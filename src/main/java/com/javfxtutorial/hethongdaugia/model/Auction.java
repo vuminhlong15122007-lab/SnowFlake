@@ -4,15 +4,21 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Auction {
+public class Auction extends Entity {
+    private int counterId = 0;
     private Item item;
     private BidTransaction WinningBid;
     private boolean isActive;
     private List<BidTransaction> bidHistory;
 
-    public Auction(Item item) {
+    public Auction(Item item, String name) {
+        super(name);
+        counterId ++;
         this.item = item;
         this.bidHistory = new ArrayList<BidTransaction>();
+
+
+
     }
 
     public boolean checkActive(){
@@ -48,4 +54,11 @@ public class Auction {
     public List<BidTransaction> getBidHistory() {
         return bidHistory;
     }
+
+    @Override
+    public String Generate_Id(){
+        counterId = counterId ++;
+        return "AU" + String.format("%03d", counterId);
+    }
 }
+
