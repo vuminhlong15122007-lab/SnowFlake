@@ -2,7 +2,7 @@ package com.javfxtutorial.hethongdaugia.model;
 import java.time.LocalDate;
 public abstract class Entity {
     private String id ;
-    private LocalDate time ;
+    private LocalDate time = LocalDate.now(); // thời gian khởi tạo tài khoản / sản phẩm => cố định không sửa
     private String name ;
 
     public String getId() {
@@ -11,14 +11,6 @@ public abstract class Entity {
 
     public void setId(String id) {
         this.id = id;
-    }
-
-    public LocalDate getTime() {
-        return time;
-    }
-
-    public void setTime(LocalDate time) {
-        this.time = time;
     }
 
     public String getName() {
