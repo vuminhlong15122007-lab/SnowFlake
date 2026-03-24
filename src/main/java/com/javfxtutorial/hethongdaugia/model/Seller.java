@@ -6,10 +6,9 @@ public class Seller extends Bidder{
     List<Item> list_item = new ArrayList<>();    // tạo 1 list rỗng kiểu Item
     double counter = 0;
 
-    public Seller(String id, String name, List<Item> list_item, double counter) {
-        super(id, name);
+    public Seller(String name, String passWord, String email, String fullName, double money, List<Item> list_item) {
+        super(name, passWord, email, fullName, money);
         this.list_item = list_item;
-        this.counter = counter;
     }
 
     public void addItem(Item new_item){
