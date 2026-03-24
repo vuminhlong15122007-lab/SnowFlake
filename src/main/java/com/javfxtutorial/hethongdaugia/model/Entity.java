@@ -21,8 +21,8 @@ public abstract class Entity {
         this.name = name;
     }
 
-    public Entity(String id , String name ){
-        this.id = id ;
+    public Entity(String name ){
+        this.id = Generate_Id() ;
         this.name = name ;
     }
 
