@@ -4,6 +4,13 @@ import java.util.ArrayList;
 
 public class Seller extends Bidder{
     List<Item> list_item = new ArrayList<>();    // tạo 1 list rỗng kiểu Item
+    double counter = 0;
+
+    public Seller(String id, String name, List<Item> list_item, double counter) {
+        super(id, name);
+        this.list_item = list_item;
+        this.counter = counter;
+    }
 
     public void addItem(Item new_item){
         if(list_item.contains(new_item)){    // Test sp đã trong list chưa
@@ -26,8 +33,15 @@ public class Seller extends Bidder{
         // chưa làm
     }
 
-    @Override
     public List<Item> getListItem(){
         return list_item;
     }
+
+    @Override
+    public String Generate_Id(){
+        counter ++;
+        return "SE " + counter + String.format("%03d", counter);
+    }
+
+
 }

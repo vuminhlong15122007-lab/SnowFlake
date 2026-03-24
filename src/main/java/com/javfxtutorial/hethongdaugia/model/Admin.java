@@ -4,7 +4,7 @@ public class Admin extends User {
     private double counter = 0;
 
     public Admin(String id, String name, String passWord, String fullName, String email, double counter) {
-        super(id, name, passWord, fullName, email);
+        super( name, passWord, fullName, email);
         this.counter = counter;
     }
 
