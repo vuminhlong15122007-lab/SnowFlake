@@ -23,7 +23,7 @@ public class Auction extends Entity {
 
     public boolean checkActive(){
         LocalDate now = LocalDate.now();
-        if (now.isAfter(item.endTime)){
+        if (now.isAfter(item.getEndTime())){
             return false;
         }
         return true;
@@ -35,14 +35,14 @@ public class Auction extends Entity {
             return false;
         }
 
-        if(amount < item.stepPrice + item.highestPrice){
-            System.out.println(String.format("Cần đặt giá cao hơn: %d", highestPrice + item.stepPrice));
+        if(amount < item.getStepPrice() + item.getHighestPrice()){
+            System.out.println(String.format("Cần đặt giá cao hơn: %d", item.getHighestPrice() + item.getStepPrice()));
             return false;
         }
 
         BidTransaction new_transaction = new BidTransaction(bidder, amount, LocalDate.now());
         bidHistory.add(new_transaction);
-        item.highestPrice = amount;
+        item.setHighestPrice(amount) ;
         this.WinningBid = new_transaction;
         return true;
     }
