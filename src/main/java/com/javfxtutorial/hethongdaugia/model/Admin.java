@@ -3,8 +3,8 @@ package com.javfxtutorial.hethongdaugia.model;
 public class Admin extends User {
     private double counter = 0;
 
-    public Admin(String id, String name, String passWord, String fullName, String email, double counter) {
-        super( name, passWord, fullName, email);
+    public Admin(String name, String passWord, String fullName, String email, double counter) {
+        super(name, passWord, fullName, email);
         this.counter = counter;
     }
 
