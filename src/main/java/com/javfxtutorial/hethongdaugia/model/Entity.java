@@ -21,9 +21,9 @@ public abstract class Entity {
         this.name = name;
     }
 
-    public Entity(String id , LocalDate time ){
+    public Entity(String id , String name ){
         this.id = id ;
-        this.time = time ;
+        this.name = name ;
     }
 
     public abstract String Generate_Id();
