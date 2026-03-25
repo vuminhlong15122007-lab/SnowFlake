@@ -22,7 +22,7 @@
             <Font size="15.0" />
          </font>
       </PasswordField>
-      <Button layoutX="263.0" layoutY="279.0" mnemonicParsing="false" text="Đăng nhập" />
+      <Button layoutX="317.0" layoutY="280.0" mnemonicParsing="false" text="Đăng nhập" />
       <Label layoutX="179.0" layoutY="57.0" prefHeight="41.0" prefWidth="323.0" text="Hệ thống đấu giá SnowFox">
          <font>
             <Font name="Serif Regular" size="26.0" />
@@ -35,5 +35,6 @@
       </Avatar>
       <Icon content="PERSON" layoutX="179.0" layoutY="161.0" />
       <Icon content="LOCK" layoutX="179.0" layoutY="223.0" />
+      <Button layoutX="201.0" layoutY="280.0" mnemonicParsing="false" prefHeight="30.0" prefWidth="78.0" text="Đăng ký" />
    </children>
 </AnchorPane>
