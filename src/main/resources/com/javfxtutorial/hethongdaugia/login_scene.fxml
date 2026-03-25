@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import com.gluonhq.charm.glisten.control.Avatar?>
+<?import com.gluonhq.charm.glisten.control.Icon?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
@@ -22,15 +23,17 @@
          </font>
       </PasswordField>
       <Button layoutX="263.0" layoutY="279.0" mnemonicParsing="false" text="Đăng nhập" />
-      <Label layoutX="138.0" layoutY="57.0" prefHeight="41.0" prefWidth="323.0" text="Hệ thống đấu giá SnowFox">
+      <Label layoutX="179.0" layoutY="57.0" prefHeight="41.0" prefWidth="323.0" text="Hệ thống đấu giá SnowFox">
          <font>
             <Font name="Serif Regular" size="26.0" />
          </font>
       </Label>
-      <Avatar layoutX="38.0" layoutY="28.0" radius="50.0">
+      <Avatar layoutX="79.0" layoutY="28.0" radius="50.0">
          <image>
             <Image url="@Logo.png" />
          </image>
       </Avatar>
+      <Icon content="PERSON" layoutX="179.0" layoutY="161.0" />
+      <Icon content="LOCK" layoutX="179.0" layoutY="223.0" />
    </children>
 </AnchorPane>
