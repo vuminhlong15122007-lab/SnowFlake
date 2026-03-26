@@ -155,7 +155,7 @@
                               <Insets bottom="5.0" left="10.0" right="5.0" top="15.0" />
                            </HBox.margin>
                            <image>
-                              <Image url="r ăn bơ.jpg" />
+                              <Image url="@r ăn bơ.jpg" />
                            </image>
                         </ImageView>
                         <VBox alignment="TOP_RIGHT" prefHeight="151.0" prefWidth="216.0" spacing="7.0">
