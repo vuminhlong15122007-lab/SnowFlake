@@ -32,7 +32,7 @@
     <center>
         <VBox spacing="15" style="-fx-padding: 20;">
             <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Chào mừng đến với hệ thống đấu giá!" />
-            <Button onAction="#handleXemSanPham" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 10;" text="Xem sản phẩm đang đấu giá" />
+            <Button style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-padding: 10;" text="Xem sản phẩm đang đấu giá" />
         </VBox>
     </center>
 
