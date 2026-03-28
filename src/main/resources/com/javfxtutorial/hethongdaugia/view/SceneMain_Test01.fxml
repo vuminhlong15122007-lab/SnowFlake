@@ -49,7 +49,7 @@
         <!-- Faded high-res winter image (all images point to @Logo.png as requested) -->
         <ImageView fitHeight="500" fitWidth="900" mouseTransparent="true" opacity="0.18" pickOnBounds="true" preserveRatio="false">
             <image>
-                <Image url="@Logo.png" />
+                <Image url="@../assets/Logo.png" />
             </image>
             <effect>
                 <GaussianBlur radius="6" />
@@ -72,7 +72,7 @@
                         <HBox alignment="CENTER_LEFT" spacing="10">
                             <ImageView fitHeight="48" fitWidth="48">
                                 <image>
-                                    <Image url="@Logo.png" />
+                                    <Image url="@../assets/Logo.png" />
                                 </image>
                             </ImageView>
                             <VBox spacing="0">
@@ -89,7 +89,7 @@
                             </padding>
                             <ImageView fitHeight="18" fitWidth="18" mouseTransparent="true" pickOnBounds="true">
                                 <image>
-                                    <Image url="@Logo.png" />
+                                    <Image url="@../assets/Logo.png" />
                                 </image>
                             </ImageView>
                             <TextField prefWidth="300" promptText="Tìm sản phẩm, người tạo..." style="-fx-background-color: transparent; -fx-prompt-text-fill: rgba(0,0,0,0.35); -fx-text-fill: #012a4a;" />
@@ -105,7 +105,7 @@
                                 <graphic>
                                     <ImageView fitHeight="18" fitWidth="18">
                                         <image>
-                                            <Image url="@Logo.png" />
+                                            <Image url="@../assets/Logo.png" />
                                         </image>
                                     </ImageView>
                                 </graphic>
@@ -247,7 +247,7 @@
                                         <StackPane prefHeight="140" style="-fx-background-radius: 8; -fx-overflow: hidden;">
                                             <ImageView fitHeight="140" fitWidth="220" preserveRatio="true">
                                                 <image>
-                                                    <Image url="@Logo.png" />
+                                                    <Image url="@../assets/Logo.png" />
                                                 </image>
                                             </ImageView>
                                             <HBox alignment="TOP_RIGHT">
@@ -299,7 +299,7 @@
                     <Separator />
                     <ImageView fitHeight="120" fitWidth="200" preserveRatio="true">
                         <image>
-                            <Image url="@Logo.png" />
+                            <Image url="@../assets/Logo.png" />
                         </image>
                     </ImageView>
                     <Label style="-fx-font-weight: 700; -fx-text-fill: #012a4a;" text="Chọn một phiên để xem chi tiết" wrapText="true" />
