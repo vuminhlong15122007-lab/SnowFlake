@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+
+<AnchorPane prefHeight="500" prefWidth="900" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+
+    <children>
+
+        <!-- BACKGROUND -->
+        <Pane prefHeight="500" prefWidth="900" style="-fx-background-color: linear-gradient(to right, #e0f7ff, #ffffff, #d6f0ff);" />
+
+        <!-- LEFT PANEL (branding) -->
+        <VBox layoutX="50" layoutY="100" spacing="15">
+         <HBox prefHeight="100.0" prefWidth="200.0">
+            <children>
+               <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                  <image>
+                     <Image url="@Logo.png" />
+                  </image>
+               </ImageView>
+               <Label prefHeight="104.0" prefWidth="182.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #2b5876;" text="SnowFox" />
+            </children>
+         </HBox>
+            <Label style="-fx-font-size: 18px; -fx-text-fill: #4e7ea8;" text="Phát triển bởi SnowFlake Studio!" />
+        </VBox>
+
+        <!-- LOGIN CARD -->
+        <VBox alignment="CENTER" layoutX="550" layoutY="80" prefHeight="360" prefWidth="300" spacing="15" style="-fx-background-color: rgba(255,255,255,0.6);                      -fx-background-radius: 25;                      -fx-padding: 30;                      -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 25, 0, 0, 10);">
+
+            <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2b5876;" text="Login" />
+
+            <TextField prefHeight="40" promptText="Username" style="-fx-background-radius: 12;                               -fx-background-color: white;" />
+
+            <PasswordField prefHeight="40" promptText="Password" style="-fx-background-radius: 12;                                   -fx-background-color: white;" />
+
+            <CheckBox style="-fx-text-fill: #4e7ea8;" text="Remember me" />
+
+            <!-- LOGIN BUTTON -->
+            <Button prefHeight="40" prefWidth="220" style="-fx-background-radius: 20;                            -fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed);                            -fx-text-fill: white;                            -fx-font-weight: bold;" text="LOGIN" />
+
+            <!-- REGISTER BUTTON -->
+            <Button prefHeight="35" prefWidth="220" style="-fx-background-radius: 20;                            -fx-background-color: transparent;                            -fx-border-color: #2f80ed;                            -fx-border-radius: 20;                            -fx-text-fill: #2f80ed;" text="CREATE ACCOUNT" />
+
+            <Label style="-fx-text-fill: #7aaed6; -fx-underline: true;" text="Forgot password?" />
+
+        </VBox>
+
+    </children>
+</AnchorPane>
