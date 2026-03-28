@@ -1,28 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="500" prefWidth="800" style="-fx-background-color: #eef5fb;" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/25">
+<BorderPane prefHeight="500" prefWidth="800" style="-fx-background-color: #eef5fb;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
 
    <!-- HEADER -->
    <top>
-      <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10; -fx-background-color: #dce9f5;">
+      <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10; -fx-background-color: linear-gradient(to right, white, #6ec2f7);">
 
          <ImageView fitHeight="35" fitWidth="35">
             <image>
                <Image url="@Logo.png" />
             </image></ImageView>
-         <Label style="-fx-font-size: 15;" text="SnowFox - Tài khoản" />
+         <Label graphicTextGap="15.0" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: green;" text="SnowFox - Tài Khoản">
+            <effect>
+               <Blend />
+            </effect></Label>
       </HBox>
    </top>
 
@@ -30,33 +26,33 @@
    <left>
       <VBox alignment="TOP_CENTER" spacing="12" style="-fx-padding: 15; -fx-background-color: #f4f8fc;">
 
-         <ImageView fitHeight="70" fitWidth="70">
+         <ImageView fitHeight="140.0" fitWidth="140.0">
             <image>
                <Image url="@Logo.png" />
             </image></ImageView>
 
-         <Button prefWidth="150" style="-fx-background-color: #e3edf7;" text="Thông tin cá nhân" />
+         <Button prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Thông tin cá nhân" />
 
-         <Button prefWidth="150" style="-fx-background-color: #e3edf7;" text="Lịch sử đấu giá" />
+         <Button prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Lịch sử đấu giá" />
 
-         <Button prefWidth="150" style="-fx-background-color: #e3edf7;" text="Sản phẩm của tôi" />
+         <Button prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Sản phẩm của tôi" />
 
-         <Button prefWidth="150" style="-fx-background-color: #e3edf7;" text="Đăng xuất" />
+         <Button prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Đăng xuất" />
       </VBox>
    </left>
 
    <!-- CONTENT -->
    <center>
-      <VBox alignment="TOP_CENTER" style="-fx-padding: 20;">
+      <VBox alignment="TOP_CENTER" style="-fx-padding: 20; -fx-background-color: linear-gradient(to right, white, #02620);">
 
          <VBox spacing="12" style="-fx-background-color: white;                          -fx-padding: 20;                          -fx-background-radius: 10;                          -fx-border-color: #d6e2ee;                          -fx-border-radius: 10;">
 
-            <Label style="-fx-font-size: 14;" text="Thông tin cá nhân" />
+            <Label style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, #56ccf2, #2f80ed);" text="Thông tin cá nhân" />
 
             <!-- AVATAR -->
-            <HBox alignment="CENTER" spacing="10">
-               <ImageView fitHeight="80" fitWidth="80" />
-               <Button style="-fx-background-color: #cfe2f3;" text="Đổi ảnh" />
+            <HBox alignment="CENTER_LEFT" spacing="10">
+               <ImageView fitHeight="80" fitWidth="80.0" nodeOrientation="INHERIT" />
+               <Button style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Đổi ảnh" />
             </HBox>
 
             <!-- FORM -->
@@ -72,19 +68,24 @@
                <TextField GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
                <Label text="Vai trò:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-               <Label text="Bidder"
-                      style="-fx-background-color: #d9eaf7;
-              -fx-text-fill: #2c3e50;
-              -fx-padding: 5 12 5 12;
-              -fx-background-radius: 10;"
-                      GridPane.rowIndex="3" GridPane.columnIndex="1"/>
+               <Label style="-fx-background-color: linear-gradient(to right,yellow, gold); -fx-text-fill: blue; -fx-padding: 5 12 5 12; -fx-background-radius: 10;" text="Bidder" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+               <columnConstraints>
+                  <ColumnConstraints />
+                  <ColumnConstraints />
+               </columnConstraints>
+               <rowConstraints>
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+                  <RowConstraints />
+               </rowConstraints>
             </GridPane>
 
             <!-- BUTTON -->
             <HBox spacing="10">
-               <Button style="-fx-background-color: #cfe2f3;" text="Cập nhật" />
+               <Button style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Cập nhật" />
 
-               <Button style="-fx-background-color: #cfe2f3;" text="Đổi mật khẩu" />
+               <Button style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-font-weight: bold; -fx-text-fill: white;" text="Đổi mật khẩu" />
             </HBox>
 
          </VBox>
