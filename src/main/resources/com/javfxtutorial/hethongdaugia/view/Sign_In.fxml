@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.CheckBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.PasswordField?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="500" prefWidth="900" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="500" prefWidth="900" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
 
     <children>
 
@@ -21,17 +13,17 @@
 
         <!-- LEFT PANEL -->
         <VBox layoutX="50" layoutY="120" spacing="15">
-         <HBox prefHeight="100.0" prefWidth="274.0">
+         <HBox alignment="CENTER" prefHeight="100.0" prefWidth="274.0">
             <children>
                <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true"> <!--thuộc tính của ảnh-->
                   <image>
                      <Image url="@../assets/Logo.png" /> <!--đường dẫn của ảnh-->
                   </image>
                </ImageView>
-                  <Label prefHeight="100.0" prefWidth="158.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #2b5876;" text="SnowFox" />
+                  <Label prefHeight="100.0" prefWidth="158.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #56ccf2;" text="SnowFox" />
             </children>
          </HBox>
-            <Label style="-fx-font-size: 18px; -fx-text-fill: #4e7ea8;" text="Kỷ nguyên vươn mình cùng SnowFox " />
+            <Label style="-fx-font-size: 20; -fx-font-weight: bold; -fx-text-fill: #2f80ed;" text="Kỷ nguyên vươn mình cùng SnowFox " />
         </VBox>
 
         <!-- REGISTER CARD -->
