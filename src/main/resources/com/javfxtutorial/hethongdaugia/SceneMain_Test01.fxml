@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.collections.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.shape.*?>
+
+<AnchorPane prefHeight="500" prefWidth="900" style="-fx-font-family: 'Segoe UI', 'Roboto', sans-serif;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+
+    <!-- Non-visual definitions -->
+    <fx:define>
+        <ToggleGroup fx:id="viewToggleGroup" />
+    </fx:define>
+
+    <!-- Background layers -->
+    <children>
+
+        <!-- Gradient base -->
+        <Rectangle height="500" layoutX="0" layoutY="0" width="900">
+            <fill>
+                <LinearGradient endX="0" endY="1" startX="0" startY="0">
+                    <stops>
+                        <Stop color="#eaf6ff" offset="0.0" />
+                        <Stop color="#dff3ff" offset="0.6" />
+                        <Stop color="#f7fbff" offset="1.0" />
+                    </stops>
+                </LinearGradient>
+            </fill>
+        </Rectangle>
+
+        <!-- Subtle vignette -->
+        <Rectangle height="500" layoutX="0" layoutY="0" opacity="0.08" width="900">
+            <fill>
+                <RadialGradient centerX="0.5" centerY="0.4" focusAngle="0" focusDistance="0.6" radius="0.8">
+                    <stops>
+                        <Stop color="#ffffff" offset="0.0" />
+                        <Stop color="#bcd8ee" offset="1.0" />
+                    </stops>
+                </RadialGradient>
+            </fill>
+        </Rectangle>
+
+        <!-- Faded high-res winter image (all images point to @Logo.png as requested) -->
+        <ImageView fitHeight="500" fitWidth="900" mouseTransparent="true" opacity="0.18" pickOnBounds="true" preserveRatio="false">
+            <image>
+                <Image url="@Logo.png" />
+            </image>
+            <effect>
+                <GaussianBlur radius="6" />
+            </effect>
+        </ImageView>
+
+        <!-- Canvas for optional snowfall animation -->
+        <Canvas height="500" mouseTransparent="true" width="900" />
+
+        <!-- Main glass container -->
+        <BorderPane layoutX="20" layoutY="12" prefHeight="476" prefWidth="860" style="-fx-background-color: rgba(255,255,255,0.12); -fx-background-radius: 14; -fx-border-radius: 14;">
+            <effect>
+                <DropShadow color="#9fc5e8" radius="18" spread="0.08" />
+            </effect>
+
+            <!-- TOP: Header -->
+            <top>
+                <VBox spacing="8" style="-fx-padding: 12 16 8 16;">
+                    <HBox alignment="CENTER_LEFT" spacing="12">
+                        <HBox alignment="CENTER_LEFT" spacing="10">
+                            <ImageView fitHeight="48" fitWidth="48">
+                                <image>
+                                    <Image url="@Logo.png" />
+                                </image>
+                            </ImageView>
+                            <VBox spacing="0">
+                                <Label style="-fx-font-size: 20px; -fx-text-fill: #0b3d91; -fx-font-weight: 800;" text="SnowFox" />
+                                <Label prefHeight="14.0" prefWidth="95.0" style="-fx-font-size: 11px; -fx-text-fill: #0b3d91; -fx-opacity: 0.8;" text="SnowFlake Studio" />
+                            </VBox>
+                        </HBox>
+
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <HBox alignment="CENTER" spacing="8" style="-fx-background-color: rgba(255,255,255,0.14); -fx-background-radius: 10;">
+                            <padding>
+                                <Insets bottom="6" left="6" right="6" top="6" />
+                            </padding>
+                            <ImageView fitHeight="18" fitWidth="18" mouseTransparent="true" pickOnBounds="true">
+                                <image>
+                                    <Image url="@Logo.png" />
+                                </image>
+                            </ImageView>
+                            <TextField prefWidth="300" promptText="Tìm sản phẩm, người tạo..." style="-fx-background-color: transparent; -fx-prompt-text-fill: rgba(0,0,0,0.35); -fx-text-fill: #012a4a;" />
+                            <Button mnemonicParsing="false" style="-fx-background-color: transparent; -fx-text-fill: #012a4a; -fx-font-weight: 600;" text="Bộ lọc" />
+                        </HBox>
+
+                        <HBox alignment="CENTER_RIGHT" spacing="8">
+                            <Button style="-fx-background-color: #1e88e5; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 6 12 6 12;" text="Tạo phiên" />
+                            <Button style="-fx-background-color: transparent; -fx-text-fill: #012a4a;" text="Tải lại">
+                                <tooltip>
+                                    <Tooltip text="Tải lại danh sách phiên" />
+                                </tooltip>
+                                <graphic>
+                                    <ImageView fitHeight="18" fitWidth="18">
+                                        <image>
+                                            <Image url="@Logo.png" />
+                                        </image>
+                                    </ImageView>
+                                </graphic>
+                            </Button>
+                            <MenuButton style="-fx-background-color: transparent; -fx-text-fill: #012a4a;" text="Tài khoản">
+                                <items>
+                                    <MenuItem text="Hồ sơ" />
+                                    <MenuItem text="Cài đặt" />
+                                    <SeparatorMenuItem />
+                                    <MenuItem text="Đăng xuất" />
+                                </items>
+                            </MenuButton>
+                        </HBox>
+                    </HBox>
+
+                    <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 6 0 0 0;">
+                        <Label style="-fx-text-fill: #013a63; -fx-font-weight: 600;" text="Sắp xếp:" />
+                        <ChoiceBox prefWidth="160">
+                            <items>
+                                <FXCollections fx:factory="observableArrayList">
+                                    <String fx:value="Mới nhất" />
+                                    <String fx:value="Sắp hết hạn" />
+                                    <String fx:value="Giá cao nhất" />
+                                    <String fx:value="Giá thấp nhất" />
+                                </FXCollections>
+                            </items>
+                        </ChoiceBox>
+
+                        <Separator orientation="VERTICAL" prefHeight="20" />
+
+                        <HBox alignment="CENTER_LEFT" spacing="6">
+                            <ToggleButton selected="true" style="-fx-background-color: rgba(255,255,255,0.06);" text="Lưới">
+                        <toggleGroup>
+                           <ToggleGroup fx:id="viewToggleGroup" />
+                        </toggleGroup></ToggleButton>
+                            <ToggleButton style="-fx-background-color: transparent;" text="Danh sách" toggleGroup="$viewToggleGroup" />
+                        </HBox>
+
+                        <Region HBox.hgrow="ALWAYS" />
+
+                        <HBox alignment="CENTER_RIGHT" spacing="8">
+                            <Label style="-fx-text-fill: #013a63;" text="Tổng phiên:" />
+                            <Label style="-fx-font-weight: bold; -fx-text-fill: #013a63;" text="0" />
+                        </HBox>
+                    </HBox>
+                </VBox>
+            </top>
+
+            <!-- LEFT: Filters -->
+            <left>
+                <VBox prefWidth="220" spacing="12" style="-fx-background-color: rgba(255,255,255,0.08); -fx-background-radius: 12;">
+                    <padding>
+                        <Insets bottom="14" left="14" right="14" top="14" />
+                    </padding>
+                    <Label style="-fx-font-size: 14px; -fx-text-fill: #023e73; -fx-font-weight: 700;" text="Bộ lọc nâng cao" />
+                    <Separator />
+
+                    <Label style="-fx-text-fill: #023e73; -fx-font-weight: 600;" text="Danh mục" />
+                    <ListView prefHeight="90">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="Tất cả" />
+                                <String fx:value="PC Gaming" />
+                                <String fx:value="Workstation" />
+                                <String fx:value="Server" />
+                                <String fx:value="Phụ kiện" />
+                            </FXCollections>
+                        </items>
+                    </ListView>
+
+                    <Label style="-fx-text-fill: #023e73; -fx-font-weight: 600;" text="Khoảng giá (VNĐ)" />
+                    <HBox spacing="8">
+                        <padding>
+                            <Insets bottom="0" left="0" right="0" top="0" />
+                        </padding>
+                        <TextField prefWidth="90" promptText="Từ" style="-fx-background-radius: 6;" />
+                        <TextField prefWidth="90" promptText="Đến" style="-fx-background-radius: 6;" />
+                    </HBox>
+
+                    <Label style="-fx-text-fill: #023e73; -fx-font-weight: 600;" text="Thời gian còn lại" />
+                    <ChoiceBox prefWidth="200">
+                        <items>
+                            <FXCollections fx:factory="observableArrayList">
+                                <String fx:value="Tất cả" />
+                                <String fx:value="Dưới 1 giờ" />
+                                <String fx:value="Dưới 24 giờ" />
+                                <String fx:value="Dưới 7 ngày" />
+                            </FXCollections>
+                        </items>
+                    </ChoiceBox>
+
+                    <Label style="-fx-text-fill: #023e73; -fx-font-weight: 600;" text="Tùy chọn" />
+                    <CheckBox text="Có hình ảnh" />
+                    <CheckBox text="Chỉ của tôi" />
+                    <CheckBox text="Yêu thích" />
+
+                    <HBox alignment="CENTER" spacing="8">
+                        <padding>
+                            <Insets bottom="0" left="0" right="0" top="0" />
+                        </padding>
+                        <Button style="-fx-background-color: #0288d1; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 6 12 6 12;" text="Áp dụng" />
+                        <Button style="-fx-background-color: transparent; -fx-text-fill: #012a4a;" text="Xóa" />
+                    </HBox>
+
+                    <Region VBox.vgrow="ALWAYS" />
+                </VBox>
+            </left>
+
+            <!-- CENTER: Content -->
+            <center>
+                <StackPane style="-fx-padding: 12;">
+                    <VBox spacing="12" style="-fx-background-color: rgba(255,255,255,0.06); -fx-padding: 12; -fx-background-radius: 10;">
+                        <StackPane prefHeight="320" prefWidth="560">
+
+                            <!-- List view (table) -->
+                            <TableView prefHeight="320" prefWidth="560" style="-fx-background-color: rgba(255,255,255,0.9); -fx-border-radius: 8;" visible="false">
+                                <columns>
+                                    <TableColumn prefWidth="220" text="Tên sản phẩm" />
+                                    <TableColumn prefWidth="120" text="Người tạo" />
+                                    <TableColumn prefWidth="100" text="Giá khởi điểm" />
+                                    <TableColumn prefWidth="120" text="Thời gian còn lại" />
+                                </columns>
+                            </TableView>
+
+                            <!-- Skeleton loader -->
+                            <VBox alignment="CENTER" spacing="10" style="-fx-background-color: rgba(255,255,255,0.06); -fx-padding: 20;" visible="false">
+                                <Label style="-fx-text-fill: rgba(0,0,0,0.6); -fx-font-size: 14px;" text="Đang tải phiên..." />
+                                <ProgressIndicator progress="-1" />
+                            </VBox>
+
+                            <!-- Grid view (cards) -->
+                            <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" visible="true">
+                                <FlowPane hgap="14" prefWrapLength="520" vgap="14">
+                                    <padding>
+                                        <Insets bottom="10" left="10" right="10" top="10" />
+                                    </padding>
+                                    <!-- Placeholder card (duplicate or populate in controller) -->
+                                    <VBox prefWidth="240" spacing="8" style="-fx-background-color: linear-gradient(to bottom right, rgba(255,255,255,0.95), rgba(255,255,255,0.9)); -fx-background-radius: 10; -fx-padding: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.12), 8,0,0,4);">
+                                        <StackPane prefHeight="140" style="-fx-background-radius: 8; -fx-overflow: hidden;">
+                                            <ImageView fitHeight="140" fitWidth="220" preserveRatio="true">
+                                                <image>
+                                                    <Image url="@Logo.png" />
+                                                </image>
+                                            </ImageView>
+                                            <HBox alignment="TOP_RIGHT">
+                                                <padding>
+                                                    <Insets bottom="0" left="0" right="6" top="6" />
+                                                </padding>
+                                                <ToggleButton style="-fx-background-color: rgba(255,255,255,0.6); -fx-background-radius: 6;" text="❤" />
+                                            </HBox>
+                                        </StackPane>
+                                        <Label style="-fx-font-size: 14px; -fx-font-weight: 700; -fx-text-fill: #012a4a; -fx-padding: 6 0 0 0;" text="Tên sản phẩm mẫu" />
+                                        <Label style="-fx-font-size: 12px; -fx-text-fill: rgba(0,0,0,0.6);" text="Người tạo • Giá khởi điểm" />
+                                        <HBox alignment="CENTER_LEFT" spacing="8" style="-fx-padding: 8 0 0 0;">
+                                            <Label style="-fx-font-size: 11px; -fx-text-fill: rgba(0,0,0,0.6);" text="Thời gian còn lại:" />
+                                            <ProgressBar prefWidth="120" progress="0.6" style="-fx-accent: #0288d1;" />
+                                        </HBox>
+                                        <HBox alignment="CENTER_RIGHT" spacing="8" style="-fx-padding: 8 0 0 0;">
+                                            <Button style="-fx-background-color: transparent; -fx-text-fill: #012a4a;" text="Xem" />
+                                            <Button style="-fx-background-color: #0288d1; -fx-text-fill: white; -fx-font-weight: bold;" text="Đấu giá" />
+                                        </HBox>
+                                    </VBox>
+                                </FlowPane>
+                            </ScrollPane>
+
+                        </StackPane>
+
+                        <!-- Pagination and bulk actions -->
+                        <HBox alignment="CENTER_LEFT" spacing="12" style="-fx-padding: 6 8 6 8;">
+                            <HBox alignment="CENTER_LEFT" spacing="8">
+                                <Button style="-fx-background-color: transparent; -fx-text-fill: #012a4a;" text="Chọn tất cả" />
+                                <Button style="-fx-background-color: transparent; -fx-text-fill: #012a4a;" text="Yêu thích" />
+                                <Button style="-fx-background-color: transparent; -fx-text-fill: #c62828;" text="Xóa" />
+                            </HBox>
+
+                            <Region HBox.hgrow="ALWAYS" />
+
+                            <HBox alignment="CENTER_RIGHT" spacing="8">
+                                <Label style="-fx-text-fill: #012a4a;" text="Trang" />
+                                <Pagination maxPageIndicatorCount="5" pageCount="1" />
+                            </HBox>
+                        </HBox>
+                    </VBox>
+                </StackPane>
+            </center>
+
+            <!-- RIGHT: Detail pane -->
+            <right>
+                <VBox prefWidth="220" spacing="10" style="-fx-padding: 12; -fx-background-color: rgba(255,255,255,0.04); -fx-background-radius: 10;">
+                    <Label style="-fx-font-size: 14px; -fx-text-fill: #023e73; -fx-font-weight: 700;" text="Chi tiết phiên" />
+                    <Separator />
+                    <ImageView fitHeight="120" fitWidth="200" preserveRatio="true">
+                        <image>
+                            <Image url="@Logo.png" />
+                        </image>
+                    </ImageView>
+                    <Label style="-fx-font-weight: 700; -fx-text-fill: #012a4a;" text="Chọn một phiên để xem chi tiết" wrapText="true" />
+                    <Label style="-fx-text-fill: rgba(0,0,0,0.6);" text="Người tạo: -" />
+                    <Label style="-fx-text-fill: rgba(0,0,0,0.6);" text="Giá khởi điểm: -" />
+                    <Label style="-fx-text-fill: rgba(0,0,0,0.6);" text="Thời gian còn lại: -" />
+                    <TextArea editable="false" prefRowCount="6" style="-fx-background-color: rgba(255,255,255,0.06); -fx-background-radius: 6;" wrapText="true" />
+                    <HBox alignment="CENTER" spacing="8">
+                        <Button style="-fx-background-color: #0288d1; -fx-text-fill: white; -fx-font-weight: bold; -fx-padding: 8 12 8 12;" text="Đặt giá" />
+                        <Button style="-fx-background-color: transparent; -fx-text-fill: #012a4a;" text="Nhắn người tạo" />
+                    </HBox>
+
+                    <Region VBox.vgrow="ALWAYS" />
+                </VBox>
+            </right>
+
+            <!-- BOTTOM: footer -->
+            <bottom>
+                <HBox alignment="CENTER" style="-fx-padding: 8 12 8 12;">
+                    <Label style="-fx-text-fill: rgba(0,0,0,0.55); -fx-font-size: 12px;" text="© 2026 SnowFox • Thiết kế giao diện mùa đông" />
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label style="-fx-text-fill: rgba(0,0,0,0.45); -fx-font-size: 11px;" text="Phiên bản UI: 1.0.0" />
+                </HBox>
+            </bottom>
+        </BorderPane>
+
+    </children>
+</AnchorPane>
