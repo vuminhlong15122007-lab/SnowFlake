@@ -9,7 +9,7 @@
 
    <!-- HEADER -->
    <top>
-      <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10; -fx-background-color: linear-gradient(to right, white, #6ec2f7);">
+      <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10; -fx-background-color: linear-gradient(to right, skyblue, #2f80ed);">
 
          <ImageView fitHeight="35" fitWidth="35">
             <image>
@@ -51,7 +51,11 @@
 
             <!-- AVATAR -->
             <HBox alignment="CENTER_LEFT" spacing="10">
-               <ImageView fitHeight="80" fitWidth="80.0" nodeOrientation="INHERIT" />
+               <Pane prefHeight="122.0" prefWidth="122.0" style="-fx-border-color: black;">
+                  <children>
+                     <ImageView fitHeight="122.0" fitWidth="122.0" nodeOrientation="INHERIT" />
+                  </children>
+               </Pane>
                <Button style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Đổi ảnh" />
             </HBox>
 
