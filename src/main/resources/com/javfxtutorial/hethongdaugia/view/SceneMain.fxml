@@ -54,7 +54,7 @@
     <!-- Footer -->
     <bottom>
         <HBox alignment="CENTER" style="-fx-background-color: #b3c6ff; -fx-padding: 8;">
-            <Label style="-fx-text-fill: white; -fx-font-size: 12px;" text="© 2026 Auction Platform" />
+            <Label style="-fx-text-fill: white; -fx-font-size: 12px;" text="© 2026 SnowFox - Studio SnowFlake" />
         </HBox>
     </bottom>
 </BorderPane>

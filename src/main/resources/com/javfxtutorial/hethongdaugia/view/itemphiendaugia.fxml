@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="160.0" prefWidth="600.0" style="-fx-background-color: white; -fx-border-color: #dcdde1; -fx-border-radius: 10; -fx-background-radius: 10;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <HBox alignment="CENTER_LEFT" spacing="20.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0" AnchorPane.rightAnchor="10.0" AnchorPane.topAnchor="10.0">
+            <children>
+                <AnchorPane prefHeight="140.0" prefWidth="140.0" style="-fx-background-color: #f5f6fa; -fx-background-radius: 10;">
+                    <children>
+                        <ImageView fx:id="imgSanPham" fitHeight="120.0" fitWidth="120.0" layoutX="10.0" layoutY="10.0" pickOnBounds="true" preserveRatio="true" />
+                    </children>
+                </AnchorPane>
+
+                <VBox prefHeight="140.0" prefWidth="280.0" spacing="8.0" HBox.hgrow="ALWAYS">
+                    <children>
+                        <Label fx:id="lblTenSP" text="Tên sản phẩm" textFill="#2f3640">
+                            <font>
+                                <Font name="System Bold" size="18.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lblGiaHienTai" text="Giá hiện tại: ... VNĐ" textFill="#e84118">
+                            <font>
+                                <Font name="System Bold" size="14.0" />
+                            </font>
+                        </Label>
+                        <Label fx:id="lblLuotDau" text="🔥 Số ... lượt đấu giá" textFill="#7f8c8d" />
+                        <Label fx:id="lblThoiGian" text="⏰ Còn: " textFill="#7f8c8d" />
+                    </children>
+                </VBox>
+
+                <VBox alignment="BOTTOM_RIGHT" prefHeight="140.0" prefWidth="130.0">
+                    <children>
+                        <Button fx:id="btnDauGia" mnemonicParsing="false" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #ff9f43; -fx-text-fill: white; -fx-background-radius: 20; -fx-cursor: hand;" text="ĐẤU GIÁ NGAY">
+                            <font>
+                                <Font name="System Bold" size="12.0" />
+                            </font>
+                        </Button>
+                    </children>
+                </VBox>
+            </children>
+        </HBox>
+    </children>
+    <padding>
+        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+    </padding>
+</AnchorPane>
