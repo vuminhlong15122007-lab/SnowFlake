@@ -38,7 +38,7 @@
 
                 <VBox alignment="BOTTOM_RIGHT" prefHeight="140.0" prefWidth="130.0">
                     <children>
-                        <Button fx:id="btnDauGia" mnemonicParsing="false" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: #ff9f43; -fx-text-fill: white; -fx-background-radius: 20; -fx-cursor: hand;" text="ĐẤU GIÁ NGAY">
+                        <Button fx:id="btnDauGia" mnemonicParsing="false" prefHeight="35.0" prefWidth="120.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-text-fill: white; -fx-background-radius: 20; -fx-cursor: hand;" text="ĐẤU GIÁ NGAY">
                             <font>
                                 <Font name="System Bold" size="12.0" />
                             </font>
