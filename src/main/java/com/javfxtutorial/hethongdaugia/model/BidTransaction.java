@@ -30,7 +30,8 @@ public class BidTransaction extends Entity{
 
     @Override
     public String Generate_Id(){
-        counterId = counterId ++;
+        counterId  = this.getCountBidTransaction() + 1;
+        this.setCountBidTransaction(counterId);
         return "AU" + String.format("%03d", counterId);
     }
 }

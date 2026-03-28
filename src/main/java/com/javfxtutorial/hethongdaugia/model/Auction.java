@@ -57,8 +57,9 @@ public class Auction extends Entity {
 
     @Override
     public String Generate_Id(){
-        counterId = counterId ++;
-        return "AU" + String.format("%03d", counterId);
+        int counter  = this.getCountAuction() + 1;
+        this.setCountAuction(counter);
+        return "AU" + String.format("%03d", counter);
     }
 }
 

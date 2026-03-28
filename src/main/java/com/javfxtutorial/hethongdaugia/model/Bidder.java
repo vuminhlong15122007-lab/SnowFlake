@@ -2,7 +2,7 @@ package com.javfxtutorial.hethongdaugia.model;
 
 public class Bidder extends User {
     private double money;
-    private int counterID = 0;
+    private int counterID ;
 
     public double getMoney() {
         return money;
@@ -22,7 +22,8 @@ public class Bidder extends User {
 
 
     public String Generate_Id(){
-        this.counterID = counterID + 1;
+        counterID  = this.getCountBidder() + 1;
+        this.setCountBidder(counterID);
         return "BD" + String.format("%03d", counterID);
     }
     public Bidder(String name , String passWord , String email , String fullName , double money){

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Seller extends Bidder{
     List<Item> list_item = new ArrayList<>();    // tạo 1 list rỗng kiểu Item
-    double counter = 0;
+    private int counter ;
 
     public Seller(String name, String passWord, String email, String fullName, double money, List<Item> list_item) {
         super(name, passWord, email, fullName, money);
@@ -38,7 +38,8 @@ public class Seller extends Bidder{
 
     @Override
     public String Generate_Id(){
-        counter ++;
+        counter  = this.getCountSeller() + 1;
+        this.setCountSeller(counter);
         return "SE " + counter + String.format("%03d", counter);
     }
 
