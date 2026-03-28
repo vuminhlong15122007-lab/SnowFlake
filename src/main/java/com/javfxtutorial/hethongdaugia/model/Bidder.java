@@ -1,8 +1,9 @@
 package com.javfxtutorial.hethongdaugia.model;
 
+import com.javfxtutorial.hethongdaugia.dao.UserDAO;
+
 public class Bidder extends User {
     private double money;
-    private int counterID ;
 
     public double getMoney() {
         return money;
@@ -12,19 +13,11 @@ public class Bidder extends User {
         money = money;
     }
 
-    public int getCounterID() {
-        return counterID;
-    }
-
-    public void setCounterID(int counterID) {
-        this.counterID = counterID;
-    }
 
 
     public String Generate_Id(){
-        counterID  = this.getCountBidder() + 1;
-        this.setCountBidder(counterID);
-        return "BD" + String.format("%03d", counterID);
+        int counter = UserDAO.getInstance().getSize();
+        return "BD" + String.format("%03d", counter);
     }
 
     public Bidder(String name , String passWord , String email ){

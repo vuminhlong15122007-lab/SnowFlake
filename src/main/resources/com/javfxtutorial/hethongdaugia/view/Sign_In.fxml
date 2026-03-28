@@ -25,7 +25,7 @@
             <children>
                <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true"> <!--thuộc tính của ảnh-->
                   <image>
-                     <Image url="@Logo.png" /> <!--đường dẫn của ảnh-->
+                     <Image url="@../assets/Logo.png" /> <!--đường dẫn của ảnh-->
                   </image>
                </ImageView>
                   <Label prefHeight="100.0" prefWidth="158.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #2b5876;" text="SnowFox" />
