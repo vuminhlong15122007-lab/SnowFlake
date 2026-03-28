@@ -26,6 +26,10 @@ public class Bidder extends User {
         this.setCountBidder(counterID);
         return "BD" + String.format("%03d", counterID);
     }
+
+    public Bidder(String name , String passWord , String email ){
+        super(name, passWord, email);
+    }
     public Bidder(String name , String passWord , String email , String fullName , double money){
         super(name , passWord , email , fullName);
         this.money = money ;
