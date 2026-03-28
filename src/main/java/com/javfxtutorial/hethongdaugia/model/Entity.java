@@ -25,7 +25,7 @@ public abstract class Entity {
         this.id = Generate_Id() ;
     }
     public Entity(String name ){
-        this.id = Generate_Id() ;
+        this.id = this.Generate_Id() ;
         this.name = name ;
     }
 
