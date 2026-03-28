@@ -13,7 +13,7 @@
 
          <ImageView fitHeight="35" fitWidth="35">
             <image>
-               <Image url="@../assets/Logo.png" />
+               <Image url="@../assets/ClassicLogo.png" />
             </image></ImageView>
          <Label graphicTextGap="15.0" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, purple, blue);" text="SnowFox - Tài Khoản">
             <effect>

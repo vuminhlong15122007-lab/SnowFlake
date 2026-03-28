@@ -11,10 +11,10 @@
         <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-background-color: #b3c6ff; -fx-padding: 10;">
          <ImageView fitHeight="68.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true">
             <image>
-               <Image url="@../assets/Logo.png" />
+               <Image url="@../assets/ClassicLogo.png" />
             </image>
          </ImageView>
-            <Label style="-fx-font-size: 27; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox" />
+            <Label prefHeight="39.0" prefWidth="456.0" style="-fx-font-size: 27; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox - Trang đấu giá " />
          <Region prefHeight="68.0" prefWidth="545.0" />
          <Button alignment="CENTER" mnemonicParsing="false" prefHeight="52.0" prefWidth="105.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 15;" text="Quay lại Menu" />
         </HBox>
