@@ -16,13 +16,15 @@
 
     <!-- Header -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-background-color: linear-gradient(to right, #89CFF0,lavender); -fx-padding: 10;">
+        <HBox alignment="CENTER_LEFT" prefHeight="90.0" prefWidth="900.0" spacing="15" style="-fx-background-color: linear-gradient(to right, #89CFF0,lavender); -fx-padding: 10;">
          <ImageView fitHeight="75.0" fitWidth="75.0" pickOnBounds="true" preserveRatio="true">
             <image>
                <Image url="@../assets/ClassicLogo.png" />
             </image>
          </ImageView>
-            <Label style="-fx-font-size: 22px; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox - Quản lý sản phẩm" />
+            <Label prefHeight="32.0" prefWidth="332.0" style="-fx-font-size: 22px; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox - Quản lý sản phẩm" />
+         <Region prefHeight="75.0" prefWidth="326.0" />
+         <Button mnemonicParsing="false" prefHeight="48.0" prefWidth="103.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -ox-border-color: red; -fx-background-radius: 10; -fx-border-radius: 10; -fx-text-fill: white; -fx-font-weight: bold;" text="quay về Menu" />
         </HBox>
     </top>
 
