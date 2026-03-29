@@ -95,5 +95,12 @@
          </VBox>
       </VBox>
    </center>
+   <bottom>
+      <HBox prefHeight="22.0" prefWidth="600.0" style="-fx-background-color: #b3c6ff; -fx-padding: 8;" BorderPane.alignment="CENTER">
+         <children>
+            <Label alignment="CENTER" prefHeight="18.0" prefWidth="876.0" style="-fx-text-fill: white; -fx-font-size: 12px;" text="© 2026 SnowFox - Studio SnowFlake" textAlignment="CENTER" />
+         </children>
+      </HBox>
+   </bottom>
 
 </BorderPane>
