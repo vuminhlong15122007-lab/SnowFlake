@@ -2,7 +2,7 @@ package com.javfxtutorial.hethongdaugia.model;
 
 import java.time.LocalDate;
 
-public abstract class User extends Entity {
+public class User extends Entity {
     private String passWord;
     private String email;
     private String fullName;
@@ -69,5 +69,9 @@ public abstract class User extends Entity {
 
     public void setFullName(String fullName) {
         this.fullName = fullName;
+    }
+    @Override
+    public String Generate_Id() {
+        return "";
     }
 }
