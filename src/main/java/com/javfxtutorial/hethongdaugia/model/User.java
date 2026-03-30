@@ -1,50 +1,22 @@
 package com.javfxtutorial.hethongdaugia.model;
 
+import com.javfxtutorial.hethongdaugia.model.enums.AccountType;
+
 import java.time.LocalDate;
 
-public class User extends Entity {
+public class User{
     private String passWord;
     private String email;
-    private String fullName;
-    private int countSeller = 0 ;
-    private int countBidder = 0;
-    private int countAdmin = 0 ;
+    private String name;
+    private String sdt;
+    private int id;
+    private AccountType accountType;
 
-    public int getCountAdmin() {
-        return countAdmin;
-    }
-
-    public void setCountAdmin(int countAdmin) {
-        this.countAdmin = countAdmin;
-    }
-
-    public int getCountSeller() {
-        return countSeller;
-    }
-
-    public void setCountSeller(int countSeller) {
-        this.countSeller = countSeller;
-    }
-
-    public int getCountBidder() {
-        return countBidder;
-    }
-
-    public void setCountBidder(int countBidder) {
-        this.countBidder = countBidder;
-    }
-
-    public User(String name, String passWord, String email) {
-        super(name);
+    public User(String name, String passWord, String email, String sdt) {
+        this.name = name;
         this.passWord = passWord;
         this.email = email;
-    }
-
-    public User(String name, String passWord, String fullName, String email) {
-        super(name);
-        this.passWord = passWord;
-        this.fullName = fullName;
-        this.email = email;
+        this.sdt = sdt;
     }
 
     public String getPassWord() {
@@ -63,15 +35,29 @@ public class User extends Entity {
         this.email = email;
     }
 
-    public String getFullName() {
-        return fullName;
+    public String getName() {
+        return name;
     }
 
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
+    public void setName(String name) {
+        this.name = name;
     }
-    @Override
-    public String Generate_Id() {
-        return "";
+
+    public String getSdt() {
+        return sdt;
+    }
+
+    public void setSdt(String sdt) {
+        this.sdt = sdt;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public AccountType getAccountType() {
+        return accountType;
     }
 }
+
+
