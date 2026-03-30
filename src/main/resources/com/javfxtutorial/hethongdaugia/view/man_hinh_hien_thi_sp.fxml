@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="1100.0" style="-fx-background-color: #f0f8ff;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+    <top>
+        <HBox prefHeight="60.0" style="-fx-background-color: linear-gradient(to bottom right, #FFF0F5, #E1BEE7, #B3E5FC); -fx-padding: 10;">
+            <children>
+            <Pane prefHeight="40.0" prefWidth="1112.0">
+               <children>
+                      <Button layoutX="947.0" layoutY="4.0" mnemonicParsing="false" prefHeight="32.0" prefWidth="126.0" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 16;" text="Quay lại Menu" />
+                      <Label layoutX="70.0" prefHeight="40.0" prefWidth="432.0" style="-fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-size: 20px; -fx-font-weight: bold;" text="SnowFox System - Phiên đấu giá" />
+                   <ImageView fitHeight="70.0" fitWidth="70.0" layoutY="-15.0" pickOnBounds="true" preserveRatio="true">
+                       <image>
+                           <Image url="@../assets/Logo.png" />
+                       </image>
+                   </ImageView>
+               </children></Pane>
+            </children>
+        </HBox>
+    </top>
+
+    <center>
+        <SplitPane dividerPositions="0.5" prefHeight="160.0" prefWidth="200.0" style="-fx-background-color: transparent;">
+            <items>
+                <AnchorPane minWidth="0.0" prefHeight="160.0" prefWidth="100.0" style="-fx-background-color: white;">
+                    <children>
+                        <VBox layoutX="20.0" layoutY="20.0" prefHeight="580.0" prefWidth="500.0" spacing="15.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+                            <children>
+                                <Label style="-fx-font-weight: bold; -fx-font-size: 18px; -fx-text-fill: #2f80ed;" text="🔍 CHI TIẾT SẢN PHẨM PHIÊN ĐẤU GIÁ" />
+                                <Separator prefWidth="200.0" />
+                                <VBox alignment="CENTER" prefHeight="200.0" style="-fx-background-color: #f9f9f9; -fx-background-radius: 10;">
+                                    <children>
+                                        <ImageView fx:id="auctionImage" fitHeight="180.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true" />
+                                    </children>
+                                </VBox>
+                        <Pane prefHeight="73.0" prefWidth="506.0">
+                           <children>
+                              <Label fx:id="lblAuctionName" layoutX="164.0" layoutY="22.0" style="-fx-font-weight: bold; -fx-font-size: 20px;" text="tên sp muốn đấu giá" textAlignment="RIGHT" />
+                           </children>
+                        </Pane>
+                                <HBox spacing="10.0">
+                                    <children>
+                                        <Label text="Giá hiện tại:" textFill="#7f8c8d" />
+                                        <Label fx:id="lblCurrentPrice" style="-fx-font-weight: bold;" text="xx.000.000 VNĐ" textFill="#e74c3c" />
+                                    </children>
+                                </HBox>
+                                <VBox alignment="CENTER" prefHeight="60.0" style="-fx-background-color: #fff0f0; -fx-background-radius: 5; -fx-border-color: #ffcccc;">
+                                    <children>
+                                        <Label text="THỜI GIAN CÒN LẠI" textFill="#c0392b">
+                                            <font><Font name="System Bold" size="11.0" /></font>
+                                        </Label>
+                                        <Label fx:id="lblTimer" text="xxxxxx" textFill="#e74c3c">
+                                            <font><Font name="System Bold" size="22.0" /></font>
+                                        </Label>
+                                    </children>
+                                </VBox>
+                                <Label style="-fx-font-style: italic;" text="* Nhấn 'Đấu Giá' ở bên phải để tham gia phiên này" textFill="#95a5a6" />
+                            </children>
+                        </VBox>
+                    </children>
+                </AnchorPane>
+
+                <AnchorPane minWidth="0.0" prefHeight="160.0" prefWidth="100.0" style="-fx-background-color: #f4f7f6;">
+                    <children>
+                        <VBox layoutX="20.0" layoutY="20.0" prefHeight="580.0" prefWidth="500.0" spacing="15.0" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="20.0" AnchorPane.rightAnchor="20.0" AnchorPane.topAnchor="20.0">
+                            <children>
+                                <Label style="-fx-font-weight: bold; -fx-font-size: 18px;" text="📦 THÔNG TIN SẢN PHẨM" textFill="#5e326f" />
+                                <Separator prefWidth="200.0" />
+                                <VBox spacing="8.0" style="-fx-background-color: white; -fx-padding: 15; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.05), 10, 0, 0, 0);">
+                                    <children>
+                                        <Label text="Người đăng: Seller_Snowflake_01" textFill="#34495e" />
+                                        <Label text="Ngày đăng: 20/03/2026" textFill="#7f8c8d" />
+                                        <Label lineSpacing="3.0" text="Mô tả sản phẩm: Hàng bảo hành 24 tháng, hỗ trợ vận chuyển toàn quốc cho người thắng cuộc." wrapText="true" />
+                                    </children>
+                                </VBox>
+
+                                <Pane prefHeight="150.0" /> <VBox alignment="CENTER" spacing="15.0" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 15; -fx-border-color: #2f80ed; -fx-border-width: 2;">
+                                <children>
+                                    <Button fx:id="btnGoToAuction" mnemonicParsing="false" prefHeight="50.0" prefWidth="300.0" style="-fx-background-color: linear-gradient(to right, purple, blue); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 25; -fx-cursor: hand; -fx-font-size: 16px;" text="THAM GIA ĐẤU GIÁ NGAY" />
+                                </children>
+                            </VBox>
+                            </children>
+                        </VBox>
+                    </children>
+                </AnchorPane>
+            </items>
+        </SplitPane>
+    </center>
+
+    <bottom>
+        <HBox alignment="CENTER" prefHeight="30.0" style="-fx-background-color: linear-gradient(to bottom right, #FFF0F5, #E1BEE7, #B3E5FC);">
+            <children>
+                <Label text="© 2026 SnowFox - Studio SnowFlake" textFill="#540909" />
+            </children>
+        </HBox>
+    </bottom>
+</BorderPane>
