@@ -17,6 +17,7 @@ public class User{
         this.passWord = passWord;
         this.email = email;
         this.sdt = sdt;
+
     }
 
     public String getPassWord() {
@@ -53,6 +54,10 @@ public class User{
 
     public int getId() {
         return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public AccountType getAccountType() {

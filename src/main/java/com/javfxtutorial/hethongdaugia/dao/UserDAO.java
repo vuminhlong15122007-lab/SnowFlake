@@ -17,14 +17,31 @@ public class UserDAO implements DAOInterface<User> {
         int result = 0;
         try {
             Statement st = connection.createStatement();
-            String sql = "insert into User (id, name, passWord, email)\n" +
-                    "values (\"" + user.getId() + "\" , \"" + user.getName() + "\" , \"" + user.getPassWord() + "\" , \"" + user.getEmail() + "\");";
+
+            // 1. BỎ cột 'id' ra khỏi câu sql để MySQL tự động quyết định ID
+            String sql = "insert into User (name, passWord, email, sdt)\n" +
+                    "values (\"" + user.getName()
+                    + "\" , \"" + user.getPassWord()
+                    + "\" , \"" + user.getEmail()
+                    + "\" , \"" + user.getSdt()
+                    + "\");";
 
             System.out.println("Bạn đang thực thi: " + sql);
-            result = st.executeUpdate(sql);
+
+            // 2. Thêm cờ Statement.RETURN_GENERATED_KEYS vào hàm executeUpdate
+            result = st.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
 
             if (result > 0) {
                 System.out.println("Tạo user thành công");
+
+                // 3. Lấy ID do MySQL vừa tạo ra và gán lại cho đối tượng user
+                ResultSet rs = st.getGeneratedKeys();
+                if (rs.next()) {
+                    int newId = rs.getInt(1); // Lấy giá trị ở cột đầu tiên của ResultSet
+                    user.setId(newId);        // Gán ngược lại cho user
+                    System.out.println("ID tự động tạo là: " + user.getId());
+                }
+                rs.close(); // Nhớ đóng ResultSet
             } else {
                 System.out.println("Tạo user thất bại");
             }
@@ -33,10 +50,39 @@ public class UserDAO implements DAOInterface<User> {
         }
         return result;
     }
-
     @Override
     public int update(User user) {
-        return 0;
+        Connection connection = JBDCUtil.getConnection();
+        int result = 0;
+
+        // Câu lệnh SQL với các dấu ? đại diện cho giá trị sẽ truyền vào sau
+        // QUAN TRỌNG: Bắt buộc phải có WHERE id = ?, nếu không nó sẽ update TOÀN BỘ bảng!
+        String sql = "UPDATE User " +
+                "SET name = \"" + user.getName()
+                + "\" , password = \"" + user.getPassWord()
+                + "\" , email = \"" + user.getEmail()
+                + "\" , sdt = \"" + user.getSdt()
+                + "\" WHERE id = " + user.getId() +
+                ";";
+
+        try {
+            System.out.println("Bạn đang thực thi" + sql);
+            Statement st = connection.createStatement();
+            // Chạy câu lệnh
+            result = st.executeUpdate(sql);
+
+            if (result > 0) {
+                System.out.println("Cập nhật user thành công!");
+            } else {
+                System.out.println("Cập nhật thất bại (có thể ID không tồn tại trong database).");
+            }
+
+
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+        return result;
     }
 
     @Override
