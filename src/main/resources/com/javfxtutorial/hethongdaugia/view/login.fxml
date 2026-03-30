@@ -32,19 +32,18 @@
 
             <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2b5876;" text="Login" />
 
-            <TextField prefHeight="40" promptText="Username" style="-fx-background-radius: 12;                               -fx-background-color: white;" />
+            <TextField fx:id="Username" prefHeight="40" promptText="Username" style="-fx-background-radius: 12;                               -fx-background-color: white;" />
 
-            <PasswordField prefHeight="40" promptText="Password" style="-fx-background-radius: 12;                                   -fx-background-color: white;" />
+            <PasswordField fx:id="Password" prefHeight="40" promptText="Password" style="-fx-background-radius: 12;                                   -fx-background-color: white;" />
 
             <CheckBox style="-fx-text-fill: #4e7ea8;" text="Remember me" />
 
             <!-- LOGIN BUTTON -->
-            <Button prefHeight="40" prefWidth="220" style="-fx-background-radius: 20;                            -fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed);                            -fx-text-fill: white;                            -fx-font-weight: bold;" text="LOGIN" />
+            <Button fx:id="login" onAction="#clickLogin" prefHeight="40" prefWidth="220" style="-fx-background-radius: 20;                            -fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed);                            -fx-text-fill: white;                            -fx-font-weight: bold;" text="LOGIN" />
 
             <!-- REGISTER BUTTON -->
-            <Button id="sign_in" prefHeight="35" prefWidth="220" style="-fx-background-radius: 20;                            -fx-background-color: transparent;                            -fx-border-color: #2f80ed;                            -fx-border-radius: 20;                            -fx-text-fill: #2f80ed;" text="CREATE ACCOUNT" />
-
-            <Label style="-fx-text-fill: #7aaed6; -fx-underline: true;" text="Forgot password?" />
+            <Button id="sign_in" fx:id="sign_in" onAction="#clickCreateAccount" prefHeight="35" prefWidth="220" style="-fx-background-radius: 20;                            -fx-background-color: transparent;                            -fx-border-color: #2f80ed;                            -fx-border-radius: 20;                            -fx-text-fill: #2f80ed;" text="CREATE ACCOUNT" />
+         <Button fx:id="sign_in" mnemonicParsing="false" onAction="#clickCreateAccount" style="-fx-text-fill: #7aaed6; -fx-underline: true; -fx-background-color: transparent;" text="Forgot password?" />
 
         </VBox>
 

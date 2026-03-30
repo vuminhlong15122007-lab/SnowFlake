@@ -4,7 +4,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="500" prefWidth="900" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1">
+<AnchorPane prefHeight="500" prefWidth="900" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.controller.RegisterController">
 
     <children>
 
@@ -31,21 +31,21 @@
 
             <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2b5876;" text="Register" />
 
-            <TextField prefHeight="38" promptText="Username" style="-fx-background-radius: 12;" />
+            <TextField fx:id="Username" prefHeight="38" promptText="Username" style="-fx-background-radius: 12;" />
 
-            <TextField prefHeight="38" promptText="Email" style="-fx-background-radius: 12;" />
+            <TextField fx:id="Email" prefHeight="38" promptText="Email" style="-fx-background-radius: 12;" />
 
-            <PasswordField prefHeight="38" promptText="Password" style="-fx-background-radius: 12;" />
+            <PasswordField fx:id="Password" prefHeight="38" promptText="Password" style="-fx-background-radius: 12;" />
 
-            <PasswordField prefHeight="38" promptText="Confirm Password" style="-fx-background-radius: 12;" />
+            <PasswordField fx:id="Confirm_Password" prefHeight="38" promptText="Confirm Password" style="-fx-background-radius: 12;" />
 
             <CheckBox style="-fx-text-fill: #4e7ea8;" text="I agree to Terms" />
 
             <!-- REGISTER BUTTON -->
-            <Button prefHeight="38" prefWidth="200" style="-fx-background-radius: 20;                            -fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed);                            -fx-text-fill: white;                            -fx-font-weight: bold;" text="SIGN UP" />
+            <Button fx:id="Sign_up" onAction="#clickSignUp" prefHeight="38" prefWidth="200" style="-fx-background-radius: 20;                            -fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed);                            -fx-text-fill: white;                            -fx-font-weight: bold;" text="SIGN UP" />
 
             <!-- BACK TO LOGIN -->
-            <Button prefHeight="32" prefWidth="200" style="-fx-background-color: transparent;                            -fx-text-fill: #2f80ed;" text="Back to Login" />
+            <Button fx:id="backToLogin" onAction="#clickBackToLogin" prefHeight="32" prefWidth="200" style="-fx-background-color: transparent;                            -fx-text-fill: #2f80ed;" text="Back to Login" />
 
         </VBox>
 
