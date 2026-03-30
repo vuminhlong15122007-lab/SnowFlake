@@ -4,7 +4,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="500" prefWidth="900" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml" fx:controller="com.javfxtutorial.hethongdaugia.controller.LoginController">
+<AnchorPane prefHeight="500" prefWidth="900" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.controller.LoginController">
 
     <children>
 
@@ -42,7 +42,7 @@
             <Button prefHeight="40" prefWidth="220" style="-fx-background-radius: 20;                            -fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed);                            -fx-text-fill: white;                            -fx-font-weight: bold;" text="LOGIN" />
 
             <!-- REGISTER BUTTON -->
-            <Button prefHeight="35" prefWidth="220" style="-fx-background-radius: 20;                            -fx-background-color: transparent;                            -fx-border-color: #2f80ed;                            -fx-border-radius: 20;                            -fx-text-fill: #2f80ed;" text="CREATE ACCOUNT" />
+            <Button id="sign_in" prefHeight="35" prefWidth="220" style="-fx-background-radius: 20;                            -fx-background-color: transparent;                            -fx-border-color: #2f80ed;                            -fx-border-radius: 20;                            -fx-text-fill: #2f80ed;" text="CREATE ACCOUNT" />
 
             <Label style="-fx-text-fill: #7aaed6; -fx-underline: true;" text="Forgot password?" />
 

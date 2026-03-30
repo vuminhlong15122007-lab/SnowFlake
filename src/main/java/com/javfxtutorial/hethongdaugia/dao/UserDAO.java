@@ -12,7 +12,7 @@ public class UserDAO implements DAOInterface<User> {
     }
 
     @Override
-    public int create(User user) {
+    public int insert(User user) {
         Connection connection = JBDCUtil.getConnection();
         int result = 0;
         try {
