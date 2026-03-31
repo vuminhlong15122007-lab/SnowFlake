@@ -3,10 +3,17 @@ package com.javfxtutorial.hethongdaugia.test;
 import com.javfxtutorial.hethongdaugia.dao.UserDAO;
 import com.javfxtutorial.hethongdaugia.database.JBDCUtil;
 import com.javfxtutorial.hethongdaugia.model.User;
+import com.javfxtutorial.hethongdaugia.model.enums.AccountType;
 
 public class TestUserDAO {
     static void main() {
-        System.out.println(UserDAO.getInstance().selectById(8));
-        System.out.println(UserDAO.getInstance().selectByCondition("name = \"long\""));
+        User user = new User("danh", "con", "danh", "con", AccountType.USER);
+        UserDAO.getInstance().insert(user);
+        System.out.println(UserDAO.getInstance().selectAll());
+        System.out.println(UserDAO.getInstance().selectById(user.getId()));
+        System.out.println(UserDAO.getInstance().selectByCondition("name = \"danh\""));
+        user.setName("lan");
+        UserDAO.getInstance().update(user);
+        UserDAO.getInstance().update(user);
     }
 }

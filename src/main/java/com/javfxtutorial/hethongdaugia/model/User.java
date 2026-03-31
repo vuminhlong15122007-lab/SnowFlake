@@ -12,19 +12,21 @@ public class User{
     private int id;
     private AccountType accountType;
 
-    public User(String name, String passWord, String email, String sdt) {
+    public User(String name, String passWord, String email, String sdt, AccountType accountType) {
         this.name = name;
         this.passWord = passWord;
         this.email = email;
         this.sdt = sdt;
+        this.accountType = accountType;
     }
 
-    public User(int id, String name, String passWord, String email, String sdt) {
+    public User(int id, String name, String passWord, String email, String sdt, AccountType accountType) {
         this.id = id;
         this.name = name;
         this.passWord = passWord;
         this.email = email;
         this.sdt = sdt;
+        this.accountType = accountType;
     }
 
     public String getPassWord() {

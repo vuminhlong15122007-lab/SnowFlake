@@ -2,6 +2,7 @@ package com.javfxtutorial.hethongdaugia.dao;
 
 import com.javfxtutorial.hethongdaugia.database.JBDCUtil;
 import com.javfxtutorial.hethongdaugia.model.User;
+import com.javfxtutorial.hethongdaugia.model.enums.AccountType;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -19,11 +20,12 @@ public class UserDAO implements DAOInterface<User> {
             Statement st = connection.createStatement();
 
             // 1. BỎ cột 'id' ra khỏi câu sql để MySQL tự động quyết định ID
-            String sql = "insert into User (name, passWord, email, sdt)\n" +
+            String sql = "insert into User (name, passWord, email, sdt, accountType)\n" +
                     "values (\"" + user.getName()
                     + "\" , \"" + user.getPassWord()
                     + "\" , \"" + user.getEmail()
                     + "\" , \"" + user.getSdt()
+                    + "\" , \"" + user.getAccountType()
                     + "\");";
 
             System.out.println("Bạn đang thực thi: " + sql);
@@ -62,6 +64,7 @@ public class UserDAO implements DAOInterface<User> {
                 + "\" , password = \"" + user.getPassWord()
                 + "\" , email = \"" + user.getEmail()
                 + "\" , sdt = \"" + user.getSdt()
+                + "\" , accountType = \"" + user.getAccountType()
                 + "\" WHERE id = " + user.getId() +
                 ";";
 
@@ -127,7 +130,8 @@ public class UserDAO implements DAOInterface<User> {
                 String email = resultSet.getString("email");
                 String passWord = resultSet.getString("passWord");
                 String sdt = resultSet.getString("sdt");
-                User user = new User(id, name, passWord, email, sdt);
+                AccountType accountType = AccountType.valueOf(resultSet.getString("accountType"));
+                User user = new User(id, name, passWord, email, sdt, accountType);
                 result.add(user);
             }
             JBDCUtil.closeConnection(connection);
@@ -154,7 +158,8 @@ public class UserDAO implements DAOInterface<User> {
                 String email = resultSet.getString("email");
                 String passWord = resultSet.getString("passWord");
                 String sdt = resultSet.getString("sdt");
-                result = new User(id, name, passWord, email, sdt);
+                AccountType accountType = AccountType.valueOf(resultSet.getString("Accounttype"));
+                result = new User(id, name, passWord, email, sdt, accountType);
             }
             //dong ket noi
             JBDCUtil.closeConnection(connection);
@@ -181,7 +186,8 @@ public class UserDAO implements DAOInterface<User> {
                 String email = resultSet.getString("email");
                 String passWord = resultSet.getString("passWord");
                 String sdt = resultSet.getString("sdt");
-                User user = new User(id, name, passWord, email, sdt);
+                AccountType accountType = AccountType.valueOf(resultSet.getString("Accounttype"));
+                User user = new User(id, name, passWord, email, sdt, accountType);
                 result.add(user);
             }
             //dong ket noi
