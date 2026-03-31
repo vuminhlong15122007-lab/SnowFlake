@@ -3,6 +3,7 @@ package com.javfxtutorial.hethongdaugia.controller;
 import com.javfxtutorial.hethongdaugia.MainApplication;
 import com.javfxtutorial.hethongdaugia.dao.UserDAO;
 import com.javfxtutorial.hethongdaugia.model.User;
+import com.javfxtutorial.hethongdaugia.model.enums.AccountType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -48,7 +49,7 @@ public class RegisterController {
         String confirmPassword = Confirm_Password.getText();
         if (!name.isEmpty() || !email.isEmpty() || !password.isEmpty() || !confirmPassword.isEmpty()){
             if (password.equals(confirmPassword)){
-                UserDAO.getInstance().insert(new User(name,password,email, sdt));
+                UserDAO.getInstance().insert(new User(name,password,email, sdt, AccountType.USER));
                 try {
                     Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/login.fxml"));
                     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
