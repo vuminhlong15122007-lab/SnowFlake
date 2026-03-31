@@ -87,7 +87,27 @@ public class UserDAO implements DAOInterface<User> {
 
     @Override
     public int delete(User user) {
-        return 0;
+        int result = 0;
+        try {
+            //tao ket noi
+            Connection connection = JBDCUtil.getConnection();
+            //tao doi tuong statement
+            Statement st = connection.createStatement();
+            //thuc thi lenh sql
+            String sql = "DELETE FROM User " + " WHERE id='" + user.getId() + "'";
+            System.out.println(sql);
+            result = st.executeUpdate(sql);
+            if (result > 0){
+                System.out.println("Xóa user thành công");
+            }
+            else{
+                System.out.println("Xóa thất bại");
+            }
+            JBDCUtil.closeConnection(connection);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 
     @Override
