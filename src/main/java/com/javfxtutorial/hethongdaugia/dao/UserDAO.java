@@ -139,12 +139,58 @@ public class UserDAO implements DAOInterface<User> {
 
     @Override
     public User selectById(User user) {
-        return null;
+        User result = null;
+        try{
+            Connection connection = JBDCUtil.getConnection(); // Tao ket noi
+            Statement statement = connection.createStatement(); // tao ra obj statement
+            // Thuc thi cau lech sql
+            String sql = "SELECT*FORM user where  id = '" + user.getId() + "'";
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            // tim kiem
+            while (resultSet.next()){
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String email = resultSet.getString("email");
+                String passWord = resultSet.getString("passWord");
+                String sdt = resultSet.getString("sdt");
+                result = new User(id, name, passWord, email, sdt);
+            }
+            //dong ket noi
+            JBDCUtil.closeConnection(connection);
+        }catch (SQLException e){
+            e.printStackTrace(); // in ra loi xong van chay tiep
+        }
+        return result;
     }
 
     @Override
     public ArrayList<User> selectByCondition(String condition) {
-        return null;
+        ArrayList<User> result =  new ArrayList<>();
+        try{
+            Connection connection = JBDCUtil.getConnection(); // Tao ket noi
+            Statement statement = connection.createStatement(); // tao ra obj statement
+            // Thuc thi cau lech sql
+            String sql = "SELECT*FORM user where " + condition ;
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            // tim kiem
+            while (resultSet.next()){
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String email = resultSet.getString("email");
+                String passWord = resultSet.getString("passWord");
+                String sdt = resultSet.getString("sdt");
+                User user = new User(id, name, passWord, email, sdt);
+                result.add(user);
+            }
+            //dong ket noi
+            JBDCUtil.closeConnection(connection);
+        }catch (SQLException e){
+            e.printStackTrace(); // in ra loi xong van chay tiep
+        }
+        return result;
+
     }
 
     public int getSize() {
