@@ -6,10 +6,11 @@ import com.javfxtutorial.hethongdaugia.model.User;
 
 public class TestUserDAO {
     static void main() {
-        User u = new User("Nguyên", "123456", "hnguyen@gmail.com", "0997832005");
-        UserDAO.getInstance().insert(u);
-        u.setName("Long");
-        UserDAO.getInstance().update(u);
+        User user = new User("haha", "haha", "haha", "haha");
+        UserDAO.getInstance().insert(user);
+        UserDAO.getInstance().selectAll();
+        UserDAO.getInstance().delete(user);
+        UserDAO.getInstance().selectAll();
 
     }
 }

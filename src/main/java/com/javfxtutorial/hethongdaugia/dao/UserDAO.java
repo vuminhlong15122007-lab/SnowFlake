@@ -122,11 +122,12 @@ public class UserDAO implements DAOInterface<User> {
             ResultSet resultSet = st.executeQuery(sql);
             //lấy dữ liệu
             while (resultSet.next()){
+                int id = resultSet.getInt("id");
                 String name = resultSet.getString("name");
                 String email = resultSet.getString("email");
                 String passWord = resultSet.getString("passWord");
                 String sdt = resultSet.getString("sdt");
-                User user = new User(name, passWord, email, sdt);
+                User user = new User(id, name, passWord, email, sdt);
                 result.add(user);
             }
             JBDCUtil.closeConnection(connection);

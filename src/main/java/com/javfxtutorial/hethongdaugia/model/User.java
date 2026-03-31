@@ -17,7 +17,14 @@ public class User{
         this.passWord = passWord;
         this.email = email;
         this.sdt = sdt;
+    }
 
+    public User(int id, String name, String passWord, String email, String sdt) {
+        this.id = id;
+        this.name = name;
+        this.passWord = passWord;
+        this.email = email;
+        this.sdt = sdt;
     }
 
     public String getPassWord() {
@@ -58,6 +65,18 @@ public class User{
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "passWord='" + passWord + '\'' +
+                ", email='" + email + '\'' +
+                ", name='" + name + '\'' +
+                ", sdt='" + sdt + '\'' +
+                ", id=" + id +
+                ", accountType=" + accountType +
+                '}';
     }
 
     public AccountType getAccountType() {

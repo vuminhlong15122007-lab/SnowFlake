@@ -5,6 +5,8 @@ module com.javfxtutorial.hethongdaugia {
     requires java.sql;
     requires mysql.connector.j;
     requires jdk.jdi;
+    requires socket.io.client;
+    requires org.json;
 
 
     opens com.javfxtutorial.hethongdaugia to javafx.fxml;
