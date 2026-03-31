@@ -138,13 +138,13 @@ public class UserDAO implements DAOInterface<User> {
     }
 
     @Override
-    public User selectById(User user) {
+    public User selectById(int userId) {
         User result = null;
         try{
             Connection connection = JBDCUtil.getConnection(); // Tao ket noi
             Statement statement = connection.createStatement(); // tao ra obj statement
             // Thuc thi cau lech sql
-            String sql = "SELECT*FORM user where  id = '" + user.getId() + "'";
+            String sql = "SELECT * FROM user where  id = '" + userId + "'";
             ResultSet resultSet = statement.executeQuery(sql);
 
             // tim kiem
@@ -171,7 +171,7 @@ public class UserDAO implements DAOInterface<User> {
             Connection connection = JBDCUtil.getConnection(); // Tao ket noi
             Statement statement = connection.createStatement(); // tao ra obj statement
             // Thuc thi cau lech sql
-            String sql = "SELECT*FORM user where " + condition ;
+            String sql = "SELECT * FROM user where " + condition ;
             ResultSet resultSet = statement.executeQuery(sql);
 
             // tim kiem

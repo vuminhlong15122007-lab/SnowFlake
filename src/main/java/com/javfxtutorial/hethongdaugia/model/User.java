@@ -70,11 +70,11 @@ public class User{
     @Override
     public String toString() {
         return "User{" +
-                "passWord='" + passWord + '\'' +
-                ", email='" + email + '\'' +
+                ", id=" + id + '\'' +
                 ", name='" + name + '\'' +
+                ", passWord='" + passWord + '\'' +
+                ", email='" + email + '\'' +
                 ", sdt='" + sdt + '\'' +
-                ", id=" + id +
                 ", accountType=" + accountType +
                 '}';
     }

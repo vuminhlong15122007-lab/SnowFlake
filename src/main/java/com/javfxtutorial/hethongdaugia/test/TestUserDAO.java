@@ -6,11 +6,7 @@ import com.javfxtutorial.hethongdaugia.model.User;
 
 public class TestUserDAO {
     static void main() {
-        User user = new User("haha", "haha", "haha", "haha");
-        UserDAO.getInstance().insert(user);
-        UserDAO.getInstance().selectAll();
-        UserDAO.getInstance().delete(user);
-        UserDAO.getInstance().selectAll();
-
+        System.out.println(UserDAO.getInstance().selectById(8));
+        System.out.println(UserDAO.getInstance().selectByCondition("name = \"long\""));
     }
 }
