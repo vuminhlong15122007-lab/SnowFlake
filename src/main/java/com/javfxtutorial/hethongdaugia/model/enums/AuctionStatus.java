@@ -1,5 +1,5 @@
 package com.javfxtutorial.hethongdaugia.model.enums;
 
-public enum ItemStatus {
+public enum AuctionStatus {
     NOT_START, RUNNING, CLOSED;
 }

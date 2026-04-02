@@ -1,65 +1,32 @@
-//package com.javfxtutorial.hethongdaugia.model;
-//
-//import java.time.LocalDate;
-//import java.util.ArrayList;
-//import java.util.List;
-//
-//public class Auction {
-//    private int counterId = 0;
-//    private Item item;
-//    private BidTransaction WinningBid;
-//    private boolean isActive;
-//    private List<BidTransaction> bidHistory;
-//
-//    public Auction(Item item, String name) {
-//        super(name);
-//        counterId ++;
-//        this.item = item;
-//        this.bidHistory = new ArrayList<BidTransaction>();
-//
-//
-//
-//    }
-//
-//    public boolean checkActive(){
-//        LocalDate now = LocalDate.now();
-//        if (now.isAfter(item.getEndTime())){
-//            return false;
-//        }
-//        return true;
-//    }
-//
-//    public boolean placeBid(Bidder bidder, double amount){
-//        if(!isActive){
-//            System.out.println("Phiên đấu giá đã kết thúc");
-//            return false;
-//        }
-//
-//        if(amount < item.getStepPrice() + item.getHighestPrice()){
-//            System.out.println(String.format("Cần đặt giá cao hơn: %d", item.getHighestPrice() + item.getStepPrice()));
-//            return false;
-//        }
-//
-//        BidTransaction new_transaction = new BidTransaction(bidder, amount, LocalDate.now());
-//        bidHistory.add(new_transaction);
-//        item.setHighestPrice(amount) ;
-//        this.WinningBid = new_transaction;
-//        return true;
-//    }
-//
-//    public BidTransaction getWinningBid() {
-//        return WinningBid;
-//    }
-//
-//    public List<BidTransaction> getBidHistory() {
-//        return bidHistory;
-//    }
-//
-//    @Override
-//    public String Generate_Id(){
-//        int counter  = this.getCountAuction() + 1;
-//        this.setCountAuction(counter);
-//        return "AU" + String.format("%03d", counter);
-//    }
-//}
-//
+package com.javfxtutorial.hethongdaugia.model;
+
+import com.javfxtutorial.hethongdaugia.model.enums.AuctionStatus;
+
+import java.time.LocalDate;
+
+public class Auction {
+    private String auctionId;
+
+    // Liên kết với sản phẩm đang được đấu giá
+    // (Trong CSDL đây sẽ là Khóa ngoại - Foreign Key)
+    private String itemId;
+
+    // Ai là người tổ chức phiên đấu giá này
+    private int sellerId;
+
+    // Các thông tin về giá
+    private double initPrice;
+    private double currentPrice;
+    private double stepPrice;
+    private double winningPrice; // Giá chốt cuối cùng (nếu có)
+
+    // Thông tin về thời gian
+    private LocalDate startingTime;
+    private LocalDate endingTime;
+
+    // Trạng thái của phiên đấu giá (VD: PENDING, ONGOING, ENDED, CANCELLED)
+    private AuctionStatus status;
+
+    // ID của người chiến thắng (sau khi phiên kết thúc)
+    private int winnerId;
+}

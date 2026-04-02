@@ -14,6 +14,6 @@ public class TestUserDAO {
         System.out.println(UserDAO.getInstance().selectByCondition("name = \"danh\""));
         user.setName("lan");
         UserDAO.getInstance().update(user);
-        UserDAO.getInstance().update(user);
+        UserDAO.getInstance().delete(user);
     }
 }
