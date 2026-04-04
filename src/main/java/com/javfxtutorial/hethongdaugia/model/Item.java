@@ -1,7 +1,8 @@
 package com.javfxtutorial.hethongdaugia.model;
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Item {
+public abstract class Item implements Serializable {
     private int sellerId;
     private String itemId;
     private String name;

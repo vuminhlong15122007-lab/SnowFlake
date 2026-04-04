@@ -24,13 +24,13 @@
             <Region HBox.hgrow="ALWAYS" />
             <TextField fx:id="searchField" promptText="Tìm kiếm sản phẩm..." style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-background-radius: 5; -fx-border-radius: 5;" />
          <Button mnemonicParsing="false" style="-fx-background-color: skyblue; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-border-radius: 10;" text="Search" />
-            <Button fx:id="logoutButton" style="-fx-background-color: #4b0082; -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold;" text="Đăng xuất" />
+            <Button fx:id="logoutButton" onAction="#clickBackToLogin" style="-fx-background-color: #4b0082; -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold;" text="Đăng xuất" />
         </HBox>
     </top>
 
     <!-- Sidebar menu -->
     <left>
-        <VBox spacing="15" style="-fx-background-color: linear-gradient(to right, lightblue, white); -fx-padding: 15; -fx-pref-width: 180;">
+        <VBox spacing="15" style="-fx-padding: 15; -fx-pref-width: 180;">
             <Button fx:id="homeButton" prefHeight="27.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold;" text="Trang chủ" />
             <Button fx:id="liveAuctionButton" prefHeight="27.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Phiên đấu giá " />
             <Button fx:id="manageProductsButton" prefHeight="27.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Quản lý sản phẩm" />

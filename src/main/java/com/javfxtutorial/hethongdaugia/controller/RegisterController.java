@@ -47,7 +47,7 @@ public class RegisterController {
         String password = Password.getText();
         String sdt = Confirm_Password.getText();
         String confirmPassword = Confirm_Password.getText();
-        if (!name.isEmpty() || !email.isEmpty() || !password.isEmpty() || !confirmPassword.isEmpty()){
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()){
             if (password.equals(confirmPassword)){
                 UserDAO.getInstance().insert(new User(name,password,email, sdt, AccountType.USER));
                 try {
@@ -59,7 +59,7 @@ public class RegisterController {
                     e.printStackTrace();
                 }
                 Stage stage = new Stage();
-                stage.setTitle("Ngu như bò");
+                stage.setTitle("Lỗi");
                 FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/popUpSignUp.fxml"));
                 stage.initStyle(StageStyle.DECORATED);
                 Scene scene = new Scene(fxmlLoader.load());
