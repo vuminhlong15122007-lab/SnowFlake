@@ -2,9 +2,10 @@ package com.javfxtutorial.hethongdaugia.common.model;
 
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 
-public class Auction {
+public class Auction implements Serializable {
     private String auctionId;
 
     // Liên kết với sản phẩm đang được đấu giá
