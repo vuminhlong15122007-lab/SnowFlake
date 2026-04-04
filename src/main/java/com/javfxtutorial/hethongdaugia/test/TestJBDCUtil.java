@@ -1,6 +1,6 @@
 package com.javfxtutorial.hethongdaugia.test;
 
-import com.javfxtutorial.hethongdaugia.database.JBDCUtil;
+import com.javfxtutorial.hethongdaugia.server.dao.JBDCUtil;
 
 import java.sql.Connection;
 

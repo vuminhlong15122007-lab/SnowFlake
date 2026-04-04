@@ -10,7 +10,9 @@ module com.javfxtutorial.hethongdaugia {
 
 
     opens com.javfxtutorial.hethongdaugia to javafx.fxml;
-    opens com.javfxtutorial.hethongdaugia.controller to javafx.fxml;
+    opens com.javfxtutorial.hethongdaugia.client.controller to javafx.fxml;
 
     exports com.javfxtutorial.hethongdaugia;
+    exports com.javfxtutorial.hethongdaugia.client;
+    opens com.javfxtutorial.hethongdaugia.client to javafx.fxml;
 }

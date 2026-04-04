@@ -88,7 +88,7 @@
                         <id>default-cli</id>
                         <configuration>
                             <mainClass>
-                                com.javfxtutorial.hethongdaugia/com.javfxtutorial.hethongdaugia.MainApplication
+                                com.javfxtutorial.hethongdaugia/com.javfxtutorial.hethongdaugia.client.MainApplication
                             </mainClass>
                             <launcher>app</launcher>
                             <jlinkZipName>app</jlinkZipName>

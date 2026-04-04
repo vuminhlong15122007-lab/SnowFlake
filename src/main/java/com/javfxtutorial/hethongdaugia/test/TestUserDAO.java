@@ -1,9 +1,8 @@
 package com.javfxtutorial.hethongdaugia.test;
 
-import com.javfxtutorial.hethongdaugia.dao.UserDAO;
-import com.javfxtutorial.hethongdaugia.database.JBDCUtil;
-import com.javfxtutorial.hethongdaugia.model.User;
-import com.javfxtutorial.hethongdaugia.model.enums.AccountType;
+import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
+import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 
 public class TestUserDAO {
     static void main() {
