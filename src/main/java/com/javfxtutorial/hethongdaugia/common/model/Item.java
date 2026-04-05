@@ -1,4 +1,4 @@
-package com.javfxtutorial.hethongdaugia.model;
+package com.javfxtutorial.hethongdaugia.common.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 

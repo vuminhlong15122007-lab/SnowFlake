@@ -1,11 +1,11 @@
-package com.javfxtutorial.hethongdaugia.model;
+package com.javfxtutorial.hethongdaugia.common.model;
 
-import com.javfxtutorial.hethongdaugia.model.enums.AccountType;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 
 import java.io.Serializable;
 import java.time.LocalDate;
 
-public abstract class User implements Serializable {
+public class User implements Serializable {
     private String passWord;
     private String email;
     private String name;
