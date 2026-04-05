@@ -15,7 +15,7 @@ import java.awt.event.ActionEvent;
 
 public class AuctionController {
 
-    @FXML ListView<com.javfxtutorial.hethongdaugia.model.Item>  featuredProductList;
+    @FXML ListView<com.javfxtutorial.hethongdaugia.common.model.Item>  featuredProductList;
     @FXML TextField searchField;
     @FXML Button btnHome;      // 4 cai button chx co hanh dong vs lk man khac
     @FXML Button btnLiveAuction;
@@ -23,7 +23,7 @@ public class AuctionController {
     @FXML Button btnprofile;
 
     // Khoi tao danh sach Observable
-    private ObservableList<com.javfxtutorial.hethongdaugia.model.Item> observable = FXCollections.observableArrayList();
+    private ObservableList<com.javfxtutorial.hethongdaugia.common.model.Item> observable = FXCollections.observableArrayList();
 
     @FXML
     public void initialize(){
@@ -33,7 +33,7 @@ public class AuctionController {
 
         // Xu ly o tim kiem - TexField
         // 1.Khoi tao lang kinh
-        FilteredList<com.javfxtutorial.hethongdaugia.model.Item>  filterData = new FilteredList<>(observable, p-> true );
+        FilteredList<com.javfxtutorial.hethongdaugia.common.model.Item>  filterData = new FilteredList<>(observable, p-> true );
 
         //2.Lang nghe o nhap du lieu
         searchField.textProperty().addListener((observable, oldValue, newValue) ->

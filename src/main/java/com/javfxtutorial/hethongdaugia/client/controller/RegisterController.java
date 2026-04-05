@@ -59,7 +59,7 @@ public class RegisterController {
                     e.printStackTrace();
                 }
                 Stage stage = new Stage();
-                stage.setTitle("Lỗi");
+                stage.setTitle("Tạo Tài Khoản Thành Công");
                 FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/popUpSignUp.fxml"));
                 stage.initStyle(StageStyle.DECORATED);
                 Scene scene = new Scene(fxmlLoader.load());

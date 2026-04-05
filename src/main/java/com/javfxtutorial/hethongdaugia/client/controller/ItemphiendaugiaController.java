@@ -20,9 +20,9 @@ public class ItemphiendaugiaController {
     @FXML Label lbLuotDau;  // 2 CAI Label cuoi chx xu ly duoc
     @FXML Label lbTimer;
 
-    private com.javfxtutorial.hethongdaugia.model.Item product;
+    private com.javfxtutorial.hethongdaugia.common.model.Item product;
 
-    public void setData(com.javfxtutorial.hethongdaugia.model.Item product){   // xu ly du lieu tu Obj den giao dien
+    public void setData(com.javfxtutorial.hethongdaugia.common.model.Item product){   // xu ly du lieu tu Obj den giao dien
         this.product = product;
         lbAuctionName.setText(product.getName());
         lbGiaSp.setText(product.getDescription());
@@ -43,7 +43,7 @@ public class ItemphiendaugiaController {
             stage.show();
 
         }catch(IOException e){
-            e.printStackTrace(getMessage());
+
 
         }
 
