@@ -1,4 +1,5 @@
 package com.javfxtutorial.hethongdaugia.common.network;
 
-public class RequestType {
+public enum RequestType {
+    CHECK_LOGIN;
 }
