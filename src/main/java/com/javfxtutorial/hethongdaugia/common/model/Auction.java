@@ -30,4 +30,6 @@ public class Auction implements Serializable {
 
     // ID của người chiến thắng (sau khi phiên kết thúc)
     private int winnerId;
+
+
 }

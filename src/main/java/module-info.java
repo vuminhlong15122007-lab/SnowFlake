@@ -7,6 +7,8 @@ module com.javfxtutorial.hethongdaugia {
     requires jdk.jdi;
     requires socket.io.client;
     requires org.json;
+    requires java.desktop;
+    requires jdk.compiler;
 
 
     opens com.javfxtutorial.hethongdaugia to javafx.fxml;
