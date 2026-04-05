@@ -198,6 +198,34 @@ public class UserDAO implements DAOInterface<User> {
 
     }
 
+    public User selectByUsername(String username) {
+        User result = null;
+        try{
+            Connection connection = JBDCUtil.getConnection(); // Tao ket noi
+            Statement statement = connection.createStatement(); // tao ra obj statement
+            // Thuc thi cau lech sql
+            String sql = "SELECT * FROM user where name = \"" + username + '"';
+            ResultSet resultSet = statement.executeQuery(sql);
+
+            // tim kiem
+            while (resultSet.next()){
+                int id = resultSet.getInt("id");
+                String name = resultSet.getString("name");
+                String email = resultSet.getString("email");
+                String passWord = resultSet.getString("passWord");
+                String sdt = resultSet.getString("sdt");
+                AccountType accountType = AccountType.valueOf(resultSet.getString("Accounttype"));
+                result = new User(id, name, passWord, email, sdt, accountType);
+            }
+            //dong ket noi
+            JBDCUtil.closeConnection(connection);
+        }catch (SQLException e){
+            e.printStackTrace(); // in ra loi xong van chay tiep
+        }
+        return result;
+
+    }
+
     public int getSize() {
         Connection connection = JBDCUtil.getConnection();
         int count = 0;

@@ -1,5 +1,9 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.network.Command;
+import com.javfxtutorial.hethongdaugia.common.network.RequestType;
+import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -19,9 +23,27 @@ public class LoginController {
     @FXML private Button login;
     @FXML private Button sign_in;
     @FXML
-    public void clickLogin(ActionEvent event) {
+    public void clickLogin(ActionEvent event) throws IOException {
         String username = Username.getText();
         String password = Password.getText();
+        ServerConnection connection = new ServerConnection("192.168.102.7", 5000);
+        Command cmd = new Command(RequestType.CHECK_LOGIN);
+        cmd.addData("username", username);
+        cmd.addData("password", password);
+        Response rp = connection.sendCommand(cmd);
+        if (rp.isSuccess()){
+            try {
+                System.out.println(rp.getMessage());
+                Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/SceneMain.fxml"));
+                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                stage.setScene(new Scene(root));
+                stage.show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+            System.out.println(rp.getMessage());
+        }
     }
 
     public void clickCreateAccount(ActionEvent event){
@@ -34,5 +56,7 @@ public class LoginController {
             e.printStackTrace();
         }
     }
+
+
 
 }

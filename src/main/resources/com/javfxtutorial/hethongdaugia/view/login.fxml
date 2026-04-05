@@ -42,8 +42,8 @@
             <Button fx:id="login" onAction="#clickLogin" prefHeight="40" prefWidth="220" style="-fx-background-radius: 20;                            -fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed);                            -fx-text-fill: white;                            -fx-font-weight: bold;" text="LOGIN" />
 
             <!-- REGISTER BUTTON -->
-            <Button id="sign_in" fx:id="sign_in" onAction="#clickCreateAccount" prefHeight="35" prefWidth="220" style="-fx-background-radius: 20;                            -fx-background-color: transparent;                            -fx-border-color: #2f80ed;                            -fx-border-radius: 20;                            -fx-text-fill: #2f80ed;" text="CREATE ACCOUNT" />
-         <Button fx:id="sign_in" mnemonicParsing="false" onAction="#clickCreateAccount" style="-fx-text-fill: #7aaed6; -fx-underline: true; -fx-background-color: transparent;" text="Forgot password?" />
+            <Button id="sign_in" fx:id="sign_in" onAction="#clickCreateAccount" prefHeight="35" prefWidth="220" style="-fx-background-radius: 20; -fx-background-color: transparent;                            -fx-border-color: #2f80ed;                            -fx-border-radius: 20;                            -fx-text-fill: #2f80ed;" text="CREATE ACCOUNT" />
+<!--         <Button fx:id="sign_in" mnemonicParsing="false" onAction="#clickCreateAccount" style="-fx-text-fill: #7aaed6; -fx-underline: true; -fx-background-color: transparent;" text="Forgot password?" />-->
 
         </VBox>
 

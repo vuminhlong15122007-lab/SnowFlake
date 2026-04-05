@@ -24,7 +24,7 @@
             <Region HBox.hgrow="ALWAYS" />
             <TextField fx:id="searchField" promptText="Tìm kiếm sản phẩm..." style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-background-radius: 5; -fx-border-radius: 5;" />
          <Button mnemonicParsing="false" style="-fx-background-color: skyblue; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-border-radius: 10;" text="Search" />
-            <Button fx:id="logoutButton" onAction="#clickBackToLogin" style="-fx-background-color: #4b0082; -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold;" text="Đăng xuất" />
+            <Button fx:id="logoutButton" style="-fx-background-color: #4b0082; -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold;" text="Đăng xuất" />
         </HBox>
     </top>
 
