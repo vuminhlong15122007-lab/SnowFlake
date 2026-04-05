@@ -10,12 +10,13 @@ import java.io.IOException;
 public class MainApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
-        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("view/login.fxml"));
+        FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/login.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("SnowFox");
         stage.setScene(scene);
         stage.show();
     }
+
 
     public static void main(String[] args) {
         Application.launch(MainApplication.class, args);
