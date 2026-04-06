@@ -55,9 +55,13 @@ public class AuctionController {
         featuredProductList.setItems(filterData); // ListView hien ti nhung gi ma filteredList muon
     }
 
+
     public void loadData(){
        //observable.add(new Item() {    CHUA BIET NEN LAP GI
 
+        observable.add(new Item(32635, "shaj", "shagh", "gsja", "hsaj") {
+
+        });
 
     }
 

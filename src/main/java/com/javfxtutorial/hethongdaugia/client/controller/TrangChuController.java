@@ -9,18 +9,36 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
+import java.io.IOException;
+
 public class TrangChuController {
     //truy cap thong tin nguoi dung
+    @FXML private Button profileButton;
+    @FXML private Button liveAuctionButton; //btn dan den phien dau gia
+
     @FXML
-    private Button profileButton;
     public void goToProfile(ActionEvent event){
         try{
-            Parent root = FXMLLoader.load(getClass().getResource("man_hinh_hien_thong_tin_User.fxml"));
-            Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/man_hinh_hien_thong_tin_User.fxml"));
+            Parent root = loader.load();
+            Stage stage =  (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.getScene().setRoot(root);
         }catch (Exception e){
             e.printStackTrace();
         }
     }
+
+    @FXML
+    public void goAuction(ActionEvent event) {
+        try{
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/auction_list.fxml"));
+            Parent root = loader.load();
+            Stage stage =  (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (IOException e){
+            e.printStackTrace();
+        }
+
+    }
+
 }
