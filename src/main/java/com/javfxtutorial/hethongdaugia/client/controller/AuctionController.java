@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.common.model.Item;
 import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -8,22 +9,24 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import com.javfxtutorial.hethongdaugia.common.model.Item;
 
-import java.awt.event.ActionEvent;
 
 public class AuctionController {
 
-    @FXML ListView<com.javfxtutorial.hethongdaugia.common.model.Item>  featuredProductList;
+    @FXML ListView<Item>  featuredProductList;
     @FXML TextField searchField;
     @FXML Button btnHome;      // 4 cai button chx co hanh dong vs lk man khac
     @FXML Button btnLiveAuction;
     @FXML Button btnmanageProducts;
     @FXML Button btnprofile;
 
+
     // Khoi tao danh sach Observable
-    private ObservableList<com.javfxtutorial.hethongdaugia.common.model.Item> observable = FXCollections.observableArrayList();
+    private ObservableList<Item> observable = FXCollections.observableArrayList();
 
     @FXML
     public void initialize(){
@@ -32,8 +35,11 @@ public class AuctionController {
         featuredProductList.setMaxWidth(Double.MAX_VALUE ); // gian rong het co theo chieu rong
 
         // Xu ly o tim kiem - TexField
-        // 1.Khoi tao lang kinh
-        FilteredList<com.javfxtutorial.hethongdaugia.common.model.Item>  filterData = new FilteredList<>(observable, p-> true );
+        // 1.Khoi tao  FilteredList - loc du lieu de hien thi
+        FilteredList<Item>  filterData = new FilteredList<>(observable, p-> true );
+
+        // load du lieu
+        loadData();
 
         //2.Lang nghe o nhap du lieu
         searchField.textProperty().addListener((observable, oldValue, newValue) ->
@@ -46,9 +52,14 @@ public class AuctionController {
 
                 }));
 
-
+        featuredProductList.setItems(filterData); // ListView hien ti nhung gi ma filteredList muon
     }
 
+    public void loadData(){
+       //observable.add(new Item() {    CHUA BIET NEN LAP GI
+
+
+    }
 
 
 

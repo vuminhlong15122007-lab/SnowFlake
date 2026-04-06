@@ -1,25 +1,80 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.Button;
-import java.lang.classfile.Label;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
+import com.javfxtutorial.hethongdaugia.common.model.Item;
+
+import java.io.IOException;
+
 
 public class ManHinhHienThiSpController {
-    @FXML private Label LbGiaSp;
-    @FXML private Label LbTenngban;
-    @FXML private Label LbLoaisp;
+    @FXML private Label lbGiaSp;
+    @FXML private Label lbTenngban;
+    @FXML private Label lbTimer; // phan nay chx xu ly duoc
     @FXML private Button btnMenu;
-    @FXML private Button btnGoToAuction;
-    @FXML private Label LbAuctionName;
+    @FXML private Button btnGoToAuction; // phai lien ket  voi man chinh
+    @FXML private Label lbAuctionName;
+    @FXML private ImageView imgSanPham;
 
-    public void click1(ActionEvent even){
+    private Item  TemMemory; // Bộ nhớ tạm thời để lưu sản phẩm đang xem
+    private Parent TemListView;  // Luu lai man hinh Auction de con quay lai sau khi nhan btnMenu
+
+    public void setProductData(Item p){ // nhan du lieu tu man Item..
+        this.TemMemory = p;
+        lbGiaSp.setText(p.getDescription());
+        lbAuctionName.setText(p.getName());
+        if (p.getImagePath() != null){
+            Image image = new Image(getClass().getResourceAsStream(p.getImagePath())); // tao anh tu duong dan
+            imgSanPham.setImage(image); // dan tam anh vao khung
+        }
+//        lbTenngban.setText(p.getSellerId());  - man hinh Item khong co sellerid .. nghi cach luu vao cai j do de co the man hinh nay sd
+        // chua xu ly duoc phan hien tgian
+    }
+
+    @FXML
+    public void initialize(){
+        // Nạp sẵn Màn hình 1 vào bộ nhớ ngay khi Màn 3 hiện lên
+        Platform.runLater(() -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/auction_list.fxml"));
+                TemListView = loader.load();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
+    }
+
+    @FXML
+    public void QuaylaiMenu(ActionEvent event){
+        if (TemListView != null){
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.getScene().setRoot(TemListView);
+        }else{
+            // chua kip nap xong man
+            try{
+               Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/auction_list.fxml"));
+               Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+               stage.getScene().setRoot(root);
+               
+            }catch (IOException e){
+                e.printStackTrace();
+            }
+        }
 
     }
 
-    public void click(ActionEvent even){
 
-    }
+
+
 
 
 }
