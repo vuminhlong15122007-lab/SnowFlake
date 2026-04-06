@@ -49,6 +49,11 @@ public class ClientHandler extends Thread {
         return new Response(false, "Lỗi", null);
     }
 }
+// logic controller nhaaanj được thao tác ấn vào nút login của user
+// -> controller mở connection gửi command đến server -> server check request type của command bằng handle command (pthuc mình tạo để xử lý logic)
+// -> request type = login -> server xử lý command login = cách gọi đến usermanager để kiểm tra xem user có tồn tại hay k
+// -> usermanager thì lại gọi đến mấy phương thức DAO( data access object - database) để kiểm tra xem có user không
+// -> nếu usermanger trả về user thi server trả về respone cho controller (true: trạng thái phthuc - thành công , message - lời nhắn, payload- dữ liệu trả lại)
 
 
 
