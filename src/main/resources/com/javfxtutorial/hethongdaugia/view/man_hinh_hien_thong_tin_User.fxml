@@ -37,7 +37,7 @@
 
          <Button prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Sản phẩm của tôi" />
 
-         <Button fx:id="logOut" onAction="#clickBackToLogin" prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Đăng xuất" />
+         <Button fx:id="logOut"  prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Đăng xuất" />
       </VBox>
    </left>
 

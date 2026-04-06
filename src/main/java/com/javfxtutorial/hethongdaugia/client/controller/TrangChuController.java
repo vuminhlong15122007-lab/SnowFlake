@@ -15,7 +15,7 @@ public class TrangChuController {
     private Button profileButton;
     public void goToProfile(ActionEvent event){
         try{
-            Parent root = FXMLLoader.load(getClass().getResource("man_hinh_hien_thong_tin_User.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/man_hinh_hien_thong_tin_User.fxml"));
             Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
