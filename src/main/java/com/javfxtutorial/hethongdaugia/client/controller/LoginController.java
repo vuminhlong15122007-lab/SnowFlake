@@ -26,7 +26,7 @@ public class LoginController {
     public void clickLogin(ActionEvent event) throws IOException {
         String username = Username.getText();
         String password = Password.getText();
-        ServerConnection connection = new ServerConnection("192.168.102.7", 5000);
+        ServerConnection connection = new ServerConnection( 5000);
         Command cmd = new Command(RequestType.CHECK_LOGIN);
         cmd.addData("username", username);
         cmd.addData("password", password);

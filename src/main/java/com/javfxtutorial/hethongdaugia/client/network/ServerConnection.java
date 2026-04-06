@@ -10,14 +10,15 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ServerConnection {
+    public String IP = "10.11.119.134";
     private Socket clientSocket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
-    public ServerConnection(String host, int port){
+    public ServerConnection(int port){
         //khởi tạo socket connect tới server và luông để truyền/ nhận dữ liệu
         try {
-            this.clientSocket = new Socket(host, port);
+            this.clientSocket = new Socket(IP, port);
             this.out = new ObjectOutputStream(clientSocket.getOutputStream());
             this.in = new ObjectInputStream(clientSocket.getInputStream());
         } catch (IOException e) {

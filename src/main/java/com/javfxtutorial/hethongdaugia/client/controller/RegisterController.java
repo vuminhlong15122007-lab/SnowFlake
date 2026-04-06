@@ -47,7 +47,7 @@ public class RegisterController {
         String password = Password.getText();
         String sdt = Confirm_Password.getText();
         String confirmPassword = Confirm_Password.getText();
-        if (name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()){
+        if (!name.isEmpty() || !email.isEmpty() || !password.isEmpty() || !confirmPassword.isEmpty()){
             if (password.equals(confirmPassword)){
                 UserDAO.getInstance().insert(new User(name,password,email, sdt, AccountType.USER));
                 try {
