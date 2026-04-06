@@ -4,12 +4,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ListCell;
-
+import com.javfxtutorial.hethongdaugia.common.model.Item;
 import java.io.IOException;
 
-public class ProductCell extends ListCell<com.javfxtutorial.hethongdaugia.model.Item> {
+public class ProductCell extends ListCell<Item> {
     @Override
-    protected void updateItem(com.javfxtutorial.hethongdaugia.model.Item item, boolean empty){  // method cua class cha da la protected
+    protected void updateItem(Item item, boolean empty){  // method cua class cha da la protected
         super.updateItem(item,empty);
         if(empty||item == null){  // Tuc la man hinh da khong hien thi sp nua . tinh nang cua ListView
             setText(null); // lam null chu de tai sd lai cai itemphien... y
