@@ -10,7 +10,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ServerConnection {
-    public String IP = "10.11.71.111";
+    public String IP = "10.11.20.22";
     private Socket clientSocket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
@@ -38,6 +38,7 @@ public class ServerConnection {
         }
     }
     public void close() throws IOException {
-        this.clientSocket.close();
+        if (clientSocket != null){
+        this.clientSocket.close();}
     }
 }
