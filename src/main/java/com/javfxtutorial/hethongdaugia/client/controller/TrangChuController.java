@@ -23,4 +23,15 @@ public class TrangChuController {
             e.printStackTrace();
         }
     }
+
+    public void goAuction(ActionEvent event){
+        try{
+            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/auction_list.fxml"));
+            Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 }

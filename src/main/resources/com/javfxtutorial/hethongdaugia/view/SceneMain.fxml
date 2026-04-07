@@ -1,13 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="500" prefWidth="900" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.TrangChuController">
+<BorderPane prefHeight="500" prefWidth="900" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.TrangChuController">
     <!-- Header -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-padding: 10;">
+        <HBox alignment="CENTER_LEFT" prefHeight="41.0" prefWidth="900.0" spacing="20" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-padding: 10;">
          <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
             <image>
                <Image url="@../assets/Logo.png" />
@@ -15,8 +21,6 @@
          </ImageView>
             <Label style="-fx-font-size: 22px; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox" />
             <Region HBox.hgrow="ALWAYS" />
-            <TextField fx:id="searchField" promptText="Tìm kiếm sản phẩm..." style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-background-radius: 5; -fx-border-radius: 5;" />
-         <Button mnemonicParsing="false" style="-fx-background-color: skyblue; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-border-radius: 10;" text="Search" />
             <Button fx:id="logoutButton" style="-fx-background-color: #4b0082; -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold;" text="Đăng xuất" />
         </HBox>
     </top>
@@ -33,14 +37,25 @@
 
     <!-- Nội dung chính -->
     <center>
-        <VBox spacing="20" style="-fx-padding: 20; -fx-background-color: linear-gradient(to right, white, lightblue);">
-            <Label style="-fx-font-size: 18px; -fx-text-fill: #333366; -fx-font-weight: bold;" text="Sản phẩm nổi bật" />
+        <StackPane style="-fx-background-color: linear-gradient(to bottom right, #ffffff, #f0faff);">
+            <children>
+                <VBox alignment="CENTER" spacing="5">
+                    <children>
+                  <Label prefHeight="85.0" prefWidth="231.0" style="-fx-font-size: 30; -fx-font-weight: bold; -fx-font-family: 'Lucida Handwriting', 'Mistral', 'Cursive'; -fx-text-fill: #34495e; -fx-effect: dropshadow(three-pass-box, rgba(47, 128, 237, 0.2), 15, 0, 0, 5); -fx-padding: 0 0 10 0;" text="WELCOME TO" textAlignment="CENTER" />
+                        <Label style="-fx-font-size: 60px;                                       -fx-font-weight: bold;                                       -fx-font-family: 'Lucida Handwriting', 'Mistral', 'Cursive';                                       -fx-text-fill: linear-gradient(to right, #4b0082, #2f80ed);                                       -fx-effect: dropshadow(three-pass-box, rgba(47, 128, 237, 0.2), 15, 0, 0, 5);                                       -fx-padding: 0 0 10 0;" text="kI nguyên SnowFox" textAlignment="CENTER">
+                        </Label>
 
-            <!-- ListView hiển thị sản phẩm nổi bật -->
-            <ListView fx:id="featuredProductList" prefHeight="300">
-                <!-- mỗi item sẽ là custom cell có ảnh + tên + giá -->
-            </ListView>
-        </VBox>
+                        <HBox alignment="CENTER">
+                            <Region prefHeight="2" prefWidth="120" style="-fx-background-color: #2f80ed; -fx-opacity: 0.3;" />
+                            <Label style="-fx-text-fill: #2f80ed; -fx-font-size: 15px;" text=" ❄ " />
+                            <Region prefHeight="2" prefWidth="120" style="-fx-background-color: #2f80ed; -fx-opacity: 0.3;" />
+                        </HBox>
+
+                        <Label style="-fx-font-size: 16px;                                       -fx-text-fill: #34495e;                                       -fx-font-family: 'Segoe UI Semibold';                                       -fx-opacity: 0.8;                                       -fx-padding: 10 0 0 0;" text="~ Nơi những phiên đấu giá trở nên kỳ diệu ~" />
+                    </children>
+                </VBox>
+            </children>
+        </StackPane>
     </center>
 
     <!-- Footer -->

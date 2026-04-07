@@ -13,6 +13,7 @@ import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 
+import java.awt.*;
 import java.io.IOException;
 
 
@@ -20,10 +21,10 @@ public class ManHinhHienThiSpController {
     @FXML private Label lbGiaSp;
     @FXML private Label lbTenngban;
     @FXML private Label lbTimer; // phan nay chx xu ly duoc
-    @FXML private Button btnMenu;
-    @FXML private Button btnGoToAuction; // phai lien ket  voi man chinh
+    @FXML private Button btnMenu;// phai lien ket  voi man chinh
     @FXML private Label lbAuctionName;
     @FXML private ImageView imgSanPham;
+
 
     private Item  TemMemory; // Bộ nhớ tạm thời để lưu sản phẩm đang xem
     private Parent TemListView;  // Luu lai man hinh Auction de con quay lai sau khi nhan btnMenu
@@ -72,6 +73,22 @@ public class ManHinhHienThiSpController {
             }
         }
 
+    }
+
+    @FXML
+    public void goToAuction(ActionEvent event){
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/dau_gia_truc_tiep.fxml"));
+            Parent root = loader.load();
+
+            GoLiveActionController goLiveActionController = loader.getController(); // truyen du lieu sang
+            goLiveActionController.setDataSang(this.TemMemory);
+
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.getScene().setRoot(root);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 
