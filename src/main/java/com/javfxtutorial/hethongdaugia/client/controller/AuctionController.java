@@ -5,7 +5,12 @@ import javafx.beans.Observable;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -13,6 +18,9 @@ import javafx.scene.image.Image;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
+import javafx.stage.Stage;
+
+import java.io.IOException;
 
 
 public class AuctionController {
@@ -69,6 +77,60 @@ public class AuctionController {
 
     }
 
+    public void logOut1(ActionEvent event){
+        try {
 
+            // Nap man hinh giao dien man_hinh_sp
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/login.fxml"));
+            Parent root = loader.load();  // tim file FXML doc ban ve va tao giao dien xac ( chua co bo nao)
+
+            // Lech chuyen man
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.getScene().setRoot(root);  //Chuyen man = setRoot
+
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void manageProducts(ActionEvent event){
+        try {
+
+            // Nap man hinh giao dien man_hinh_sp
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/quan_ly_san_pham_seller.fxml"));
+            Parent root = loader.load();  // tim file FXML doc ban ve va tao giao dien xac ( chua co bo nao)
+
+            // Lech chuyen man
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+            stage.getScene().setRoot(root);  //Chuyen man = setRoot
+
+        }catch(IOException e){
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void btnHome(ActionEvent event){
+        try{
+            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/SceneMain.fxml"));
+            Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
+    public void goToProfile(ActionEvent event){
+        try{
+            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/man_hinh_hien_thong_tin_User.fxml"));
+            Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
 
 }

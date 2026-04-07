@@ -5,7 +5,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="500" prefWidth="800" style="-fx-background-color: #eef5fb;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" >
+<BorderPane prefHeight="500" prefWidth="800" style="-fx-background-color: #eef5fb;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.ManHinhThongTinUserController">
 
    <!-- HEADER -->
    <top>
@@ -15,10 +15,11 @@
             <image>
                <Image url="@../assets/ClassicLogo.png" />
             </image></ImageView>
-         <Label graphicTextGap="15.0" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, purple, blue);" text="SnowFox - Tài Khoản">
+         <Label graphicTextGap="15.0" prefHeight="30.0" prefWidth="607.0" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, purple, blue);" text="SnowFox - Tài Khoản">
             <effect>
                <Blend />
             </effect></Label>
+         <Button fx:id="logOut1" mnemonicParsing="false" onAction="#logOut1" prefHeight="32.0" prefWidth="142.0" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12;" text="Quay lại Menu" />
       </HBox>
    </top>
 
@@ -37,13 +38,13 @@
 
          <Button prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Sản phẩm của tôi" />
 
-         <Button fx:id="logOut"  prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Đăng xuất" />
+         <Button fx:id="logOut" onAction="#logOut" prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Đăng xuất" />
       </VBox>
    </left>
 
    <!-- CONTENT -->
    <center>
-      <VBox alignment="TOP_CENTER" style="-fx-padding: 20; -fx-background-color: linear-gradient(to right, white, #02620);">
+      <VBox alignment="TOP_CENTER" style="-fx-padding: 20; -fx-background-color: white;">
 
          <VBox spacing="12" style="-fx-background-color: white;                          -fx-padding: 20;                          -fx-background-radius: 10;                          -fx-border-color: #d6e2ee;                          -fx-border-radius: 10;">
 
