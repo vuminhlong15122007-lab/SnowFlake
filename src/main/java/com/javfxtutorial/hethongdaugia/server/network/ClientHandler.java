@@ -2,9 +2,11 @@ package com.javfxtutorial.hethongdaugia.server.network;
 
 
 import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.RequestType;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
 import com.javfxtutorial.hethongdaugia.server.manager.UserManager;
 
 import java.io.*;
@@ -43,7 +45,18 @@ public class ClientHandler extends Thread {
                     return new Response(true, "Đăng nhập thành công", user);
                 }
                 return new Response(false, "Sai tên hoặc mật khẩu", null);
+            case REGISTER:
+                String username1 = (String) cmd.getData("username");
+                boolean isUsernameExisted = UserManager.getInstance().checkExistedUsername(username1);
+                if (isUsernameExisted){
+                    return new Response(false, "username đã tồn tại", null);
+                }
 
+                String pw2 = (String) cmd.getData("password");
+                String email = (String) cmd.getData("email");
+                String sdt = (String) cmd.getData("sdt");
+                UserDAO.getInstance().insert(new User(username1, pw2, email, sdt, AccountType.USER));
+                return new Response(true, "tạo tài khoản thành công", null);
 
         }
         return new Response(false, "Lỗi", null);

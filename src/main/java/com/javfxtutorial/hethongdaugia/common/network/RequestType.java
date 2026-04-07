@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.common.network;
 
 public enum RequestType {
-    CHECK_LOGIN;
+    CHECK_LOGIN,
+    REGISTER;
 }

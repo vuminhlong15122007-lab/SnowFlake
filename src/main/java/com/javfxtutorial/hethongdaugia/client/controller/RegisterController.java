@@ -1,6 +1,10 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.MainApplication;
+import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.network.Command;
+import com.javfxtutorial.hethongdaugia.common.network.RequestType;
+import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
@@ -19,6 +23,8 @@ import javafx.stage.StageStyle;
 import java.io.IOException;
 
 public class RegisterController {
+    @FXML
+    public TextField PhoneNumber;
     @FXML
     private TextField Username;
     @FXML
@@ -43,32 +49,40 @@ public class RegisterController {
     }
     public void clickSignUp(ActionEvent event) throws IOException {
         String name = Username.getText();
-        String email = Email.getText();
         String password = Password.getText();
-        String sdt = Confirm_Password.getText();
+        String email = Email.getText();
+        String sdt = PhoneNumber.getText();
         String confirmPassword = Confirm_Password.getText();
-        if (!name.isEmpty() || !email.isEmpty() || !password.isEmpty() || !confirmPassword.isEmpty()){
+        if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
             if (password.equals(confirmPassword)){
-                UserDAO.getInstance().insert(new User(name,password,email, sdt, AccountType.USER));
-                try {
-                    Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/login.fxml"));
-                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                    stage.setScene(new Scene(root));
+                ServerConnection connection = new ServerConnection(5000);
+                Command cmd = new Command(RequestType.REGISTER);
+                cmd.addData("username", name);
+                cmd.addData("password", password);
+                cmd.addData("email", email);
+                cmd.addData("sdt", sdt);
+                Response rp = connection.sendCommand(cmd);
+                if (rp.isSuccess()){
+                    try {
+                        Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/login.fxml"));
+                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                        stage.setScene(new Scene(root));
+                        stage.show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Stage stage = new Stage();
+                    stage.setTitle("Tạo Tài Khoản Thành Công");
+                    FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/popUpSignUp.fxml"));
+                    stage.initStyle(StageStyle.DECORATED);
+                    Scene scene = new Scene(fxmlLoader.load());
+                    stage.setScene(scene);
                     stage.show();
-                } catch (IOException e) {
-                    e.printStackTrace();
                 }
-                Stage stage = new Stage();
-                stage.setTitle("Tạo Tài Khoản Thành Công");
-                FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/popUpSignUp.fxml"));
-                stage.initStyle(StageStyle.DECORATED);
-                Scene scene = new Scene(fxmlLoader.load());
-                stage.setScene(scene);
-                stage.show();
+                connection.close();
 
             }
         }
-
     }
 
 }

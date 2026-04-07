@@ -15,7 +15,7 @@ public class JBDCUtil {
             com.mysql.cj.jdbc.Driver driver = new Driver();//tạo driver
             DriverManager.registerDriver(driver);
 // bước 2: khai báo các thông số cơ bản yêu cầu cho kết nối
-            String url = "jdbc:mysql://127.0.0.1:3306/he_thong_dau_gia";
+            String url = "jdbc:mysql://localhost:3306/he_thong_dau_gia";
             String username = "root";
             String password = "123456";
 // bước 3: tạo kết nối

@@ -21,5 +21,13 @@ public class UserManager {
         return null;
     }
 
+    public boolean checkExistedUsername(String username){ //trả về true nếu username đã tồn tại
+        User user = UserDAO.getInstance().selectByUsername(username);
+        if (user != null){
+            return true;
+        }
+        return false;
+    }
+
 
 }

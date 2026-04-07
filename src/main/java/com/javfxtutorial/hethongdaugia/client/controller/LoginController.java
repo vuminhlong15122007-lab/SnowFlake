@@ -44,6 +44,7 @@ public class LoginController {
         } else {
             System.out.println(rp.getMessage());
         }
+        connection.close();
     }
 
     public void clickCreateAccount(ActionEvent event){
