@@ -28,10 +28,17 @@ public class ItemphiendaugiaController {
     public void setData(Item product){   // xu ly du lieu tu Obj den giao dien
         this.product = product;
         lbAuctionName.setText(product.getName());
-        lbGiaSp.setText(product.getDescription());
+        lbGiaSp.setText(product.getGiaHienTai());
         if (product.getImagePath() != null){
-            Image image = new Image(getClass().getResourceAsStream(product.getItemId()));  // Tao tam anh tu duong dan
-            imgSanPham.setImage(image); // dan tam anh vao khung
+            try{
+                // 1. Đường dẫn phải bắt đầu bằng dấu /
+                String imagePath = "/com/javfxtutorial/hethongdaugia/assets/" + product.getImagePath();
+                Image image = new Image(getClass().getResourceAsStream(imagePath));  // Tao tam anh tu duong dan
+                imgSanPham.setImage(image); // dan tam anh vao khung
+            }catch(Exception e){
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -44,9 +51,9 @@ public class ItemphiendaugiaController {
             Parent root = loader.load();  // tim file FXML doc ban ve va tao giao dien xac ( chua co bo nao)
 
             ManHinhHienThiSpController controller = loader.getController(); // truyen vao bo nao cua giao dien
-            controller.setProductData( product);  // Truyen du lieu vao ManHinhHienThiSp
+            controller.setProductData( this.product);  // Truyen du lieu vao ManHinhHienThiSp
 
-            // Truy nguoc lai cua so de ra lenh cho giao dien phai lm j do
+            // Lech chuyen man
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.getScene().setRoot(root);  //Chuyen man = setRoot
 

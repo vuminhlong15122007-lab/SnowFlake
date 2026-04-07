@@ -30,10 +30,11 @@ public class ManHinhHienThiSpController {
 
     public void setProductData(Item p){ // nhan du lieu tu man Item..
         this.TemMemory = p;
-        lbGiaSp.setText(p.getDescription());
+        lbGiaSp.setText(p.getGiaHienTai());
         lbAuctionName.setText(p.getName());
         if (p.getImagePath() != null){
-            Image image = new Image(getClass().getResourceAsStream(p.getImagePath())); // tao anh tu duong dan
+            String imagePath = "/com/javfxtutorial/hethongdaugia/assets/" + p.getImagePath();
+            Image image = new Image(getClass().getResourceAsStream(imagePath));  // Tao tam anh tu duong dan
             imgSanPham.setImage(image); // dan tam anh vao khung
         }
 //        lbTenngban.setText(p.getSellerId());  - man hinh Item khong co sellerid .. nghi cach luu vao cai j do de co the man hinh nay sd
@@ -42,8 +43,13 @@ public class ManHinhHienThiSpController {
 
     @FXML
     public void initialize(){
-        // Nạp sẵn Màn hình 1 vào bộ nhớ ngay khi Màn 3 hiện lên
-        Platform.runLater(() -> {
+
+
+    }
+
+    @FXML
+    public void QuaylaiMenu(ActionEvent event){
+        Platform.runLater(() -> {   // Nạp sẵn Màn hình 1 vào bộ nhớ ngay khi Màn 3 hiện lên
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/auction_list.fxml"));
                 TemListView = loader.load();
@@ -51,10 +57,6 @@ public class ManHinhHienThiSpController {
                 e.printStackTrace();
             }
         });
-    }
-
-    @FXML
-    public void QuaylaiMenu(ActionEvent event){
         if (TemListView != null){
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.getScene().setRoot(TemListView);
