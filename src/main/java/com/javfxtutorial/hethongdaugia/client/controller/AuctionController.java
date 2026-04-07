@@ -34,12 +34,12 @@ public class AuctionController {
         VBox.setVgrow(featuredProductList, Priority.ALWAYS); // listView tu gian rong het co theo chieu doc
         featuredProductList.setMaxWidth(Double.MAX_VALUE ); // gian rong het co theo chieu rong
 
+        // load du lieu
+        loadData();
+
         // Xu ly o tim kiem - TexField
         // 1.Khoi tao  FilteredList - loc du lieu de hien thi
         FilteredList<Item>  filterData = new FilteredList<>(observable, p-> true );
-
-        // load du lieu
-        loadData();
 
         //2.Lang nghe o nhap du lieu
         searchField.textProperty().addListener((observable, oldValue, newValue) ->
@@ -52,16 +52,20 @@ public class AuctionController {
 
                 }));
 
-        featuredProductList.setItems(filterData); // ListView hien ti nhung gi ma filteredList muon
+
+        featuredProductList.setCellFactory(lv -> new ProductCell());  //lệnh cài đặt cách hiển thị cho ListView.
+        featuredProductList.setItems(filterData);
     }
 
 
     public void loadData(){
        //observable.add(new Item() {    CHUA BIET NEN LAP GI
 
-        observable.add(new Item(32635, "shaj", "shagh", "gsja", "hsaj") {
 
-        });
+        observable.add(new Item(32635, "iPhone 15", "Siêu phẩm Apple", "dep","381938", "nui-tuyet-mexico.jpg"));
+        observable.add(new Item(32636, "Ao", "Ao Khoac", "dep","91731", "nui-tuyet-mexico.jpg"));
+        observable.add(new Item(32636, "Quan", "Quan", "dep", "319371", "nui-tuyet-mexico.jpg"));
+
 
     }
 

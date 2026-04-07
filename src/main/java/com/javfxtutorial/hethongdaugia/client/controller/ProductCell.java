@@ -17,14 +17,14 @@ public class ProductCell extends ListCell<Item> {
             }else{
                 try{
                     // Nap man hinh giao dien itemphien..
-                FXMLLoader loader = new FXMLLoader(getClass().getResource("com/javfxtutorial/hethongdaugia/view/itemphiendaugia.fxml"));
-                Parent root = loader.load(); // tim FXML de doc giao dien va tao giao dien xac
+                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/itemphiendaugia.fxml"));
+                    Parent root = loader.load(); // tim FXML de doc giao dien va tao giao dien xac
 
                 // Truyen vao controller
-                ItemphiendaugiaController controller = loader.getController();
-                controller.setData(item); // truyen vao du lieu cho Itemphien...
+                    ItemphiendaugiaController controller = loader.getController();
+                    controller.setData(item); // truyen vao du lieu cho Itemphien...
 
-                setGraphic(root); // hien thi giao dien xac da tao ra man hinh
+                    setGraphic(root); // hien thi giao dien xac da tao ra man hinh
 
             }catch (IOException e){
                 e.printStackTrace();
