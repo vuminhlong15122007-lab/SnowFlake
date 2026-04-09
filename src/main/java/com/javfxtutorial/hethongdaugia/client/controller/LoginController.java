@@ -1,8 +1,8 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.model.Command.LoginCommand;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
-import com.javfxtutorial.hethongdaugia.common.network.RequestType;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -27,7 +27,7 @@ public class LoginController {
         String username = Username.getText();
         String password = Password.getText();
         ServerConnection connection = new ServerConnection( 5000);
-        Command cmd = new Command(RequestType.CHECK_LOGIN);
+        Command cmd = new LoginCommand();
         cmd.addData("username", username);
         cmd.addData("password", password);
         Response rp = connection.sendCommand(cmd);

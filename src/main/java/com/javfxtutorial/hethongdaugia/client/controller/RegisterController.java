@@ -3,18 +3,13 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.MainApplication;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
-import com.javfxtutorial.hethongdaugia.common.network.RequestType;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
-import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
-import com.javfxtutorial.hethongdaugia.common.model.User;
-import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -35,8 +30,6 @@ public class RegisterController {
     private PasswordField Confirm_Password;
 
     @FXML
-    private Button backtologin;
-    @FXML
     public void clickBackToLogin(ActionEvent event){
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/login.fxml"));
@@ -56,7 +49,7 @@ public class RegisterController {
         if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
             if (password.equals(confirmPassword)){
                 ServerConnection connection = new ServerConnection(5000);
-                Command cmd = new Command(RequestType.REGISTER);
+                Command cmd = new RegisterCommand();
                 cmd.addData("username", name);
                 cmd.addData("password", password);
                 cmd.addData("email", email);
