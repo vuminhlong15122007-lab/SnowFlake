@@ -3,8 +3,7 @@ package com.javfxtutorial.hethongdaugia.common.network;
 import java.io.Serializable;
 import java.util.HashMap;
 
-// client gửi command qua cho server, server sẽ handle
-// client = cách check request thpe, chạy logic và gửi lại respone
+//abstract class cho mọi Command
 public abstract class Command implements Serializable {
     HashMap<String, Object> data;
     public Command() {

@@ -2,6 +2,7 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.MainApplication;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.model.Command.RegisterCommand;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.event.ActionEvent;
