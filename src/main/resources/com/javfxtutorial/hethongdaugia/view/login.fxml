@@ -35,8 +35,7 @@
             <TextField fx:id="Username" prefHeight="40" promptText="Username" style="-fx-background-radius: 12;                               -fx-background-color: white;" />
 
             <PasswordField fx:id="Password" prefHeight="40" promptText="Password" style="-fx-background-radius: 12;                                   -fx-background-color: white;" />
-
-            <CheckBox style="-fx-text-fill: #4e7ea8;" text="Remember me" />
+         <Label alignment="CENTER" prefHeight="18.0" prefWidth="145.0" text="Trạng thái đăng nhập" />
 
             <!-- LOGIN BUTTON -->
             <Button fx:id="login" onAction="#clickLogin" prefHeight="40" prefWidth="220" style="-fx-background-radius: 20;                            -fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed);                            -fx-text-fill: white;                            -fx-font-weight: bold;" text="LOGIN" />
