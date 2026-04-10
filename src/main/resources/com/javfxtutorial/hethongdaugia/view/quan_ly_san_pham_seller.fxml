@@ -35,7 +35,7 @@
             </VBox>
 
             <!-- Chi tiết sản phẩm -->
-            <VBox spacing="12" style="-fx-background-color: lavender; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 6,0,0,2);">
+            <VBox prefHeight="468.0" prefWidth="575.0" spacing="12" style="-fx-background-color: lavender; -fx-padding: 20; -fx-background-radius: 10; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 6,0,0,2);">
                 <Label style="-fx-font-size: 18px; -fx-text-fill: #4b0082; -fx-font-weight: bold;" text="Chi tiết sản phẩm" />
             <HBox alignment="CENTER_LEFT" prefHeight="155.0" prefWidth="430.0">
                <children>
@@ -52,6 +52,8 @@
                 <TextArea fx:id="descriptionField" prefHeight="65.0" prefRowCount="3" prefWidth="478.0" promptText="Mô tả sản phẩm" style="-fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
                 <TextField fx:id="priceField" promptText="Giá khởi điểm" style="-fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
             <TextField fx:id="buocGia" promptText="Bước giá " style="-fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
+            <TextField fx:id="thoigianbatdau" prefHeight="21.0" prefWidth="527.0" promptText="Thời gian bắt đầu" style="-fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
+            <TextField fx:id="thoigianketthuc" promptText="Thời gian kết thúc" style="-fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
                 <Button fx:id="saveButton" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="Lưu" />
             </VBox>
         </HBox>
