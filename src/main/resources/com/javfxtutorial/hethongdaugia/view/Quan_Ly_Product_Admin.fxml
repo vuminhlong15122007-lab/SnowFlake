@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<BorderPane prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.controller.Quan_Ly_Product_Admin_Controller">
+
+    <top>
+        <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-background-color: linear-gradient(to right, skyblue, lavender);" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+            </padding>
+         <ImageView fitHeight="90.0" fitWidth="90.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+               <Image url="@../assets/ClassicLogo.png" />
+            </image>
+         </ImageView>
+            <Label text="Bảng Điều Khiển Admin - Quản Lý Sản Phẩm" textFill="WHITE">
+                <font>
+                    <Font name="System Bold" size="22.0" />
+                </font>
+            </Label>
+            <Region HBox.hgrow="ALWAYS" />
+            <TextField fx:id="searchField" prefWidth="250.0" promptText="Tìm kiếm (Tên SP, Danh mục)..." style="-fx-background-radius: 15;" />
+            <Button fx:id="btnSearch" mnemonicParsing="false" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 15;" text="Tìm kiếm" />
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="10.0" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+            </padding>
+            <Label text="Danh sách sản phẩm trên hệ thống">
+                <font>
+                    <Font name="System Bold" size="16.0" />
+                </font>
+            </Label>
+            <TableView fx:id="productTable" VBox.vgrow="ALWAYS">
+                <columns>
+                    <TableColumn fx:id="colId" prefWidth="60.0" text="Mã SP" />
+                    <TableColumn fx:id="colProductName" prefWidth="200.0" text="Tên sản phẩm" />
+                    <TableColumn fx:id="colCategory" prefWidth="120.0" text="Danh mục" />
+                    <TableColumn fx:id="colOwner" prefWidth="120.0" text="Người đăng" />
+                    <TableColumn fx:id="colStartPrice" prefWidth="120.0" text="Giá khởi điểm" />
+                    <TableColumn fx:id="colCurrentPrice" prefWidth="120.0" text="Giá đấu hiện tại" />
+                    <TableColumn fx:id="colStatus" prefWidth="100.0" text="Trạng thái" />
+                </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                </columnResizePolicy>
+            </TableView>
+        </VBox>
+    </center>
+
+    <right>
+        <VBox prefWidth="300.0" spacing="15.0" style="-fx-background-color: #ecf0f1; -fx-border-color: #bdc3c7; -fx-border-width: 0 0 0 1;" BorderPane.alignment="CENTER">
+            <padding>
+                <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
+            </padding>
+
+            <Label text="Chi tiết sản phẩm">
+                <font>
+                    <Font name="System Bold" size="18.0" />
+                </font>
+            </Label>
+            <Separator />
+
+            <VBox alignment="CENTER" style="-fx-background-color: #ffffff; -fx-border-color: #bdc3c7; -fx-border-radius: 5; -fx-background-radius: 5;">
+                <padding>
+                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                </padding>
+                <ImageView fx:id="productImageView" fitHeight="120.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true" />
+            </VBox>
+
+            <TextArea fx:id="productInfoArea" editable="false" prefHeight="100.0" promptText="Mô tả chi tiết sản phẩm..." style="-fx-background-color: transparent;" wrapText="true" />
+
+            <Separator />
+
+            <Label text="Thao tác quản trị">
+                <font>
+                    <Font name="System Bold" size="16.0" />
+                </font>
+            </Label>
+            <Button fx:id="btnDeleteProduct" maxWidth="Infinity" mnemonicParsing="false" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;" text="XÓA SẢN PHẨM" />
+
+        </VBox>
+    </right>
+</BorderPane>
