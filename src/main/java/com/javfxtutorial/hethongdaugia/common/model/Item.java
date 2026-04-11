@@ -14,7 +14,7 @@ public class Item implements Serializable {
         this.itemId = itemId;
     }
 
-    public Item(int sellerId, int itemId, String name, String description, double giaHienTai, String imagePath) {
+    public Item(int sellerId, String name, String description, double giaHienTai, String imagePath) {
         this.sellerId = sellerId;
         this.name = name;
         this.description = description;
@@ -22,7 +22,7 @@ public class Item implements Serializable {
         this.giaHienTai = giaHienTai;
     }
 
-    public Item(int sellerId, int itemId, String name, String description, String imagePath, double giaHienTai) {
+    public Item(int itemId, int sellerId, String name, String description, String imagePath, double giaHienTai) {
         this.sellerId = sellerId;
         this.itemId = itemId;
         this.name = name;

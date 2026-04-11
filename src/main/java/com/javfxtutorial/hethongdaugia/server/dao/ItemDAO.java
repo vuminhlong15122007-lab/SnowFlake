@@ -1,7 +1,6 @@
 package com.javfxtutorial.hethongdaugia.server.dao;
 
 import com.javfxtutorial.hethongdaugia.common.model.Item;
-import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 
 
@@ -24,7 +23,7 @@ public class ItemDAO implements DAOInterface<Item> {
     public int insert(Item item) {
         // 1. Viết câu SQL phù hợp với bảng Item
         Connection connection = JDBCUtil.getConnection();
-        String sql = "INSERT INTO Item (idseller,name, description, imagePath , giaHienTai) VALUES (?,?, ?, ?, ?)";
+        String sql = "INSERT INTO Item (idseller, name, description, imagePath , giaHienTai) VALUES (?,?, ?, ?, ?)";
         int result = 0;
 
         // 2. Sử dụng try-with-resources để tự động quản lý kết nối
@@ -184,6 +183,7 @@ public class ItemDAO implements DAOInterface<Item> {
         }
         return result;
     };
+
     public ArrayList<Item> selectByCondition(String condition){
         ArrayList<Item> result =  new ArrayList<>();
         try{
@@ -202,52 +202,6 @@ public class ItemDAO implements DAOInterface<Item> {
                 String imagePath = resultSet.getString("imagePath");
                 double giaHienTai = resultSet.getDouble("giaHienTai");
                 result .add(new Item(idseller , itemid, name, description, imagePath, giaHienTai));
-            }
-            //dong ket noi
-            JDBCUtil.closeConnection(connection);
-        }catch (SQLException e){
-            e.printStackTrace(); // in ra loi xong van chay tiep
-        }
-        return result;
-
-    }
-    public int getSize() {
-        Connection connection = JDBCUtil.getConnection();
-        int count = 0;
-        ResultSet result;
-        try {
-            String sql = "SELECT COUNT(*) FROM Item";
-            PreparedStatement pstmt = connection.prepareStatement(sql);
-            System.out.println("Bạn đang thực thi: " + sql);
-            ResultSet rs = pstmt.executeQuery(sql);
-            if (rs.next()) {
-                // Lấy giá trị của cột đầu tiên (chính là kết quả của COUNT(*))
-                count = rs.getInt(1);
-            }
-
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-        return count;
-    }
-    public Item selectByUsername(String username) {
-        Item result = null;
-        try{
-            Connection connection = JDBCUtil.getConnection(); // Tao ket noi
-            Statement statement = connection.createStatement(); // tao ra obj statement
-            // Thuc thi cau lech sql
-            String sql = "SELECT * FROM user where name = \"" + username + '"';
-            ResultSet resultSet = statement.executeQuery(sql);
-
-            // tim kiem
-            while (resultSet.next()){
-                int idseller = resultSet.getInt("idseller");
-                int itemid = resultSet.getInt("itemid");
-                String name = resultSet.getString("name");
-                String description = resultSet.getString("description");
-                String imagePath = resultSet.getString("imagePath");
-                double giaHienTai = resultSet.getDouble("giaHienTai");
-                result = new Item(idseller , itemid, name, description, imagePath, giaHienTai);
             }
             //dong ket noi
             JDBCUtil.closeConnection(connection);

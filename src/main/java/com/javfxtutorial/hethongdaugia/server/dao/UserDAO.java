@@ -168,7 +168,6 @@ public class UserDAO implements DAOInterface<User> {
         return result;
     }
 
-    @Override
     public ArrayList<User> selectByCondition(String condition) {
         ArrayList<User> result =  new ArrayList<>();
         try{

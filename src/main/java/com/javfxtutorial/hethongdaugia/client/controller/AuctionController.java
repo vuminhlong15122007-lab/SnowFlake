@@ -69,12 +69,6 @@ public class AuctionController {
     public void loadData(){
        //observable.add(new Item() {    CHUA BIET NEN LAP GI
 
-
-        observable.add(new Item(32635, "iPhone 15", "Siêu phẩm Apple", "dep","381938", "nui-tuyet-mexico.jpg"));
-        observable.add(new Item(32636, "Ao", "Ao Khoac", "dep","91731", "nui-tuyet-mexico.jpg"));
-        observable.add(new Item(32636, "Quan", "Quan", "dep", "319371", "nui-tuyet-mexico.jpg"));
-
-
     }
 
     public void logOut1(ActionEvent event){
