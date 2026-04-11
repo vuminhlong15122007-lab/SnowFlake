@@ -8,49 +8,28 @@ public class Item implements Serializable {
     private String name;
     private String description;
     private String imagePath; // đường dẫn ảnh
-    private double giaHienTai;
+    private double currentPrice;
+    private double stepPrice;
 
-    public void setItemId(int itemId) {
-        this.itemId = itemId;
-    }
-
-    public Item(int sellerId, int itemId, String name, String description, double giaHienTai, String imagePath) {
-        this.sellerId = sellerId;
-        this.name = name;
-        this.description = description;
-        this.imagePath = imagePath;
-        this.giaHienTai = giaHienTai;
-    }
-
-    public Item(int sellerId, int itemId, String name, String description, String imagePath, double giaHienTai) {
+    public Item(int sellerId, int itemId, String name, String description, String imagePath, double currentPrice, double stepPrice) {
         this.sellerId = sellerId;
         this.itemId = itemId;
         this.name = name;
         this.description = description;
         this.imagePath = imagePath;
-        this.giaHienTai = giaHienTai;
+        this.currentPrice = currentPrice;
+        this.stepPrice = stepPrice;
     }
 
-    public double getGiaHienTai() {
-        return giaHienTai;
-    }
-
-    public void setGiaHienTai(double giaHienTai) {
-        this.giaHienTai = giaHienTai;
-    }
-
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public String getImagePath() {
-        return imagePath;
-    }
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
+    public void setItemId(int itemId) {this.itemId = itemId;}
+    public double getStepPrice() {return stepPrice;}
+    public void setStepPrice(double stepPrice) {this.stepPrice = stepPrice;}
+    public double getCurrentPrice() {return currentPrice;}
+    public void setCurrentPrice(double currrntPrice) {this.currentPrice = currrntPrice;}
+    public String getName() {return name;}
+    public void setName(String name) {this.name = name;}
+    public String getImagePath() {return imagePath;}
+    public void setImagePath(String imagePath) {this.imagePath = imagePath;}
     public String getDescription() {return description;}
     public void setDescription(String description) {this.description = description;}
     public int getItemId() {return itemId;}

@@ -8,5 +8,4 @@ public interface DAOInterface<T> {
     int delete(T t);
     ArrayList<T> selectAll();
     T selectById(int id);
-    ArrayList<T> selectByCondition(String condition);
 }

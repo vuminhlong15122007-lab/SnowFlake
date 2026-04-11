@@ -52,8 +52,38 @@
                 <TextArea fx:id="descriptionField" prefHeight="65.0" prefRowCount="3" prefWidth="478.0" promptText="Mô tả sản phẩm" style="-fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
                 <TextField fx:id="priceField" promptText="Giá khởi điểm" style="-fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
             <TextField fx:id="buocGia" promptText="Bước giá " style="-fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
-            <TextField fx:id="thoigianbatdau" prefHeight="21.0" prefWidth="527.0" promptText="Thời gian bắt đầu" style="-fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
-            <TextField fx:id="thoigianketthuc" promptText="Thời gian kết thúc" style="-fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label prefWidth="70" style="-fx-text-fill: #333366; -fx-font-weight: bold;" text="Bắt đầu:" />
+                    <DatePicker fx:id="startDatePicker" prefWidth="150" promptText="Chọn ngày" style="-fx-border-color: #b3c6ff; -fx-border-radius: 3;" />
+                    <Spinner fx:id="startHourSpinner" prefWidth="70" style="-fx-border-color: #b3c6ff; -fx-border-radius: 3;">
+                        <valueFactory>
+                            <SpinnerValueFactory.IntegerSpinnerValueFactory initialValue="12" max="23" min="0" />
+                        </valueFactory>
+                    </Spinner>
+                    <Label text="Giờ" />
+                    <Spinner fx:id="startMinuteSpinner" prefWidth="70" style="-fx-border-color: #b3c6ff; -fx-border-radius: 3;">
+                        <valueFactory>
+                            <SpinnerValueFactory.IntegerSpinnerValueFactory initialValue="0" max="59" min="0" />
+                        </valueFactory>
+                    </Spinner>
+                    <Label text="Phút" />
+                </HBox>
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label prefWidth="70" style="-fx-text-fill: #333366; -fx-font-weight: bold;" text="Kết thúc:" />
+                    <DatePicker fx:id="endDatePicker" prefWidth="150" promptText="Chọn ngày" style="-fx-border-color: #b3c6ff; -fx-border-radius: 3;" />
+                    <Spinner fx:id="endHourSpinner" prefWidth="70" style="-fx-border-color: #b3c6ff; -fx-border-radius: 3;">
+                        <valueFactory>
+                            <SpinnerValueFactory.IntegerSpinnerValueFactory initialValue="12" max="23" min="0" />
+                        </valueFactory>
+                    </Spinner>
+                    <Label text="Giờ" />
+                    <Spinner fx:id="endMinuteSpinner" prefWidth="70" style="-fx-border-color: #b3c6ff; -fx-border-radius: 3;">
+                        <valueFactory>
+                            <SpinnerValueFactory.IntegerSpinnerValueFactory initialValue="0" max="59" min="0" />
+                        </valueFactory>
+                    </Spinner>
+                    <Label text="Phút" />
+                </HBox>
                 <Button fx:id="saveButton" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="Lưu" />
             </VBox>
         </HBox>

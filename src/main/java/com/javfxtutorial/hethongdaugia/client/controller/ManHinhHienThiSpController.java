@@ -31,7 +31,7 @@ public class ManHinhHienThiSpController {
 
     public void setProductData(Item p){ // nhan du lieu tu man Item..
         this.TemMemory = p;
-        lbGiaSp.setText(p.getGiaHienTai());
+        lbGiaSp.setText(String.valueOf(p.getCurrentPrice()));
         lbAuctionName.setText(p.getName());
         if (p.getImagePath() != null){
             String imagePath = "/com/javfxtutorial/hethongdaugia/assets/" + p.getImagePath();
@@ -81,8 +81,8 @@ public class ManHinhHienThiSpController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/dau_gia_truc_tiep.fxml"));
             Parent root = loader.load();
 
-            GoLiveActionController goLiveActionController = loader.getController(); // truyen du lieu sang
-            goLiveActionController.setDataSang(this.TemMemory);
+//            GoLiveActionController goLiveActionController = loader.getController(); // truyen du lieu sang
+//            goLiveActionController.setDataSang(this.TemMemory);
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.getScene().setRoot(root);

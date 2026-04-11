@@ -26,16 +26,16 @@ public class GoLiveActionController {
 
     private  Item product;
 
-    public void setDataSang(Item p){
-        this.product = p;
-        giaHienTai.setText(p.getGiaHienTai());
-        productName.setText(p.getName());
-        if (p.getImagePath()!= null){
-            String imag = "/com/javfxtutorial/hethongdaugia/assets/" + p.getImagePath();
-            Image image = new Image(getClass().getResourceAsStream(imag));
-            productImage.setImage(image);
-        }
-    }
+//    public void setDataSang(Item p){
+//        this.product = p;
+//        giaHienTai.setText(p.getGiaHienTai());
+//        productName.setText(p.getName());
+//        if (p.getImagePath()!= null){
+//            String imag = "/com/javfxtutorial/hethongdaugia/assets/" + p.getImagePath();
+//            Image image = new Image(getClass().getResourceAsStream(imag));
+//            productImage.setImage(image);
+//        }
+//    }
 
     public void goMenu(ActionEvent event){
         try{

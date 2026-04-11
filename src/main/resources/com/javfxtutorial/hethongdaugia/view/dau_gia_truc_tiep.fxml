@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="500" prefWidth="900" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.GoLiveActionController">
+<BorderPane prefHeight="500" prefWidth="900" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.ManHinhDauGiaTrucTiep">
 
     <!-- Header -->
     <top>
@@ -44,6 +44,12 @@
                   </Label>
                </children>
             </HBox>
+            <HBox prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label prefHeight="41.0" prefWidth="73.0" text="Bước giá" />
+                  <Label text="..." />
+               </children>
+            </HBox>
             <HBox prefHeight="27.0" prefWidth="263.0" spacing="6.0">
                <children>
                       <Label fx:id="highestBidder" prefHeight="20.0" prefWidth="149.0" style="-fx-font-size: 14px; -fx-text-fill: #333366;" text="Người đặt giá cao nhất: " />
@@ -70,7 +76,7 @@
 
                 <!-- Khu vực đặt giá -->
                 <HBox alignment="CENTER" spacing="10">
-                    <TextField fx:id="bidInput" promptText="Nhập giá của bạn..." style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
+                    <TextField fx:id="priceInput_tf" promptText="Nhập giá của bạn..." style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
                 </HBox>
                  <Button fx:id="placeBidButton" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="Đặt giá" />
             </VBox>
