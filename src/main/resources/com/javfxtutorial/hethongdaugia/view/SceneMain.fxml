@@ -36,7 +36,7 @@
                 <VBox alignment="CENTER" spacing="5">
                     <children>
                   <Label prefHeight="85.0" prefWidth="231.0" style="-fx-font-size: 30; -fx-font-weight: bold; -fx-font-family: 'Lucida Handwriting', 'Mistral', 'Cursive'; -fx-text-fill: #34495e; -fx-effect: dropshadow(three-pass-box, rgba(47, 128, 237, 0.2), 15, 0, 0, 5); -fx-padding: 0 0 10 0;" text="WELCOME TO" textAlignment="CENTER" />
-                        <Label style="-fx-font-size: 60px;                                       -fx-font-weight: bold;                                       -fx-font-family: 'Lucida Handwriting', 'Mistral', 'Cursive';                                       -fx-text-fill: linear-gradient(to right, #4b0082, #2f80ed);                                       -fx-effect: dropshadow(three-pass-box, rgba(47, 128, 237, 0.2), 15, 0, 0, 5);                                       -fx-padding: 0 0 10 0;" text="kI nguyên SnowFox" textAlignment="CENTER">
+                        <Label style="-fx-font-size: 60px;                                       -fx-font-weight: bold;                                       -fx-font-family: 'Lucida Handwriting', 'Mistral', 'Cursive';                                       -fx-text-fill: linear-gradient(to right, #4b0082, #2f80ed);                                       -fx-effect: dropshadow(three-pass-box, rgba(47, 128, 237, 0.2), 15, 0, 0, 5);                                       -fx-padding: 0 0 10 0;" text="k ỉ nguyên SnowFox" textAlignment="CENTER">
                         </Label>
 
                         <HBox alignment="CENTER">

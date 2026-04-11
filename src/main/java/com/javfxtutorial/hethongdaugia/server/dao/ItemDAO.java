@@ -23,7 +23,7 @@ public class ItemDAO implements DAOInterface<Item> {
     public int insert(Item item) {
         // 1. Viết câu SQL phù hợp với bảng Item
         Connection connection = JDBCUtil.getConnection();
-        String sql = "INSERT INTO Item (idseller, name, description, imagePath , giaHienTai) VALUES (?,?, ?, ?, ?)";
+        String sql = "INSERT INTO Item (idseller, name, description, imagePath , currentPrice , stepPrice) VALUES (?,?, ?, ?, ?,?)";
         int result = 0;
 
         // 2. Sử dụng try-with-resources để tự động quản lý kết nối
@@ -148,10 +148,10 @@ public class ItemDAO implements DAOInterface<Item> {
                 String name = resultSet.getString("name");
                 String description = resultSet.getString("description");
                 String imagePath = resultSet.getString("imagePath");
-                double currentPrice = resultSet.getDouble("currentPrice");
+                double giaHienTai = resultSet.getDouble("giaHienTai");
                 double stepPrice = resultSet.getDouble("stepPrice");
                 AccountType accountType = AccountType.valueOf(resultSet.getString("accountType"));
-                Item item = new Item(idseller , itemid, name, description, imagePath, currentPrice, stepPrice);
+                Item item = new Item(idseller , itemid, name, description, imagePath, giaHienTai , stepPrice);
                 result.add(item);
             }
             JDBCUtil.closeConnection(connection);

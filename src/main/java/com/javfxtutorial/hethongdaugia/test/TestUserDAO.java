@@ -5,8 +5,8 @@ import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 
 public class TestUserDAO {
-    static void main() {
-        User user = new User("danh", "con", "danh", "con", AccountType.USER);
+    static void main(String[] args) {
+        User user = new User("danh5", "con", "danh", "con", AccountType.USER);
         UserDAO.getInstance().insert(user);
         System.out.println(UserDAO.getInstance().selectAll());
         System.out.println(UserDAO.getInstance().selectById(user.getId()));
