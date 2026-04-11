@@ -28,6 +28,18 @@ public class UserManager {
         }
         return false;
     }
-
+    public User updateUserProfile(int userId, String username, String email, String phone){
+        User oldUser = UserDAO.getInstance().selectById(userId);
+        if(oldUser == null){
+            return null;
+        }
+        //tao user moi tu thong tin cao nhat
+        User updateUser = new User(userId, username, oldUser.getPassWord(), email, phone, oldUser.getAccountType());
+        int result = UserDAO.getInstance().update(updateUser);
+        if(result > 0){
+            return updateUser; //thanh cong thi tra ve user moi
+        }
+        return null;//that bai
+    }
 
 }

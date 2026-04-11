@@ -8,7 +8,7 @@ public class ClientModel {
 
     public static ClientModel getInstance() {
         if (instance == null){
-            return new ClientModel();
+            instance = new ClientModel();
         }
         return instance;
     }
