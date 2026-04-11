@@ -8,37 +8,27 @@ public class Item implements Serializable {
     private String name;
     private String description;
     private String imagePath; // đường dẫn ảnh
-    private String giaHienTai;
+    private double currentPrice;
+    private double stepPrice;
 
-    public Item(int sellerId, String itemId, String name, String description, String giaHienTai,  String imagePath) {
+    public Item(int sellerId, String itemId, String name, String description, String imagePath, double currentPrice, double stepPrice) {
         this.sellerId = sellerId;
         this.itemId = itemId;
         this.name = name;
         this.description = description;
         this.imagePath = imagePath;
-        this.giaHienTai = giaHienTai;
+        this.currentPrice = currentPrice;
+        this.stepPrice = stepPrice;
     }
 
-    public String getGiaHienTai() {
-        return giaHienTai;
-    }
-
-    public void setGiaHienTai(String giaHienTai) {
-        this.giaHienTai = giaHienTai;
-    }
-
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
-    public String getImagePath() {
-        return imagePath;
-    }
-    public void setImagePath(String imagePath) {
-        this.imagePath = imagePath;
-    }
+    public double getStepPrice() {return stepPrice;}
+    public void setStepPrice(double stepPrice) {this.stepPrice = stepPrice;}
+    public double getCurrentPrice() {return currentPrice;}
+    public void setCurrentPrice(double currrntPrice) {this.currentPrice = currrntPrice;}
+    public String getName() {return name;}
+    public void setName(String name) {this.name = name;}
+    public String getImagePath() {return imagePath;}
+    public void setImagePath(String imagePath) {this.imagePath = imagePath;}
     public String getDescription() {return description;}
     public void setDescription(String description) {this.description = description;}
     public String getItemId() {return itemId;}
