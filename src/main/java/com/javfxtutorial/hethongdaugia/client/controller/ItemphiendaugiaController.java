@@ -28,7 +28,7 @@ public class ItemphiendaugiaController {
     public void setData(Item product){   // xu ly du lieu tu Obj den giao dien
         this.product = product;
         lbAuctionName.setText(product.getName());
-        lbGiaSp.setText(product.getGiaHienTai());
+        lbGiaSp.setText(String.valueOf(product.getCurrentPrice()));
         if (product.getImagePath() != null){
             try{
                 // 1. Đường dẫn phải bắt đầu bằng dấu /
