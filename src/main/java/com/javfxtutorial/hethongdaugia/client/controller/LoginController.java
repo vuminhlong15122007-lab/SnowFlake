@@ -1,7 +1,10 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Command.LoginCommand;
+import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.event.ActionEvent;
@@ -32,14 +35,28 @@ public class LoginController {
         cmd.addData("password", password);
         Response rp = connection.sendCommand(cmd);
         if (rp.isSuccess()){
-            try {
-                System.out.println(rp.getMessage());
-                Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/SceneMain.fxml"));
-                Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                stage.setScene(new Scene(root));
-                stage.show();
-            } catch (IOException e) {
-                e.printStackTrace();
+            User user = (User) rp.getPayLoad();
+            ClientModel.getInstance().setCurrentUser(user);
+            if (user.getAccountType() == AccountType.USER){
+                try {
+                    System.out.println(rp.getMessage());
+                    Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/SceneMain.fxml"));
+                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    stage.setScene(new Scene(root));
+                    stage.show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else if (user.getAccountType() == AccountType.ADMIN) {
+                try {
+                    System.out.println(rp.getMessage());
+                    Parent root = FXMLLoader.load(getClass().getResource("com/javfxtutorial/hethongdaugia/view/Quan_Ly_User_Admin.fxml"));
+                    Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    stage.setScene(new Scene(root));
+                    stage.show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         } else {
             System.out.println(rp.getMessage());
