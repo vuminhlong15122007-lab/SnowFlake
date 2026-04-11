@@ -4,14 +4,14 @@ import java.time.LocalDate;
 
 public class Item implements Serializable {
     private int sellerId;
-    private String itemId;
+    private int itemId;
     private String name;
     private String description;
     private String imagePath; // đường dẫn ảnh
     private double currentPrice;
     private double stepPrice;
 
-    public Item(int sellerId, String itemId, String name, String description, String imagePath, double currentPrice, double stepPrice) {
+    public Item(int sellerId, int itemId, String name, String description, String imagePath, double currentPrice, double stepPrice) {
         this.sellerId = sellerId;
         this.itemId = itemId;
         this.name = name;
@@ -21,6 +21,7 @@ public class Item implements Serializable {
         this.stepPrice = stepPrice;
     }
 
+    public void setItemId(int itemId) {this.itemId = itemId;}
     public double getStepPrice() {return stepPrice;}
     public void setStepPrice(double stepPrice) {this.stepPrice = stepPrice;}
     public double getCurrentPrice() {return currentPrice;}
@@ -31,7 +32,7 @@ public class Item implements Serializable {
     public void setImagePath(String imagePath) {this.imagePath = imagePath;}
     public String getDescription() {return description;}
     public void setDescription(String description) {this.description = description;}
-    public String getItemId() {return itemId;}
+    public int getItemId() {return itemId;}
     public int getSellerId() {return sellerId;}
     public void setSellerId(int sellerId) {this.sellerId = sellerId;}
 }

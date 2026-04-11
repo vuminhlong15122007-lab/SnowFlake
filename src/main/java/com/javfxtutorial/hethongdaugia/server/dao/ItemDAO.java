@@ -36,7 +36,8 @@ public class ItemDAO implements DAOInterface<Item> {
             pst.setString(2, item.getName());
             pst.setString(3, item.getDescription());
             pst.setString(4, item.getImagePath());
-            pst.setDouble(5, item.getGiaHienTai());
+            pst.setDouble(5, item.getCurrentPrice());
+            pst.setDouble(6, item.getStepPrice());
 
             System.out.println("Bạn đang thực thi thêm Item: " + item.getName());
 
@@ -81,7 +82,8 @@ public class ItemDAO implements DAOInterface<Item> {
             pst.setString(1, item.getName());
             pst.setString(2, item.getDescription());
             pst.setString(3, item.getImagePath());
-            pst.setDouble(4, item.getGiaHienTai());
+            pst.setDouble(4, item.getCurrentPrice());
+            pst.setDouble(5,item.getStepPrice());
 
             // Gán giá trị cho dấu ? trong mệnh đề WHERE (Quan trọng nhất)
             pst.setInt(5, item.getItemId());
@@ -146,9 +148,10 @@ public class ItemDAO implements DAOInterface<Item> {
                 String name = resultSet.getString("name");
                 String description = resultSet.getString("description");
                 String imagePath = resultSet.getString("imagePath");
-                double giaHienTai = resultSet.getDouble("giaHienTai");
+                double currentPrice = resultSet.getDouble("currentPrice");
+                double stepPrice = resultSet.getDouble("stepPrice");
                 AccountType accountType = AccountType.valueOf(resultSet.getString("accountType"));
-                Item item = new Item(idseller , itemid, name, description, imagePath, giaHienTai);
+                Item item = new Item(idseller , itemid, name, description, imagePath, currentPrice, stepPrice);
                 result.add(item);
             }
             JDBCUtil.closeConnection(connection);
@@ -173,8 +176,9 @@ public class ItemDAO implements DAOInterface<Item> {
                 String name = resultSet.getString("name");
                 String description = resultSet.getString("description");
                 String imagePath = resultSet.getString("imagePath");
-                double giaHienTai = resultSet.getDouble("giaHienTai");
-                result = new Item(idseller , itemid, name, description, imagePath, giaHienTai);
+                double currentPrice = resultSet.getDouble("currentPrice");
+                double stepPrice = resultSet.getDouble("stepPrice");
+                result = new Item(idseller , itemid, name, description, imagePath, currentPrice, stepPrice);
             }
             //dong ket noi
             JDBCUtil.closeConnection(connection);
@@ -200,8 +204,9 @@ public class ItemDAO implements DAOInterface<Item> {
                 String name = resultSet.getString("name");
                 String description = resultSet.getString("description");
                 String imagePath = resultSet.getString("imagePath");
-                double giaHienTai = resultSet.getDouble("giaHienTai");
-                result .add(new Item(idseller , itemid, name, description, imagePath, giaHienTai));
+                double currentPrice = resultSet.getDouble("currentPrice");
+                double stepPrice = resultSet.getDouble("stepPrice");
+                result .add(new Item(idseller , itemid, name, description, imagePath, currentPrice, stepPrice));
             }
             //dong ket noi
             JDBCUtil.closeConnection(connection);
