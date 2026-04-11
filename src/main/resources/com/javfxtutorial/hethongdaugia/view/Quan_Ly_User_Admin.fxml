@@ -1,22 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextArea?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yourpackage.AdminUserController">
+<BorderPane prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminUserManagementController">
 
     <top>
         <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-background-color: linear-gradient(to right, skyblue, lavender);" BorderPane.alignment="CENTER">
@@ -28,15 +18,15 @@
                <Image url="@../assets/ClassicLogo.png" />
             </image>
          </ImageView>
-            <Label style="-fx-font-size: 20; -fx-font-weight: bold;" text="Bảng Điều Khiển Admin - Quản Lý User" textFill="WHITE">
+            <Label style="-fx-font-size: 17; -fx-font-weight: bold;" text="Bảng Điều Khiển Admin - Quản Lý User" textFill="WHITE">
                 <font>
                     <Font name="System Bold" size="22.0" />
                 </font>
             </Label>
             <Region HBox.hgrow="ALWAYS" />
-            <TextField fx:id="searchField" prefWidth="250.0" promptText="Tìm kiếm (Tên, Email, ID)..." style="-fx-background-radius: 15;" />
+            <TextField fx:id="searchField" prefHeight="26.0" prefWidth="213.0" promptText="Tìm kiếm (Tên, Email, ID)..." style="-fx-background-radius: 15;" />
             <Button fx:id="btnSearch" mnemonicParsing="false" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 15;" text="Tìm kiếm" />
-         <Button mnemonicParsing="false" style="-fx-background-color: #3498db; -fx-text-fill: while; -fx-background-radius: 15;" text="Thoát" textFill="WHITE" />
+         <Button fx:id="thoat01" mnemonicParsing="false" onAction="#clickButtonExit" style="-fx-background-color: #3498db; -fx-text-fill: while; -fx-background-radius: 15;" text="Thoát" textFill="WHITE" />
         </HBox>
     </top>
 
@@ -89,7 +79,7 @@
                 </font>
             </Label>
 
-            <Button fx:id="btnAddUser" maxWidth="Infinity" mnemonicParsing="false" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold;" text="+ Thêm người dùng mới" />
+            <Button fx:id="AddUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToAddUser" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold;" text="+ Thêm người dùng mới" />
             <Button fx:id="btnEditUser" maxWidth="Infinity" mnemonicParsing="false" style="-fx-background-color: #f39c12; -fx-text-fill: white;" text="Cập nhật thông tin" />
             <Button fx:id="btnResetPassword" maxWidth="Infinity" mnemonicParsing="false" style="-fx-background-color: #9b59b6; -fx-text-fill: white;" text="Đặt lại mật khẩu" />
             <Button fx:id="btnLockAccount" maxWidth="Infinity" mnemonicParsing="false" style="-fx-background-color: #e67e22; -fx-text-fill: white;" text="Khóa / Mở khóa tài khoản" />
