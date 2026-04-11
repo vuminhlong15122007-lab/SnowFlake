@@ -15,9 +15,9 @@ public class JDBCUtil {
             com.mysql.cj.jdbc.Driver driver = new Driver();//tạo driver
             DriverManager.registerDriver(driver);
 // bước 2: khai báo các thông số cơ bản yêu cầu cho kết nối
-            String url = "jdbc:mysql://localhost:3306/he_thong_dau_gia";
-            String username = "root";
-            String password = "123456";
+            String url = "jdbc:mysql://gateway01.ap-southeast-1.prod.aws.tidbcloud.com:4000/test";
+            String username = "3sSzrSFdZfqFKd5.root";
+            String password = "8J1D7oKnbj8npKF1";
 // bước 3: tạo kết nối
             connection = DriverManager.getConnection(url, username, password);
         } catch (SQLException e) {
