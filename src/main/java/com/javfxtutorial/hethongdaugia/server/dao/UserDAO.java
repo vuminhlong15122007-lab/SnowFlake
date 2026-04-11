@@ -13,7 +13,7 @@ public class UserDAO implements DAOInterface<User> {
 
     @Override
     public int insert(User user) {
-        Connection connection = JBDCUtil.getConnection();
+        Connection connection = JDBCUtil.getConnection();
         int result = 0;
         try {
             Statement st = connection.createStatement();
@@ -53,7 +53,7 @@ public class UserDAO implements DAOInterface<User> {
     }
     @Override
     public int update(User user) {
-        Connection connection = JBDCUtil.getConnection();
+        Connection connection = JDBCUtil.getConnection();
         int result = 0;
 
         // Câu lệnh SQL với các dấu ? đại diện cho giá trị sẽ truyền vào sau
@@ -92,7 +92,7 @@ public class UserDAO implements DAOInterface<User> {
         int result = 0;
         try {
             //tao ket noi
-            Connection connection = JBDCUtil.getConnection();
+            Connection connection = JDBCUtil.getConnection();
             //tao doi tuong statement
             Statement st = connection.createStatement();
             //thuc thi lenh sql
@@ -105,7 +105,7 @@ public class UserDAO implements DAOInterface<User> {
             else{
                 System.out.println("Xóa thất bại");
             }
-            JBDCUtil.closeConnection(connection);
+            JDBCUtil.closeConnection(connection);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -116,7 +116,7 @@ public class UserDAO implements DAOInterface<User> {
     public ArrayList<User> selectAll() {
         ArrayList<User> result = new ArrayList<>();
         try {
-            Connection connection = JBDCUtil.getConnection();
+            Connection connection = JDBCUtil.getConnection();
             Statement st = connection.createStatement();
             //lenh sql
             String sql = "SELECT * FROM user";
@@ -133,7 +133,7 @@ public class UserDAO implements DAOInterface<User> {
                 User user = new User(id, name, passWord, email, sdt, accountType);
                 result.add(user);
             }
-            JBDCUtil.closeConnection(connection);
+            JDBCUtil.closeConnection(connection);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -144,7 +144,7 @@ public class UserDAO implements DAOInterface<User> {
     public User selectById(int userId) {
         User result = null;
         try{
-            Connection connection = JBDCUtil.getConnection(); // Tao ket noi
+            Connection connection = JDBCUtil.getConnection(); // Tao ket noi
             Statement statement = connection.createStatement(); // tao ra obj statement
             // Thuc thi cau lech sql
             String sql = "SELECT * FROM user where  id = '" + userId + "'";
@@ -161,7 +161,7 @@ public class UserDAO implements DAOInterface<User> {
                 result = new User(id, name, passWord, email, sdt, accountType);
             }
             //dong ket noi
-            JBDCUtil.closeConnection(connection);
+            JDBCUtil.closeConnection(connection);
         }catch (SQLException e){
             e.printStackTrace(); // in ra loi xong van chay tiep
         }
@@ -172,7 +172,7 @@ public class UserDAO implements DAOInterface<User> {
     public ArrayList<User> selectByCondition(String condition) {
         ArrayList<User> result =  new ArrayList<>();
         try{
-            Connection connection = JBDCUtil.getConnection(); // Tao ket noi
+            Connection connection = JDBCUtil.getConnection(); // Tao ket noi
             Statement statement = connection.createStatement(); // tao ra obj statement
             // Thuc thi cau lech sql
             String sql = "SELECT * FROM user where " + condition ;
@@ -190,7 +190,7 @@ public class UserDAO implements DAOInterface<User> {
                 result.add(user);
             }
             //dong ket noi
-            JBDCUtil.closeConnection(connection);
+            JDBCUtil.closeConnection(connection);
         }catch (SQLException e){
             e.printStackTrace(); // in ra loi xong van chay tiep
         }
@@ -201,7 +201,7 @@ public class UserDAO implements DAOInterface<User> {
     public User selectByUsername(String username) {
         User result = null;
         try{
-            Connection connection = JBDCUtil.getConnection(); // Tao ket noi
+            Connection connection = JDBCUtil.getConnection(); // Tao ket noi
             Statement statement = connection.createStatement(); // tao ra obj statement
             // Thuc thi cau lech sql
             String sql = "SELECT * FROM user where name = \"" + username + '"';
@@ -218,7 +218,7 @@ public class UserDAO implements DAOInterface<User> {
                 result = new User(id, name, passWord, email, sdt, accountType);
             }
             //dong ket noi
-            JBDCUtil.closeConnection(connection);
+            JDBCUtil.closeConnection(connection);
         }catch (SQLException e){
             e.printStackTrace(); // in ra loi xong van chay tiep
         }
@@ -227,7 +227,7 @@ public class UserDAO implements DAOInterface<User> {
     }
 
     public int getSize() {
-        Connection connection = JBDCUtil.getConnection();
+        Connection connection = JDBCUtil.getConnection();
         int count = 0;
         ResultSet result;
         try {

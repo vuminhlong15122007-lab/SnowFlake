@@ -6,7 +6,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class JBDCUtil {
+public class JDBCUtil {
     public static Connection getConnection() {
         Connection connection = null;
 

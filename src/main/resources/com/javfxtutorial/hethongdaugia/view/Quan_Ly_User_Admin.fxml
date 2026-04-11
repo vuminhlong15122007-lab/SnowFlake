@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yourpackage.AdminUserController">
+<BorderPane prefHeight="500.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.yourpackage.AdminUserController">
 
     <top>
         <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-background-color: linear-gradient(to right, skyblue, lavender);" BorderPane.alignment="CENTER">
@@ -18,7 +18,7 @@
                <Image url="@../assets/ClassicLogo.png" />
             </image>
          </ImageView>
-            <Label style="-fx-font-size: 20; -fx-font-weight: bold;" text="Bảng Điều Khiển Admin - Quản Lý Người Dùng" textFill="WHITE">
+            <Label style="-fx-font-size: 20; -fx-font-weight: bold;" text="Bảng Điều Khiển Admin - Quản Lý User" textFill="WHITE">
                 <font>
                     <Font name="System Bold" size="22.0" />
                 </font>
@@ -68,7 +68,7 @@
                 </font>
             </Label>
             <Separator />
-            <TextArea fx:id="userInfoArea" editable="false" prefHeight="120.0" promptText="Chọn một người dùng từ danh sách để xem thông tin chi tiết..." style="-fx-background-color: transparent;" wrapText="true" />
+            <TextArea fx:id="userInfoArea" editable="false" prefHeight="75.0" prefWidth="249.0" promptText="Chọn một người dùng từ danh sách để xem thông tin chi tiết..." style="-fx-background-color: transparent;" wrapText="true" />
 
             <Separator />
 

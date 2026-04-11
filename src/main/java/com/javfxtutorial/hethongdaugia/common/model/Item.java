@@ -4,13 +4,25 @@ import java.time.LocalDate;
 
 public class Item implements Serializable {
     private int sellerId;
-    private String itemId;
+    private int itemId;
     private String name;
     private String description;
     private String imagePath; // đường dẫn ảnh
-    private String giaHienTai;
+    private double giaHienTai;
 
-    public Item(int sellerId, String itemId, String name, String description, String giaHienTai,  String imagePath) {
+    public void setItemId(int itemId) {
+        this.itemId = itemId;
+    }
+
+    public Item(int sellerId, int itemId, String name, String description, double giaHienTai, String imagePath) {
+        this.sellerId = sellerId;
+        this.name = name;
+        this.description = description;
+        this.imagePath = imagePath;
+        this.giaHienTai = giaHienTai;
+    }
+
+    public Item(int sellerId, int itemId, String name, String description, String imagePath, double giaHienTai) {
         this.sellerId = sellerId;
         this.itemId = itemId;
         this.name = name;
@@ -19,11 +31,11 @@ public class Item implements Serializable {
         this.giaHienTai = giaHienTai;
     }
 
-    public String getGiaHienTai() {
+    public double getGiaHienTai() {
         return giaHienTai;
     }
 
-    public void setGiaHienTai(String giaHienTai) {
+    public void setGiaHienTai(double giaHienTai) {
         this.giaHienTai = giaHienTai;
     }
 
@@ -41,7 +53,7 @@ public class Item implements Serializable {
     }
     public String getDescription() {return description;}
     public void setDescription(String description) {this.description = description;}
-    public String getItemId() {return itemId;}
+    public int getItemId() {return itemId;}
     public int getSellerId() {return sellerId;}
     public void setSellerId(int sellerId) {this.sellerId = sellerId;}
 }
