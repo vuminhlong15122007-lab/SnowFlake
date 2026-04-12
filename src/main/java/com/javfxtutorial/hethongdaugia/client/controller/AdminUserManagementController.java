@@ -1,16 +1,55 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
-
+import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
+import javafx.fxml.Initializable;
+import javafx.scene.*;
 import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
+import java.net.URL;
+import java.util.ResourceBundle;
 
-public class AdminUserManagementController {
+
+public class AdminUserManagementController implements  Initializable {
+    @FXML
+    private TableView<User> userTable;
+
+    @FXML
+    private TableColumn<User, Integer> colId;
+
+    @FXML
+    private TableColumn<User, String> colUsername;
+
+    @FXML
+    private TableColumn<User, String> colEmail;
+    @FXML
+    private TableColumn<User, String> colPhone;
+    @FXML
+    private TableColumn<User, String> colRole;
+    @FXML
+    private TableColumn<User, String> colStatus;
+
+    private UserDAO nguoiDungDAO = new UserDAO();
+    @Override
+    public void initialize(URL location, ResourceBundle resources) {
+        // Tên trong ngoặc kép ("id", "username", "email") phải CHÍNH XÁC với tên biến trong class User
+        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
+        colUsername.setCellValueFactory(new PropertyValueFactory<>("name"));
+        colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
+        colPhone.setCellValueFactory(new PropertyValueFactory<>("sdt"));
+        colRole.setCellValueFactory(new PropertyValueFactory<>("accountType"));
+
+        // Lấy dữ liệu và nhét vào bảng
+        ObservableList<User> danhSach = nguoiDungDAO.selectAll();
+        userTable.setItems(danhSach);
+    }
     //cap nhat thong tin
     @FXML
     private Button btnEditUser;
@@ -74,4 +113,5 @@ public class AdminUserManagementController {
             e.printStackTrace();
         }
     }
+
 }

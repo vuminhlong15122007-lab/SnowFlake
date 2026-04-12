@@ -2,6 +2,8 @@ package com.javfxtutorial.hethongdaugia.server.dao;
 
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -113,30 +115,44 @@ public class UserDAO implements DAOInterface<User> {
     }
 
     @Override
-    public ArrayList<User> selectAll() {
-        ArrayList<User> result = new ArrayList<>();
-        try {
-            Connection connection = JDBCUtil.getConnection();
-            Statement st = connection.createStatement();
-            //lenh sql
-            String sql = "SELECT * FROM user";
-            System.out.println(sql);
-            ResultSet resultSet = st.executeQuery(sql);
-            //lấy dữ liệu
-            while (resultSet.next()){
+    public ObservableList<User> selectAll() {
+        ObservableList<User> result = FXCollections.observableArrayList();
+
+        // Khuyến khích liệt kê rõ tên cột thay vì dùng SELECT *
+        String sql = "SELECT id, name, email, passWord, sdt, accountType FROM user";
+
+        // Sử dụng try-with-resources để TỰ ĐỘNG đóng kết nối (cực kỳ quan trọng)
+        try (Connection connection = JDBCUtil.getConnection();
+             PreparedStatement pst = connection.prepareStatement(sql);
+             ResultSet resultSet = pst.executeQuery()) {
+
+            System.out.println("Đang thực thi: " + sql);
+
+            while (resultSet.next()) {
                 int id = resultSet.getInt("id");
                 String name = resultSet.getString("name");
                 String email = resultSet.getString("email");
                 String passWord = resultSet.getString("passWord");
                 String sdt = resultSet.getString("sdt");
-                AccountType accountType = AccountType.valueOf(resultSet.getString("accountType"));
+
+                // Xử lý Enum an toàn hơn đề phòng trường hợp dưới DB bị null
+                String typeString = resultSet.getString("accountType");
+                AccountType accountType = null;
+                if (typeString != null && !typeString.isEmpty()) {
+                    accountType = AccountType.valueOf(typeString);
+                }
+
                 User user = new User(id, name, passWord, email, sdt, accountType);
                 result.add(user);
             }
-            JDBCUtil.closeConnection(connection);
+
         } catch (SQLException e) {
+            System.err.println("Lỗi truy vấn Database: " + e.getMessage());
             e.printStackTrace();
+        } catch (IllegalArgumentException e) {
+            System.err.println("Lỗi sai định dạng AccountType (Enum không khớp): " + e.getMessage());
         }
+
         return result;
     }
 

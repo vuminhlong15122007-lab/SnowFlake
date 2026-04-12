@@ -2,6 +2,8 @@ package com.javfxtutorial.hethongdaugia.server.dao;
 
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 
 import java.sql.*;
@@ -132,8 +134,8 @@ public class ItemDAO implements DAOInterface<Item> {
         return result;
     }
 
-    public ArrayList<Item> selectAll(){
-        ArrayList<Item> result = new ArrayList<>();
+    public ObservableList<Item> selectAll(){
+        ObservableList<Item> result = FXCollections.observableArrayList();
         try {
             Connection connection = JDBCUtil.getConnection();
             Statement st = connection.createStatement();
