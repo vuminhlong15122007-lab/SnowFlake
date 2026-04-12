@@ -61,16 +61,6 @@
                 <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
             </padding>
 
-            <Label text="Thông tin chi tiết">
-                <font>
-                    <Font name="System Bold" size="18.0" />
-                </font>
-            </Label>
-            <Separator />
-            <TextArea fx:id="userInfoArea" editable="false" prefHeight="120.0" promptText="Chọn một người dùng từ danh sách để xem thông tin chi tiết..." style="-fx-background-color: transparent;" wrapText="true" />
-
-            <Separator />
-
             <Label text="Thao tác quản trị">
                 <font>
                     <Font name="System Bold" size="16.0" />
