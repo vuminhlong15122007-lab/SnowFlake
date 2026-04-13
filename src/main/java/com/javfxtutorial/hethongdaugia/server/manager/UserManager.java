@@ -41,5 +41,14 @@ public class UserManager {
         }
         return null;//that bai
     }
+    public boolean deleteUser(int userId, String username, String email, String phone){
+        User deleteUser = UserDAO.getInstance().selectById(userId);
+        int result = UserDAO.getInstance().delete(deleteUser);
+        if (result > 0){
+            System.out.println( "Xóa user thành công");
+            return true;
+        }
+        return false;
+    }
 
 }
