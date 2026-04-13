@@ -91,7 +91,7 @@
 
             <Button fx:id="btnAddUser" maxWidth="Infinity" mnemonicParsing="false" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold;" text="+ Thêm người dùng mới" />
             <Button fx:id="btnEditUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#getUpdateUser" style="-fx-background-color: #f39c12; -fx-text-fill: white;" text="Cập nhật thông tin" />
-            <Button fx:id="btnResetPassword" maxWidth="Infinity" mnemonicParsing="false" style="-fx-background-color: #9b59b6; -fx-text-fill: white;" text="Đặt lại mật khẩu" />
+            <Button fx:id="btnResetPassword" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToResetPW" style="-fx-background-color: #9b59b6; -fx-text-fill: white;" text="Đặt lại mật khẩu" />
             <Button fx:id="btnLockAccount" maxWidth="Infinity" mnemonicParsing="false" style="-fx-background-color: #e67e22; -fx-text-fill: white;" text="Khóa / Mở khóa tài khoản" />
 
             <Region VBox.vgrow="ALWAYS" />
