@@ -7,7 +7,7 @@
 <BorderPane prefHeight="500" prefWidth="900" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.TrangChuController">
     <!-- Header -->
     <top>
-        <HBox alignment="CENTER_LEFT" prefHeight="41.0" prefWidth="900.0" spacing="20" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-padding: 10;">
+        <HBox alignment="CENTER_LEFT" prefHeight="41.0" prefWidth="900.0" spacing="20" style="-fx-background-color: linear-gradient(to right, #FFF0F5, #B3E5FC); -fx-padding: 10;">
          <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
             <image>
                <Image url="@../assets/Logo.png" />
@@ -15,7 +15,7 @@
          </ImageView>
             <Label style="-fx-font-size: 22px; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox" />
             <Region HBox.hgrow="ALWAYS" />
-            <Button fx:id="logoutButton" onAction="#goLogin" style="-fx-background-color: #4b0082; -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold;" text="Đăng xuất" />
+            <Button fx:id="logoutButton" onAction="#goLogin" prefHeight="32.0" prefWidth="90.0" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12;" text="Đăng xuất" />
         </HBox>
     </top>
 
@@ -36,7 +36,7 @@
                 <VBox alignment="CENTER" spacing="5">
                     <children>
                   <Label prefHeight="85.0" prefWidth="231.0" style="-fx-font-size: 30; -fx-font-weight: bold; -fx-font-family: 'Lucida Handwriting', 'Mistral', 'Cursive'; -fx-text-fill: #34495e; -fx-effect: dropshadow(three-pass-box, rgba(47, 128, 237, 0.2), 15, 0, 0, 5); -fx-padding: 0 0 10 0;" text="WELCOME TO" textAlignment="CENTER" />
-                        <Label style="-fx-font-size: 60px;                                       -fx-font-weight: bold;                                       -fx-font-family: 'Lucida Handwriting', 'Mistral', 'Cursive';                                       -fx-text-fill: linear-gradient(to right, #4b0082, #2f80ed);                                       -fx-effect: dropshadow(three-pass-box, rgba(47, 128, 237, 0.2), 15, 0, 0, 5);                                       -fx-padding: 0 0 10 0;" text="k ỉ nguyên SnowFox" textAlignment="CENTER">
+                        <Label style="-fx-font-size: 60px;                                       -fx-font-weight: bold;                                       -fx-font-family: 'Lucida Handwriting', 'Mistral', 'Cursive';                                       -fx-text-fill: linear-gradient(to right, #4b0082, #2f80ed);                                       -fx-effect: dropshadow(three-pass-box, rgba(47, 128, 237, 0.2), 15, 0, 0, 5);                                       -fx-padding: 0 0 10 0;" text="SnowFox" textAlignment="CENTER">
                         </Label>
 
                         <HBox alignment="CENTER">
@@ -54,8 +54,10 @@
 
     <!-- Footer -->
     <bottom>
-        <HBox alignment="CENTER" style="-fx-background-color: #b3c6ff; -fx-padding: 8;">
-            <Label style="-fx-text-fill: white; -fx-font-size: 12px;" text="© 2026 SnowFox - Studio SnowFlake" />
+        <HBox prefHeight="22.0" prefWidth="600.0" style="-fx-background-color: linear-gradient(to right, #FFF0F5, #B3E5FC); -fx-padding: 8;" BorderPane.alignment="CENTER">
+            <children>
+                <Label alignment="CENTER" prefHeight="18.0" prefWidth="876.0" style="-fx-font-size: 12px;" text="© 2026 SnowFox - Studio SnowFlake" textAlignment="CENTER" textFill="#902a2a" />
+            </children>
         </HBox>
     </bottom>
 </BorderPane>
