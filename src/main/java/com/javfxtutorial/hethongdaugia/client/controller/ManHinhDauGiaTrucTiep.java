@@ -13,18 +13,16 @@ import com.javfxtutorial.hethongdaugia.common.model.Item;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.io.InvalidObjectException;
 
 
-public class GoLiveActionController {
+public class ManHinhDauGiaTrucTiep {
     @FXML Button goMenu;
-    @FXML Button placeBidButton;
     @FXML Label giaHienTai;
     @FXML Label ngMua; // chua xu ly duoc
     @FXML Label productName;
     @FXML ImageView productImage;
 
-    private  Item product;
+//    private  Item product;
 
 //    public void setDataSang(Item p){
 //        this.product = p;
