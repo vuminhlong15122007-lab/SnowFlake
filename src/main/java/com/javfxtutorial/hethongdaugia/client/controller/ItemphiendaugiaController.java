@@ -29,17 +29,17 @@ public class ItemphiendaugiaController {
         this.product = product;
         lbAuctionName.setText(product.getName());
         lbGiaSp.setText(String.valueOf(product.getCurrentPrice()));
-        if (product.getImagePath() != null){
-            try{
-                // 1. Đường dẫn phải bắt đầu bằng dấu /
-                String imagePath = "/com/javfxtutorial/hethongdaugia/assets/" + product.getImagePath();
-                Image image = new Image(getClass().getResourceAsStream(imagePath));  // Tao tam anh tu duong dan
-                imgSanPham.setImage(image); // dan tam anh vao khung
-            }catch(Exception e){
-                e.printStackTrace();
-            }
-
-        }
+//        if (product.getImagePath() != null){
+//            try{
+//                // 1. Đường dẫn phải bắt đầu bằng dấu /
+//                String imagePath = "/com/javfxtutorial/hethongdaugia/assets/" + product.getImagePath();
+//                Image image = new Image(getClass().getResourceAsStream(imagePath));  // Tao tam anh tu duong dan
+//                imgSanPham.setImage(image); // dan tam anh vao khung
+//            }catch(Exception e){
+//                e.printStackTrace();
+//            }
+//
+//        } SET DỮ LIỆU ẢNH - ĐỂ SAU
     }
 
     @FXML

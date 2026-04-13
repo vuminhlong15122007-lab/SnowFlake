@@ -1,7 +1,10 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllItemsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
-import javafx.beans.Observable;
+import com.javfxtutorial.hethongdaugia.common.network.Command;
+import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -14,13 +17,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
-import com.javfxtutorial.hethongdaugia.common.model.Item;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 
 public class AuctionController {
@@ -67,8 +69,11 @@ public class AuctionController {
 
 
     public void loadData(){
-       //observable.add(new Item() {    CHUA BIET NEN LAP GI
-
+       //observable.add(new Item()
+        ServerConnection connection = new ServerConnection(5000);
+        Command cmd = new GetAllItemsCommand();
+        Response rp = connection.sendCommand(cmd);
+        observable.addAll((ArrayList<Item>) rp.getPayLoad());
     }
 
     public void logOut1(ActionEvent event){

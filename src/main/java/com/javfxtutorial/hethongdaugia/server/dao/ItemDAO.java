@@ -11,8 +11,8 @@ import java.util.ArrayList;
 
 public class ItemDAO implements DAOInterface<Item> {
     private ItemDAO(){};
-    public static ItemDAO instance;
-    public ItemDAO getInstance(){
+    private static ItemDAO instance;
+    public static ItemDAO getInstance(){
         if (instance == null){
             synchronized (ItemDAO.class){
                 if (instance == null){

@@ -1,6 +1,7 @@
 package com.javfxtutorial.hethongdaugia.client.model;
 
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 
 public class ClientModel {
@@ -31,5 +32,13 @@ public class ClientModel {
     }
     public void setCurrentAuction(Auction currentAuction) {
         this.currentAuction = currentAuction;
+    }
+
+    private Item currentItem;
+    public Item getCurrentItem(){
+        return currentItem;
+    }
+    public void setCurrentItem(Item currentItem) {
+        this.currentItem = currentItem;
     }
 }
