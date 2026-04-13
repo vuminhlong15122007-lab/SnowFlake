@@ -41,18 +41,16 @@
                     <Font name="System Bold" size="16.0" />
                 </font>
             </Label>
-            <TableView fx:id="userTable" VBox.vgrow="ALWAYS">
+            <TableView fx:id="userTable" prefHeight="397.0" prefWidth="590.0" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="colId" prefWidth="60.0" text="ID" />
-                    <TableColumn fx:id="colUsername" prefWidth="150.0" text="Tên đăng nhập" />
-                    <TableColumn fx:id="colFullName" prefWidth="200.0" text="Họ và tên" />
-                    <TableColumn fx:id="colEmail" prefWidth="220.0" text="Email" />
-                    <TableColumn fx:id="colRole" prefWidth="100.0" text="Vai trò" />
-                    <TableColumn fx:id="colStatus" prefWidth="100.0" text="Trạng thái" />
+                    <TableColumn fx:id="colId" prefWidth="40" text="ID" />
+                    <TableColumn fx:id="colUsername" prefWidth="120" text="Tên đăng nhập" />
+                    <TableColumn fx:id="colEmail" prefWidth="158.39993286132812" text="Email" />
+                    <TableColumn fx:id="colPhone" prefWidth="107.20001220703125" text="Sđt" />
+                    <TableColumn fx:id="colRole" minWidth="0.0" prefWidth="84.0" text="Vai trò" />
+                    <TableColumn fx:id="colStatus" prefWidth="78.4000244140625" text="Trạng thái" />
                 </columns>
-                <columnResizePolicy>
-                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                </columnResizePolicy>
+
             </TableView>
         </VBox>
     </center>
@@ -62,16 +60,6 @@
             <padding>
                 <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
             </padding>
-
-            <Label text="Thông tin chi tiết">
-                <font>
-                    <Font name="System Bold" size="18.0" />
-                </font>
-            </Label>
-            <Separator />
-            <TextArea fx:id="userInfoArea" editable="false" prefHeight="120.0" promptText="Chọn một người dùng từ danh sách để xem thông tin chi tiết..." style="-fx-background-color: transparent;" wrapText="true" />
-
-            <Separator />
 
             <Label text="Thao tác quản trị">
                 <font>

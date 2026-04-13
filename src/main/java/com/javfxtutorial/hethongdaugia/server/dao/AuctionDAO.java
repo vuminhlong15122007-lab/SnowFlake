@@ -3,6 +3,8 @@ package com.javfxtutorial.hethongdaugia.server.dao;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -137,8 +139,8 @@ public class AuctionDAO implements DAOInterface<Auction> {
         return result;
     }
 
-    public ArrayList<Auction> selectAll() {
-        ArrayList<Auction> result = new ArrayList<>();
+    public ObservableList<Auction> selectAll() {
+        ObservableList<Auction> result = FXCollections.observableArrayList();
         try {
             Connection connection = JDBCUtil.getConnection();
             Statement st = connection.createStatement();

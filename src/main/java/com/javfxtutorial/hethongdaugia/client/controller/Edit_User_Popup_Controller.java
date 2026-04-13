@@ -1,4 +1,69 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.client.MainApplication;
+import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.model.Command.RegisterCommand;
+import com.javfxtutorial.hethongdaugia.common.network.Command;
+import com.javfxtutorial.hethongdaugia.common.network.Response;
+import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.TextField;
+import javafx.stage.Stage;
+import javafx.stage.StageStyle;
+
+import java.io.IOException;
+
 public class Edit_User_Popup_Controller {
+    @FXML
+    private TextField txtName;
+    @FXML
+    private TextField txtEmail;
+    @FXML
+    private TextField txtPhoneNumber;
+    @FXML
+    private ComboBox cbRole ;
+    @FXML
+    private ComboBox cbStatus ;
+    public void clickToSave(ActionEvent event) throws IOException {
+        String name = txtName.getText();
+        String email = txtEmail.getText();
+        String sdt = txtPhoneNumber.getText();
+        String password = "00000";
+        String confirmPassword = "00000";
+        if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
+            if (password.equals(confirmPassword)){
+                ServerConnection connection = new ServerConnection(5000);
+                Command cmd = new RegisterCommand();
+                cmd.addData("username", name);
+                cmd.addData("password", password);
+                cmd.addData("email", email);
+                cmd.addData("sdt", sdt);
+                Response rp = connection.sendCommand(cmd);
+                if (rp.isSuccess()){
+                    try {
+                        Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/Quan_Ly_User_Admin.fxml"));
+                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                        stage.setScene(new Scene(root));
+                        stage.show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    Stage stage = new Stage();
+                    stage.setTitle("Tạo Tài Khoản Thành Công");
+                    FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/popUpSignUp.fxml"));
+                    stage.initStyle(StageStyle.DECORATED);
+                    Scene scene = new Scene(fxmlLoader.load());
+                    stage.setScene(scene);
+                    stage.show();
+                }
+                connection.close();
+
+            }
+        }
+    }
 }

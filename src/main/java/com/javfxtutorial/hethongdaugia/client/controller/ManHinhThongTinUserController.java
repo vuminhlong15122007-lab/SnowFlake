@@ -60,17 +60,13 @@ public class ManHinhThongTinUserController {
     public void loadUserInfo(){
         User currentUser = ClientModel.getInstance().getCurrentUser();
         if (currentUser != null){
-            usernameLabel.setText(currentUser.getName());
-            emailLabel.setText(currentUser.getEmail());
-            phoneLabel.setText(currentUser.getSdt());
-
             updateNameText.setText(currentUser.getName());
             updateEmailText.setText(currentUser.getEmail());
             updatePhoneText.setText(currentUser.getSdt());
         }else{
-            usernameLabel.setText("");
-            emailLabel.setText("");
-            phoneLabel.setText("");
+            updateNameText.setText("");
+            updateEmailText.setText("");
+            updatePhoneText.setText("");
         }
     }
     //cap nhat thong tin

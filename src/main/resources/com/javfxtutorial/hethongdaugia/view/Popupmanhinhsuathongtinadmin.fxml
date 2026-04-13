@@ -40,19 +40,20 @@
         </rowConstraints>
 
         <Label text="Tên đăng nhập:" GridPane.rowIndex="0" />
+        <TextField fx:id="txtName" promptText="nhập tên đăng nhập" GridPane.columnIndex="1" />
 
         <Label text="Email: " GridPane.rowIndex="1" />
-        <TextField fx:id="txtFullName" promptText="Example@gmail.com" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <TextField fx:id="txtEmail" promptText="Example@gmail.com" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
         <Label text="Số điện thoại" GridPane.rowIndex="2" />
-        <TextField fx:id="txtEmail" promptText="phone number" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <TextField fx:id="txtPhoneNumber" promptText="phone number" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
         <Label text="Vai trò:" GridPane.rowIndex="3" />
         <ComboBox fx:id="cbRole" prefWidth="260.0" promptText="-- Chọn vai trò --" GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
         <Label text="Trạng thái:" GridPane.rowIndex="4" />
         <ComboBox fx:id="cbStatus" prefWidth="260.0" promptText="-- Chọn trạng thái --" GridPane.columnIndex="1" GridPane.rowIndex="4" />
-      <TextField promptText="nhập tên đăng nhập" GridPane.columnIndex="1" />
+
     </GridPane>
 
     <HBox alignment="CENTER_RIGHT" spacing="15.0">
@@ -61,6 +62,6 @@
         </VBox.margin>
         <Button fx:id="btnCancel" cancelButton="true" mnemonicParsing="false" prefWidth="90.0" style="-fx-background-color: #95a5a6; -fx-text-fill: white;" text="Hủy bỏ" />
 
-        <Button fx:id="btnSave" defaultButton="true" mnemonicParsing="false" prefWidth="110.0" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;" text="Lưu thay đổi" />
+        <Button fx:id="btnSave" defaultButton="true" mnemonicParsing="false" onAction="#clickToSave" prefWidth="110.0" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;" text="Lưu thay đổi" />
     </HBox>
 </VBox>
