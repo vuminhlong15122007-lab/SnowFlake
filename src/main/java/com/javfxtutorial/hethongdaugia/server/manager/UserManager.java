@@ -41,5 +41,22 @@ public class UserManager {
         }
         return null;//that bai
     }
-
+    public boolean deleteUser(int userId, String username, String email, String phone){
+        User deleteUser = UserDAO.getInstance().selectById(userId);
+        int result = UserDAO.getInstance().delete(deleteUser);
+        if (result > 0){
+            System.out.println( "Xóa user thành công");
+            return true;
+        }
+        return false;
+    }
+    public boolean reset_password(int userId, String passWord){
+        User resetPW = UserDAO.getInstance().selectById(userId);
+        int result = UserDAO.getInstance().update(resetPW);
+        if (result > 0){
+            System.out.println( "Đổi mật khẩu thành công");
+            return true;
+        }
+        return false;
+    }
 }
