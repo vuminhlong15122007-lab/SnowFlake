@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -29,6 +30,17 @@ public class Edit_User_Popup_Controller {
     private ComboBox cbRole ;
     @FXML
     private ComboBox cbStatus ;
+    @FXML private Button btnCancel;
+    @FXML
+    public void initialize() {
+        // gan su kien dong cua so cho nut huy
+        btnCancel.setOnAction(event -> {
+            // Llay va dong stage hien tai
+            Stage stage = (Stage) btnCancel.getScene().getWindow();
+            stage.close();
+        });
+    }
+    @FXML
     public void clickToSave(ActionEvent event) throws IOException {
         String name = txtName.getText();
         String email = txtEmail.getText();

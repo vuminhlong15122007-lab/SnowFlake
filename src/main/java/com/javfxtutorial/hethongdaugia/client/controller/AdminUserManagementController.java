@@ -68,9 +68,9 @@ public class AdminUserManagementController implements  Initializable {
     @FXML
     private Button btnEditUser;
     @FXML
-    public void getUpdateUser(ActionEvent event){
+    public void getUpdateAdmin(ActionEvent event){
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/Popupmanhinhsuathongtinadmin.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/update_admin.fxml"));
             Parent root = loader.load();
             Stage popupStage = new Stage();
 
@@ -128,7 +128,8 @@ public class AdminUserManagementController implements  Initializable {
     }
     @FXML private Button btnDeleteUser;
     @FXML
-    public void clickToDeleteUser(){
+    public void clickToDeleteUser() throws IOException {
+        ServerConnection connection = new ServerConnection();
         User selectUser = userTable.getSelectionModel().getSelectedItem();
         if (selectUser == null){
             showAlert("Lỗi", "Vui lòng chọn người dùng cần xóa");
@@ -149,7 +150,6 @@ public class AdminUserManagementController implements  Initializable {
         //neu co
         if(result == yes){
             //tao command gui len server
-            ServerConnection connection = new ServerConnection();
             DeleteUserCommand cmd = new DeleteUserCommand();
             cmd.addData("userId", selectUser.getId());
             cmd.addData("username", selectUser.getName());
@@ -165,6 +165,7 @@ public class AdminUserManagementController implements  Initializable {
             }
 
         }
+        connection.close();
 
     }
     private void showAlert(String title, String content) {

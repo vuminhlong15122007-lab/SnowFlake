@@ -9,6 +9,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 
+import java.io.IOException;
+
 public class ResetPassWordController {
     @FXML private TextField txtoldPW;
     @FXML private TextField txtNewPW;
@@ -32,7 +34,7 @@ public class ResetPassWordController {
         }
     }
     @FXML
-    public void updatePW(){
+    public void updatePW() throws IOException {
         //lay du lieu tu o nhap
         String newPW = txtNewPW.getText();
         String confirmPW = txtConfirmPW.getText();
@@ -63,7 +65,9 @@ public class ResetPassWordController {
             showAlert("Thành công", "Cập nhật mật khẩu thành công");
         }else{
             showAlert("Thất bại", rp.getMessage());
-        }}
+        }
+        connection.close();
+    }
 
     //hien thi alert
     public void showAlert(String title, String message){
