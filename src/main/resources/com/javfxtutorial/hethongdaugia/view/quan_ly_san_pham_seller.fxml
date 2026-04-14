@@ -29,8 +29,7 @@
                 <ListView fx:id="productList" prefHeight="350" prefWidth="250" />
                 <HBox alignment="CENTER" spacing="10">
                     <Button fx:id="addButton" style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="Thêm" />
-                    <Button fx:id="editButton" style="-fx-background-color: #6c757d; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="Sửa" />
-                    <Button fx:id="deleteButton" style="-fx-background-color: #dc3545; -fx-font-weight: bold; -fx-text-fill: white; -fx-background-radius: 6;" text="Xóa" />
+                    <Button fx:id="deleteButton" prefHeight="25.0" prefWidth="48.0" style="-fx-background-color: #dc3545; -fx-font-weight: bold; -fx-text-fill: white; -fx-background-radius: 6;" text="Xóa" />
                 </HBox>
             </VBox>
 
