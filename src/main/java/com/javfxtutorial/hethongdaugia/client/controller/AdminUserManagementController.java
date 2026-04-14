@@ -40,6 +40,8 @@ public class AdminUserManagementController implements  Initializable {
     private TableColumn<User, String> colRole;
     @FXML
     private TableColumn<User, String> colStatus;
+    @FXML
+    private Button deleteButton;
 
     private UserDAO nguoiDungDAO = new UserDAO();
     @Override
@@ -183,6 +185,37 @@ public class AdminUserManagementController implements  Initializable {
             stage.show();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+    @FXML
+    private void handleDeleteUser() {
+        // 1. Lấy dòng đang được chọn từ TableView
+        User selectedUser = userTable.getSelectionModel().getSelectedItem();
+        UserDAO  dao = new UserDAO();
+
+        if (selectedUser != null) {
+            // 2. Hiển thị hộp thoại xác nhận (Tùy chọn nhưng nên có)
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Xác nhận xóa");
+            alert.setHeaderText("Bạn có chắc chắn muốn xóa tài khoản: " + selectedUser.getName() + "?");
+
+            if (alert.showAndWait().get() == ButtonType.OK) {
+                // 3. Thực hiện xóa trong Cơ sở dữ liệu (ví dụ gọi hàm delete từ DAO)
+                int success = dao.delete(selectedUser);
+
+                if (success != 0) {
+                    // 4. Cập nhật lại giao diện (Xóa khỏi ObservableList đang hiển thị)
+                    userTable.getItems().remove(selectedUser);
+                    System.out.println("Xóa thành công!");
+                } else {
+                    System.out.println("Lỗi hệ thống không thể xóa.");
+                }
+            }
+        } else {
+            // Nếu chưa chọn hàng nào mà đã bấm nút
+            Alert warning = new Alert(Alert.AlertType.WARNING);
+            warning.setContentText("Vui lòng chọn một tài khoản trong danh sách trước!");
+            warning.show();
         }
     }
 
