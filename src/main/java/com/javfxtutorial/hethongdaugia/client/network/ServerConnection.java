@@ -46,9 +46,14 @@ public class ServerConnection {
         }
     }
     public void close() throws IOException {
-        if (clientSocket != null){
-        this.clientSocket.close();}
-        in.close();
-        out.close();
+        if (in != null) {
+            in.close();
+        }
+        if (out != null) {
+            out.close();
+        }
+        if (clientSocket != null) {
+            this.clientSocket.close();
+        }
     }
 }
