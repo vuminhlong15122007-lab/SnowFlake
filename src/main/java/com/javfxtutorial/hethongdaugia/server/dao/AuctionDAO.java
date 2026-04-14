@@ -139,8 +139,8 @@ public class AuctionDAO implements DAOInterface<Auction> {
         return result;
     }
 
-    public ObservableList<Auction> selectAll() {
-        ObservableList<Auction> result = FXCollections.observableArrayList();
+    public ArrayList<Auction> selectAll() {
+        ArrayList<Auction> result = new ArrayList<>();
         try {
             Connection connection = JDBCUtil.getConnection();
             Statement st = connection.createStatement();

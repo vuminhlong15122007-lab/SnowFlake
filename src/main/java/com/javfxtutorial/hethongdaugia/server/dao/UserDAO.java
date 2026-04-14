@@ -115,8 +115,8 @@ public class UserDAO implements DAOInterface<User> {
     }
 
     @Override
-    public ObservableList<User> selectAll() {
-        ObservableList<User> result = FXCollections.observableArrayList();
+    public ArrayList<User> selectAll() {
+        ArrayList<User> result = new ArrayList<>();
 
         // Khuyến khích liệt kê rõ tên cột thay vì dùng SELECT *
         String sql = "SELECT id, name, email, passWord, sdt, accountType FROM user";

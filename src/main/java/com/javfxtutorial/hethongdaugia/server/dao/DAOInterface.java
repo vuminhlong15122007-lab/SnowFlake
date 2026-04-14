@@ -8,6 +8,6 @@ public interface DAOInterface<T> {
     int insert(T t);
     int update(T t);
     int delete(T t);
-    ObservableList<T> selectAll();
+    ArrayList<T> selectAll();
     T selectById(int id);
 }

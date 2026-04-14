@@ -134,8 +134,8 @@ public class ItemDAO implements DAOInterface<Item> {
         return result;
     }
 
-    public ObservableList<Item> selectAll(){
-        ObservableList<Item> result = FXCollections.observableArrayList();
+    public ArrayList<Item> selectAll(){
+        ArrayList<Item> result = new ArrayList<>();
         try {
             Connection connection = JDBCUtil.getConnection();
             Statement st = connection.createStatement();
