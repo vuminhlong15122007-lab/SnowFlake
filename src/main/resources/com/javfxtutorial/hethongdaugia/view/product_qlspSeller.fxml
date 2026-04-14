@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<HBox alignment="CENTER_LEFT" prefWidth="250.0" spacing="10.0" style="-fx-background-color: #f8f9fa; -fx-background-radius: 12; -fx-border-color: #e0e0e0; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1">
+    <children>
+        <ImageView fx:id="imgProduct" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" />
+
+        <VBox alignment="CENTER_LEFT" HBox.hgrow="ALWAYS">
+            <children>
+                <Label fx:id="lbProductName" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Tên sản phẩm" />
+            <HBox prefHeight="0.0" prefWidth="156.0">
+               <children>
+                  <Label text="ID:   " />
+                  <Label fx:id="ItemID" text="..." />
+               </children>
+            </HBox>
+                <HBox prefHeight="0.0" prefWidth="155.0">
+                    <children>
+                        <Label fx:id="lbPrice" style="-fx-font-size: 12px; -fx-font-weight: bold;" text=".............." textFill="RED" />
+                        <Label text="  VND" textFill="#f80000" />
+                    </children>
+                </HBox>
+            </children>
+        </VBox>
+
+        <Label fx:id="lbStatus" style="-fx-text-fill: #27ae6C0; -fx-font-size: 10px;" text="●" textFill="#eb0000" />
+    </children>
+    <padding>
+        <Insets bottom="8.0" left="10.0" right="10.0" top="8.0" />
+    </padding>
+</HBox>

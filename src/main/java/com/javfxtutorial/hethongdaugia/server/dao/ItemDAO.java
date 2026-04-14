@@ -25,7 +25,7 @@ public class ItemDAO implements DAOInterface<Item> {
     public int insert(Item item) {
         // 1. Viết câu SQL phù hợp với bảng Item
         Connection connection = JDBCUtil.getConnection();
-        String sql = "INSERT INTO Item (idseller, name, description, imagePath , currentPrice , stepPrice) VALUES (?,?, ?, ?, ?,?)";
+        String sql = "INSERT INTO Item (idseller, name, description, imagePath ) VALUES (?,?, ?, ?)";
         int result = 0;
 
         // 2. Sử dụng try-with-resources để tự động quản lý kết nối
@@ -34,12 +34,11 @@ public class ItemDAO implements DAOInterface<Item> {
 
             // 3. Truyền tham số an toàn vào câu SQL
             // Lưu ý chọn đúng kiểu dữ liệu: setString, setDouble, setInt...
-            pst.setInt(1, item.getItemId());
+            pst.setInt(1, item.getSellerId());
             pst.setString(2, item.getName());
             pst.setString(3, item.getDescription());
             pst.setString(4, item.getImagePath());
-            pst.setDouble(5, item.getCurrentPrice());
-            pst.setDouble(6, item.getStepPrice());
+
 
             System.out.println("Bạn đang thực thi thêm Item: " + item.getName());
 
@@ -74,7 +73,7 @@ public class ItemDAO implements DAOInterface<Item> {
 
         // Câu lệnh SQL: Cập nhật thông tin dựa trên khóa chính là itemId
         // Giả định bạn không cho phép cập nhật idseller (vì người bán đã cố định), nếu cần bạn có thể thêm vào SET
-        String sql = "UPDATE Item SET name = ?, description = ?, imagePath = ?, giaHienTai = ? WHERE itemId = ?";
+        String sql = "UPDATE Item SET name = ?, description = ?, imagePath = ? WHERE itemId = ?";
 
         // Sử dụng try-with-resources để tự động đóng Connection và PreparedStatement
         try (Connection connection = JDBCUtil.getConnection();
@@ -84,11 +83,10 @@ public class ItemDAO implements DAOInterface<Item> {
             pst.setString(1, item.getName());
             pst.setString(2, item.getDescription());
             pst.setString(3, item.getImagePath());
-            pst.setDouble(4, item.getCurrentPrice());
-            pst.setDouble(5,item.getStepPrice());
+
 
             // Gán giá trị cho dấu ? trong mệnh đề WHERE (Quan trọng nhất)
-            pst.setInt(5, item.getItemId());
+            pst.setInt(4, item.getItemId());
 
             System.out.println("Bạn đang thực thi cập nhật Item có ID: " + item.getItemId());
 
@@ -146,14 +144,11 @@ public class ItemDAO implements DAOInterface<Item> {
             //lấy dữ liệu
             while (resultSet.next()){
                 int idseller = resultSet.getInt("idseller");
-                int itemid = resultSet.getInt("itemid");
                 String name = resultSet.getString("name");
                 String description = resultSet.getString("description");
                 String imagePath = resultSet.getString("imagePath");
-                double giaHienTai = resultSet.getDouble("giaHienTai");
-                double stepPrice = resultSet.getDouble("stepPrice");
                 AccountType accountType = AccountType.valueOf(resultSet.getString("accountType"));
-                Item item = new Item(idseller , itemid, name, description, imagePath, giaHienTai , stepPrice);
+                Item item = new Item(idseller, name, description, imagePath);
                 result.add(item);
             }
             JDBCUtil.closeConnection(connection);
@@ -174,13 +169,10 @@ public class ItemDAO implements DAOInterface<Item> {
             // tim kiem
             while (resultSet.next()){
                 int idseller = resultSet.getInt("idseller");
-                int itemid = resultSet.getInt("itemid");
                 String name = resultSet.getString("name");
                 String description = resultSet.getString("description");
                 String imagePath = resultSet.getString("imagePath");
-                double currentPrice = resultSet.getDouble("currentPrice");
-                double stepPrice = resultSet.getDouble("stepPrice");
-                result = new Item(idseller , itemid, name, description, imagePath, currentPrice, stepPrice);
+                result = new Item(idseller, name, description, imagePath);
             }
             //dong ket noi
             JDBCUtil.closeConnection(connection);
@@ -202,13 +194,10 @@ public class ItemDAO implements DAOInterface<Item> {
             // tim kiem
             while (resultSet.next()){
                 int idseller = resultSet.getInt("idseller");
-                int itemid = resultSet.getInt("itemid");
                 String name = resultSet.getString("name");
                 String description = resultSet.getString("description");
                 String imagePath = resultSet.getString("imagePath");
-                double currentPrice = resultSet.getDouble("currentPrice");
-                double stepPrice = resultSet.getDouble("stepPrice");
-                result .add(new Item(idseller , itemid, name, description, imagePath, currentPrice, stepPrice));
+                result .add(new Item(idseller, name, description, imagePath));
             }
             //dong ket noi
             JDBCUtil.closeConnection(connection);

@@ -39,7 +39,7 @@ public class ItemphiendaugiaController {
 //                e.printStackTrace();
 //            }
 //
-//        } SET DỮ LIỆU ẢNH - ĐỂ SAU
+//        }
     }
 
     @FXML

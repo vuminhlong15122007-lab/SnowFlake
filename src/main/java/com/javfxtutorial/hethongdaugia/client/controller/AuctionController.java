@@ -80,9 +80,7 @@ public class AuctionController {
 //        if (itemList != null){
 //            observable.addAll(itemList);
 //        }
-        observable.add(new Item(1, 1, "test", "teset", "aaaa", 2000, 2000));
-        ClientModel.getInstance().setCurrentItem(new Item(1, 1, "test", "teset", "aaaa", 2000, 2000));
-        ClientModel.getInstance().setCurrentAuction(new Auction(1, 1, 200, 2000, LocalDateTime.now(), LocalDateTime.now()));
+
     }
 
 

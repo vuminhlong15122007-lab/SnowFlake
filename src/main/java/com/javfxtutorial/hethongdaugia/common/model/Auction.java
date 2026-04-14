@@ -40,6 +40,8 @@ public class Auction implements Serializable {
         this.endingTime = endingTime;
     }
 
+
+
     public int getAuctionId() {
         return auctionId;
     }

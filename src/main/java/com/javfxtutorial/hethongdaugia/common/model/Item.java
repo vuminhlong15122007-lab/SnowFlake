@@ -1,6 +1,7 @@
 package com.javfxtutorial.hethongdaugia.common.model;
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Item implements Serializable {
     private int sellerId;
@@ -10,15 +11,14 @@ public class Item implements Serializable {
     private String imagePath; // đường dẫn ảnh
     private double currentPrice;
     private double stepPrice;
+    private LocalDateTime tGianBD;
 
-    public Item(int sellerId, int itemId, String name, String description, String imagePath, double currentPrice, double stepPrice) {
+    public Item(int sellerId, String name, String description, String imagePath) {
         this.sellerId = sellerId;
-        this.itemId = itemId;
         this.name = name;
         this.description = description;
         this.imagePath = imagePath;
-        this.currentPrice = currentPrice;
-        this.stepPrice = stepPrice;
+
     }
 
     public void setItemId(int itemId) {this.itemId = itemId;}
