@@ -66,7 +66,6 @@ public class ResetPassWordController {
         }else{
             showAlert("Thất bại", rp.getMessage());
         }
-        connection.close();
     }
 
     //hien thi alert
