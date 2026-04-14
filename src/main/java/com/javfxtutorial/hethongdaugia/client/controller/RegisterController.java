@@ -57,14 +57,7 @@ public class RegisterController {
                 cmd.addData("sdt", sdt);
                 Response rp = connection.sendCommand(cmd);
                 if (rp.isSuccess()){
-                    try {
-                        Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/login.fxml"));
-                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                        stage.setScene(new Scene(root));
-                        stage.show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+
                     Stage stage = new Stage();
                     stage.setTitle("Tạo Tài Khoản Thành Công");
                     FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/popUpSignUp.fxml"));
@@ -72,6 +65,14 @@ public class RegisterController {
                     Scene scene = new Scene(fxmlLoader.load());
                     stage.setScene(scene);
                     stage.show();
+                    try {
+                        Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/login.fxml"));
+                        Stage stage1 = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                        stage1.setScene(new Scene(root));
+                        stage1.show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 connection.close();
 
