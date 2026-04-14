@@ -1,6 +1,8 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllItemsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
@@ -22,6 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 
@@ -70,11 +73,18 @@ public class AuctionController {
 
     public void loadData(){
        //observable.add(new Item()
-        ServerConnection connection = new ServerConnection(5000);
-        Command cmd = new GetAllItemsCommand();
-        Response rp = connection.sendCommand(cmd);
-        observable.addAll((ArrayList<Item>) rp.getPayLoad());
+//        ServerConnection connection = new ServerConnection();
+//        Command cmd = new GetAllItemsCommand();
+//        Response rp = connection.sendCommand(cmd);
+//        ObservableList<Item> itemList = (ObservableList<Item>) rp.getPayLoad();
+//        if (itemList != null){
+//            observable.addAll(itemList);
+//        }
+        observable.add(new Item(1, 1, "test", "teset", "aaaa", 2000, 2000));
+        ClientModel.getInstance().setCurrentItem(new Item(1, 1, "test", "teset", "aaaa", 2000, 2000));
+        ClientModel.getInstance().setCurrentAuction(new Auction(1, 1, 200, 2000, LocalDateTime.now(), LocalDateTime.now()));
     }
+
 
     public void logOut1(ActionEvent event){
         try {

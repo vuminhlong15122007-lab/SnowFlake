@@ -10,11 +10,14 @@ import com.javfxtutorial.hethongdaugia.server.manager.UserManager;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ClientHandler extends Thread {
     private Socket clientSocket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
+    private static List<ObjectOutputStream> clientsOutput = new ArrayList<>();
 
     public ClientHandler(Socket socket) {
         this.clientSocket = socket;
@@ -25,11 +28,26 @@ public class ClientHandler extends Thread {
         try {
             in = new ObjectInputStream(clientSocket.getInputStream());
             out = new ObjectOutputStream(clientSocket.getOutputStream());
-            Command cmd = (Command) in.readObject();
-            Response rp = cmd.handle();
-            out.writeObject(rp);
+            clientsOutput.add(out);
+            while (true) { //luôn chờ command của client
+                Command cmd = (Command) in.readObject();
+                Response rp = cmd.handle();
+                out.writeObject(rp);
+            }
         } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            System.out.println("Client ngừng kết nối");;
+        } finally {
+            // 3. Khi Client đóng app hoặc rớt mạng, xóa khỏi danh sách
+            if (out != null) {
+                clientsOutput.remove(out);
+            }
+            try { clientSocket.close();} catch (IOException ex) {}
+        }
+    }
+
+    public static void broadcast(Response rp) throws IOException {
+        for (ObjectOutputStream client: clientsOutput){
+            client.writeObject(rp);
         }
     }
 }

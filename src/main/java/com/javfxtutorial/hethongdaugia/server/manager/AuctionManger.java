@@ -1,7 +1,10 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
+import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 
 public class AuctionManger {
 
@@ -21,7 +24,7 @@ public class AuctionManger {
 
     public boolean checkValidBid(double amount){
         double currentPrice = AuctionDAO.getInstance().selectById(currentAuction.getAuctionId()).getCurrentPrice(); //vào DAO check giá hiện tại
-        if (amount < currentPrice + currentAuction.getStepPrice()){
+        if (amount > currentPrice + currentAuction.getStepPrice()){
             return true;
         }
         System.out.println("Cần đặt giá cao hơn giá hiện tại + bước giá");
@@ -30,7 +33,6 @@ public class AuctionManger {
 
     public synchronized boolean placeBid(double amount){
         if (checkValidBid(amount)) {
-            currentAuction = AuctionDAO.getInstance().selectById(currentAuction.getAuctionId());
             currentAuction.setCurrentPrice(amount);
             AuctionDAO.getInstance().update(currentAuction);
             return true;

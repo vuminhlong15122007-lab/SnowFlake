@@ -90,7 +90,7 @@
 
                         <Region VBox.vgrow="ALWAYS" /> <VBox alignment="CENTER" spacing="10.0">
                         <children>
-                            <Button fx:id="btnGoToAuction" mnemonicParsing="false" onAction="#goToAuction" prefHeight="50.0" prefWidth="300.0" style="-fx-background-color: linear-gradient(to right, #6A11CB, #2575FC); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25; -fx-cursor: hand;" text="THAM GIA ĐẤU GIÁ NGAY" />
+                            <Button fx:id="btnGoToAuction" mnemonicParsing="false" onAction="#goToManHinhDauGiaTrucTiep" prefHeight="50.0" prefWidth="300.0" style="-fx-background-color: linear-gradient(to right, #6A11CB, #2575FC); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25; -fx-cursor: hand;" text="THAM GIA ĐẤU GIÁ NGAY" />
                             <Label textFill="#27ae60" />
                         </children>
                     </VBox>
