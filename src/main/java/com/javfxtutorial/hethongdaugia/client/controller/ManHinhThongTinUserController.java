@@ -86,7 +86,7 @@ public class ManHinhThongTinUserController {
         }
 
         //tao command gui len server
-        ServerConnection connection = new ServerConnection(5000);
+        ServerConnection connection = new ServerConnection();
         UpdateProfileCommand cmd = new UpdateProfileCommand();
         cmd.addData("userId", currentUser.getId());
         cmd.addData("username", newName);

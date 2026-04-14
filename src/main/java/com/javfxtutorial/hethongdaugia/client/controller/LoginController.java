@@ -29,7 +29,7 @@ public class LoginController {
     public void clickLogin(ActionEvent event) throws IOException {
         String username = Username.getText();
         String password = Password.getText();
-        ServerConnection connection = new ServerConnection( 5000);
+        ServerConnection connection = new ServerConnection();
         Command cmd = new LoginCommand();
         cmd.addData("username", username);
         cmd.addData("password", password);

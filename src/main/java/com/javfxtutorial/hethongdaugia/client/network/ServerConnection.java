@@ -11,20 +11,28 @@ import java.net.Socket;
 
 public class ServerConnection {
     public String IP = "localhost";
+    public int PORT = 5000;
     private Socket clientSocket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
-    public ServerConnection(int port){
+    public ServerConnection(){
         //khởi tạo socket connect tới server và luông để truyền/ nhận dữ liệu
         try {
-            this.clientSocket = new Socket(IP, port);
+            this.clientSocket = new Socket(IP, PORT);
             this.out = new ObjectOutputStream(clientSocket.getOutputStream());
             this.in = new ObjectInputStream(clientSocket.getInputStream());
         } catch (IOException e) {
             System.out.println("Không kết nối được server");
         }
 
+    }
+
+    public ObjectOutputStream getOut() {
+        return out;
+    }
+    public ObjectInputStream getIn() {
+        return in;
     }
 
     // Gửi command và chờ response (đồng bộ)
@@ -40,5 +48,7 @@ public class ServerConnection {
     public void close() throws IOException {
         if (clientSocket != null){
         this.clientSocket.close();}
+        in.close();
+        out.close();
     }
 }

@@ -49,7 +49,7 @@ public class RegisterController {
         String confirmPassword = Confirm_Password.getText();
         if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
             if (password.equals(confirmPassword)){
-                ServerConnection connection = new ServerConnection(5000);
+                ServerConnection connection = new ServerConnection();
                 Command cmd = new RegisterCommand();
                 cmd.addData("username", name);
                 cmd.addData("password", password);
