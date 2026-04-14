@@ -45,14 +45,16 @@ public class Edit_User_Popup_Controller {
                 cmd.addData("sdt", sdt);
                 Response rp = connection.sendCommand(cmd);
                 if (rp.isSuccess()){
-                    try {
-                        Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/Quan_Ly_User_Admin.fxml"));
-                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                        stage.setScene(new Scene(root));
-                        stage.show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+//                    try {
+//                        Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/Quan_Ly_User_Admin.fxml"));
+//                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+//                        stage.setScene(new Scene(root));
+//                        stage.show();
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                    }
+                    Stage stage1 = (Stage) ((Node) event.getSource()).getScene().getWindow();
+                    stage1.close();
                     Stage stage = new Stage();
                     stage.setTitle("Tạo Tài Khoản Thành Công");
                     FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/popUpSignUp.fxml"));

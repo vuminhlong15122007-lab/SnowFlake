@@ -10,8 +10,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 
 public class ResetPassWordController {
-    @FXML private TextField txtOldPW;
-    @FXML private TextField txtnNewPW;
+    @FXML private TextField txtoldPW;
+    @FXML private TextField txtNewPW;
     @FXML private TextField txtConfirmPW;
     @FXML
     public void initialize(){
@@ -22,19 +22,19 @@ public class ResetPassWordController {
     public void loadUserInfo(){
         User currentUser = ClientModel.getInstance().getCurrentUser();
         if (currentUser != null){
-            txtConfirmPW.setText(currentUser.getPassWord());
-            txtnNewPW.setText("");
+            txtoldPW.setText(currentUser.getPassWord());
+            txtNewPW.setText("");
             txtConfirmPW.setText("");
         }else{
-            txtOldPW.setText("");
-            txtnNewPW.setText("");
+            txtoldPW.setText("");
+            txtNewPW.setText("");
             txtConfirmPW.setText("");
         }
     }
     @FXML
     public void updatePW(){
         //lay du lieu tu o nhap
-        String newPW = txtnNewPW.getText();
+        String newPW = txtNewPW.getText();
         String confirmPW = txtConfirmPW.getText();
 
         //lay user hien tai
@@ -49,7 +49,7 @@ public class ResetPassWordController {
         ServerConnection connection = new ServerConnection();
         UpdateProfileCommand cmd = new UpdateProfileCommand();
         cmd.addData("userId", currentUser.getId());
-        cmd.addData("passWord", txtnNewPW);
+        cmd.addData("passWord", txtNewPW);
 
         Response rp = connection.sendCommand(cmd);
 
