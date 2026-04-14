@@ -18,7 +18,7 @@
                <Image url="@../assets/ClassicLogo.png" />
             </image>
          </ImageView>
-            <Label style="-fx-font-size: 20; -fx-font-weight: bold;" text="Bảng Điều Khiển Admin - Quản Lý Người Dùng" textFill="WHITE">
+            <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Bảng Điều Khiển Admin - Quản Lý Người Dùng" textFill="WHITE">
                 <font>
                     <Font name="System Bold" size="22.0" />
                 </font>
@@ -63,16 +63,6 @@
                 <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
             </padding>
 
-            <Label text="Thông tin chi tiết">
-                <font>
-                    <Font name="System Bold" size="18.0" />
-                </font>
-            </Label>
-            <Separator />
-            <TextArea fx:id="userInfoArea" editable="false" prefHeight="120.0" promptText="Chọn một người dùng từ danh sách để xem thông tin chi tiết..." style="-fx-background-color: transparent;" wrapText="true" />
-
-            <Separator />
-
             <Label text="Thao tác quản trị">
                 <font>
                     <Font name="System Bold" size="16.0" />
@@ -83,7 +73,7 @@
             <Button fx:id="btnEditUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#getUpdateUser" style="-fx-background-color: #f39c12; -fx-text-fill: white;" text="Cập nhật thông tin" />
             <Button fx:id="btnResetPassword" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToResetPW" style="-fx-background-color: #9b59b6; -fx-text-fill: white;" text="Đặt lại mật khẩu" />
             <Button fx:id="btnLockAccount" maxWidth="Infinity" mnemonicParsing="false" style="-fx-background-color: #e67e22; -fx-text-fill: white;" text="Khóa / Mở khóa tài khoản" />
-
+            <Button fx:id="reload" maxWidth="Infinity" mnemonicParsing="false" onAction="#reLoad" style="-fx-background-color: skyblue; -fx-text-fill: white; -fx-font-weight: bold;" text="ReLoad" />
             <Region VBox.vgrow="ALWAYS" />
             <Separator />
             <Button fx:id="deleteButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToDeleteUser" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;" text="XÓA TÀI KHOẢN" />

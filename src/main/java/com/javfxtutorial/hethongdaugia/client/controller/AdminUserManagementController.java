@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 
@@ -42,6 +43,8 @@ public class AdminUserManagementController implements  Initializable {
     private TableColumn<User, String> colStatus;
     @FXML
     private Button deleteButton;
+    @FXML
+    private Button reload;
 
     private UserDAO nguoiDungDAO = new UserDAO();
     @Override
@@ -73,7 +76,6 @@ public class AdminUserManagementController implements  Initializable {
 
             // 1. (Tùy chọn) Thiết lập tính năng Modality
             // Nếu bạn muốn người dùng bắt buộc phải thao tác và đóng pop-up này
-            // trước khi có thể click vào màn hình chính bên dưới, hãy bỏ comment dòng sau:
             popupStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
 
             // 2. (Tùy chọn) Đặt tiêu đề cho pop-up
@@ -217,6 +219,19 @@ public class AdminUserManagementController implements  Initializable {
             warning.setContentText("Vui lòng chọn một tài khoản trong danh sách trước!");
             warning.show();
         }
+    }
+
+
+
+
+
+    public void reLoad(ActionEvent event){
+        userTable.getItems().clear();
+        UserDAO  dao = new UserDAO();
+        List<User> freshData = dao.selectAll();
+        userTable.getItems().addAll(freshData);
+        System.out.println("Dữ liệu đã được cập nhật!");
+
     }
 
 }
