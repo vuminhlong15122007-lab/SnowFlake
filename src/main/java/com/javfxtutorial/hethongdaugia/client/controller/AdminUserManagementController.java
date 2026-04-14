@@ -181,6 +181,7 @@ public class AdminUserManagementController implements  Initializable {
             Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/reset_password.fxml"));
 
             Stage stage = new Stage();
+            //khong dong cua so cu ma khoa cua so cu o phía  sau
             stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
             Scene scene = new Scene(root);
             stage.setScene(scene);
