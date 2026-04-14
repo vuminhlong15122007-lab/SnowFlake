@@ -51,7 +51,7 @@ public class ResetPassWordController {
         ServerConnection connection = new ServerConnection();
         UpdateProfileCommand cmd = new UpdateProfileCommand();
         cmd.addData("userId", currentUser.getId());
-        cmd.addData("passWord", txtNewPW);
+        cmd.addData("passWord", newPW);
 
         Response rp = connection.sendCommand(cmd);
 
