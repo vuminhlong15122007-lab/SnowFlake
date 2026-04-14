@@ -1,10 +1,10 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
-import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteUserCommand;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,7 +16,9 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 
@@ -54,7 +56,7 @@ public class AdminUserManagementController implements  Initializable {
     }
     @FXML
     private void loadUserData(){
-        ObservableList<User> danhSach = nguoiDungDAO.selectAll();
+        ObservableList<User> danhSach = FXCollections.observableArrayList(nguoiDungDAO.selectAll());
         userTable.setItems(danhSach);
     }
     //cap nhat thong tin
@@ -143,7 +145,7 @@ public class AdminUserManagementController implements  Initializable {
         //neu co
         if(result == yes){
             //tao command gui len server
-            ServerConnection connection = new ServerConnection(5000);
+            ServerConnection connection = new ServerConnection();
             DeleteUserCommand cmd = new DeleteUserCommand();
             cmd.addData("userId", selectUser.getId());
             cmd.addData("username", selectUser.getName());
