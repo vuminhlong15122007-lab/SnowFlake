@@ -189,5 +189,9 @@ public class QuanLySpSellerController {
         }).start();
     }
 
+    @FXML
+    public void updateImg(ActionEvent event){
+        // chưa xử lý
+    }
 
 }
