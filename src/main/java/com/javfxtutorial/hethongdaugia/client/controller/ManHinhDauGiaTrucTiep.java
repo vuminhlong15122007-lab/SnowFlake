@@ -35,11 +35,11 @@ public class ManHinhDauGiaTrucTiep implements Initializable {
     @FXML
     TextField priceInput_tf;
     @FXML
-    TextField highestPayer_tf;
+    Label highestPayer_tf;
     @FXML
-    TextField currentPrice_tf;
+    Label currentPrice_tf;
     @FXML
-    TextField stepPrice_tf;
+    Label stepPrice_tf;
 
 
     public void goMenu(ActionEvent event){

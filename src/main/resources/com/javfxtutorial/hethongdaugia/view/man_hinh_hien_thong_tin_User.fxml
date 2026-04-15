@@ -99,7 +99,7 @@
             <HBox spacing="10">
                <Button fx:id="updateInfo" onAction="#handleUpdateInfo" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Cập nhật" />
 
-               <Button fx:id="resetPW" onAction="#resetPW" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-font-weight: bold; -fx-text-fill: white;" text="Đổi mật khẩu" />
+               <Button fx:id="resetPW" onAction="#clickToResetPW" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-font-weight: bold; -fx-text-fill: white;" text="Đổi mật khẩu" />
             </HBox>
 
          </VBox>
