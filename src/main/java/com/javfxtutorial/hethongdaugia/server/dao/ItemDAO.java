@@ -109,27 +109,63 @@ public class ItemDAO implements DAOInterface<Item> {
         return result;
     }
     public int delete(Item item){
-        int result = 0;
+//        int result = 0;
+//        try {
+//            //tao ket noi
+//            Connection connection = JDBCUtil.getConnection();
+//            //tao doi tuong statement
+//            Statement st = connection.createStatement();
+//            //thuc thi lenh sql
+//            String sql = "DELETE FROM Item " + " WHERE ItemId='" + item.getItemId() + "'";
+//            System.out.println(sql);
+//            result = st.executeUpdate(sql);
+//            if (result > 0){
+//                System.out.println("Xóa Item thành công");
+//            }
+//            else{
+//                System.out.println("Xóa thất bại");
+//            }
+//            JDBCUtil.closeConnection(connection);
+//        } catch (SQLException e) {
+//            e.printStackTrace();
+//        }
+//        return result;
+        Connection connection = JDBCUtil.getConnection();
         try {
-            //tao ket noi
-            Connection connection = JDBCUtil.getConnection();
-            //tao doi tuong statement
-            Statement st = connection.createStatement();
-            //thuc thi lenh sql
-            String sql = "DELETE FROM Item " + " WHERE ItemId='" + item.getItemId() + "'";
-            System.out.println(sql);
-            result = st.executeUpdate(sql);
-            if (result > 0){
-                System.out.println("Xóa Item thành công");
+            connection.setAutoCommit(false); // Bắt đầu transaction
+
+            // 1. Xóa tất cả Auction liên quan đến Item này
+            String deleteAuctionSQL = "DELETE FROM Auction WHERE item_id = ?";
+            try (PreparedStatement pstAuction = connection.prepareStatement(deleteAuctionSQL)) {
+                pstAuction.setInt(1, item.getItemId());
+                int auctionRows = pstAuction.executeUpdate();
+                System.out.println("Đã xóa " + auctionRows + " Auction liên quan.");
             }
-            else{
-                System.out.println("Xóa thất bại");
+
+            // 2. Xóa Item
+            String deleteItemSQL = "DELETE FROM Item WHERE ItemId = ?";
+            try (PreparedStatement pstItem = connection.prepareStatement(deleteItemSQL)) {
+                pstItem.setInt(1, item.getItemId());
+                int result = pstItem.executeUpdate();
+
+                connection.commit(); // Thành công → lưu thay đổi
+                System.out.println("Xóa Item thành công, ID = " + item.getItemId());
+                return result;
             }
-            JDBCUtil.closeConnection(connection);
         } catch (SQLException e) {
             e.printStackTrace();
+            try {
+                connection.rollback(); // Có lỗi → quay lui
+            } catch (SQLException ex) {
+                ex.printStackTrace();
+            }
+            return 0;
+        } finally {
+            try {
+                connection.setAutoCommit(true);
+            } catch (SQLException e) {}
+            JDBCUtil.closeConnection(connection);
         }
-        return result;
     }
 
     public ArrayList<Item> selectAll(){
@@ -206,5 +242,34 @@ public class ItemDAO implements DAOInterface<Item> {
         }
         return result;
 
+    }
+
+    public ArrayList<Item> selectBySellerId(int sellerId) {         // dùng để ghép atribust ơr Item vs ở Auction
+        ArrayList<Item> result = new ArrayList<>();
+        String sql = "SELECT i.itemId, i.idseller, i.name, i.description, i.imagePath, " +
+                "a.init_price, a.step_price " +
+                "FROM Item i LEFT JOIN Auction a ON i.itemId = a.item_id " +
+                "WHERE i.idseller = ? " +
+                "ORDER BY a.starting_time DESC"; // Lấy phiên mới nhất nếu có nhiều
+        try (Connection conn = JDBCUtil.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+            pst.setInt(1, sellerId);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next()) {
+                Item item = new Item();
+                item.setItemId(rs.getInt("itemId"));
+                item.setSellerId(rs.getInt("idseller"));
+                item.setName(rs.getString("name"));
+                item.setDescription(rs.getString("description"));
+                item.setImagePath(rs.getString("imagePath"));
+                // Gán giá từ Auction (nếu không có Auction thì giá = 0)
+                item.setCurrentPrice(rs.getDouble("init_price"));
+                item.setStepPrice(rs.getDouble("step_price"));
+                result.add(item);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return result;
     }
 }

@@ -21,7 +21,13 @@ public class Item implements Serializable {
 
     }
 
+    public Item() {
+    }
+
     public void setItemId(int itemId) {this.itemId = itemId;}
+
+    public void settGianBD(LocalDateTime tGianBD) {this.tGianBD = tGianBD;}
+
     public double getStepPrice() {return stepPrice;}
     public void setStepPrice(double stepPrice) {this.stepPrice = stepPrice;}
     public double getCurrentPrice() {return currentPrice;}

@@ -27,7 +27,7 @@
          </ImageView>
             <Label prefHeight="32.0" prefWidth="332.0" style="-fx-font-size: 22px; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox - Quản lý sản phẩm" />
          <Region prefHeight="75.0" prefWidth="326.0" />
-         <Button fx:id="goMenu" mnemonicParsing="false" onAction="#goMenu" prefHeight="48.0" prefWidth="103.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -ox-border-color: red; -fx-background-radius: 10; -fx-border-radius: 10; -fx-text-fill: white; -fx-font-weight: bold;" text="quay về Menu" />
+         <Button fx:id="goMenu" mnemonicParsing="false" onAction="#goMenu" prefHeight="48.0" prefWidth="103.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -ox-border-color: red; -fx-background-radius: 10; -fx-border-radius: 10; -fx-text-fill: white; -fx-font-weight: bold;" text="Trang chủ" />
         </HBox>
     </top>
 
@@ -35,12 +35,11 @@
     <center>
         <HBox spacing="20" style="-fx-padding: 20; -fx-background-color: #89cffo;">
             <!-- Danh sách sản phẩm -->
-            <VBox spacing="10" style="-fx-background-color: #ffffff; -fx-padding: 15; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #b3c6ff;">
+            <VBox prefHeight="482.0" prefWidth="334.0" spacing="10" style="-fx-background-color: #ffffff; -fx-padding: 15; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: #b3c6ff;">
                 <Label prefHeight="25.0" prefWidth="242.0" style="-fx-font-size: 16px; -fx-text-fill: #333366; -fx-font-weight: bold;" text="Danh sách sản phẩm của tôi" />
-                <ListView fx:id="productList" prefHeight="350" prefWidth="250" />
+                <ListView fx:id="productList" prefHeight="382.0" prefWidth="267.0" />
                 <HBox alignment="CENTER" spacing="10">
-                    <Button fx:id="addButton" style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="Thêm" />
-                    <Button fx:id="deleteButton" style="-fx-background-color: #dc3545; -fx-font-weight: bold; -fx-text-fill: white; -fx-background-radius: 6;" text="Xóa" />
+                    <Button fx:id="deleteButton" onAction="#deleteAuction" style="-fx-background-color: #dc3545; -fx-font-weight: bold; -fx-text-fill: white; -fx-background-radius: 6;" text="Xóa" />
                 </HBox>
             </VBox>
 
@@ -61,7 +60,7 @@
                 <TextField fx:id="nameField" promptText="Tên sản phẩm" style="-fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
                 <TextArea fx:id="descriptionField" prefHeight="65.0" prefRowCount="3" prefWidth="478.0" promptText="Mô tả sản phẩm" style="-fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
                 <TextField fx:id="priceField" promptText="Giá khởi điểm" style="-fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
-            <TextField fx:id="buocGia" promptText="Bước giá " style="-fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
+            <TextField fx:id="tfstepPrice" promptText="Bước giá " style="-fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
                 <HBox alignment="CENTER_LEFT" spacing="10">
                     <Label prefWidth="70" style="-fx-text-fill: #333366; -fx-font-weight: bold;" text="Bắt đầu:" />
                     <DatePicker fx:id="startDatePicker" prefWidth="150" promptText="Chọn ngày" style="-fx-border-color: #b3c6ff; -fx-border-radius: 3;" />
@@ -94,7 +93,7 @@
                     </Spinner>
                     <Label text="Phút" />
                 </HBox>
-                <Button fx:id="saveButton" onAction="#upDate" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="Lưu" />
+                <Button fx:id="saveButton" onAction="#luuSp" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="Lưu" />
             </VBox>
         </HBox>
     </center>
