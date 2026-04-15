@@ -28,7 +28,7 @@
             <effect>
                <Blend />
             </effect></Label>
-         <Button fx:id="logOut1" mnemonicParsing="false" onAction="#logOut1" prefHeight="32.0" prefWidth="142.0" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12;" text="Quay lại Menu" />
+         <Button fx:id="logOut1" mnemonicParsing="false" onAction="#logOut1" prefHeight="32.0" prefWidth="107.0" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12;" text="Trang chủ" />
       </HBox>
    </top>
 
