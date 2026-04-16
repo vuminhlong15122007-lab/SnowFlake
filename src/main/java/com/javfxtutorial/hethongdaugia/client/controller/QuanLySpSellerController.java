@@ -102,10 +102,10 @@ public class QuanLySpSellerController {
             Command cm = new AddItemCommand();
             cm.addData("Item", item);
             cm.addData("Auction", auction);
-            new Thread(() -> {
+            new Thread(() -> {     // Tao 1 luong phụ để để gửi dữ liệu về server và chuyển dữ liệu từ server về
                 try {
-                    Response response = connection.sendCommand(cm);
-                    Platform.runLater(() -> {
+                    Response response = connection.sendCommand(cm); // method gui du lieu ve sẻrver
+                    Platform.runLater(() -> {   // gọi Thread Main cập nhận giao diện
                         if (response.isSuccess()) {
                             Item savedItem = (Item) response.getPayLoad();
                             observable.add(savedItem);

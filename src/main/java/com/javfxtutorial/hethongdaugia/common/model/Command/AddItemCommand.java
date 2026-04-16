@@ -19,7 +19,7 @@ public class AddItemCommand extends Command{ //Dùng để thêm sản phẩm m�
 
         Item saveItem = ItemManager.getInstance().addItem(item);
         if(saveItem != null ){
-            auction.setItemId(saveItem.getItemId()); // Gán lại ID
+            auction.setItemId(saveItem.getItemId()); // Gán  ID chi san pham
             if (ItemManager.getInstance().addAuction(auction)) {
                 return new Response(true, "Thêm thành công", item);
             }

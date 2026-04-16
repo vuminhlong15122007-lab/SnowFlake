@@ -4,9 +4,11 @@ import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 
+import com.javfxtutorial.hethongdaugia.common.model.Command.GetItemsBySellerCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -26,6 +28,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class AuctionController {
@@ -73,15 +76,31 @@ public class AuctionController {
 
     public void loadData(){
        //observable.add(new Item()
-//        ServerConnection connection = new ServerConnection();
-//        Command cmd = new GetAllItemsCommand();
-//        Response rp = connection.sendCommand(cmd);
-//        ObservableList<Item> itemList = (ObservableList<Item>) rp.getPayLoad();
-//        if (itemList != null){
-//            observable.addAll(itemList);
-//        }
 
+        int sellerId = ClientModel.getInstance().getCurrentUser().getId();
+        Command cmd = new GetItemsBySellerCommand(sellerId);
+        ServerConnection connection = new ServerConnection();
+        Response rp = connection.sendCommand(cmd);
+        new Thread(() -> { //Tạo 1 luồng giao diện mới và giao công vc cho luồng
+            try {
+                Response resp = connection.sendCommand(cmd);  //cmd biến thành dãy bit gửi qua mạng => server xưr lý => gửi về một Response chứa danh sách Item.
+
+                Platform.runLater(() -> {          //luồng phụ gọi để luồng chính xử lý
+                    if (resp.isSuccess()) {  // kiểm tra xem có nhận được danh sách cân ko
+                        List<Item> items = (List<Item>) resp.getPayLoad();  // lấy đồ ra
+                        observable.setAll(items); // sắp xếp lên listView
+                    }
+                });
+            } catch (Exception e) {
+                e.printStackTrace();
+
+            }
+        }).start();
     }
+
+
+
+
 
 
     public void logOut1(ActionEvent event){

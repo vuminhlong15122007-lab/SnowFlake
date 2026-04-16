@@ -37,6 +37,19 @@ public class ManHinhThongTinUserController {
     }
 
     @FXML
+    public void btnGoToMyItem(ActionEvent event){
+        try{
+            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/quan_ly_san_pham_seller.fxml"));
+            Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+            Scene scene = new Scene(root);
+            stage.setScene(scene);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    @FXML
     public void logOut(ActionEvent event){
         try{
             Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/login.fxml"));

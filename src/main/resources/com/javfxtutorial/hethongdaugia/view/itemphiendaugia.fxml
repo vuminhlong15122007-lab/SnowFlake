@@ -28,24 +28,22 @@
                         </Label>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                              <Label text="Giá hiện tại: " textFill="#e84118">
+                              <Label text="Giá sản phẩm: " textFill="#e84118">
                                   <font>
                                       <Font name="System Bold" size="14.0" />
                                   </font>
                               </Label>
-                        <Label fx:id="lbGiaSp" text="Gia sp" textFill="#e84118">
+                        <Label fx:id="lbGiaSp" text="..." textFill="#e84118">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
                         </Label>
                      </children>
                   </HBox>
-                  <Label text="ID:" />
-                  <HBox prefHeight="100.0" prefWidth="200.0">
+                  <HBox prefHeight="9.0" prefWidth="273.0">
                      <children>
-                              <Label text="🔥 Số " textFill="#7f8c8d" />
-                        <Label fx:id="lbLuotDau" text="..." textFill="#7f8c8d" />
-                        <Label text=" lượt đấu giá" textFill="#7f8c8d" />
+                        <Label text="ID:  " />
+                        <Label fx:id="lbItemID" text="Label" />
                      </children>
                   </HBox>
                   <HBox prefHeight="100.0" prefWidth="200.0">

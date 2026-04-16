@@ -22,13 +22,16 @@ public class ItemphiendaugiaController {
     @FXML Label lbLuotDau;  // 2 CAI Label cuoi chx xu ly duoc
     @FXML Label lbTimer;
     @FXML ImageView imgSanPham;
+    @FXML Label lbItemID;
 
     private Item product;
 
     public void setData(Item product){   // xu ly du lieu tu Obj den giao dien
         this.product = product;
         lbAuctionName.setText(product.getName());
-        lbGiaSp.setText(String.valueOf(product.getCurrentPrice()));
+        lbGiaSp.setText(String.format("%,.0f VNĐ", product.getCurrentPrice()));
+        lbItemID.setText(String.valueOf(product.getItemId()));
+
 //        if (product.getImagePath() != null){
 //            try{
 //                // 1. Đường dẫn phải bắt đầu bằng dấu /
