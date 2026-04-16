@@ -12,14 +12,13 @@ public class JDBCUtil {
 
             String host = "gateway01.ap-southeast-1.prod.aws.tidbcloud.com";
             String port = "4000";
-            // Cẩn thận chỗ này: nếu bạn đã tạo DB riêng trên HeidiSQL thì sửa lại tên
             String database = "test";
             String username = "3sSzrSFdZfqFKd5.root";
             String password = "8J1D7oKnbj8npKF1";
 
             // Chuỗi URL chuẩn cho TiDB Cloud
             String url = "jdbc:mysql://" + host + ":" + port + "/" + database +
-                    "?enabledTLSProtocols=TLSv1.2,TLSv1.3&sslMode=REQUIRED"; // Đổi thành REQUIRED cho "nhẹ"
+                    "?enabledTLSProtocols=TLSv1.2,TLSv1.3&sslMode=REQUIRED";
 
             connection = DriverManager.getConnection(url, username, password);
             System.out.println("Kết nối thành công tới TiDB Cloud!");
