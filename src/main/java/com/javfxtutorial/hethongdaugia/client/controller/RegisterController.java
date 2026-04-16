@@ -19,16 +19,11 @@ import javafx.stage.StageStyle;
 import java.io.IOException;
 
 public class RegisterController {
-    @FXML
-    public TextField PhoneNumber;
-    @FXML
-    private TextField Username;
-    @FXML
-    private TextField Email;
-    @FXML
-    private PasswordField Password;
-    @FXML
-    private PasswordField Confirm_Password;
+    @FXML public TextField PhoneNumber;
+    @FXML private TextField Username;
+    @FXML private TextField Email;
+    @FXML private PasswordField Password;
+    @FXML private PasswordField Confirm_Password;
 
     @FXML
     public void clickBackToLogin(ActionEvent event){

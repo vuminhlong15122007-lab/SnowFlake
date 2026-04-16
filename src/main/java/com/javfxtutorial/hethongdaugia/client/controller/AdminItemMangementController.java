@@ -25,23 +25,17 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 public class AdminItemMangementController implements  Initializable {
-    @FXML
-    private TableView<Item> itemTable;
-    @FXML
-    private TableColumn<Item,Integer> colId ;
-    @FXML
-    private TableColumn<Item,String> colItemName;
-    @FXML
-    private TableColumn<Item,String> colStartPrice;
-    @FXML
-    private TableColumn<Item,String> colStepPrice;
-    @FXML
-    private TableColumn<Item,String> colCategory;
-    @FXML
-    private TableColumn<Item,String> colOwner;
-    @FXML
-    private TableColumn<Item,String> colStatus;
+    @FXML private TableView<Item> itemTable;
+    @FXML private TableColumn<Item,Integer> colId ;
+    @FXML private TableColumn<Item,String> colItemName;
+    @FXML private TableColumn<Item,String> colStartPrice;
+    @FXML private TableColumn<Item,String> colStepPrice;
+    @FXML private TableColumn<Item,String> colCategory;
+    @FXML private TableColumn<Item,String> colOwner;
+    @FXML private TableColumn<Item,String> colStatus;
+
     private ItemDAO  itemDAO = ItemDAO.getInstance();
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -53,10 +47,12 @@ public class AdminItemMangementController implements  Initializable {
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         loadItemData();
     }
+
     private void loadItemData(){
         ObservableList<Item> danhSach = FXCollections.observableArrayList(itemDAO.selectAll());
         itemTable.setItems(danhSach);
     }
+
     public void clickButtonExit(ActionEvent event){
         try{
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/SceneMain.fxml"));

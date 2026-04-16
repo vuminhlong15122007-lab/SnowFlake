@@ -24,27 +24,15 @@ import java.util.ResourceBundle;
 
 
 public class AdminUserManagementController implements  Initializable {
-    @FXML
-    private TableView<User> userTable;
-
-    @FXML
-    private TableColumn<User, Integer> colId;
-
-    @FXML
-    private TableColumn<User, String> colUsername;
-
-    @FXML
-    private TableColumn<User, String> colEmail;
-    @FXML
-    private TableColumn<User, String> colPhone;
-    @FXML
-    private TableColumn<User, String> colRole;
-    @FXML
-    private TableColumn<User, String> colStatus;
-    @FXML
-    private Button deleteButton;
-    @FXML
-    private Button reload;
+    @FXML private TableView<User> userTable;
+    @FXML private TableColumn<User, Integer> colId;
+    @FXML private TableColumn<User, String> colUsername;
+    @FXML private TableColumn<User, String> colEmail;
+    @FXML private TableColumn<User, String> colPhone;
+    @FXML private TableColumn<User, String> colRole;
+    @FXML private TableColumn<User, String> colStatus;
+    @FXML private Button deleteButton;
+    @FXML private Button reload;
 
     private UserDAO nguoiDungDAO = UserDAO.getInstance();
     @Override

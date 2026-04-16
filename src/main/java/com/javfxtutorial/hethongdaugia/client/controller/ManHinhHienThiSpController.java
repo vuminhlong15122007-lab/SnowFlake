@@ -12,6 +12,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
@@ -25,9 +26,9 @@ public class ManHinhHienThiSpController {
     @FXML private Label lbGiaSp;
     @FXML private Label lbTenngban;
     @FXML private Label lbTimer; // phan nay chx xu ly duoc
-    @FXML private Button btnMenu;// phai lien ket  voi man chinh
     @FXML private Label lbAuctionName;
     @FXML private ImageView imgSanPham;
+    @FXML private TextArea taDescription;
 
 
     private Item  TemMemory; // Bộ nhớ tạm thời để lưu sản phẩm đang xem
@@ -37,13 +38,14 @@ public class ManHinhHienThiSpController {
         this.TemMemory = p;
         lbGiaSp.setText(String.valueOf(p.getCurrentPrice()));
         lbAuctionName.setText(p.getName());
+        lbTenngban.setText(String.valueOf(ClientModel.getInstance().getCurrentUser().getId()));
+        taDescription.setText(p.getDescription());
         if (p.getImagePath() != null){
             String imagePath = "/com/javfxtutorial/hethongdaugia/assets/" + p.getImagePath();
             Image image = new Image(getClass().getResourceAsStream(imagePath));  // Tao tam anh tu duong dan
             imgSanPham.setImage(image); // dan tam anh vao khung
         }
-//        lbTenngban.setText(p.getSellerId());  - man hinh Item khong co sellerid .. nghi cach luu vao cai j do de co the man hinh nay sd
-        // chua xu ly duoc phan hien tgian
+//
     }
 
     @FXML
@@ -92,6 +94,8 @@ public class ManHinhHienThiSpController {
             e.printStackTrace();
         }
     }
+
+
 
 
 
