@@ -54,25 +54,16 @@ public class Edit_User_Popup_Controller {
         String selectRole = cbRole.getValue();
         String password = "00000";
         String confirmPassword = "00000";
-        if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
-            if (password.equals(confirmPassword)){
-                ServerConnection connection = new ServerConnection();
-                Command cmd = new AddAccountCommand();
-                cmd.addData("username", name);
-                cmd.addData("password", password);
-                cmd.addData("email", email);
-                cmd.addData("sdt", sdt);
-                cmd.addData("accountType", selectRole);
-                Response rp = connection.sendCommand(cmd);
-                if (rp.isSuccess()){
-//                    try {
-//                        Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/Quan_Ly_User_Admin.fxml"));
-//                        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-//                        stage.setScene(new Scene(root));
-//                        stage.show();
-//                    } catch (IOException e) {
-//                        e.printStackTrace();
-//                    }
+        if (!name.isEmpty() && !email.isEmpty() && !selectRole.isEmpty()){
+            ServerConnection connection = new ServerConnection();
+            Command cmd = new AddAccountCommand();
+            cmd.addData("username", name);
+            cmd.addData("password", password);
+            cmd.addData("email", email);
+            cmd.addData("sdt", sdt);
+            cmd.addData("accountType", selectRole);
+            Response rp = connection.sendCommand(cmd);
+            if (rp.isSuccess()){
                     Stage stage1 = (Stage) ((Node) event.getSource()).getScene().getWindow();
                     stage1.close();
                     Stage stage = new Stage();
@@ -82,7 +73,7 @@ public class Edit_User_Popup_Controller {
                     Scene scene = new Scene(fxmlLoader.load());
                     stage.setScene(scene);
                     stage.show();
-                }
+
                 connection.close();
 
             }

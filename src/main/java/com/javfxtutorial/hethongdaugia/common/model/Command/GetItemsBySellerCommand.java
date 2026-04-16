@@ -7,10 +7,17 @@ import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
 
 import java.util.ArrayList;
 
-public class GetAllItemsCommand extends Command {
+public class GetItemsBySellerCommand extends Command {
+    private int sellerId;
+
+    public GetItemsBySellerCommand(int sellerId) {
+        this.sellerId = sellerId;
+    }
+
     @Override
     public Response handle() {
-        ArrayList<Item> allItems = ItemDAO.getInstance().selectAll();
-        return new Response(true, "Lấy thành công", allItems);
+        // Gọi ItemDAO để lấy danh sách Item theo sellerId
+        ArrayList<Item> items = ItemDAO.getInstance().selectBySellerId(sellerId);
+        return new Response(true, "Thành công", items);
     }
 }

@@ -46,17 +46,14 @@ public class AdminUserManagementController implements  Initializable {
     @FXML
     private Button reload;
 
-    private UserDAO nguoiDungDAO = new UserDAO();
+    private UserDAO nguoiDungDAO = UserDAO.getInstance();
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        // Tên trong ngoặc kép ("id", "username", "email") phải CHÍNH XÁC với tên biến trong class User
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colUsername.setCellValueFactory(new PropertyValueFactory<>("name"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         colPhone.setCellValueFactory(new PropertyValueFactory<>("sdt"));
         colRole.setCellValueFactory(new PropertyValueFactory<>("accountType"));
-
-        // Lấy dữ liệu và nhét vào bảng
         loadUserData();
     }
     @FXML
@@ -195,8 +192,7 @@ public class AdminUserManagementController implements  Initializable {
 
     public void reLoad(ActionEvent event){
         userTable.getItems().clear();
-        UserDAO  dao = new UserDAO();
-        List<User> freshData = dao.selectAll();
+        List<User> freshData = nguoiDungDAO.selectAll();
         userTable.getItems().addAll(freshData);
         System.out.println("Dữ liệu đã được cập nhật!");
 

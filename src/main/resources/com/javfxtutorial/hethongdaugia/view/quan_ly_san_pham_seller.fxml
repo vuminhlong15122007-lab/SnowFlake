@@ -1,10 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="500" prefWidth="900" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.QuanLySpSellerController">
+<BorderPane prefHeight="500" prefWidth="900" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.QuanLySpSellerController">
 
     <!-- Header -->
     <top>
@@ -16,7 +27,7 @@
          </ImageView>
             <Label prefHeight="32.0" prefWidth="332.0" style="-fx-font-size: 22px; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox - Quản lý sản phẩm" />
          <Region prefHeight="75.0" prefWidth="326.0" />
-         <Button fx:id="goMenu" mnemonicParsing="false" onAction="#goMenu" prefHeight="48.0" prefWidth="103.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -ox-border-color: red; -fx-background-radius: 10; -fx-border-radius: 10; -fx-text-fill: white; -fx-font-weight: bold;" text="quay về Menu" />
+         <Button fx:id="goMenu" mnemonicParsing="false" onAction="#goMenu" prefHeight="48.0" prefWidth="103.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -ox-border-color: red; -fx-background-radius: 10; -fx-border-radius: 10; -fx-text-fill: white; -fx-font-weight: bold;" text="Trang chủ" />
         </HBox>
     </top>
 
@@ -28,8 +39,7 @@
                 <Label prefHeight="25.0" prefWidth="242.0" style="-fx-font-size: 16px; -fx-text-fill: #333366; -fx-font-weight: bold;" text="Danh sách sản phẩm của tôi" />
                 <ListView fx:id="productList" prefHeight="350" prefWidth="250" />
                 <HBox alignment="CENTER" spacing="10">
-                    <Button fx:id="addButton" style="-fx-background-color: #4caf50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="Thêm" />
-                    <Button fx:id="deleteButton" prefHeight="25.0" prefWidth="48.0" style="-fx-background-color: #dc3545; -fx-font-weight: bold; -fx-text-fill: white; -fx-background-radius: 6;" text="Xóa" />
+                    <Button fx:id="deleteButton" onAction="#deleteAuction" prefHeight="25.0" prefWidth="48.0" style="-fx-background-color: #dc3545; -fx-font-weight: bold; -fx-text-fill: white; -fx-background-radius: 6;" text="Xóa" />
                 </HBox>
             </VBox>
 
@@ -44,13 +54,13 @@
                      </image>
                   </ImageView>
                   <Region prefHeight="155.0" prefWidth="54.0" />
-                  <Button mnemonicParsing="false" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Tải ảnh lên" />
+                  <Button fx:id="btupImg" mnemonicParsing="false" onAction="#updateImg" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Tải ảnh lên" />
                </children>
             </HBox>
                 <TextField fx:id="nameField" promptText="Tên sản phẩm" style="-fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
                 <TextArea fx:id="descriptionField" prefHeight="65.0" prefRowCount="3" prefWidth="478.0" promptText="Mô tả sản phẩm" style="-fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
                 <TextField fx:id="priceField" promptText="Giá khởi điểm" style="-fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
-            <TextField fx:id="buocGia" promptText="Bước giá " style="-fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
+            <TextField fx:id="tfstepPrice" promptText="Bước giá " style="-fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
                 <HBox alignment="CENTER_LEFT" spacing="10">
                     <Label prefWidth="70" style="-fx-text-fill: #333366; -fx-font-weight: bold;" text="Bắt đầu:" />
                     <DatePicker fx:id="startDatePicker" prefWidth="150" promptText="Chọn ngày" style="-fx-border-color: #b3c6ff; -fx-border-radius: 3;" />
@@ -83,7 +93,7 @@
                     </Spinner>
                     <Label text="Phút" />
                 </HBox>
-                <Button fx:id="saveButton" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="Lưu" />
+                <Button fx:id="saveButton" onAction="#luuSp" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="Lưu" />
             </VBox>
         </HBox>
     </center>

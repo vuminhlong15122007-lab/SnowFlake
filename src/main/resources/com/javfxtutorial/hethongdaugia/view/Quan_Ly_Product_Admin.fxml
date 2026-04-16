@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.controller.Quan_Ly_Product_Admin_Controller">
+<BorderPane prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminItemMangementController">
 
     <top>
         <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-background-color: linear-gradient(to right, skyblue, lavender);" BorderPane.alignment="CENTER">
@@ -18,7 +18,7 @@
                <Image url="@../assets/ClassicLogo.png" />
             </image>
          </ImageView>
-            <Label text="Bảng Điều Khiển Admin - Quản Lý Sản Phẩm" textFill="WHITE">
+            <Label style="-fx-font-size: 18; -fx-font-weight: bold;" text="Bảng Điều Khiển Admin - Quản Lý Sản Phẩm" textFill="WHITE">
                 <font>
                     <Font name="System Bold" size="22.0" />
                 </font>
@@ -26,6 +26,7 @@
             <Region HBox.hgrow="ALWAYS" />
             <TextField fx:id="searchField" prefWidth="250.0" promptText="Tìm kiếm (Tên SP, Danh mục)..." style="-fx-background-radius: 15;" />
             <Button fx:id="btnSearch" mnemonicParsing="false" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 15;" text="Tìm kiếm" />
+            <Button fx:id="logOutAd" mnemonicParsing="false" onAction="#clickButtonExit" style="-fx-background-color: #3498db; -fx-text-fill: while; -fx-background-radius: 15;" text="Thoát" textFill="WHITE" />
         </HBox>
     </top>
 
@@ -39,14 +40,14 @@
                     <Font name="System Bold" size="16.0" />
                 </font>
             </Label>
-            <TableView fx:id="productTable" VBox.vgrow="ALWAYS">
+            <TableView fx:id="itemTable" VBox.vgrow="ALWAYS">
                 <columns>
                     <TableColumn fx:id="colId" prefWidth="60.0" text="Mã SP" />
-                    <TableColumn fx:id="colProductName" prefWidth="200.0" text="Tên sản phẩm" />
+                    <TableColumn fx:id="colItemName" prefWidth="200.0" text="Tên sản phẩm" />
                     <TableColumn fx:id="colCategory" prefWidth="120.0" text="Danh mục" />
                     <TableColumn fx:id="colOwner" prefWidth="120.0" text="Người đăng" />
-                    <TableColumn fx:id="colStartPrice" prefWidth="120.0" text="Giá khởi điểm" />
-                    <TableColumn fx:id="colCurrentPrice" prefWidth="120.0" text="Giá đấu hiện tại" />
+                    <TableColumn fx:id="colStartPrice" prefWidth="120.0" text="Giá hiện tại" />
+                    <TableColumn fx:id="colStepPrice" prefWidth="120.0" text="Bước giá" />
                     <TableColumn fx:id="colStatus" prefWidth="100.0" text="Trạng thái" />
                 </columns>
                 <columnResizePolicy>
@@ -85,7 +86,7 @@
                     <Font name="System Bold" size="16.0" />
                 </font>
             </Label>
-            <Button fx:id="btnDeleteProduct" maxWidth="Infinity" mnemonicParsing="false" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;" text="XÓA SẢN PHẨM" />
+            <Button fx:id="btnDeleteProduct" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToDeleteItem" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;" text="XÓA SẢN PHẨM" />
 
         </VBox>
     </right>
