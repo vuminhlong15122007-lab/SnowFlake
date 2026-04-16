@@ -183,7 +183,6 @@ public class ItemDAO implements DAOInterface<Item> {
                 String name = resultSet.getString("name");
                 String description = resultSet.getString("description");
                 String imagePath = resultSet.getString("imagePath");
-//                AccountType accountType = AccountType.valueOf(resultSet.getString("accountType"));
                 Item item = new Item(idseller, name, description, imagePath);
                 result.add(item);
             }
