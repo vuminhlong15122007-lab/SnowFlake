@@ -11,9 +11,9 @@ public class ResetPassWordCommand extends Command {
         int userId = (int) this.getData("userId");
         String passWord = (String) this.getData("passWord");
 
-        boolean resetPW = UserManager.getInstance().reset_password(userId, passWord);
-        if(resetPW){
-            return new Response(true, "Đổi mật khẩu thành công", null);
+        User resetPW = UserManager.getInstance().reset_password(userId, passWord);
+        if(resetPW != null){
+            return new Response(true, "Đổi mật khẩu thành công", resetPW);
         }else{
             return new Response(false, "Lỗi", null);
         }

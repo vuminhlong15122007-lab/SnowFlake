@@ -50,13 +50,15 @@ public class UserManager {
         }
         return false;
     }
-    public boolean reset_password(int userId, String passWord){
+    public User reset_password(int userId, String passWord){
         User resetPW = UserDAO.getInstance().selectById(userId);
-        int result = UserDAO.getInstance().update(resetPW);
+        //user moi
+        User newUser = new User(userId, resetPW.getName(), passWord, resetPW.getEmail(), resetPW.getSdt(), resetPW.getAccountType());
+        int result = UserDAO.getInstance().update(newUser);
         if (result > 0){
             System.out.println( "Đổi mật khẩu thành công");
-            return true;
+            return newUser;
         }
-        return false;
+        return null;
     }
 }

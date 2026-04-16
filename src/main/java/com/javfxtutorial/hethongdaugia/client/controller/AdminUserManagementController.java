@@ -201,5 +201,14 @@ public class AdminUserManagementController implements  Initializable {
         System.out.println("Dữ liệu đã được cập nhật!");
 
     }
+    @FXML private Button logOutAd;
+    @FXML
+    public void logOut(ActionEvent event) throws Exception{
+        Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/login.fxml"));
+        Scene scene = new Scene(root);
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(scene);
+        stage.show();
+    }
 
 }

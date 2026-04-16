@@ -35,7 +35,7 @@
             <Region HBox.hgrow="ALWAYS" />
             <TextField fx:id="searchField" prefWidth="250.0" promptText="Tìm kiếm (Tên, Email, ID)..." style="-fx-background-radius: 15;" />
             <Button fx:id="btnSearch" mnemonicParsing="false" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 15;" text="Tìm kiếm" />
-         <Button fx:id="logOutAd" mnemonicParsing="false" style="-fx-background-color: #3498db; -fx-text-fill: while; -fx-background-radius: 15;" text="Thoát" textFill="WHITE" />
+         <Button fx:id="logOutAd" mnemonicParsing="false" onAction="#logOut" style="-fx-background-color: #3498db; -fx-text-fill: while; -fx-background-radius: 15;" text="Thoát" textFill="WHITE" />
         </HBox>
     </top>
 
