@@ -9,25 +9,31 @@ public class Item implements Serializable {
     private String name;
     private String description;
     private String imagePath; // đường dẫn ảnh
+    private String sellerName;
+
     private double currentPrice;
     private double stepPrice;
-    private LocalDateTime tGianBD;
 
     public Item(int sellerId, String name, String description, String imagePath) {
         this.sellerId = sellerId;
         this.name = name;
         this.description = description;
         this.imagePath = imagePath;
+    }
 
+    public Item(int itemId, int sellerId, String name, String description, String imagePath, String sellerName) {
+        this.sellerId = sellerId;
+        this.itemId = itemId;
+        this.name = name;
+        this.description = description;
+        this.imagePath = imagePath;
+        this.sellerName = sellerName;
     }
 
     public Item() {
     }
 
     public void setItemId(int itemId) {this.itemId = itemId;}
-
-    public void settGianBD(LocalDateTime tGianBD) {this.tGianBD = tGianBD;}
-
     public double getStepPrice() {return stepPrice;}
     public void setStepPrice(double stepPrice) {this.stepPrice = stepPrice;}
     public double getCurrentPrice() {return currentPrice;}
@@ -41,6 +47,8 @@ public class Item implements Serializable {
     public int getItemId() {return itemId;}
     public int getSellerId() {return sellerId;}
     public void setSellerId(int sellerId) {this.sellerId = sellerId;}
+    public String getSellerName() {return sellerName;}
+    public void setSellerName(String sellerName) {this.sellerName = sellerName;}
 }
 
 

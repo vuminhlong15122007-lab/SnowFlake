@@ -45,7 +45,7 @@ public class ResetPassWordController {
         }
     }
     @FXML
-    public void updatePW() throws IOException {
+    public void updatePW() throws IOException, ClassNotFoundException {
         //lay du lieu tu o nhap
         String newPW = txtNewPW.getText();
         String confirmPW = txtConfirmPW.getText();
@@ -64,7 +64,8 @@ public class ResetPassWordController {
         cmd.addData("userId", currentUser.getId());
         cmd.addData("passWord", newPW);
 
-        Response rp = connection.sendCommand(cmd);
+        connection.sendCommand(cmd);
+        Response rp = connection.receiveResponse();
 
         if(rp.isSuccess()){
             currentUser.setPassWord(newPW);

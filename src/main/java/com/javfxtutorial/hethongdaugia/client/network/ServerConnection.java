@@ -36,22 +36,20 @@ public class ServerConnection {
     }
 
     // Gửi command và chờ response (đồng bộ)
-    public Response sendCommand(Command cmd) {
+    public void sendCommand(Command cmd) {
         try {
             out.writeObject(cmd);
             out.flush();
-            return (Response) in.readObject();  // nhận vể response của server
         } catch (Exception e) {
-            return new Response(false, "Lỗi kết nối", null);
+            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
+
+    public Response receiveResponse() throws IOException, ClassNotFoundException {
+        return (Response) in.readObject();
+    }
     public void close() throws IOException {
-        if (in != null) {
-            in.close();
-        }
-        if (out != null) {
-            out.close();
-        }
         if (clientSocket != null) {
             this.clientSocket.close();
         }

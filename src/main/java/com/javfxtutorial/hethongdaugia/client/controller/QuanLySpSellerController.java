@@ -7,6 +7,7 @@ import com.javfxtutorial.hethongdaugia.common.model.Command.AddItemCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteItemCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetItemsBySellerCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.application.Platform;
@@ -96,7 +97,7 @@ public class QuanLySpSellerController {
             Item item = new Item(sellerID, ten, moTa, imagePath);
             item.setCurrentPrice(giaKhoiDiem);
             item.setStepPrice(buocGia);
-            Auction auction = new Auction(item.getItemId(), sellerID, giaKhoiDiem, buocGia,tGianBD, tGianKT );
+            Auction auction = new Auction(item.getItemId(), sellerID, giaKhoiDiem, buocGia,tGianBD, tGianKT, AuctionStatus.NOT_START);
 
             ServerConnection connection = new ServerConnection();
             Command cm = new AddItemCommand();
@@ -104,7 +105,8 @@ public class QuanLySpSellerController {
             cm.addData("Auction", auction);
             new Thread(() -> {     // Tao 1 luong phụ để để gửi dữ liệu về server và chuyển dữ liệu từ server về
                 try {
-                    Response response = connection.sendCommand(cm); // method gui du lieu ve sẻrver
+                    connection.sendCommand(cm);
+                    Response response = connection.receiveResponse();// method gui du lieu ve sẻrver
                     Platform.runLater(() -> {   // gọi Thread Main cập nhận giao diện
                         if (response.isSuccess()) {
                             Item savedItem = (Item) response.getPayLoad();
@@ -150,7 +152,8 @@ public class QuanLySpSellerController {
 
         new Thread(() -> { //Tạo 1 luồng giao diện mới và giao công vc cho luồng
             try {
-                Response resp = connection.sendCommand(cmd);  //cmd biến thành dãy bit gửi qua mạng => server xưr lý => gửi về một Response chứa danh sách Item.
+                connection.sendCommand(cmd);
+                Response resp = connection.receiveResponse();   //cmd biến thành dãy bit gửi qua mạng => server xưr lý => gửi về một Response chứa danh sách Item.
 
                 Platform.runLater(() -> {          //luồng phụ gọi để luồng chính xử lý
                     if (resp.isSuccess()) {  // kiểm tra xem có nhận được danh sách cân ko
@@ -176,7 +179,8 @@ public class QuanLySpSellerController {
         ServerConnection connection = new ServerConnection();
         new Thread(() -> {
             try {
-                Response resp = connection.sendCommand(cmd);  // gửi yêu cầu lên server và server xử lý
+                connection.sendCommand(cmd);
+                Response resp = connection.receiveResponse(); // gửi yêu cầu lên server và server xử lý
                 Platform.runLater(() -> {
                     if (resp.isSuccess()) {  //check xem yc đã đc thực hiện chx
                         observable.remove(selected);// xóa sp khỏi ds

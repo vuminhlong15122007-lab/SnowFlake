@@ -179,11 +179,13 @@ public class ItemDAO implements DAOInterface<Item> {
             ResultSet resultSet = st.executeQuery(sql);
             //lấy dữ liệu
             while (resultSet.next()){
+                int itemId = resultSet.getInt("itemid");
                 int idseller = resultSet.getInt("idseller");
                 String name = resultSet.getString("name");
                 String description = resultSet.getString("description");
                 String imagePath = resultSet.getString("imagePath");
-                Item item = new Item(idseller, name, description, imagePath);
+                String sellerName = resultSet.getString("sellerName");
+                Item item = new Item(itemId, idseller, name,description, imagePath, sellerName);
                 result.add(item);
             }
             JDBCUtil.closeConnection(connection);
@@ -203,11 +205,13 @@ public class ItemDAO implements DAOInterface<Item> {
 
             // tim kiem
             while (resultSet.next()){
+                int itemId = resultSet.getInt("itemid");
                 int idseller = resultSet.getInt("idseller");
                 String name = resultSet.getString("name");
                 String description = resultSet.getString("description");
                 String imagePath = resultSet.getString("imagePath");
-                result = new Item(idseller, name, description, imagePath);
+                String sellerName = resultSet.getString("sellerName");
+                result = new Item(itemId, idseller, name,description, imagePath, sellerName);
             }
             //dong ket noi
             JDBCUtil.closeConnection(connection);
@@ -228,11 +232,14 @@ public class ItemDAO implements DAOInterface<Item> {
 
             // tim kiem
             while (resultSet.next()){
+                int itemId = resultSet.getInt("itemid");
                 int idseller = resultSet.getInt("idseller");
                 String name = resultSet.getString("name");
                 String description = resultSet.getString("description");
                 String imagePath = resultSet.getString("imagePath");
-                result .add(new Item(idseller, name, description, imagePath));
+                String sellerName = resultSet.getString("sellerName");
+                Item item = new Item(itemId, idseller, name,description, imagePath, sellerName);
+                result.add(item);
             }
             //dong ket noi
             JDBCUtil.closeConnection(connection);

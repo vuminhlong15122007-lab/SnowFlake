@@ -21,19 +21,19 @@
 
                 <VBox prefHeight="140.0" prefWidth="280.0" spacing="8.0" HBox.hgrow="ALWAYS">
                     <children>
-                        <Label fx:id="lbAuctionName" style="-fx-text-fill: linear-gradient(to right, purple, #2f80ed);" text="Tên sản phẩm" textFill="#2f3640">
+                        <Label fx:id="ItemNameLabel" style="-fx-text-fill: linear-gradient(to right, purple, #2f80ed);" text="Tên sản phẩm" textFill="#2f3640">
                             <font>
                                 <Font name="System Bold" size="18.0" />
                             </font>
                         </Label>
-                  <HBox prefHeight="100.0" prefWidth="200.0">
+                  <HBox prefHeight="31.0" prefWidth="273.0">
                      <children>
                               <Label text="Giá sản phẩm: " textFill="#e84118">
                                   <font>
                                       <Font name="System Bold" size="14.0" />
                                   </font>
                               </Label>
-                        <Label fx:id="lbGiaSp" text="..." textFill="#e84118">
+                        <Label fx:id="ItemPriceText" text="..." textFill="#e84118">
                            <font>
                               <Font name="System Bold" size="14.0" />
                            </font>
@@ -42,14 +42,20 @@
                   </HBox>
                   <HBox prefHeight="9.0" prefWidth="273.0">
                      <children>
-                        <Label text="ID:  " />
-                        <Label fx:id="lbItemID" text="Label" />
+                        <Label text="Người bán: " />
+                        <Label fx:id="SellerNameText" text="Label" />
                      </children>
                   </HBox>
-                  <HBox prefHeight="100.0" prefWidth="200.0">
+                  <HBox layoutX="10.0" layoutY="85.0" prefHeight="9.0" prefWidth="273.0">
                      <children>
-                              <Label fx:id="lblThoiGian" text="⏰ Còn: " textFill="#7f8c8d" />
-                        <Label fx:id="lbTimer" text="Label" />
+                        <Label text="Thời gian bắt đầu: " />
+                        <Label fx:id="StartTimeText" text="Label" />
+                     </children>
+                  </HBox>
+                  <HBox prefHeight="9.0" prefWidth="273.0">
+                     <children>
+                        <Label text="Trạng thái: " />
+                        <Label fx:id="AuctionStatusText" text="Label" />
                      </children>
                   </HBox>
                     </children>

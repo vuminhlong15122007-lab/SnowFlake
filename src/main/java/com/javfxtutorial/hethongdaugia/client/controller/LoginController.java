@@ -26,14 +26,15 @@ public class LoginController {
     @FXML private Button login;
     @FXML private Button sign_in;
     @FXML
-    public void clickLogin(ActionEvent event) throws IOException {
+    public void clickLogin(ActionEvent event) throws IOException, ClassNotFoundException {
         String username = Username.getText();
         String password = Password.getText();
         ServerConnection connection = new ServerConnection();
         Command cmd = new LoginCommand();
         cmd.addData("username", username);
         cmd.addData("password", password);
-        Response rp = connection.sendCommand(cmd);
+        connection.sendCommand(cmd);
+        Response rp = connection.receiveResponse();
         if (rp.isSuccess()){
             User user = (User) rp.getPayLoad();
             ClientModel.getInstance().setCurrentUser(user);

@@ -4,6 +4,7 @@ import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 
+import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllItemsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetItemsBySellerCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
@@ -46,6 +47,7 @@ public class AuctionController {
 
     @FXML
     public void initialize(){
+        featuredProductList.setSelectionModel(null); //khi chọn không bị đổi màu
         // Ep listView gian rong ra het co
         VBox.setVgrow(featuredProductList, Priority.ALWAYS); // listView tu gian rong het co theo chieu doc
         featuredProductList.setMaxWidth(Double.MAX_VALUE ); // gian rong het co theo chieu rong
@@ -76,18 +78,16 @@ public class AuctionController {
 
     public void loadData(){
        //observable.add(new Item()
-
-        int sellerId = ClientModel.getInstance().getCurrentUser().getId();
-        Command cmd = new GetItemsBySellerCommand(sellerId);
+        Command cmd = new GetAllItemsCommand();
         ServerConnection connection = new ServerConnection();
-        Response rp = connection.sendCommand(cmd);
         new Thread(() -> { //Tạo 1 luồng giao diện mới và giao công vc cho luồng
             try {
-                Response resp = connection.sendCommand(cmd);  //cmd biến thành dãy bit gửi qua mạng => server xưr lý => gửi về một Response chứa danh sách Item.
-
+                connection.sendCommand(cmd);
+                Response resp = connection.receiveResponse();  //cmd biến thành dãy bit gửi qua mạng => server xưr lý => gửi về một Response chứa danh sách Item.
+                connection.close();
                 Platform.runLater(() -> {          //luồng phụ gọi để luồng chính xử lý
                     if (resp.isSuccess()) {  // kiểm tra xem có nhận được danh sách cân ko
-                        List<Item> items = (List<Item>) resp.getPayLoad();  // lấy đồ ra
+                        ArrayList<Item> items = (ArrayList<Item>) resp.getPayLoad();  // lấy đồ ra
                         observable.setAll(items); // sắp xếp lên listView
                     }
                 });

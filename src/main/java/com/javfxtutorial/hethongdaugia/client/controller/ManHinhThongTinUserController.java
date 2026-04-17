@@ -15,6 +15,8 @@ import javafx.scene.control.*;
 import javafx.stage.Stage;
 import javafx.scene.control.Alert;
 
+import java.io.IOException;
+
 public class ManHinhThongTinUserController {
     @FXML private Label usernameLabel;
     @FXML private Label emailLabel;
@@ -82,7 +84,7 @@ public class ManHinhThongTinUserController {
     }
     //cap nhat thong tin
     @FXML
-    public void handleUpdateInfo(){
+    public void handleUpdateInfo() throws IOException, ClassNotFoundException {
         //lay du lieu tu o nhap
         String newName = updateNameText.getText();
         String newEmail = updateEmailText.getText();
@@ -104,7 +106,8 @@ public class ManHinhThongTinUserController {
         cmd.addData("email", newEmail);
         cmd.addData("phone", newPhone);
 
-        Response rp = connection.sendCommand(cmd);
+        connection.sendCommand(cmd);
+        Response rp = connection.receiveResponse();
 
         if(rp.isSuccess()){
             //cap nhat lai clientmodel voi user moi

@@ -65,7 +65,7 @@ public class AdminItemMangementController implements  Initializable {
         }
     }
     @FXML
-    public void clickToDeleteItem() throws IOException {
+    public void clickToDeleteItem() throws IOException, ClassNotFoundException {
         ServerConnection connection = new ServerConnection();
         Item selectItem = itemTable.getSelectionModel().getSelectedItem();
         if (selectItem == null) {
@@ -94,7 +94,9 @@ public class AdminItemMangementController implements  Initializable {
             cmd.addData("currentPrice", selectItem.getCurrentPrice());
             cmd.addData("stepPrice", selectItem.getStepPrice());
 
-            Response rp = connection.sendCommand(cmd);
+            connection.sendCommand(cmd);
+            Response rp = connection.receiveResponse();
+
             if (rp.isSuccess()) {
                 showAlert("Xóa thành công", rp.getMessage());
                 loadItemData();//load lai bang

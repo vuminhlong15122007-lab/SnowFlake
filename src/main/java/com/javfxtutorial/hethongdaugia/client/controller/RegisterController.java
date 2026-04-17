@@ -36,7 +36,7 @@ public class RegisterController {
             e.printStackTrace();
         }
     }
-    public void clickSignUp(ActionEvent event) throws IOException {
+    public void clickSignUp(ActionEvent event) throws IOException, ClassNotFoundException {
         String name = Username.getText();
         String password = Password.getText();
         String email = Email.getText();
@@ -50,7 +50,8 @@ public class RegisterController {
                 cmd.addData("password", password);
                 cmd.addData("email", email);
                 cmd.addData("sdt", sdt);
-                Response rp = connection.sendCommand(cmd);
+                connection.sendCommand(cmd);
+                Response rp = connection.receiveResponse();
                 if (rp.isSuccess()){
 
                     Stage stage = new Stage();

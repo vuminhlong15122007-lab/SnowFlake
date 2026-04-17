@@ -113,7 +113,7 @@ public class AdminUserManagementController implements  Initializable {
     }
     @FXML private Button btnDeleteUser;
     @FXML
-    public void clickToDeleteUser() throws IOException {
+    public void clickToDeleteUser() throws IOException, ClassNotFoundException {
         ServerConnection connection = new ServerConnection();
         User selectUser = userTable.getSelectionModel().getSelectedItem();
         if (selectUser == null){
@@ -141,7 +141,8 @@ public class AdminUserManagementController implements  Initializable {
             cmd.addData("email", selectUser.getEmail());
             cmd.addData("phone", selectUser.getSdt());
 
-            Response rp = connection.sendCommand(cmd);
+            connection.sendCommand(cmd);
+            Response rp = connection.receiveResponse();
             if(rp.isSuccess()){
                 showAlert("Xóa thành công", rp.getMessage());
                 loadUserData();//load lai bang

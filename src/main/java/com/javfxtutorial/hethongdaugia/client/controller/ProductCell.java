@@ -28,7 +28,9 @@ public class ProductCell extends ListCell<Item> {
 
             }catch (IOException e){
                 e.printStackTrace();
-            }
+            } catch (ClassNotFoundException e) {
+                    throw new RuntimeException(e);
+                }
         }
     }
 

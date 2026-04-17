@@ -40,6 +40,27 @@ public class Auction implements Serializable {
         this.endingTime = endingTime;
     }
 
+    public Auction(int auctionId, int itemId, int sellerId, double initPrice, double stepPrice, LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
+        this.auctionId = auctionId;
+        this.itemId = itemId;
+        this.sellerId = sellerId;
+        this.initPrice = initPrice;
+        this.stepPrice = stepPrice;
+        this.startingTime = startingTime;
+        this.endingTime = endingTime;
+        this.status = status;
+    }
+    public Auction( int itemId, int sellerId, double initPrice, double stepPrice, LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
+        this.itemId = itemId;
+        this.sellerId = sellerId;
+        this.initPrice = initPrice;
+        this.stepPrice = stepPrice;
+        this.startingTime = startingTime;
+        this.endingTime = endingTime;
+        this.status = status;
+    }
+
+
 
 
     public int getAuctionId() {
@@ -127,5 +148,22 @@ public class Auction implements Serializable {
 
     public void setWinnerId(int winnerId) {
         this.winnerId = winnerId;
+    }
+
+    @Override
+    public String toString() {
+        return "Auction{" +
+                "auctionId=" + auctionId +
+                ", itemId=" + itemId +
+                ", sellerId=" + sellerId +
+                ", initPrice=" + initPrice +
+                ", currentPrice=" + currentPrice +
+                ", stepPrice=" + stepPrice +
+                ", winningPrice=" + winningPrice +
+                ", startingTime=" + startingTime +
+                ", endingTime=" + endingTime +
+                ", status=" + status +
+                ", winnerId=" + winnerId +
+                '}';
     }
 }

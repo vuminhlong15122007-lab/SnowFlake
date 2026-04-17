@@ -47,7 +47,7 @@ public class Edit_User_Popup_Controller {
                 "ADMIN"));
     }
     @FXML
-    public void clickToSave(ActionEvent event) throws IOException {
+    public void clickToSave(ActionEvent event) throws IOException, ClassNotFoundException {
         String name = txtName.getText();
         String email = txtEmail.getText();
         String sdt = txtPhoneNumber.getText();
@@ -62,7 +62,8 @@ public class Edit_User_Popup_Controller {
             cmd.addData("email", email);
             cmd.addData("sdt", sdt);
             cmd.addData("accountType", selectRole);
-            Response rp = connection.sendCommand(cmd);
+            connection.sendCommand(cmd);
+            Response rp = connection.receiveResponse();
             if (rp.isSuccess()){
                     Stage stage1 = (Stage) ((Node) event.getSource()).getScene().getWindow();
                     stage1.close();

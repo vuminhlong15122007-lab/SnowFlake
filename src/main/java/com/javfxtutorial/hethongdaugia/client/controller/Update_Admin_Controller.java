@@ -46,7 +46,7 @@ public class Update_Admin_Controller {
     }
     //cap nhat thong tin
     @FXML
-    public void handleUpdateInfo() throws IOException {
+    public void handleUpdateInfo() throws IOException, ClassNotFoundException {
         //lay du lieu tu o nhap
         String newName = txtName.getText();
         String newEmail = txtEmail.getText();
@@ -68,7 +68,8 @@ public class Update_Admin_Controller {
         cmd.addData("email", newEmail);
         cmd.addData("phone", newPhone);
 
-        Response rp = connection.sendCommand(cmd);
+        connection.sendCommand(cmd);
+        Response rp = connection.receiveResponse();
 
         if(rp.isSuccess()){
             //cap nhat lai clientmodel voi user moi
