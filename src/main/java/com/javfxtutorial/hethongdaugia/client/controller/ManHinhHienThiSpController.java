@@ -28,28 +28,17 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 
 public class ManHinhHienThiSpController {
-    @FXML
-    private Label EndingtimeLabel;
-    @FXML
-    private Label ItemNameLabel;
-    @FXML
-    private Label ItemPriceLabel;
-    @FXML
-    private Label LbMotasp;
-    @FXML
-    private Label StartTimeLabel;
-    @FXML
-    private Button ThamGiaDauGiaBtn;
-    @FXML
-    private Button btnMenu;
-    @FXML
-    private ImageView imgSanPham;
-    @FXML
-    private Label lbLoaisp;
-    @FXML
-    private Label lbTenngban;
-    @FXML
-    private Label lbTimer;
+    @FXML private Label EndingtimeLabel;
+    @FXML private Label ItemNameLabel;
+    @FXML private Label ItemPriceLabel;
+    @FXML private Label LbMotasp;
+    @FXML private Label StartTimeLabel;
+    @FXML private Button ThamGiaDauGiaBtn;
+    @FXML private Button btnMenu;
+    @FXML private ImageView imgSanPham;
+    @FXML private Label lbLoaisp;
+    @FXML private Label lbTenngban;
+    @FXML private Label lbTimer;
 
 
     private Item item = ClientModel.getInstance().getCurrentItem();

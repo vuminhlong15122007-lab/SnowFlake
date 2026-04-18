@@ -39,7 +39,8 @@
                 <Label prefHeight="25.0" prefWidth="242.0" style="-fx-font-size: 16px; -fx-text-fill: #333366; -fx-font-weight: bold;" text="Danh sách sản phẩm của tôi" />
                 <ListView fx:id="productList" prefHeight="350" prefWidth="250" />
                 <HBox alignment="CENTER" spacing="10">
-                    <Button fx:id="deleteButton" onAction="#deleteAuction" prefHeight="25.0" prefWidth="48.0" style="-fx-background-color: #dc3545; -fx-font-weight: bold; -fx-text-fill: white; -fx-background-radius: 6;" text="Xóa" />
+                    <Button onAction="#suaSp" prefHeight="25.0" prefWidth="48.0" style="-fx-background-color: #f39c12; -fx-font-weight: bold; -fx-text-fill: white; -fx-background-radius: 6;" text="Sửa" />
+               <Button fx:id="deleteButton1" onAction="#deleteAuction" prefHeight="25.0" prefWidth="48.0" style="-fx-background-color: #dc3545; -fx-font-weight: bold; -fx-text-fill: white; -fx-background-radius: 6;" text="Xóa" />
                 </HBox>
             </VBox>
 
@@ -58,7 +59,7 @@
                </children>
             </HBox>
                 <TextField fx:id="nameField" promptText="Tên sản phẩm" style="-fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
-                <TextArea fx:id="descriptionField" prefHeight="65.0" prefRowCount="3" prefWidth="478.0" promptText="Mô tả sản phẩm" style="-fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
+                <TextArea fx:id="descriptionField" prefHeight="65.0" prefRowCount="3" prefWidth="478.0" promptText="Mô tả sản phẩm" style="-fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" wrapText="true" />
                 <TextField fx:id="priceField" promptText="Giá khởi điểm" style="-fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
             <TextField fx:id="tfstepPrice" promptText="Bước giá " style="-fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
                 <HBox alignment="CENTER_LEFT" spacing="10">

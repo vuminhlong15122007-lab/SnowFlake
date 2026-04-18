@@ -22,17 +22,13 @@ import javafx.stage.StageStyle;
 import java.io.IOException;
 
 public class Edit_User_Popup_Controller {
-    @FXML
-    private TextField txtName;
-    @FXML
-    private TextField txtEmail;
-    @FXML
-    private TextField txtPhoneNumber;
-    @FXML
-    private ComboBox<String> cbRole ;
-    @FXML
-    private ComboBox cbStatus ;
+    @FXML private TextField txtName;
+    @FXML private TextField txtEmail;
+    @FXML private TextField txtPhoneNumber;
+    @FXML private ComboBox<String> cbRole ;
+    @FXML private ComboBox cbStatus ;
     @FXML private Button btnCancel;
+
     @FXML
     public void initialize() {
         // gan su kien dong cua so cho nut huy
@@ -46,6 +42,7 @@ public class Edit_User_Popup_Controller {
                 "USER",
                 "ADMIN"));
     }
+
     @FXML
     public void clickToSave(ActionEvent event) throws IOException, ClassNotFoundException {
         String name = txtName.getText();

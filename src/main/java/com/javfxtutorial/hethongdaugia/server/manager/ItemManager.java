@@ -43,15 +43,12 @@ public class ItemManager {
                 return item;  //Trả về ID (do DAO gán)
             }
         }
-        return null; // thất bại
+        return null;
     }
 
     public boolean addAuction (Auction auction ){
         int soDong = AuctionDAO.getInstance().insert(auction); // tao moi 1 ban ghi chua tug co trong DB
-        if (soDong > 0){
-            return true;
-        }
-        return false;
+        return soDong >0;
     }
 
     public boolean deleteItem(int itemId) {
@@ -63,6 +60,8 @@ public class ItemManager {
         int rows = ItemDAO.getInstance().delete(item);
         return rows > 0;
     }
+
+
 
 
 }

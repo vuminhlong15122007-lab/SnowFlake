@@ -21,6 +21,7 @@ public class ResetPassWordController {
     @FXML private TextField txtNewPW;
     @FXML private TextField txtConfirmPW;
     @FXML private Button btnCancel;
+
     @FXML
     public void initialize(){
         btnCancel.setOnAction(event -> {
@@ -30,6 +31,7 @@ public class ResetPassWordController {
         });
         loadUserInfo();
     }
+
     //lay du lieu tu clientmodel de hien thi
     @FXML
     public void loadUserInfo(){
@@ -44,6 +46,7 @@ public class ResetPassWordController {
             txtConfirmPW.setText("");
         }
     }
+
     @FXML
     public void updatePW() throws IOException, ClassNotFoundException {
         //lay du lieu tu o nhap

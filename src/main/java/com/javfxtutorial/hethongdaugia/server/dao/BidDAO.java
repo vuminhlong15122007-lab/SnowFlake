@@ -1,12 +1,13 @@
 package com.javfxtutorial.hethongdaugia.server.dao;
 
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
+import com.javfxtutorial.hethongdaugia.common.model.Item;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BidDAO {
+public class BidDAO  {
     private static BidDAO instance;
     private BidDAO(){}
     public static BidDAO getInstance(){

@@ -22,18 +22,12 @@ import java.io.IOException;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 
 public class ItemphiendaugiaController {
-    @FXML
-    private Label AuctionStatusText;
-    @FXML
-    private Label ItemNameLabel;
-    @FXML
-    private Label ItemPriceText;
-    @FXML
-    private Label SellerNameText;
-    @FXML
-    private Label StartTimeText;
-    @FXML
-    private ImageView imgSanPham;
+    @FXML private Label AuctionStatusText;
+    @FXML private Label ItemNameLabel;
+    @FXML private Label ItemPriceText;
+    @FXML private Label SellerNameText;
+    @FXML private Label StartTimeText;
+    @FXML private ImageView imgSanPham;
 
     private Item item ;
     private Auction auction;

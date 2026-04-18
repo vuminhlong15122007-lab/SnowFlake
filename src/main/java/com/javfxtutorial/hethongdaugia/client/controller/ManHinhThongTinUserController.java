@@ -21,7 +21,6 @@ public class ManHinhThongTinUserController {
     @FXML private Label usernameLabel;
     @FXML private Label emailLabel;
     @FXML private Label phoneLabel;
-
     @FXML private TextField updateNameText;
     @FXML private TextField updateEmailText;
     @FXML private TextField updatePhoneText;
