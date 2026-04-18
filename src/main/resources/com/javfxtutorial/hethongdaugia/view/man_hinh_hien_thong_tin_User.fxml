@@ -1,20 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.effect.Blend?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
-<?import javafx.scene.layout.RowConstraints?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="500" prefWidth="800" style="-fx-background-color: #eef5fb;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.ProductDisplayController">
+<BorderPane prefHeight="500" prefWidth="800" style="-fx-background-color: #eef5fb;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.UserProfileController">
 
    <!-- HEADER -->
    <top>
@@ -28,7 +19,7 @@
             <effect>
                <Blend />
             </effect></Label>
-         <Button fx:id="logOut1" mnemonicParsing="false" onAction="#logOut1" prefHeight="32.0" prefWidth="107.0" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12;" text="Trang chủ" />
+         <Button fx:id="clickToBackToSceneMain" mnemonicParsing="false" onAction="#clickToBackToSceneMain" prefHeight="32.0" prefWidth="107.0" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12;" text="Trang chủ" />
       </HBox>
    </top>
 
@@ -45,9 +36,9 @@
 
          <Button prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Lịch sử đấu giá" />
 
-         <Button prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Sản phẩm của tôi" />
+         <Button onAction="#clickToSellerMangement" prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Sản phẩm của tôi" />
 
-         <Button fx:id="logOut" onAction="#logOut" prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Đăng xuất" />
+         <Button fx:id="logOut" onAction="#clickToLogOut" prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Đăng xuất" />
       </VBox>
    </left>
 
@@ -63,10 +54,10 @@
             <HBox alignment="CENTER_LEFT" spacing="10">
                <Pane prefHeight="122.0" prefWidth="122.0" style="-fx-border-color: black;">
                   <children>
-                     <ImageView fitHeight="122.0" fitWidth="122.0" nodeOrientation="INHERIT" />
+                     <ImageView fx:id="myImageView" fitHeight="122.0" fitWidth="122.0" nodeOrientation="INHERIT" />
                   </children>
                </Pane>
-               <Button style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Đổi ảnh" />
+               <Button onAction="#clickToChooseImage" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Đổi ảnh" />
             </HBox>
 
             <!-- FORM -->
@@ -99,7 +90,7 @@
             <HBox spacing="10">
                <Button fx:id="updateInfo" onAction="#handleUpdateInfo" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Cập nhật" />
 
-               <Button fx:id="resetPW" onAction="#clickToResetPW" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-font-weight: bold; -fx-text-fill: white;" text="Đổi mật khẩu" />
+               <Button fx:id="resetPW" onAction="#clickToResetPassword" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-font-weight: bold; -fx-text-fill: white;" text="Đổi mật khẩu" />
             </HBox>
 
          </VBox>

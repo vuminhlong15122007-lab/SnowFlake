@@ -2,10 +2,12 @@ package com.javfxtutorial.hethongdaugia.server.dao;
 
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 public class UserDAO implements DAOInterface<User> {
@@ -15,142 +17,98 @@ public class UserDAO implements DAOInterface<User> {
 
     @Override
     public int insert(User user) {
-        Connection connection = JDBCUtil.getConnection();
         int result = 0;
-        try {
-            Statement st = connection.createStatement();
+        String sql = "INSERT INTO User (name, passWord, email, sdt, accountType, avt) VALUES (?, ?, ?, ?, ?, ?)";
 
-            // 1. BỎ cột 'id' ra khỏi câu sql để MySQL tự động quyết định ID
-            String sql = "insert into User (name, passWord, email, sdt, accountType)\n" +
-                    "values (\"" + user.getName()
-                    + "\" , \"" + user.getPassWord()
-                    + "\" , \"" + user.getEmail()
-                    + "\" , \"" + user.getSdt()
-                    + "\" , \"" + user.getAccountType()
-                    + "\");";
-
-            System.out.println("Bạn đang thực thi: " + sql);
-
-            // 2. Thêm cờ Statement.RETURN_GENERATED_KEYS vào hàm executeUpdate
-            result = st.executeUpdate(sql, Statement.RETURN_GENERATED_KEYS);
+        try (Connection connection = JDBCUtil.getConnection();
+             PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            pst.setString(1, user.getName());
+            pst.setString(2, user.getPassWord());
+            pst.setString(3, user.getEmail());
+            pst.setString(4, user.getSdt());
+            pst.setString(5, user.getAccountType() == null ? null : user.getAccountType().name());
+            pst.setString(6, user.getImagePath());
+            result = pst.executeUpdate();
 
             if (result > 0) {
-                System.out.println("Tạo user thành công");
-
-                // 3. Lấy ID do MySQL vừa tạo ra và gán lại cho đối tượng user
-                ResultSet rs = st.getGeneratedKeys();
-                if (rs.next()) {
-                    int newId = rs.getInt(1); // Lấy giá trị ở cột đầu tiên của ResultSet
-                    user.setId(newId);        // Gán ngược lại cho user
-                    System.out.println("ID tự động tạo là: " + user.getId());
+                System.out.println("Tao user thanh cong");
+                try (ResultSet rs = pst.getGeneratedKeys()) {
+                    if (rs.next()) {
+                        user.setId(rs.getInt(1));
+                    }
                 }
-                rs.close(); // Nhớ đóng ResultSet
             } else {
-                System.out.println("Tạo user thất bại");
+                System.out.println("Tao user that bai");
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.err.println("Loi tao user: " + e.getMessage());
         }
+
         return result;
     }
+
     @Override
     public int update(User user) {
-        Connection connection = JDBCUtil.getConnection();
         int result = 0;
+        String sql = "UPDATE User SET name = ?, passWord = ?, email = ?, sdt = ?, accountType = ?, avt = ? WHERE id = ?";
 
-        // Câu lệnh SQL với các dấu ? đại diện cho giá trị sẽ truyền vào sau
-        // QUAN TRỌNG: Bắt buộc phải có WHERE id = ?, nếu không nó sẽ update TOÀN BỘ bảng!
-        String sql = "UPDATE User " +
-                "SET name = \"" + user.getName()
-                + "\" , password = \"" + user.getPassWord()
-                + "\" , email = \"" + user.getEmail()
-                + "\" , sdt = \"" + user.getSdt()
-                + "\" , accountType = \"" + user.getAccountType()
-                + "\" WHERE id = " + user.getId() +
-                ";";
-
-        try {
-            System.out.println("Bạn đang thực thi" + sql);
-            Statement st = connection.createStatement();
-            // Chạy câu lệnh
-            result = st.executeUpdate(sql);
+        try (Connection connection = JDBCUtil.getConnection();
+             PreparedStatement pst = connection.prepareStatement(sql)) {
+            pst.setString(1, user.getName());
+            pst.setString(2, user.getPassWord());
+            pst.setString(3, user.getEmail());
+            pst.setString(4, user.getSdt());
+            pst.setString(5, user.getAccountType() == null ? null : user.getAccountType().name());
+            pst.setString(6, user.getImagePath());
+            pst.setInt(7, user.getId());
+            result = pst.executeUpdate();
 
             if (result > 0) {
-                System.out.println("Cập nhật user thành công!");
+                System.out.println("Cap nhat user thanh cong");
             } else {
-                System.out.println("Cập nhật thất bại (có thể ID không tồn tại trong database).");
+                System.out.println("Cap nhat that bai (co the ID khong ton tai trong database).");
             }
-
-
-
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.err.println("Loi cap nhat user: " + e.getMessage());
         }
+
         return result;
     }
 
     @Override
     public int delete(User user) {
         int result = 0;
-        try {
-            //tao ket noi
-            Connection connection = JDBCUtil.getConnection();
-            //tao doi tuong statement
-            Statement st = connection.createStatement();
-            //thuc thi lenh sql
-            String sql = "DELETE FROM User " + " WHERE id='" + user.getId() + "'";
-            System.out.println(sql);
-            result = st.executeUpdate(sql);
-            if (result > 0){
-                System.out.println("Xóa user thành công");
+        String sql = "DELETE FROM User WHERE id = ?";
+
+        try (Connection connection = JDBCUtil.getConnection();
+             PreparedStatement pst = connection.prepareStatement(sql)) {
+            pst.setInt(1, user.getId());
+            result = pst.executeUpdate();
+            if (result > 0) {
+                System.out.println("Xoa user thanh cong");
+            } else {
+                System.out.println("Xoa that bai");
             }
-            else{
-                System.out.println("Xóa thất bại");
-            }
-            JDBCUtil.closeConnection(connection);
         } catch (SQLException e) {
             e.printStackTrace();
         }
+
         return result;
     }
 
     @Override
     public ArrayList<User> selectAll() {
         ArrayList<User> result = new ArrayList<>();
+        String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user";
 
-        // Khuyến khích liệt kê rõ tên cột thay vì dùng SELECT *
-        String sql = "SELECT id, name, email, passWord, sdt, accountType FROM user";
-
-        // Sử dụng try-with-resources để TỰ ĐỘNG đóng kết nối (cực kỳ quan trọng)
         try (Connection connection = JDBCUtil.getConnection();
              PreparedStatement pst = connection.prepareStatement(sql);
              ResultSet resultSet = pst.executeQuery()) {
-
-            System.out.println("Đang thực thi: " + sql);
-
             while (resultSet.next()) {
-                int id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
-                String email = resultSet.getString("email");
-                String passWord = resultSet.getString("passWord");
-                String sdt = resultSet.getString("sdt");
-
-                // Xử lý Enum an toàn hơn đề phòng trường hợp dưới DB bị null
-                String typeString = resultSet.getString("accountType");
-                AccountType accountType = null;
-                if (typeString != null && !typeString.isEmpty()) {
-                    accountType = AccountType.valueOf(typeString);
-                }
-
-                User user = new User(id, name, passWord, email, sdt, accountType);
-                result.add(user);
+                result.add(mapUser(resultSet));
             }
-
-        } catch (SQLException e) {
-            System.err.println("Lỗi truy vấn Database: " + e.getMessage());
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            System.err.println("Lỗi sai định dạng AccountType (Enum không khớp): " + e.getMessage());
+        } catch (SQLException | IllegalArgumentException e) {
+            System.err.println("Loi truy van danh sach user: " + e.getMessage());
         }
 
         return result;
@@ -158,106 +116,86 @@ public class UserDAO implements DAOInterface<User> {
 
     @Override
     public User selectById(int userId) {
-        User result = null;
-        try{
-            Connection connection = JDBCUtil.getConnection(); // Tao ket noi
-            Statement statement = connection.createStatement(); // tao ra obj statement
-            // Thuc thi cau lech sql
-            String sql = "SELECT * FROM user where  id = '" + userId + "'";
-            ResultSet resultSet = statement.executeQuery(sql);
+        String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE id = ?";
 
-            // tim kiem
-            while (resultSet.next()){
-                int id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
-                String email = resultSet.getString("email");
-                String passWord = resultSet.getString("passWord");
-                String sdt = resultSet.getString("sdt");
-                AccountType accountType = AccountType.valueOf(resultSet.getString("Accounttype"));
-                result = new User(id, name, passWord, email, sdt, accountType);
+        try (Connection connection = JDBCUtil.getConnection();
+             PreparedStatement pst = connection.prepareStatement(sql)) {
+            pst.setInt(1, userId);
+            try (ResultSet resultSet = pst.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapUser(resultSet);
+                }
             }
-            //dong ket noi
-            JDBCUtil.closeConnection(connection);
-        }catch (SQLException e){
-            e.printStackTrace(); // in ra loi xong van chay tiep
+        } catch (SQLException | IllegalArgumentException e) {
+            System.err.println("Loi lay user theo id: " + e.getMessage());
         }
-        return result;
+
+        return null;
     }
 
     public ArrayList<User> selectByCondition(String condition) {
-        ArrayList<User> result =  new ArrayList<>();
-        try{
-            Connection connection = JDBCUtil.getConnection(); // Tao ket noi
-            Statement statement = connection.createStatement(); // tao ra obj statement
-            // Thuc thi cau lech sql
-            String sql = "SELECT * FROM user where " + condition ;
-            ResultSet resultSet = statement.executeQuery(sql);
+        ArrayList<User> result = new ArrayList<>();
+        String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE " + condition;
 
-            // tim kiem
-            while (resultSet.next()){
-                int id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
-                String email = resultSet.getString("email");
-                String passWord = resultSet.getString("passWord");
-                String sdt = resultSet.getString("sdt");
-                AccountType accountType = AccountType.valueOf(resultSet.getString("Accounttype"));
-                User user = new User(id, name, passWord, email, sdt, accountType);
-                result.add(user);
+        try (Connection connection = JDBCUtil.getConnection();
+             Statement statement = connection.createStatement();
+             ResultSet resultSet = statement.executeQuery(sql)) {
+            while (resultSet.next()) {
+                result.add(mapUser(resultSet));
             }
-            //dong ket noi
-            JDBCUtil.closeConnection(connection);
-        }catch (SQLException e){
-            e.printStackTrace(); // in ra loi xong van chay tiep
+        } catch (SQLException | IllegalArgumentException e) {
+            System.err.println("Loi lay user theo dieu kien: " + e.getMessage());
         }
-        return result;
 
+        return result;
     }
 
     public User selectByUsername(String username) {
-        User result = null;
-        try{
-            Connection connection = JDBCUtil.getConnection(); // Tao ket noi
-            Statement statement = connection.createStatement(); // tao ra obj statement
-            // Thuc thi cau lech sql
-            String sql = "SELECT * FROM user where name = \"" + username + '"';
-            ResultSet resultSet = statement.executeQuery(sql);
+        String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE name = ?";
 
-            // tim kiem
-            while (resultSet.next()){
-                int id = resultSet.getInt("id");
-                String name = resultSet.getString("name");
-                String email = resultSet.getString("email");
-                String passWord = resultSet.getString("passWord");
-                String sdt = resultSet.getString("sdt");
-                AccountType accountType = AccountType.valueOf(resultSet.getString("Accounttype"));
-                result = new User(id, name, passWord, email, sdt, accountType);
+        try (Connection connection = JDBCUtil.getConnection();
+             PreparedStatement pst = connection.prepareStatement(sql)) {
+            pst.setString(1, username);
+            try (ResultSet resultSet = pst.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapUser(resultSet);
+                }
             }
-            //dong ket noi
-            JDBCUtil.closeConnection(connection);
-        }catch (SQLException e){
-            e.printStackTrace(); // in ra loi xong van chay tiep
+        } catch (SQLException | IllegalArgumentException e) {
+            System.err.println("Loi lay user theo username: " + e.getMessage());
         }
-        return result;
 
+        return null;
     }
 
     public int getSize() {
-        Connection connection = JDBCUtil.getConnection();
-        int count = 0;
-        ResultSet result;
-        try {
-            String sql = "SELECT COUNT(*) FROM User";
-            PreparedStatement pstmt = connection.prepareStatement(sql);
-            System.out.println("Bạn đang thực thi: " + sql);
-            ResultSet rs = pstmt.executeQuery(sql);
-            if (rs.next()) {
-                // Lấy giá trị của cột đầu tiên (chính là kết quả của COUNT(*))
-                count = rs.getInt(1);
-            }
+        String sql = "SELECT COUNT(*) FROM User";
 
+        try (Connection connection = JDBCUtil.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql);
+             ResultSet rs = pstmt.executeQuery()) {
+            if (rs.next()) {
+                return rs.getInt(1);
+            }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.err.println("Loi dem user: " + e.getMessage());
         }
-        return count;
+
+        return 0;
+    }
+
+    private User mapUser(ResultSet resultSet) throws SQLException {
+        int id = resultSet.getInt("id");
+        String name = resultSet.getString("name");
+        String email = resultSet.getString("email");
+        String passWord = resultSet.getString("passWord");
+        String sdt = resultSet.getString("sdt");
+        String avatar = resultSet.getString("avt");
+        String typeString = resultSet.getString("accountType");
+        AccountType accountType = typeString == null || typeString.isBlank()
+                ? null
+                : AccountType.valueOf(typeString);
+
+        return new User(id, name, passWord, email, sdt, accountType, avatar);
     }
 }

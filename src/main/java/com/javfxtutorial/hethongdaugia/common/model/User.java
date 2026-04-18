@@ -12,6 +12,8 @@ public class User implements Serializable {
     private String sdt;
     private int id;
     private AccountType accountType;
+    private String avt;
+
 
     public User(String name, String passWord, String email, String sdt, AccountType accountType) {
         this.name = name;
@@ -19,6 +21,16 @@ public class User implements Serializable {
         this.email = email;
         this.sdt = sdt;
         this.accountType = accountType;
+        this.avt  = null ;
+    }
+    public User(int id, String name, String passWord, String email, String sdt, AccountType accountType , String avt) {
+        this.id = id;
+        this.name = name;
+        this.passWord = passWord;
+        this.email = email;
+        this.sdt = sdt;
+        this.accountType = accountType;
+        this.avt  = avt ;
     }
 
     public User(int id, String name, String passWord, String email, String sdt, AccountType accountType) {
@@ -28,6 +40,7 @@ public class User implements Serializable {
         this.email = email;
         this.sdt = sdt;
         this.accountType = accountType;
+        this.avt = null ;
     }
 
     public String getPassWord() {
@@ -70,6 +83,9 @@ public class User implements Serializable {
         this.id = id;
     }
 
+    public void setImagePath(String avt){this.avt = avt;}
+
+    public String getImagePath(){return this.avt;}
     @Override
     public String toString() {
         return "User{" +
@@ -86,5 +102,3 @@ public class User implements Serializable {
         return accountType;
     }
 }
-
-

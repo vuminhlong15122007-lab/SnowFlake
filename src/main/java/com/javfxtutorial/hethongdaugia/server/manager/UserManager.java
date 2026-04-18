@@ -1,62 +1,78 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
-import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
 import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
 
 public class UserManager {
     private static UserManager instance;
-    private UserManager(){}
+
+    private UserManager() {}
+
     public static UserManager getInstance() {
-        if (instance == null){
+        if (instance == null) {
             instance = new UserManager();
         }
         return instance;
     }
 
-    public User authenticate(String username, String password){
+    public User authenticate(String username, String password) {
         User user = UserDAO.getInstance().selectByUsername(username);
-        if (user != null && user.getPassWord().equals(password)){
+        if (user != null && user.getPassWord().equals(password)) {
             return user;
         }
         return null;
     }
 
-    public boolean checkExistedUsername(String username){ //trả về true nếu username đã tồn tại
+    public boolean checkExistedUsername(String username) {
         User user = UserDAO.getInstance().selectByUsername(username);
-        if (user != null){
-            return true;
-        }
-        return false;
+        return user != null;
     }
-    public User updateUserProfile(int userId, String username, String email, String phone){
+
+    public User updateUserProfile(int userId, String username, String email, String phone, String avt) {
         User oldUser = UserDAO.getInstance().selectById(userId);
-        if(oldUser == null){
+        if (oldUser == null) {
             return null;
         }
-        //tao user moi tu thong tin cao nhat
-        User updateUser = new User(userId, username, oldUser.getPassWord(), email, phone, oldUser.getAccountType());
+
+        String resolvedName = username == null || username.isBlank() ? oldUser.getName() : username.trim();
+        String resolvedEmail = email == null || email.isBlank() ? oldUser.getEmail() : email.trim();
+        String resolvedPhone = phone == null || phone.isBlank() ? oldUser.getSdt() : phone.trim();
+        String resolvedAvatar = avt == null ? oldUser.getImagePath() : avt;
+
+        User updateUser = new User(userId, resolvedName, oldUser.getPassWord(), resolvedEmail, resolvedPhone, oldUser.getAccountType(), resolvedAvatar);
+
         int result = UserDAO.getInstance().update(updateUser);
-        if(result > 0){
-            return updateUser; //thanh cong thi tra ve user moi
+        if (result > 0) {
+            return updateUser;
         }
-        return null;//that bai
+        return null;
     }
-    public boolean deleteUser(int userId, String username, String email, String phone){
+
+    public boolean deleteUser(int userId, String username, String email, String phone) {
         User deleteUser = UserDAO.getInstance().selectById(userId);
         int result = UserDAO.getInstance().delete(deleteUser);
-        if (result > 0){
-            System.out.println( "Xóa user thành công");
+        if (result > 0) {
+            System.out.println("Xoa user thanh cong");
             return true;
         }
         return false;
     }
-    public User reset_password(int userId, String passWord){
+
+    public User reset_password(int userId, String passWord) {
         User resetPW = UserDAO.getInstance().selectById(userId);
-        //user moi
-        User newUser = new User(userId, resetPW.getName(), passWord, resetPW.getEmail(), resetPW.getSdt(), resetPW.getAccountType());
+        User newUser = new User(
+                userId,
+                resetPW.getName(),
+                passWord,
+                resetPW.getEmail(),
+                resetPW.getSdt(),
+                resetPW.getAccountType(),
+                resetPW.getImagePath()
+        );
+
         int result = UserDAO.getInstance().update(newUser);
-        if (result > 0){
-            System.out.println( "Đổi mật khẩu thành công");
+        if (result > 0) {
+            System.out.println("Doi mat khau thanh cong");
             return newUser;
         }
         return null;

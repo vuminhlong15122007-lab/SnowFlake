@@ -7,19 +7,22 @@ import com.javfxtutorial.hethongdaugia.server.manager.UserManager;
 
 public class UpdateProfileCommand extends Command {
     @Override
-    public Response handle(){
-        int userId = (int) this.getData("userId");
-        String name = (String) this.getData("username");
-        String email = (String) this.getData("email");
-        String phone = (String) this.getData("phone");
+    public Response handle() {
+        try {
+            int userId = (int) this.getData("userId");
+            String name = (String) this.getData("username");
+            String email = (String) this.getData("email");
+            String phone = (String) this.getData("phone");
+            String avatar = (String) this.getData("avt");
 
-        //goi sever cap nhat
-        User updateUser = UserManager.getInstance().updateUserProfile(userId, name, email, phone);
-
-        if(updateUser != null){
-            return new Response(true, "Cập nhật thành công", updateUser);
-        }else{
-            return new Response(false, "Cập nhật thất bại", null);
+            User updateUser = UserManager.getInstance().updateUserProfile(userId, name, email, phone, avatar);
+            if (updateUser != null) {
+                return new Response(true, "Cap nhat thanh cong", updateUser);
+            }
+            return new Response(false, "Cap nhat that bai", null);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Response(false, "Khong the cap nhat thong tin.", null);
         }
     }
 }
