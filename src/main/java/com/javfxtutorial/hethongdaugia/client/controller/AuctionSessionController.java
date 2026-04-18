@@ -33,6 +33,7 @@ public class AuctionSessionController {
 
     //lấy item từ db và load lên màn hình
     public void setData(Auction auction) throws IOException, ClassNotFoundException {   // xu ly du lieu tu Obj den giao dien
+        this.auction = auction;
         if (auction == null || auction.getAuctionId() <= 0) {
             return;
         }
