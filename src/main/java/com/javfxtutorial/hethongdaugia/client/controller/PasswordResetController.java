@@ -16,7 +16,7 @@ import javafx.stage.Stage;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 
-public class ResetPassWordController {
+public class PasswordResetController {
     @FXML private TextField txtoldPW;
     @FXML private TextField txtNewPW;
     @FXML private TextField txtConfirmPW;

@@ -6,6 +6,7 @@ import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AuctionDAO implements DAOInterface<Auction> {
     private static AuctionDAO instance;
@@ -122,8 +123,8 @@ public class AuctionDAO implements DAOInterface<Auction> {
     }
 
     @Override
-    public ArrayList<Auction> selectAll() {
-        ArrayList<Auction> result = new ArrayList<>();
+    public List<Auction> selectAll() {
+        List<Auction> result = new ArrayList<>();
         String sql = "SELECT * FROM Auction";
 
         try (Connection connection = JDBCUtil.getConnection();

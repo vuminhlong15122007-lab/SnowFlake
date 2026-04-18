@@ -20,7 +20,6 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
@@ -30,7 +29,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
-public class QuanLySpSellerController {
+public class SellerManagementController {
     @FXML  TextField nameField;
     @FXML TextArea descriptionField;
     @FXML  TextField priceField;

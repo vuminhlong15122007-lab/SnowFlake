@@ -4,7 +4,6 @@ import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAuctionByItemId;
-import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.sun.source.tree.TryTree;
@@ -14,6 +13,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -21,7 +21,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 
-public class ItemphiendaugiaController {
+public class AuctionSessionController {
     @FXML private Label AuctionStatusText;
     @FXML private Label ItemNameLabel;
     @FXML private Label ItemPriceText;

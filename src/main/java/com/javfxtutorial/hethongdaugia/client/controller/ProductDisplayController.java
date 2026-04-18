@@ -27,7 +27,7 @@ import com.javfxtutorial.hethongdaugia.common.model.Item;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-public class ManHinhHienThiSpController {
+public class ProductDisplayController {
     @FXML private Label EndingtimeLabel;
     @FXML private Label ItemNameLabel;
     @FXML private Label ItemPriceLabel;

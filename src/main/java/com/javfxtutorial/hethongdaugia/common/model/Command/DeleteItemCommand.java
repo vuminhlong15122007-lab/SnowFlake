@@ -7,8 +7,6 @@ import com.javfxtutorial.hethongdaugia.server.manager.ItemManager;
 public class DeleteItemCommand extends Command {
     private int itemId;
 
-    public DeleteItemCommand() {}
-
     public DeleteItemCommand(int itemId) {this.itemId = itemId;}
 
     @Override

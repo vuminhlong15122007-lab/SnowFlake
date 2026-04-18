@@ -1,13 +1,11 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.common.model.Item;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 
-public class Product_qlspSellerController {
+public class SellerProductController {
     @FXML ImageView imgProduct;
     @FXML Label lbProductName;
     @FXML Label lbPrice;

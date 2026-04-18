@@ -8,6 +8,7 @@ import javafx.collections.ObservableList;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ItemDAO implements DAOInterface<Item> {
     private ItemDAO(){};
@@ -179,13 +180,13 @@ public class ItemDAO implements DAOInterface<Item> {
             ResultSet resultSet = st.executeQuery(sql);
             //lấy dữ liệu
             while (resultSet.next()){
-                int itemId = resultSet.getInt("itemid");
                 int idseller = resultSet.getInt("idseller");
+                int iditem = resultSet.getInt("itemid");
                 String name = resultSet.getString("name");
                 String description = resultSet.getString("description");
                 String imagePath = resultSet.getString("imagePath");
-                String sellerName = resultSet.getString("sellerName");
-                Item item = new Item(itemId, idseller, name,description, imagePath, sellerName);
+
+                Item item = new Item(idseller,iditem, name, description, imagePath);
                 result.add(item);
             }
             JDBCUtil.closeConnection(connection);
