@@ -212,7 +212,7 @@ public class SellerManagementController {
     public void hienThiChiTietSanPham(Auction auction){
         nameField.setText(auction.getItem().getName());          // Thu thap du lieu ma nguoi dung da nhap
         descriptionField.setText(auction.getItem().getDescription());
-        priceField.setText(String.valueOf(auction.getInitPrice()));
+        priceField.setText(String.valueOf(auction.getCurrentPrice()));
         tfstepPrice.setText(String.valueOf(auction.getStepPrice()));
         // ẢNH - CHƯA XỬ LÝ LẤY RA
     }

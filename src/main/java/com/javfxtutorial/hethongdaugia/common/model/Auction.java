@@ -35,6 +35,7 @@ public class Auction implements Serializable {
         this.item = item;
         this.sellerId = sellerId;
         this.initPrice = initPrice;
+        this.currentPrice = initPrice;
         this.stepPrice = stepPrice;
         this.startingTime = startingTime;
         this.endingTime = endingTime;
@@ -59,6 +60,7 @@ public class Auction implements Serializable {
         this.item = item;
         this.sellerId = sellerId;
         this.initPrice = initPrice;
+        this.currentPrice = initPrice;
         this.stepPrice = stepPrice;
         this.startingTime = startingTime;
         this.endingTime = endingTime;
