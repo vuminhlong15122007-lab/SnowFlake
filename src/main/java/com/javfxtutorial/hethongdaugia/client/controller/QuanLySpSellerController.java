@@ -68,6 +68,7 @@ public class QuanLySpSellerController {
             String moTa = descriptionField.getText();
             double giaKhoiDiem = Double.valueOf(priceField.getText());
             double buocGia  = Double.valueOf(tfstepPrice.getText());
+
 //            if (product.getImagePath() != null){
 //            try{
 //                // 1. Đường dẫn phải bắt đầu bằng dấu /
@@ -142,6 +143,13 @@ public class QuanLySpSellerController {
         productList.setCellFactory((ListView<Item> listView) -> new ProductCell2()); // trả về một instance của ProductCell2 –class tự load giao diện cell tùy chỉnh
 
         loadMyProducts();  // Tải danh sách ban đùa của server ứng với IDserver ng dùng đăng nhập và đổ vào obs
+
+       // Lắng nghe sự kiện khi người dùng chọn sp
+       productList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+           if (newVal != null) {
+               hienThiChiTietSanPham(newVal);      // LUÔN hiển thị thông tin
+           }
+       });
    }
 
     private void loadMyProducts() {
@@ -196,6 +204,31 @@ public class QuanLySpSellerController {
     @FXML
     public void updateImg(ActionEvent event){
         // chưa xử lý
+    }
+
+
+    public void hienThiChiTietSanPham(Item item){
+        nameField.setText(item.getName());          // Thu thap du lieu ma nguoi dung da nhap
+        descriptionField.setText(item.getDescription());
+        priceField.setText(String.valueOf(item.getCurrentPrice()));
+        tfstepPrice.setText(String.valueOf(item.getStepPrice()));
+        // ẢNH - CHƯA XỬ LÝ LẤY RA
+    }
+
+    public void testCondition(){
+
+    }
+
+    @FXML
+    public void suaSp(ActionEvent event){  // Xử lý nuts Sửa
+        Item selected = productList.getSelectionModel().getSelectedItem();  // Lấy ttin sản phẩm đang được chọn ( của listView)
+        if (selected == null) {
+            System.out.println(" Vui lòng nhấn chọn sản phẩm");
+        }
+        hienThiChiTietSanPham(selected);
+
+
+
     }
 
 }

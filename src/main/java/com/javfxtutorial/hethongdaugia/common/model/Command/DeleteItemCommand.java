@@ -15,11 +15,9 @@ public class DeleteItemCommand extends Command {
     public Response handle() {
         // Lấy itemId từ dữ liệu nếu chưa được set qua constructor
         if (itemId == 0) {
-            Object data = getData("itemId");
-            if (data instanceof Integer) {
-                itemId = (int) data;
-            } else {
-                return new Response(false, "Thiếu itemId", null);
+            int itemId = (int) this.getData("itemID");
+            if (itemId == 0){
+                return new Response(false, "Lấy itemId thất bại", null);
             }
         }
 

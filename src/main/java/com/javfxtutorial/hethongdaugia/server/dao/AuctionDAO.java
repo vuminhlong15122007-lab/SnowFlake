@@ -138,7 +138,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
     }
 
     @Override
-    public Auction selectById(int id) {
+    public Auction selectById(int id) {  // lấy auction bằng auction id
         Auction result = null;
         String sql = "SELECT * FROM Auction WHERE auction_id = ?";
 
@@ -160,7 +160,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
         return result;
     }
 
-    public Auction selectByItemId(int id) {
+    public Auction selectByItemId(int id) {      // lấy auction dựa trên itemId
         Auction result = null;
         String sql = "SELECT * FROM Auction WHERE item_id = ?";
 

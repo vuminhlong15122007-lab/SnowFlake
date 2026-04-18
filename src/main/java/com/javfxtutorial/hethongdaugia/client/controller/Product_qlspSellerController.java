@@ -12,6 +12,7 @@ public class Product_qlspSellerController {
     @FXML Label lbProductName;
     @FXML Label lbPrice;
     @FXML Label ItemID;
+
     public Item product;
 
     public void update(Item pr){
