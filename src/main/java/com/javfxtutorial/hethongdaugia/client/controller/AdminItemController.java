@@ -1,11 +1,16 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteUserCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -24,15 +29,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
-public class AdminItemMangementController implements  Initializable {
-    @FXML private TableView<Item> itemTable;
-    @FXML private TableColumn<Item,Integer> colId ;
-    @FXML private TableColumn<Item,String> colItemName;
-    @FXML private TableColumn<Item,String> colStartPrice;
-    @FXML private TableColumn<Item,String> colStepPrice;
-    @FXML private TableColumn<Item,String> colCategory;
-    @FXML private TableColumn<Item,String> colOwner;
-    @FXML private TableColumn<Item,String> colStatus;
+public class AdminItemController implements  Initializable {
+    @FXML private TableView<Auction> itemTable;
+    @FXML private TableColumn<Auction,Integer> colId ;
+    @FXML private TableColumn<Auction,String> colItemName;
+    @FXML private TableColumn<Auction,String> colStartPrice;
+    @FXML private TableColumn<Auction,String> colStepPrice;
+    @FXML private TableColumn<Auction,String> colCategory;
+    @FXML private TableColumn<Auction,String> colOwner;
+    @FXML private TableColumn<Auction,String> colStatus;
 
     private ItemDAO  itemDAO = ItemDAO.getInstance();
 
@@ -44,7 +49,7 @@ public class AdminItemMangementController implements  Initializable {
         colOwner.setCellValueFactory(new PropertyValueFactory<>("sellerId"));
         colStartPrice.setCellValueFactory(new PropertyValueFactory<>("initPrice"));
         colStepPrice.setCellValueFactory(new PropertyValueFactory<>("stepPrice"));
-        colCategory.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getItem().getDesciption()));
+        colCategory.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getItem().getDescription()));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         try {
             loadItemData();
@@ -98,7 +103,7 @@ public class AdminItemMangementController implements  Initializable {
         ButtonType result = confirmAlert.showAndWait().orElse(null);
         //neu co
         if (result == yes) {
-            DeleteItemCommand cmd = new DeleteItemCommand(selectItem.getItemId());
+            DeleteAuctionCommand cmd = new DeleteAuctionCommand(selectItem);
             try{
             connection.sendCommand(cmd);
             Response rp = connection.receiveResponse();

@@ -30,7 +30,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 
-public class QuanLySpSellerController {
+public class SellerManagementController {
     @FXML  TextField nameField;
     @FXML TextArea descriptionField;
     @FXML  TextField priceField;
