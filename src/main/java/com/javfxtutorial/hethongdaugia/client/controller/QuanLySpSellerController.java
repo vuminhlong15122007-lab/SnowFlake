@@ -4,6 +4,7 @@ import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AddItemCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.CheckItemAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteItemCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetItemsBySellerCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
@@ -208,14 +209,34 @@ public class QuanLySpSellerController {
 
 
     public void hienThiChiTietSanPham(Item item){
-        nameField.setText(item.getName());          // Thu thap du lieu ma nguoi dung da nhap
+        nameField.setText(item.getName());
         descriptionField.setText(item.getDescription());
         priceField.setText(String.valueOf(item.getCurrentPrice()));
         tfstepPrice.setText(String.valueOf(item.getStepPrice()));
         // ẢNH - CHƯA XỬ LÝ LẤY RA
     }
 
-    public void testCondition(){
+    public void testCondition(Item item){
+//        CheckItemAuctionCommand cmd = new CheckItemAuctionCommand(item.getItemId());
+//        ServerConnection connection = new ServerConnection();
+//        new Thread(() ->  {
+//            try {
+//            connection.sendCommand(cmd);
+//            Response resp = connection.receiveResponse(); // gửi yêu cầu lên server và server xử lý
+//            Platform.runLater(() -> {
+//                if (resp.isSuccess()) {  //check xem yc đã đc thực hiện chx
+//                    String condition = resp.getMessage();
+//                    boolean result = false;
+//
+//                    if (condition == "Chưa bắt đầu") result = true;
+//                }
+//            });
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//
+//        }
+//
+//        });
 
     }
 
@@ -225,7 +246,8 @@ public class QuanLySpSellerController {
         if (selected == null) {
             System.out.println(" Vui lòng nhấn chọn sản phẩm");
         }
-        hienThiChiTietSanPham(selected);
+//        testCondition(selected);  //Chua xong
+//
 
 
 

@@ -31,11 +31,11 @@ public class CheckItemAuctionCommand extends Command {
 
         String condition;
         if (now.isBefore(start)) {
-            condition = "CHUA_BAT_DAU";
+            condition = "Chưa bắt đầu";
         } else if (now.isAfter(end)) {
-            condition = "DA_KET_THUC";
+            condition = "Đã kết thúc";
         } else {
-            condition = "DANG_DIEN_RA";
+            condition = "Đang diễn ra ";
         }
         
         return new Response(true, condition, auction);
