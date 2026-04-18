@@ -13,7 +13,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
-public class Update_Admin_Controller {
+public class AdminUpdateController {
     @FXML private TextField txtName;
     @FXML private TextField txtEmail;
     @FXML private TextField txtPhone;

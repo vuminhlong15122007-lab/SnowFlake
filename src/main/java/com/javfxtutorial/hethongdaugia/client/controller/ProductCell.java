@@ -1,6 +1,5 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -22,7 +21,7 @@ public class ProductCell extends ListCell<Auction> {
                     Parent root = loader.load(); // tim FXML de doc giao dien va tao giao dien xac
 
                 // Truyen vao controller
-                    ItemphiendaugiaController controller = loader.getController();
+                    AuctionSessionController controller = loader.getController();
                     controller.setData(auction); // truyen vao du lieu cho Itemphien...
 
                     setGraphic(root); // hien thi giao dien xac da tao ra man hinh

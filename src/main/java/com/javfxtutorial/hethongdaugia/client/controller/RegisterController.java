@@ -11,6 +11,8 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -24,6 +26,7 @@ public class RegisterController {
     @FXML private TextField Email;
     @FXML private PasswordField Password;
     @FXML private PasswordField Confirm_Password;
+    @FXML private Label message;
 
     @FXML
     public void clickBackToLogin(ActionEvent event){
@@ -42,6 +45,39 @@ public class RegisterController {
         String email = Email.getText();
         String sdt = PhoneNumber.getText();
         String confirmPassword = Confirm_Password.getText();
+        //khong de o trong
+        if(name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || sdt.isEmpty()){
+            message.setText("Vui lòng điền đầy đủ thông tin!");
+            return;
+        }
+        //check pasword du 6 ki tu
+        if(password.length() < 6){
+            message.setText("Mật khẩu phải đủ tối thiểu 6 kí tự!");
+            return;
+        }
+        //check confirm password
+        if (!password.equals(confirmPassword)){
+            message.setText("Vui lòng xác thực khớp mật khẩu!");
+            return;
+        }
+        //check so dien thoai
+        if(sdt.length() != 10){
+            message.setText("Số điện thoại phải đủ 10 số!");
+            return;
+        }
+        try{
+            Long.parseLong(sdt);
+        } catch (NumberFormatException e) {
+            message.setText("Số điện thoại chỉ bao gồm các số!");
+            return;
+        }
+        //check email
+        if (!email.endsWith("@gmail.com")) {
+            message.setText(" Email phải có đuôi @gmail.com!");
+            return;
+        }
+
+
         if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
             if (password.equals(confirmPassword)){
                 ServerConnection connection = new ServerConnection();
@@ -69,11 +105,20 @@ public class RegisterController {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                }else{
+                    showAlert("Đăng ký không thành công", rp.getMessage());
                 }
                 connection.close();
 
             }
         }
+    }
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
 }

@@ -55,6 +55,7 @@
 
             <!-- BACK TO LOGIN -->
             <Button fx:id="backToLogin" onAction="#clickBackToLogin" prefHeight="32" prefWidth="200" style="-fx-background-color: transparent;                            -fx-text-fill: #2f80ed;" text="Back to Login" />
+         <Label fx:id="message" alignment="CENTER" prefHeight="18.0" prefWidth="262.0" textFill="#fc0000" />
 
         </VBox>
 

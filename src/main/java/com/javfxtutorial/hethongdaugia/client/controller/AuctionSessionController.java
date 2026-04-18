@@ -3,6 +3,7 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.Command.GetAuctionByItemId;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
@@ -20,7 +21,7 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 
-public class ItemphiendaugiaController {
+public class AuctionSessionController {
     @FXML private Label AuctionStatusText;
     @FXML private Label ItemNameLabel;
     @FXML private Label ItemPriceText;

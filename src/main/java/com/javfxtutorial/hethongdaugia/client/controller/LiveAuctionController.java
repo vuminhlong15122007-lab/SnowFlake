@@ -5,10 +5,8 @@ import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
-import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
-import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -20,9 +18,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import com.javfxtutorial.hethongdaugia.common.model.Item;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -32,7 +27,7 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 
 
-public class ManHinhDauGiaTrucTiep implements Initializable {
+public class LiveAuctionController implements Initializable {
     Auction currentAuction;
     ServerConnection connection = new ServerConnection();
     @FXML

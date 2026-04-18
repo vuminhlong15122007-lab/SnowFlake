@@ -27,8 +27,25 @@ public class Item implements Serializable {
         this.sellerName = sellerName;
     }
 
-    public Item() {
+    public Item(int sellerId, int itemId, String name, String description, String imagePath) {
+        this.sellerId = sellerId;
+        this.itemId = itemId;
+        this.name = name;
+        this.description = description;
+        this.imagePath = imagePath;
     }
+
+    public Item(int sellerId, int itemId, String name, String description, String imagePath, double currentPrice, double stepPrice) {
+        this.sellerId = sellerId;
+        this.itemId = itemId;
+        this.name = name;
+        this.description = description;
+        this.imagePath = imagePath;
+        this.currentPrice = currentPrice;
+        this.stepPrice = stepPrice;
+    }
+
+    public Item() {}
 
     public void setItemId(int itemId) {this.itemId = itemId;}
     public String getName() {return name;}

@@ -23,7 +23,7 @@ public class ProductCell2 extends ListCell<Auction> {
                 Parent root = loader.load();
 
                 // Lấy controller của cell
-                Product_qlspSellerController cellController = loader.getController();
+                SellerProductController cellController = loader.getController();
                 // Gọi phương thức update để truyền dữ liệu
                 cellController.update(auction);
 

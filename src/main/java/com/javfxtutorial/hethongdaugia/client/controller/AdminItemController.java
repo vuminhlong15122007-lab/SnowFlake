@@ -1,15 +1,11 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteUserCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.User;
-import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
-import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -24,20 +20,19 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.URL;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class AdminItemMangementController implements  Initializable {
-    @FXML private TableView<Auction> itemTable;
-    @FXML private TableColumn<Auction,Integer> colId ;
-    @FXML private TableColumn<Auction,String> colItemName;
-    @FXML private TableColumn<Auction,String> colStartPrice;
-    @FXML private TableColumn<Auction,String> colStepPrice;
-    @FXML private TableColumn<Auction,String> colCategory;
-    @FXML private TableColumn<Auction,String> colOwner;
-    @FXML private TableColumn<Auction,String> colStatus;
+    @FXML private TableView<Item> itemTable;
+    @FXML private TableColumn<Item,Integer> colId ;
+    @FXML private TableColumn<Item,String> colItemName;
+    @FXML private TableColumn<Item,String> colStartPrice;
+    @FXML private TableColumn<Item,String> colStepPrice;
+    @FXML private TableColumn<Item,String> colCategory;
+    @FXML private TableColumn<Item,String> colOwner;
+    @FXML private TableColumn<Item,String> colStatus;
 
     private ItemDAO  itemDAO = ItemDAO.getInstance();
 
@@ -49,6 +44,7 @@ public class AdminItemMangementController implements  Initializable {
         colOwner.setCellValueFactory(new PropertyValueFactory<>("sellerId"));
         colStartPrice.setCellValueFactory(new PropertyValueFactory<>("initPrice"));
         colStepPrice.setCellValueFactory(new PropertyValueFactory<>("stepPrice"));
+        colCategory.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getItem().getDesciption()));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         try {
             loadItemData();
@@ -102,14 +98,8 @@ public class AdminItemMangementController implements  Initializable {
         ButtonType result = confirmAlert.showAndWait().orElse(null);
         //neu co
         if (result == yes) {
-            //tao command gui len server
-            DeleteUserCommand cmd = new DeleteUserCommand();
-            cmd.addData("itemId", selectItem.getItem().getItemId());
-            cmd.addData("itemname", selectItem.getItem().getName());
-            cmd.addData("description", selectItem.getItem().getDescription());
-            cmd.addData("currentPrice", selectItem.getCurrentPrice());
-            cmd.addData("stepPrice", selectItem.getStepPrice());
-
+            DeleteItemCommand cmd = new DeleteItemCommand(selectItem.getItemId());
+            try{
             connection.sendCommand(cmd);
             Response rp = connection.receiveResponse();
 
@@ -120,15 +110,16 @@ public class AdminItemMangementController implements  Initializable {
                 showAlert("Lỗi", rp.getMessage());
             }
 
-        }
+            }catch(Exception e){}
+
         connection.close();
     }
-    private void showAlert(String title, String content) {
+
+
+}private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(content);
         alert.showAndWait();
-    }
-
-}
+    }}

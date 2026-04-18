@@ -210,7 +210,27 @@ public class QuanLySpSellerController {
         // ẢNH - CHƯA XỬ LÝ LẤY RA
     }
 
-    public void testCondition(){
+    public void testCondition(Item item){
+//        CheckItemAuctionCommand cmd = new CheckItemAuctionCommand(item.getItemId());
+//        ServerConnection connection = new ServerConnection();
+//        new Thread(() ->  {
+//            try {
+//            connection.sendCommand(cmd);
+//            Response resp = connection.receiveResponse(); // gửi yêu cầu lên server và server xử lý
+//            Platform.runLater(() -> {
+//                if (resp.isSuccess()) {  //check xem yc đã đc thực hiện chx
+//                    String condition = resp.getMessage();
+//                    boolean result = false;
+//
+//                    if (condition == "Chưa bắt đầu") result = true;
+//                }
+//            });
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//
+//        }
+//
+//        });
 
     }
 

@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 
 
-public class AdminUserManagementController implements  Initializable {
+public class AdminUserController implements  Initializable {
     @FXML private TableView<User> userTable;
     @FXML private TableColumn<User, Integer> colId;
     @FXML private TableColumn<User, String> colUsername;
@@ -113,7 +113,7 @@ public class AdminUserManagementController implements  Initializable {
     }
     @FXML private Button btnDeleteUser;
     @FXML
-    public void clickToDeleteUser() throws IOException, ClassNotFoundException {
+    public void clickToDeleteUser() throws IOException {
         ServerConnection connection = new ServerConnection();
         User selectUser = userTable.getSelectionModel().getSelectedItem();
         if (selectUser == null){
@@ -141,26 +141,22 @@ public class AdminUserManagementController implements  Initializable {
             cmd.addData("email", selectUser.getEmail());
             cmd.addData("phone", selectUser.getSdt());
 
+        try {
             connection.sendCommand(cmd);
             Response rp = connection.receiveResponse();
-            if(rp.isSuccess()){
+            if (rp.isSuccess()){
                 showAlert("Xóa thành công", rp.getMessage());
-                loadUserData();//load lai bang
-            }else{
+                userTable.getItems().remove(selectUser);
+            } else {
                 showAlert("Lỗi", rp.getMessage());
             }
-
+        } catch (Exception e) {
+            showAlert("Lỗi", "Có lỗi xảy ra khi kết nối với server: " + e.getMessage());
         }
-        connection.close();
 
     }
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }
+    connection.close();
+}
     @FXML private Button btnResetPassword;
     @FXML
     public void clickToResetPW(ActionEvent event) {
@@ -194,6 +190,13 @@ public class AdminUserManagementController implements  Initializable {
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);
         stage.show();
+    }
+    private void showAlert(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
 
 }

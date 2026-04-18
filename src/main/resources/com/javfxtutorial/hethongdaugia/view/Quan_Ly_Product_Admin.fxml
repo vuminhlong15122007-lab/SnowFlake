@@ -6,7 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminItemMangementController">
+<BorderPane prefHeight="650.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminItemController">
 
     <top>
         <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-background-color: linear-gradient(to right, skyblue, lavender);" BorderPane.alignment="CENTER">
@@ -68,18 +68,7 @@
                     <Font name="System Bold" size="18.0" />
                 </font>
             </Label>
-            <Separator />
-
-            <VBox alignment="CENTER" style="-fx-background-color: #ffffff; -fx-border-color: #bdc3c7; -fx-border-radius: 5; -fx-background-radius: 5;">
-                <padding>
-                    <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                </padding>
-                <ImageView fx:id="productImageView" fitHeight="120.0" fitWidth="180.0" pickOnBounds="true" preserveRatio="true" />
-            </VBox>
-
-            <TextArea fx:id="productInfoArea" editable="false" prefHeight="100.0" promptText="Mô tả chi tiết sản phẩm..." style="-fx-background-color: transparent;" wrapText="true" />
-
-            <Separator />
+         <ImageView fitHeight="177.0" fitWidth="268.0" pickOnBounds="true" preserveRatio="true" />
 
             <Label text="Thao tác quản trị">
                 <font>

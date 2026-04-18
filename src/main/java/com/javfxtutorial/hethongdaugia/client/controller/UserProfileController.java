@@ -17,7 +17,7 @@ import javafx.scene.control.Alert;
 
 import java.io.IOException;
 
-public class ManHinhThongTinUserController {
+public class UserProfileController {
     @FXML private Label usernameLabel;
     @FXML private Label emailLabel;
     @FXML private Label phoneLabel;

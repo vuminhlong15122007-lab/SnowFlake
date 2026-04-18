@@ -9,7 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
-public class TrangChuController {
+public class HomeController {
     //truy cap thong tin nguoi dung
     @FXML
     private Button profileButton;
