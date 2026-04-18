@@ -5,6 +5,7 @@ import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AddAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.GetAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAuctionsBySellerIdCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
@@ -60,35 +61,41 @@ public class SellerManagementController {
         }
     }
 
+    public Auction getInfo(){
+        String name = nameField.getText();          // Thu thap du lieu ma nguoi dung da nhap
+        String description = descriptionField.getText();
+        double initPrice = Double.parseDouble(priceField.getText());
+        double stepPrice  = Double.parseDouble(tfstepPrice.getText());
+
+
+        // Xu ly thoi gian
+        LocalDate ngayBD = startDatePicker.getValue();
+        int starhour = (int) startHourSpinner.getValue();
+        int starminu = (int) startMinuteSpinner.getValue();
+
+        // Xu ly thoi gian
+        LocalDate ngayKT = endDatePicker.getValue();
+        int endhour = (int) endHourSpinner.getValue();
+        int endminu = (int) endMinuteSpinner.getValue();
+
+        LocalDateTime tGianBD = LocalDateTime.of(ngayBD, LocalTime.of(starhour, starminu));
+        LocalDateTime tGianKT = LocalDateTime.of(ngayKT, LocalTime.of(endhour, endminu));
+        //Lấy xong dữ liệu người dùng nhập vào
+        int sellerId = ClientModel.getInstance().getCurrentUser().getId();
+        String sellerName = ClientModel.getInstance().getCurrentUser().getName();
+
+        Item item = new Item(sellerId, name, description, imagePath, sellerName);
+        Auction auction = new Auction(item, sellerId, initPrice, stepPrice, tGianBD, tGianKT, AuctionStatus.NOT_START);
+
+        return auction;
+
+    }
+
     String imagePath = "/com/javfxtutorial/hethongdaugia/assets/Logo.png"  ;
 
     @FXML public void luuSp( ActionEvent event){       // btn Lưu
         try{
-            String name = nameField.getText();          // Thu thap du lieu ma nguoi dung da nhap
-            String description = descriptionField.getText();
-            double initPrice = Double.parseDouble(priceField.getText());
-            double stepPrice  = Double.parseDouble(tfstepPrice.getText());
-
-
-            // Xu ly thoi gian
-            LocalDate ngayBD = startDatePicker.getValue();
-            int starhour = (int) startHourSpinner.getValue();
-            int starminu = (int) startMinuteSpinner.getValue();
-
-            // Xu ly thoi gian
-            LocalDate ngayKT = endDatePicker.getValue();
-            int endhour = (int) endHourSpinner.getValue();
-            int endminu = (int) endMinuteSpinner.getValue();
-
-            LocalDateTime tGianBD = LocalDateTime.of(ngayBD, LocalTime.of(starhour, starminu));
-            LocalDateTime tGianKT = LocalDateTime.of(ngayKT, LocalTime.of(endhour, endminu));
-
-            //Lấy xong dữ liệu người dùng nhập vào
-            int sellerId = ClientModel.getInstance().getCurrentUser().getId();
-            String sellerName = ClientModel.getInstance().getCurrentUser().getName();
-
-            Item item = new Item(sellerId, name, description, imagePath, sellerName);
-            Auction auction = new Auction(item, sellerId, initPrice, stepPrice, tGianBD, tGianKT, AuctionStatus.NOT_START);
+            Auction auction = getInfo();
 
             //thêm auction vào DAO và hiện ra list bên trái
             ServerConnection connection = new ServerConnection();
@@ -125,7 +132,7 @@ public class SellerManagementController {
     }
 
 
-   public void initialize() throws IOException, ClassNotFoundException {
+    public void initialize() throws IOException, ClassNotFoundException {
         //  Cấu hình Spinner cho giờ phút
         startHourSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0));
         startMinuteSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
@@ -137,13 +144,13 @@ public class SellerManagementController {
 
         loadMyProducts();  // Tải danh sách ban đùa của server ứng với IDserver ng dùng đăng nhập và đổ vào obs
 
-       // Lắng nghe sự kiện khi người dùng chọn sp
-       productList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
-           if (newVal != null) {
-               hienThiChiTietSanPham(newVal);      // LUÔN hiển thị thông tin
-           }
-       });
-   }
+        // Lắng nghe sự kiện khi người dùng chọn sp
+        productList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) {
+                hienThiChiTietSanPham(newVal);      // LUÔN hiển thị thông tin
+            }
+        });
+    }
 
     private void loadMyProducts() throws IOException, ClassNotFoundException {
         int sellerId = ClientModel.getInstance().getCurrentUser().getId();
@@ -210,40 +217,58 @@ public class SellerManagementController {
         // ẢNH - CHƯA XỬ LÝ LẤY RA
     }
 
-    public void testCondition(Item item){
-//        CheckItemAuctionCommand cmd = new CheckItemAuctionCommand(item.getItemId());
-//        ServerConnection connection = new ServerConnection();
-//        new Thread(() ->  {
-//            try {
-//            connection.sendCommand(cmd);
-//            Response resp = connection.receiveResponse(); // gửi yêu cầu lên server và server xử lý
-//            Platform.runLater(() -> {
-//                if (resp.isSuccess()) {  //check xem yc đã đc thực hiện chx
-//                    String condition = resp.getMessage();
-//                    boolean result = false;
-//
-//                    if (condition == "Chưa bắt đầu") result = true;
-//                }
-//            });
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//
-//        }
-//
-//        });
-
-    }
 
     @FXML
-    public void suaSp(ActionEvent event){  // Xử lý nuts Sửa
+    public void suaSp  (ActionEvent event){  // Xử lý nuts Sửa
         Auction selected = productList.getSelectionModel().getSelectedItem();  // Lấy ttin sản phẩm đang được chọn ( của listView)
         if (selected == null) {
             System.out.println(" Vui lòng nhấn chọn sản phẩm");
         }
-        hienThiChiTietSanPham(selected);
+
+        GetAuctionStatusCommand cmd = new GetAuctionStatusCommand(selected);
+        ServerConnection connection = new ServerConnection();
+
+        new Thread(() -> { //Tạo 1 luồng giao diện mới và giao công vc cho luồng
+            try {
+                connection.sendCommand(cmd);
+                Response resp = connection.receiveResponse();   //cmd biến thành dãy bit gửi qua mạng => server xưr lý => gửi về một Response chứa danh sách Item.
 
 
+                AuctionStatus nowStatus = (AuctionStatus) resp.getPayLoad();
+                if(nowStatus == AuctionStatus.NOT_START){
+                    Auction auction = getInfo();
+                    Command cm = new AddAuctionCommand();
+                    cm.addData("Auction", auction);
+                    Response response = connection.receiveResponse();
+                    Platform.runLater(() -> {   // gọi Thread Main cập nhận giao diện
+                        if (response.isSuccess()) {
+                            Auction savedAuction = (Auction) response.getPayLoad();
+                            observable.add(savedAuction);
+                        } else{
+                            System.out.println(response.getMessage());
+                        }
+                    });
 
+                }else{
+                    showAlert("Không thể sửa sản phẩm", "Phiên đấu giá đang chạy hoặc đã kết thúc");
+                }
+
+
+            } catch (Exception e) {
+                e.printStackTrace();
+
+            }
+        }).start();
+
+    }
+
+    //hien thi alert
+    public void showAlert(String title, String message){
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
     }
 
 }
