@@ -11,13 +11,14 @@ import com.javfxtutorial.hethongdaugia.server.manager.UserManager;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class ClientHandler extends Thread {
     private Socket clientSocket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    private static List<ObjectOutputStream> clientsOutput = new ArrayList<>();
+    private static ArrayList<ClientHandler> clients = new ArrayList<>();
 
     public ClientHandler(Socket socket) {
         this.clientSocket = socket;
@@ -28,7 +29,7 @@ public class ClientHandler extends Thread {
         try {
             in = new ObjectInputStream(clientSocket.getInputStream());
             out = new ObjectOutputStream(clientSocket.getOutputStream());
-            clientsOutput.add(out);
+           clients.add(this);
             while (true) { //luôn chờ command của client
                 Command cmd = (Command) in.readObject();
                 Response rp = cmd.handle();
@@ -38,16 +39,30 @@ public class ClientHandler extends Thread {
             System.out.println("Client ngừng kết nối");;
         } finally {
             // 3. Khi Client đóng app hoặc rớt mạng, xóa khỏi danh sách
-            if (out != null) {
-                clientsOutput.remove(out);
+            clients.remove(this);
+            if (clientSocket != null) {
+                try {
+                    clientSocket.close();
+                } catch (IOException e) {
+                    System.out.println("Client ngắt kết nối");
+                }
             }
-            try { clientSocket.close();} catch (IOException ex) {}
         }
     }
 
     public static void broadcast(Response rp) throws IOException {
-        for (ObjectOutputStream client: clientsOutput){
-            client.writeObject(rp);
+        Iterator<ClientHandler> iterator = clients.iterator();
+        while (iterator.hasNext()){
+            ClientHandler client = iterator.next();
+            try {
+                client.out.writeObject(rp);
+                client.out.flush();
+            }  catch (IOException e){
+                if (client.clientSocket != null){
+                    client.clientSocket.close();
+                }
+                iterator.remove();
+            }
         }
     }
 }

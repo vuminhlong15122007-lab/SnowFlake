@@ -49,6 +49,7 @@ public class ManHinhDauGiaTrucTiep implements Initializable {
     @FXML
     public void goMenu(ActionEvent event){
         try{
+            connection.close();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/SceneMain.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
@@ -72,6 +73,7 @@ public class ManHinhDauGiaTrucTiep implements Initializable {
 
         Command cmd = new PlaceBidCommand();
         cmd.addData("bid", bid);
+        cmd.addData("currentAuction", currentAuction);
         connection.sendCommand(cmd);
         System.out.println("Đã send command");
     }
@@ -91,26 +93,35 @@ public class ManHinhDauGiaTrucTiep implements Initializable {
     }
 
     private void connectToServer(){ //Khởi tạo một luồng riêng để luôn nhận phản hồi từ server mà không gây lag, đơ)
-        new Thread(() -> {
+        Thread thread = new Thread(() -> {
             while (true){
                 try {
                     Response rp = connection.receiveResponse();
                     if (rp.getCommand() instanceof PlaceBidCommand){ //liên tục cập nhật giá cao nhất
                         //lấy giá mới từ server trả về (mỗi khi có client đặt giá, server sẽ thông báo cho tất cả client đang hoạt động)
                         BidTransaction bid = (BidTransaction) rp.getPayLoad();
+
                         if (ClientModel.getInstance().getCurrentUser().getId() == bid.getBidderId()){
                             Platform.runLater(() -> {
                             showAlert("Trạng thái đặt bid", rp.getMessage());});
                         }
-                        if (bid.getAuctionId() == currentAuction.getAuctionId()) { //kiểm tra xem có trùng id auction không
-                            double newPrice =  bid.getAmount();
-                            int bidderId =  bid.getBidderId();
 
-                            //trong javafx, chỉ có luồng chính mới có thể sửa UI, gọi platform runlater để gọi luồng chính cập nhật giao diện
-                            Platform.runLater(() -> {
-                                currentPrice_tf.setText(Double.toString(newPrice));
-                                highestPayer_tf.setText(String.valueOf(bidderId));
-                            });
+                        if (rp.isSuccess()) {
+                            if (bid.getAuctionId() == currentAuction.getAuctionId()) { //kiểm tra xem có trùng id auction không
+                                double newPrice = bid.getAmount();
+                                int bidderId = bid.getBidderId();
+
+                                currentAuction.setCurrentPrice(newPrice);
+                                currentAuction.setWinnerId(bidderId);
+                                currentAuction.setWinningPrice(newPrice);
+
+
+                                //trong javafx, chỉ có luồng chính mới có thể sửa UI, gọi platform runlater để gọi luồng chính cập nhật giao diện
+                                Platform.runLater(() -> {
+                                    currentPrice_tf.setText(Double.toString(newPrice));
+                                    highestPayer_tf.setText(String.valueOf(bidderId));
+                                });
+                            }
                         }
 
                     }
@@ -124,7 +135,9 @@ public class ManHinhDauGiaTrucTiep implements Initializable {
                     throw new RuntimeException(e);
                 }
             }
-        }).start();
+        });
+        thread.setDaemon(true);
+        thread.start();
     }
 
     //hien thi alert

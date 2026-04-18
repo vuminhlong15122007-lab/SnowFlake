@@ -15,8 +15,8 @@ public class PlaceBidCommand extends Command {
     @Override
     public Response handle() {
         BidTransaction bid = (BidTransaction) this.getData("bid");
-        Auction currentAuction = AuctionManger.getInstance().getCurrentAuction(bid.getAuctionId());
-        if (AuctionManger.getInstance().placeBid(currentAuction, bid.getAmount())){//nếu đặt giá thành công trả về true
+        Auction currentAuction = (Auction) this.getData("currentAuction");
+        if (AuctionManger.getInstance().placeBid(currentAuction, bid)){//nếu đặt giá thành công trả về true
             try {
                 BidDAO.getInstance().insertBid(bid);
                 ClientHandler.broadcast(new Response(true, "Đặt giá thành công", bid, this));
@@ -25,6 +25,6 @@ public class PlaceBidCommand extends Command {
             }
             return new Response(true, "Đặt Bid thành công", bid, this);
         }
-        return new Response(false, "Cần đặt giá cao hơn giá hiện tại + bước giá", null);
+        return new Response(false, "Cần đặt giá cao hơn giá hiện tại + bước giá", bid, this);
     }
 }

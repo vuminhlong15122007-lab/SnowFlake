@@ -1,6 +1,7 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import javafx.scene.control.Alert;
@@ -23,16 +24,18 @@ public class AuctionManger {
     }
 
     public synchronized boolean checkValidBid(Auction currentAuction, double amount){
-        double currentPrice = currentAuction.getCurrentPrice();//vào DAO check giá hiện tại
+        double currentPrice = currentAuction.getCurrentPrice();
         if (amount >= currentPrice + currentAuction.getStepPrice()){
             return true;
         }
         return false;
     }
 
-    public synchronized boolean placeBid(Auction currentAuction, double amount){
-        if (checkValidBid(currentAuction, amount)) {
-            currentAuction.setCurrentPrice(amount);
+    public synchronized boolean placeBid(Auction currentAuction, BidTransaction bid){
+        if (checkValidBid(currentAuction, bid.getAmount())) {
+            currentAuction.setCurrentPrice(bid.getAmount());
+            currentAuction.setWinningPrice(bid.getAmount());
+            currentAuction.setWinnerId(bid.getBidderId());
             AuctionDAO.getInstance().update(currentAuction);
             return true;
         }

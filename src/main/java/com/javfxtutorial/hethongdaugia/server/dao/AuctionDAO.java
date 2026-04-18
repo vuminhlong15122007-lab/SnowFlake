@@ -63,17 +63,21 @@ public class AuctionDAO implements DAOInterface<Auction> {
     @Override
     public int update(Auction auction) {
         int result = 0;
-        String sql = "UPDATE Auction SET init_price = ?, step_price = ?, starting_time = ?, ending_time = ?, auctionStatus =? WHERE auction_id = ?";
+        String sql = "UPDATE Auction SET winner_id = ?,init_price = ?, step_price = ?, current_price = ?, winning_price = ?, starting_time = ?, ending_time = ?, auctionStatus =? WHERE auction_id = ?";
 
         try (Connection connection = JDBCUtil.getConnection();
              PreparedStatement pst = connection.prepareStatement(sql)) {
+            pst.setInt(1, auction.getWinnerId());
+            pst.setDouble(2, auction.getInitPrice());
+            pst.setDouble(3, auction.getStepPrice());
+            pst.setDouble(4, auction.getCurrentPrice());
+            pst.setDouble(5, auction.getWinningPrice());
+            pst.setTimestamp(6, Timestamp.valueOf(auction.getStartingTime()));
+            pst.setTimestamp(7, Timestamp.valueOf(auction.getEndingTime()));
+            pst.setString(8, String.valueOf(auction.getStatus()));
+            pst.setInt(9, auction.getAuctionId());
 
-            pst.setDouble(1, auction.getInitPrice());
-            pst.setDouble(2, auction.getStepPrice());
-            pst.setTimestamp(3, Timestamp.valueOf(auction.getStartingTime()));
-            pst.setTimestamp(4, Timestamp.valueOf(auction.getEndingTime()));
-            pst.setString(5, String.valueOf(auction.getStatus()));
-            pst.setInt(6, auction.getAuctionId());
+
 
 
             System.out.println("Bạn đang thực thi cập nhật Auction có ID: " + auction.getAuctionId());
@@ -211,8 +215,11 @@ public class AuctionDAO implements DAOInterface<Auction> {
         int auctionId = resultSet.getInt("auction_id");
         int itemId = resultSet.getInt("item_id");
         int sellerId = resultSet.getInt("seller_id");
+        int winnerId = resultSet.getInt("winner_id");
         double initPrice = resultSet.getDouble("init_price");
+        double currentPrice = resultSet.getDouble("current_price");
         double stepPrice = resultSet.getDouble("step_price");
+        double winningPrice = resultSet.getDouble("winning_price");
         AuctionStatus auctionStatus = AuctionStatus.valueOf(resultSet.getString("AuctionStatus"));
 
         Timestamp startTimestamp = resultSet.getTimestamp("starting_time");
@@ -221,6 +228,6 @@ public class AuctionDAO implements DAOInterface<Auction> {
         Timestamp endTimestamp = resultSet.getTimestamp("ending_time");
         LocalDateTime endTime = (endTimestamp != null) ? endTimestamp.toLocalDateTime() : null;
 
-        return new Auction(auctionId, itemId, sellerId, initPrice, stepPrice, startTime, endTime, auctionStatus);
+        return new Auction(auctionId, itemId, sellerId, winnerId, initPrice, currentPrice, stepPrice, winningPrice, startTime, endTime, auctionStatus);
     }
 }
