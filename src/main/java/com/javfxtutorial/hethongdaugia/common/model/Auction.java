@@ -10,7 +10,7 @@ public class Auction implements Serializable {
 
     // Liên kết với sản phẩm đang được đấu giá
     // (Trong CSDL đây sẽ là Khóa ngoại - Foreign Key)
-    private int itemId;
+    private Item item;
 
     // Ai là người tổ chức phiên đấu giá này
     private int sellerId;
@@ -31,8 +31,8 @@ public class Auction implements Serializable {
     // ID của người chiến thắng (sau khi phiên kết thúc)
     private int winnerId;
 
-    public Auction(int itemId, int sellerId, double initPrice, double stepPrice, LocalDateTime startingTime, LocalDateTime endingTime) {
-        this.itemId = itemId;
+    public Auction(Item item, int sellerId, double initPrice, double stepPrice, LocalDateTime startingTime, LocalDateTime endingTime) {
+        this.item = item;
         this.sellerId = sellerId;
         this.initPrice = initPrice;
         this.stepPrice = stepPrice;
@@ -41,9 +41,9 @@ public class Auction implements Serializable {
     }
 
 
-    public Auction(int auctionId, int itemId, int sellerId, int winnerId, double initPrice, double currentPrice, double stepPrice, double winningPrice, LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
+    public Auction(int auctionId, Item item, int sellerId, int winnerId, double initPrice, double currentPrice, double stepPrice, double winningPrice, LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
         this.auctionId = auctionId;
-        this.itemId = itemId;
+        this.item = item;
         this.sellerId = sellerId;
         this.initPrice = initPrice;
         this.currentPrice = currentPrice;
@@ -55,8 +55,8 @@ public class Auction implements Serializable {
         this.winnerId = winnerId;
     }
 
-    public Auction(int itemId, int sellerId, double initPrice, double stepPrice, LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
-        this.itemId = itemId;
+    public Auction(Item item, int sellerId, double initPrice, double stepPrice, LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
+        this.item = item;
         this.sellerId = sellerId;
         this.initPrice = initPrice;
         this.stepPrice = stepPrice;
@@ -75,13 +75,8 @@ public class Auction implements Serializable {
         this.auctionId = auctionId;
     }
 
-    public int getItemId() {
-        return itemId;
-    }
-
-    public void setItemId(int itemId) {
-        this.itemId = itemId;
-    }
+    public Item getItem() {return item;}
+    public void setItem(Item item) {this.item = item;}
 
     public int getSellerId() {
         return sellerId;
@@ -159,7 +154,7 @@ public class Auction implements Serializable {
     public String toString() {
         return "Auction{" +
                 "auctionId=" + auctionId +
-                ", itemId=" + itemId +
+                ", itemId=" + item.getItemId() +
                 ", sellerId=" + sellerId +
                 ", initPrice=" + initPrice +
                 ", currentPrice=" + currentPrice +

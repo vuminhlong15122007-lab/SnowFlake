@@ -1,11 +1,15 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteUserCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -20,36 +24,48 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.net.URL;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
 public class AdminItemMangementController implements  Initializable {
-    @FXML private TableView<Item> itemTable;
-    @FXML private TableColumn<Item,Integer> colId ;
-    @FXML private TableColumn<Item,String> colItemName;
-    @FXML private TableColumn<Item,String> colStartPrice;
-    @FXML private TableColumn<Item,String> colStepPrice;
-    @FXML private TableColumn<Item,String> colCategory;
-    @FXML private TableColumn<Item,String> colOwner;
-    @FXML private TableColumn<Item,String> colStatus;
+    @FXML private TableView<Auction> itemTable;
+    @FXML private TableColumn<Auction,Integer> colId ;
+    @FXML private TableColumn<Auction,String> colItemName;
+    @FXML private TableColumn<Auction,String> colStartPrice;
+    @FXML private TableColumn<Auction,String> colStepPrice;
+    @FXML private TableColumn<Auction,String> colCategory;
+    @FXML private TableColumn<Auction,String> colOwner;
+    @FXML private TableColumn<Auction,String> colStatus;
 
     private ItemDAO  itemDAO = ItemDAO.getInstance();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        colId.setCellValueFactory(new PropertyValueFactory<>("id"));
-        colItemName.setCellValueFactory(new PropertyValueFactory<>("name"));
-        colCategory.setCellValueFactory(new PropertyValueFactory<>("email"));
+        colId.setCellValueFactory(new PropertyValueFactory<>("auctionId"));
+        colItemName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getItem().getName()));
+        colCategory.setCellValueFactory(new PropertyValueFactory<>("status")); //truyền bừa
         colOwner.setCellValueFactory(new PropertyValueFactory<>("sellerId"));
-        colStartPrice.setCellValueFactory(new PropertyValueFactory<>("currentPrice"));
+        colStartPrice.setCellValueFactory(new PropertyValueFactory<>("initPrice"));
         colStepPrice.setCellValueFactory(new PropertyValueFactory<>("stepPrice"));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
-        loadItemData();
+        try {
+            loadItemData();
+        } catch (IOException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    private void loadItemData(){
-        ObservableList<Item> danhSach = FXCollections.observableArrayList(itemDAO.selectAll());
+    private void loadItemData() throws IOException, ClassNotFoundException {
+        Command cmd = new GetAllAuctionsCommand();
+        ServerConnection connection = new ServerConnection();
+        connection.sendCommand(cmd);
+        Response rp = connection.receiveResponse();
+        connection.close();
+
+        ArrayList<Auction> auctionlist = (ArrayList<Auction>) rp.getPayLoad();
+        ObservableList<Auction> danhSach = FXCollections.observableArrayList(auctionlist);
         itemTable.setItems(danhSach);
     }
 
@@ -67,7 +83,7 @@ public class AdminItemMangementController implements  Initializable {
     @FXML
     public void clickToDeleteItem() throws IOException, ClassNotFoundException {
         ServerConnection connection = new ServerConnection();
-        Item selectItem = itemTable.getSelectionModel().getSelectedItem();
+        Auction selectItem = itemTable.getSelectionModel().getSelectedItem();
         if (selectItem == null) {
             showAlert("Lỗi", "Vui lòng chọn sản phẩm cần xóa");
             return;
@@ -75,8 +91,8 @@ public class AdminItemMangementController implements  Initializable {
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Xác nhận xóa");
         confirmAlert.setHeaderText("Bạn chắc chắn muốn xóa sản phẩm?");
-        confirmAlert.setContentText("Sản phẩm: " + selectItem.getName() +
-                "\nDescription: " + selectItem.getDescription() +
+        confirmAlert.setContentText("Sản phẩm: " + selectItem.getItem().getName() +
+                "\nDescription: " + selectItem.getItem().getDescription() +
                 "\nID người bán: " + selectItem.getSellerId());
         ButtonType yes = new ButtonType("Có", ButtonBar.ButtonData.YES);
         ButtonType no = new ButtonType("Không", ButtonBar.ButtonData.NO);
@@ -88,9 +104,9 @@ public class AdminItemMangementController implements  Initializable {
         if (result == yes) {
             //tao command gui len server
             DeleteUserCommand cmd = new DeleteUserCommand();
-            cmd.addData("itemId", selectItem.getItemId());
-            cmd.addData("itemname", selectItem.getName());
-            cmd.addData("description", selectItem.getDescription());
+            cmd.addData("itemId", selectItem.getItem().getItemId());
+            cmd.addData("itemname", selectItem.getItem().getName());
+            cmd.addData("description", selectItem.getItem().getDescription());
             cmd.addData("currentPrice", selectItem.getCurrentPrice());
             cmd.addData("stepPrice", selectItem.getStepPrice());
 

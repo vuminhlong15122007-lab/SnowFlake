@@ -3,7 +3,6 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.Command.GetAuctionByItemId;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
@@ -33,32 +32,17 @@ public class ItemphiendaugiaController {
     private Auction auction;
 
     //lấy item từ db và load lên màn hình
-    public void setData(Item item) throws IOException, ClassNotFoundException {   // xu ly du lieu tu Obj den giao dien
-        if (item == null || item.getItemId() <= 0) {
+    public void setData(Auction auction) throws IOException, ClassNotFoundException {   // xu ly du lieu tu Obj den giao dien
+        if (auction == null || auction.getAuctionId() <= 0) {
             return;
         }
-        this.item = item;
+        this.item = auction.getItem();
         ItemNameLabel.setText(item.getName());
         SellerNameText.setText(item.getSellerName());
-
-        //tìm auction theo itemid ược truyền vào = get auctionbyitemid
-        ServerConnection connection = new ServerConnection();
-        Command cmd = new GetAuctionByItemId();
-        cmd.addData("itemId", item.getItemId());
-        connection.sendCommand(cmd);
-        Response rp = connection.receiveResponse();
-        connection.close();
-        if (rp.isSuccess()) {
-            auction = (Auction) rp.getPayLoad();
-            System.out.println(auction.toString());
-            StartTimeText.setText(String.valueOf(auction.getStartingTime()));
-            ItemPriceText.setText(String.valueOf(auction.getInitPrice()));
-            AuctionStatusText.setText(String.valueOf(auction.getStatus()));
-        }else {
-            System.out.println(rp.getMessage());
-        }
-
-        }
+        StartTimeText.setText(String.valueOf(auction.getStartingTime()));
+        ItemPriceText.setText(String.valueOf(auction.getInitPrice()));
+        AuctionStatusText.setText(String.valueOf(auction.getStatus()));
+    }
 
     @FXML
     public void btnLiveAuction(ActionEvent event){

@@ -22,34 +22,6 @@ public class ItemManager {
     Item currentItem;
 
 
-    public String checkValueProduct(Item item){   // ktra logic truoc khi xu ly
-        if (item.getName() == null || item.getName().trim().isEmpty())
-            return "Tên sản phẩm không được để trống";
-        if (item.getDescription() == null || item.getDescription().trim().isEmpty())
-            return "Mô tả không được để trống";
-        if (item.getCurrentPrice() <= 0)
-            return "Giá khởi điểm phải lớn hơn 0";
-        if (item.getStepPrice() <= 0)
-            return "Bước giá phải lớn hơn 0";
-        if (item.getImagePath() == null || item.getImagePath().trim().isEmpty())
-            return "Chưa có ảnh sản phẩm";
-        return null;
-    }
-
-    public Item addItem (Item item){
-        if(checkValueProduct(item) == null){
-            int soDong = ItemDAO.getInstance().insert(item); // tao moi 1 ban ghi chua tug co trong DB
-            if (soDong > 0){
-                return item;  //Trả về ID (do DAO gán)
-            }
-        }
-        return null;
-    }
-
-    public boolean addAuction (Auction auction ){
-        int soDong = AuctionDAO.getInstance().insert(auction); // tao moi 1 ban ghi chua tug co trong DB
-        return soDong >0;
-    }
 
     public boolean deleteItem(int itemId) {
         // Tạo đối tượng Item chỉ chứa itemId

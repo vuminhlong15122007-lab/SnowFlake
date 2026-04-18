@@ -1,14 +1,21 @@
 package com.javfxtutorial.hethongdaugia.server.dao;
 
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AuctionDAO implements DAOInterface<Auction> {
     private static AuctionDAO instance;
+    private String BASE_QUERY =
+            "SELECT a.*, i.name, i.description, i.imagepath, i.idseller AS seller_id_item, i.sellerName " +
+                    "FROM auction a " +
+                    "JOIN item i ON a.item_id = i.itemid ";
+
 
     private AuctionDAO() {
     }
@@ -28,7 +35,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
         try (Connection connection = JDBCUtil.getConnection();
              PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-            pst.setInt(1, auction.getItemId());
+            pst.setInt(1, auction.getItem().getItemId());
             pst.setInt(2, auction.getSellerId());
             pst.setDouble(3, auction.getInitPrice());
             pst.setDouble(4, auction.getStepPrice());
@@ -78,8 +85,6 @@ public class AuctionDAO implements DAOInterface<Auction> {
             pst.setInt(9, auction.getAuctionId());
 
 
-
-
             System.out.println("Bạn đang thực thi cập nhật Auction có ID: " + auction.getAuctionId());
             result = pst.executeUpdate();
 
@@ -121,48 +126,81 @@ public class AuctionDAO implements DAOInterface<Auction> {
         return result;
     }
 
+    private Auction mapResultSet(ResultSet rs) throws SQLException {
+        // Map Item
+        Item item = new Item(
+                rs.getInt("item_id"),
+                rs.getInt("seller_id"),
+                rs.getString("name"),
+                rs.getString("description"),
+                rs.getString("imagepath"),
+                rs.getString("sellerName")
+        );
+
+        // Map LocalDateTime
+        LocalDateTime startingTime = rs.getTimestamp("starting_time") != null
+                ? rs.getTimestamp("starting_time").toLocalDateTime() : null;
+        LocalDateTime endingTime = rs.getTimestamp("ending_time") != null
+                ? rs.getTimestamp("ending_time").toLocalDateTime() : null;
+
+        // Map AuctionStatus
+        AuctionStatus status = AuctionStatus.valueOf(rs.getString("auctionStatus"));
+
+        return new Auction(
+                rs.getInt("auction_id"),
+                item,
+                rs.getInt("seller_id"),
+                rs.getInt("winner_id"),
+                rs.getDouble("init_price"),
+                rs.getDouble("current_price"),
+                rs.getDouble("step_price"),
+                rs.getDouble("winning_price"),
+                startingTime,
+                endingTime,
+                status
+        );
+    }
+
     @Override
     public ArrayList<Auction> selectAll() {
-        ArrayList<Auction> result = new ArrayList<>();
-        String sql = "SELECT * FROM Auction";
+        ArrayList<Auction> list = new ArrayList<>();
+        String sql = BASE_QUERY;
 
-        try (Connection connection = JDBCUtil.getConnection();
-             PreparedStatement pst = connection.prepareStatement(sql);
-             ResultSet resultSet = pst.executeQuery()) {
+        try (Connection conn = JDBCUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
-            while (resultSet.next()) {
-                result.add(extractAuctionFromResultSet(resultSet));
+            while (rs.next()) {
+                list.add(mapResultSet(rs));
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Lỗi thao tác DB khi lấy danh sách Auction", e);
         }
-        return result;
+        return list;
     }
 
     @Override
-    public Auction selectById(int id) {  // lấy auction bằng auction id
-        Auction result = null;
-        String sql = "SELECT * FROM Auction WHERE auction_id = ?";
+    public Auction selectById(int auctionId) {
+        String sql = BASE_QUERY + "WHERE a.auction_id = ?";
 
-        try (Connection connection = JDBCUtil.getConnection();
-             PreparedStatement pst = connection.prepareStatement(sql)) {
+        try (Connection conn = JDBCUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            pst.setInt(1, id);
+            ps.setInt(1, auctionId);
 
-            try (ResultSet resultSet = pst.executeQuery()) {
-                if (resultSet.next()) {
-                    result = extractAuctionFromResultSet(resultSet);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSet(rs);
                 }
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Lỗi thao tác DB khi lấy Auction theo ID", e);
         }
-        return result;
+        return null;
     }
+
 
     public Auction selectByItemId(int id) {      // lấy auction dựa trên itemId
         Auction result = null;
@@ -175,59 +213,40 @@ public class AuctionDAO implements DAOInterface<Auction> {
 
             try (ResultSet resultSet = pst.executeQuery()) {
                 if (resultSet.next()) {
-                    result = extractAuctionFromResultSet(resultSet);
                 }
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
             throw new RuntimeException("Lỗi thao tác DB khi lấy Auction theo Item ID", e);
-        } catch (NullPointerException e){
+        } catch (NullPointerException e) {
             System.out.println("dữ liệu k tồn tại");
         }
         return result;
     }
 
-    public ArrayList<Auction> selectByCondition(String condition) {
-        ArrayList<Auction> result = new ArrayList<>();
-        // Lưu ý: Nối chuỗi condition trực tiếp vào câu lệnh có thể gây ra rủi ro SQL Injection
-        // Khuyến nghị: Thiết kế lại hàm này truyền vào tên cột và giá trị thay vì cả đoạn chuỗi điều kiện
-        String sql = "SELECT * FROM Auction WHERE " + condition;
+    public ArrayList<Auction> selectBySellerId(int id) {      // lấy auction dựa trên itemId
+        ArrayList<Auction> list = new ArrayList<>();
+        String sql = BASE_QUERY + "WHERE i.idseller = ?";
 
-        try (Connection connection = JDBCUtil.getConnection();
-             PreparedStatement pst = connection.prepareStatement(sql);
-             ResultSet resultSet = pst.executeQuery()) {
+        try (Connection conn = JDBCUtil.getConnection();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
-            System.out.println("Đang lấy Auction với điều kiện: " + sql);
-            while (resultSet.next()) {
-                result.add(extractAuctionFromResultSet(resultSet));
+            ps.setInt(1, id);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    list.add(mapResultSet(rs));
+                }
             }
 
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Lỗi thao tác DB khi lấy Auction theo Condition", e);
+            throw new RuntimeException("Lỗi thao tác DB khi lấy Auction theo Seller ID", e);
+        } catch (NullPointerException e) {
+            System.out.println("dữ liệu k tồn tại");
         }
-        return result;
-    }
-
-    // --- Hàm Hỗ Trợ Dùng Chung (Giúp code gọn gàng, không bị lặp lại) ---
-    private Auction extractAuctionFromResultSet(ResultSet resultSet) throws SQLException {
-        int auctionId = resultSet.getInt("auction_id");
-        int itemId = resultSet.getInt("item_id");
-        int sellerId = resultSet.getInt("seller_id");
-        int winnerId = resultSet.getInt("winner_id");
-        double initPrice = resultSet.getDouble("init_price");
-        double currentPrice = resultSet.getDouble("current_price");
-        double stepPrice = resultSet.getDouble("step_price");
-        double winningPrice = resultSet.getDouble("winning_price");
-        AuctionStatus auctionStatus = AuctionStatus.valueOf(resultSet.getString("AuctionStatus"));
-
-        Timestamp startTimestamp = resultSet.getTimestamp("starting_time");
-        LocalDateTime startTime = (startTimestamp != null) ? startTimestamp.toLocalDateTime() : null;
-
-        Timestamp endTimestamp = resultSet.getTimestamp("ending_time");
-        LocalDateTime endTime = (endTimestamp != null) ? endTimestamp.toLocalDateTime() : null;
-
-        return new Auction(auctionId, itemId, sellerId, winnerId, initPrice, currentPrice, stepPrice, winningPrice, startTime, endTime, auctionStatus);
+        return list;
     }
 }
+

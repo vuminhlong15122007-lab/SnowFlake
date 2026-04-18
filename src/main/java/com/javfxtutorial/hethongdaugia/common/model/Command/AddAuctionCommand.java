@@ -10,19 +10,16 @@ import com.javfxtutorial.hethongdaugia.server.manager.ItemManager;
 
 import java.util.ArrayList;
 
-public class AddItemCommand extends Command{ //Dùng để thêm sản phẩm mới từ form.
-
+public class AddAuctionCommand extends Command{ //Dùng để thêm sản phẩm mới từ form.
     @Override
     public Response handle() {
-        Item item = (Item) this.getData("Item");
         Auction auction = (Auction) this.getData("Auction");
-
-        Item saveItem = ItemManager.getInstance().addItem(item);
-        if(saveItem != null ){
-            auction.setItemId(saveItem.getItemId()); // Gán  ID chi san pham
-            if (ItemManager.getInstance().addAuction(auction)) {
-                return new Response(true, "Thêm thành công", item);
-            }
+        Item item = auction.getItem();
+        int result2 = ItemDAO.getInstance().insert(item); //sau khi insert item, DAO sẽ tự ộng gắn lại id cho item -> gắn lại iditem cho auction
+        auction.getItem().setItemId(item.getItemId());
+        int result1 = AuctionDAO.getInstance().insert(auction);
+        if (result1 > 0 && result2 > 0){
+            return new Response(true, "Thêm sản phẩm mới thành công", auction);
         }
         return new Response(false, "Lỗi!!! Thêm thất bại", null);
     }

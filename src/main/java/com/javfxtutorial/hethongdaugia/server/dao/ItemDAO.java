@@ -250,32 +250,4 @@ public class ItemDAO implements DAOInterface<Item> {
 
     }
 
-    public ArrayList<Item> selectBySellerId(int sellerId) {         // dùng để ghép atribust ơr Item vs ở Auction
-        ArrayList<Item> result = new ArrayList<>();
-        String sql = "SELECT i.itemId, i.idseller, i.name, i.description, i.imagePath, " +
-                "a.init_price, a.step_price " +
-                "FROM Item i LEFT JOIN Auction a ON i.itemId = a.item_id " +
-                "WHERE i.idseller = ? " +
-                "ORDER BY a.starting_time DESC"; // Lấy phiên mới nhất nếu có nhiều
-        try (Connection conn = JDBCUtil.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
-            pst.setInt(1, sellerId);
-            ResultSet rs = pst.executeQuery();
-            while (rs.next()) {
-                Item item = new Item();
-                item.setItemId(rs.getInt("itemId"));
-                item.setSellerId(rs.getInt("idseller"));
-                item.setName(rs.getString("name"));
-                item.setDescription(rs.getString("description"));
-                item.setImagePath(rs.getString("imagePath"));
-                // Gán giá từ Auction (nếu không có Auction thì giá = 0)
-                item.setCurrentPrice(rs.getDouble("init_price"));
-                item.setStepPrice(rs.getDouble("step_price"));
-                result.add(item);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return result;
-    }
 }

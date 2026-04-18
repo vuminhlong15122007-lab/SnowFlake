@@ -1,11 +1,9 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
-import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
 
-import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllItemsCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Command.GetItemsBySellerCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
@@ -27,14 +25,12 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.List;
 
 
 public class AuctionController {
 
-    @FXML ListView<Item>  featuredProductList;
+    @FXML ListView<Auction>  featuredProductList;
     @FXML TextField searchField;
     @FXML Button btnHome;      // 4 cai button chx co hanh dong vs lk man khac
     @FXML Button btnLiveAuction;
@@ -43,7 +39,7 @@ public class AuctionController {
 
 
     // Khoi tao danh sach Observable
-    private ObservableList<Item> observable = FXCollections.observableArrayList();
+    private ObservableList<Auction> observable = FXCollections.observableArrayList();
 
     @FXML
     public void initialize(){
@@ -57,15 +53,15 @@ public class AuctionController {
 
         // Xu ly o tim kiem - TexField
         // 1.Khoi tao  FilteredList - loc du lieu de hien thi
-        FilteredList<Item>  filterData = new FilteredList<>(observable, p-> true );
+        FilteredList<Auction>  filterData = new FilteredList<>(observable, p-> true );
 
         //2.Lang nghe o nhap du lieu
         searchField.textProperty().addListener((observable, oldValue, newValue) ->
-                filterData.setPredicate(product->
+                filterData.setPredicate(auction->
                 {
                     if (newValue == null|| newValue.isEmpty()) return true; // o nhap vao du lieu trong => ds ban dau
                     String isLowerCase = newValue.toLowerCase(); // chuyen chu nguoi dung thanh chu thuong
-                    String isLowerCase2 = product.getName().toLowerCase(); // chuyen ten sp trong item thanh chu thuong
+                    String isLowerCase2 = auction.getItem().getName().toLowerCase(); // chuyen ten sp trong item thanh chu thuong
                     return isLowerCase2.contains(isLowerCase); // sp trong system chi can chua ten sp ma ng nhap thi se in ra ten sp trong system do
 
                 }));
@@ -78,7 +74,7 @@ public class AuctionController {
 
     public void loadData(){
        //observable.add(new Item()
-        Command cmd = new GetAllItemsCommand();
+        Command cmd = new GetAllAuctionsCommand();
         ServerConnection connection = new ServerConnection();
         new Thread(() -> { //Tạo 1 luồng giao diện mới và giao công vc cho luồng
             try {
@@ -87,8 +83,8 @@ public class AuctionController {
                 connection.close();
                 Platform.runLater(() -> {          //luồng phụ gọi để luồng chính xử lý
                     if (resp.isSuccess()) {  // kiểm tra xem có nhận được danh sách cân ko
-                        ArrayList<Item> items = (ArrayList<Item>) resp.getPayLoad();  // lấy đồ ra
-                        observable.setAll(items); // sắp xếp lên listView
+                        ArrayList<Auction> auctions = (ArrayList<Auction>) resp.getPayLoad();  // lấy đồ ra
+                        observable.setAll(auctions); // sắp xếp lên listView
                     }
                 });
             } catch (Exception e) {

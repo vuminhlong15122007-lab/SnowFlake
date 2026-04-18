@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -13,13 +14,11 @@ public class Product_qlspSellerController {
     @FXML Label lbPrice;
     @FXML Label ItemID;
 
-    public Item product;
 
-    public void update(Item pr){
-        this.product = pr;
-        lbPrice.setText(String.format("%,.0f VNĐ", pr.getCurrentPrice()));
-        lbProductName.setText(pr.getName());
-        ItemID.setText(String.valueOf(pr.getItemId()));
+    public void update(Auction auction){
+        lbPrice.setText(String.format("%,.0f VNĐ", auction.getCurrentPrice()));
+        lbProductName.setText(auction.getItem().getName());
+        ItemID.setText(String.valueOf(auction.getItem().getItemId()));
         // SET DU LIEU ANH .... CHUA XU LY
 
     }

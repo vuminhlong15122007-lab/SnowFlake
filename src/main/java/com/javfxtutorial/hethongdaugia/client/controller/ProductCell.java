@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -7,11 +8,11 @@ import javafx.scene.control.ListCell;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import java.io.IOException;
 
-public class ProductCell extends ListCell<Item> {
+public class ProductCell extends ListCell<Auction> {
     @Override
-    protected void updateItem(Item item, boolean empty){  // method cua class cha da la protected
-        super.updateItem(item,empty);
-        if(empty||item == null){  // Tuc la man hinh da khong hien thi sp nua . tinh nang cua ListView
+    protected void updateItem(Auction auction, boolean empty){  // method cua class cha da la protected
+        super.updateItem(auction,empty);
+        if(empty||auction == null){  // Tuc la man hinh da khong hien thi sp nua . tinh nang cua ListView
             setText(null); // lam null chu de tai sd lai cai itemphien... y
             setGraphic(null);
             }else{
@@ -22,7 +23,7 @@ public class ProductCell extends ListCell<Item> {
 
                 // Truyen vao controller
                     ItemphiendaugiaController controller = loader.getController();
-                    controller.setData(item); // truyen vao du lieu cho Itemphien...
+                    controller.setData(auction); // truyen vao du lieu cho Itemphien...
 
                     setGraphic(root); // hien thi giao dien xac da tao ra man hinh
 

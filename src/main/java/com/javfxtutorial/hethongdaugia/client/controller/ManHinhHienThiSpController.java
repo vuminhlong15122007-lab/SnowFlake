@@ -1,15 +1,8 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
-import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllItemsCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Command.GetAuctionByItemId;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
-import com.javfxtutorial.hethongdaugia.common.network.Command;
-import com.javfxtutorial.hethongdaugia.common.network.Response;
-import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -18,14 +11,11 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
 public class ManHinhHienThiSpController {
     @FXML private Label EndingtimeLabel;
@@ -65,8 +55,6 @@ public class ManHinhHienThiSpController {
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.getScene().setRoot(root);
-
-            ClientModel.getInstance().setCurrentAuction(new Auction(1, 1, 1000, 50, LocalDateTime.now(), LocalDateTime.now()));
         } catch (IOException e) {
             e.printStackTrace();
         }
