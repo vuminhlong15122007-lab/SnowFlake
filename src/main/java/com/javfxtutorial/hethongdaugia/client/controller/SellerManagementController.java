@@ -5,7 +5,6 @@ import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.*;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
-import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
@@ -25,10 +24,7 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
 
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -61,7 +57,7 @@ public class SellerManagementController {
 
     public void goMenu(ActionEvent event){    // xu ly chuyen nut
         try{
-            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/SceneMain.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml"));
             Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);

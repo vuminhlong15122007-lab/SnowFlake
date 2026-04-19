@@ -16,9 +16,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
 
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -55,7 +53,7 @@ public class AdminUserController implements  Initializable {
     @FXML
     public void getUpdateAdmin(ActionEvent event){
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/update_admin.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/update_admin.fxml"));
             Parent root = loader.load();
             Stage popupStage = new Stage();
 
@@ -78,7 +76,7 @@ public class AdminUserController implements  Initializable {
     }
     public void clickButtonExit(ActionEvent event){
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/SceneMain.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
@@ -89,7 +87,7 @@ public class AdminUserController implements  Initializable {
     }
     public void clickToAddUser(ActionEvent event){
         try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/Popupmanhinhsuathongtinadmin.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/Popupmanhinhsuathongtinadmin.fxml"));
             Parent root = loader.load();
             Stage popupStage = new Stage();
 
@@ -161,7 +159,7 @@ public class AdminUserController implements  Initializable {
     @FXML
     public void clickToResetPW(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/reset_password.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/reset_password.fxml"));
 
             Stage stage = new Stage();
             //khong dong cua so cu ma khoa cua so cu o phía  sau
@@ -185,7 +183,7 @@ public class AdminUserController implements  Initializable {
     @FXML private Button logOutAd;
     @FXML
     public void logOut(ActionEvent event) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/login.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml"));
         Scene scene = new Scene(root);
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(scene);

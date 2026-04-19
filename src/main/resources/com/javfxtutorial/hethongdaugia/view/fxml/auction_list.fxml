@@ -4,12 +4,12 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="900.0" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AuctionController">
+<BorderPane stylesheets="@../css/global.css" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="900.0" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AuctionController">
    <top>
       <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-background-color: linear-gradient(to right, #FFF0F5, #B3E5FC); -fx-padding: 10;">
          <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
             <image>
-               <Image url="@../assets/Logo.png" />
+               <Image url="@../../assets/Logo.png" />
             </image>
          </ImageView>
          <Label style="-fx-font-size: 22px; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox - Phiên đấu giá" />

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+
+<StackPane id="loginPane" prefHeight="500.0" prefWidth="900.0"
+           stylesheets="@../css/global.css"
+           xmlns:fx="http://javafx.com/fxml"
+           fx:controller="com.javfxtutorial.hethongdaugia.client.controller.LoginController">
+
+    <children>
+        <Pane style="-fx-background-color: linear-gradient(to right, #e0f7ff, #ffffff, #d6f0ff);" />
+
+        <AnchorPane maxWidth="900.0" maxHeight="500.0" prefHeight="500.0" prefWidth="900.0">
+            <children>
+
+                <VBox alignment="CENTER" layoutX="50.0" layoutY="100.0" prefHeight="142.0" prefWidth="320.0" spacing="15">
+                    <children>
+                        <HBox alignment="CENTER">
+                            <children>
+                                <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                                    <image>
+                                        <Image url="@../../assets/Logo.png" />
+                                    </image>
+                                </ImageView>
+                                <Label prefHeight="100.0" prefWidth="186.0"
+                                       style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #56ccf2;"
+                                       text="SnowFox" />
+                            </children>
+                        </HBox>
+                        <Label style="-fx-font-size: 18px; -fx-text-fill: #2f80ed; -fx-font-weight: bold;"
+                               text="Phát triển bởi SnowFlake Studio!" />
+                    </children>
+                </VBox>
+
+                <VBox alignment="CENTER" layoutX="550.0" layoutY="70.0" prefHeight="360.0" prefWidth="300.0" spacing="15"
+                      style="-fx-background-color: rgba(255,255,255,0.6);
+                             -fx-background-radius: 25;
+                             -fx-padding: 30;
+                             -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 25, 0, 0, 10);">
+                    <children>
+                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2b5876;" text="Login" />
+                        <TextField fx:id="Username" prefHeight="40" promptText="Username" style="-fx-background-radius: 10;"/>
+                        <PasswordField fx:id="Password" prefHeight="40" promptText="Password" style="-fx-background-radius: 10;"/>
+
+                        <Button fx:id="login" onAction="#clickLogin" prefHeight="40" prefWidth="220"
+                                style="-fx-background-radius: 20;
+                                       -fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed);
+                                       -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;"
+                                text="LOGIN" />
+
+                        <Button id="sign_in" fx:id="sign_in" onAction="#clickCreateAccount" prefHeight="35" prefWidth="220"
+                                style="-fx-background-radius: 20; -fx-background-color: transparent;
+                                       -fx-border-color: #2f80ed; -fx-border-radius: 20;
+                                       -fx-text-fill: #2f80ed; -fx-cursor: hand;"
+                                text="CREATE ACCOUNT" />
+                    </children>
+                </VBox>
+            </children>
+        </AnchorPane>
+    </children>
+</StackPane>

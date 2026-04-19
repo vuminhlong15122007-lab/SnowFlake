@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox prefWidth="420.0" spacing="20.0" style="-fx-background-color: linear-gradient(to right , white , skyblue); -fx-border-color: linear-gradient(to right , white , skyblue); -fx-border-width: 2;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.Edit_User_Popup_Controller">
+<VBox prefWidth="420.0" spacing="20.0" stylesheets="@../css/global.css" style="-fx-background-color: linear-gradient(to right , white , skyblue); -fx-border-color: linear-gradient(to right , white , skyblue); -fx-border-width: 2;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.Edit_User_Popup_Controller">
     <padding>
         <Insets bottom="20.0" left="25.0" right="25.0" top="20.0" />
     </padding>
@@ -22,7 +22,7 @@
       <children>
          <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
             <image>
-               <Image url="@../assets/Logo.png" />
+               <Image url="@../../assets/Logo.png" />
             </image>
          </ImageView>
       

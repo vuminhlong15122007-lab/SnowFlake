@@ -89,7 +89,7 @@ public class AuctionSessionController {
             ClientModel.getInstance().setCurrentItem(item);
             ClientModel.getInstance().setCurrentAuction(auction);
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/man_hinh_hien_thi_sp.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thi_sp.fxml"));
             Parent root = loader.load();
 
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

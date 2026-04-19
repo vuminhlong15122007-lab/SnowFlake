@@ -73,7 +73,7 @@ public class ProductDisplayController {
     @FXML
     public void QuaylaiMenu(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/SceneMain.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.getScene().setRoot(root);
@@ -88,7 +88,7 @@ public class ProductDisplayController {
         if (auction.getStatus() == AuctionStatus.RUNNING) {
         try {
             System.out.println("Phiên đấu giá hiện tại: " + ClientModel.getInstance().getCurrentAuction());
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/dau_gia_truc_tiep.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/dau_gia_truc_tiep.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.getScene().setRoot(root);

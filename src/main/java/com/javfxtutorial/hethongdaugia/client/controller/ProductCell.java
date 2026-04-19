@@ -5,8 +5,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ListCell;
 
-import java.io.IOException;
-
 public class ProductCell extends ListCell<Auction> {
     @Override
     protected void updateItem(Auction auction, boolean empty) {
@@ -19,7 +17,7 @@ public class ProductCell extends ListCell<Auction> {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/itemphiendaugia.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/itemphiendaugia.fxml"));
             Parent root = loader.load();
 
             AuctionSessionController controller = loader.getController();

@@ -15,7 +15,7 @@ public class HomeController {
     private Button profileButton;
     public void goToProfile(ActionEvent event){
         try{
-            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/man_hinh_hien_thong_tin_User.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thong_tin_User.fxml"));
             Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
@@ -27,7 +27,7 @@ public class HomeController {
     @FXML
     public void goAuction(ActionEvent event){
         try{
-            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/auction_list.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/auction_list.fxml"));
             Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
@@ -39,7 +39,7 @@ public class HomeController {
     @FXML
     public void goLogin(ActionEvent event){
         try{
-            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/login.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml"));
             Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
@@ -51,7 +51,7 @@ public class HomeController {
     @FXML
     public void manageProducts(ActionEvent event){
         try{
-            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/quan_ly_san_pham_seller.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/quan_ly_san_pham_seller.fxml"));
             Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);

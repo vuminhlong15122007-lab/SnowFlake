@@ -42,7 +42,7 @@ public class LoginController {
             if (user.getAccountType() == AccountType.USER){
                 try {
                     System.out.println(rp.getMessage());
-                    Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/SceneMain.fxml"));
+                    Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml"));
                     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                     stage.setScene(new Scene(root));
                     stage.show();
@@ -52,7 +52,7 @@ public class LoginController {
             } else if (user.getAccountType() == AccountType.ADMIN) {
                 try {
                     System.out.println(rp.getMessage());
-                    Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/Quan_Ly_User_Admin.fxml"));
+                    Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/Quan_Ly_User_Admin.fxml"));
                     Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
                     stage.setScene(new Scene(root));
                     stage.show();
@@ -68,7 +68,7 @@ public class LoginController {
 
     public void clickCreateAccount(ActionEvent event){
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/SignUp.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/SignUp.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.getScene().setRoot(root);
             stage.show();

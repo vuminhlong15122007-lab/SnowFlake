@@ -6,14 +6,14 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="500" prefWidth="900" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.LiveAuctionController">
+<BorderPane prefHeight="500" prefWidth="900" stylesheets="@../css/global.css" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.LiveAuctionController">
 
     <!-- Header -->
     <top>
         <HBox alignment="CENTER_LEFT" spacing="15" style="-fx-background-color: linear-gradient(to right, #89CFF0,lavender); -fx-padding: 10;">
          <ImageView fitHeight="68.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true">
             <image>
-               <Image url="@../assets/ClassicLogo.png" />
+               <Image url="@../../assets/ClassicLogo.png" />
             </image>
          </ImageView>
             <Label prefHeight="39.0" prefWidth="343.0" style="-fx-font-size: 27; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox - Trang đấu giá " />

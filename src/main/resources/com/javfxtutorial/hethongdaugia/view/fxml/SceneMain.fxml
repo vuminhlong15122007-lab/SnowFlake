@@ -4,13 +4,13 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="500" prefWidth="900" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.HomeController">
+<BorderPane prefHeight="500" prefWidth="900" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.HomeController">
     <!-- Header -->
     <top>
-        <HBox alignment="CENTER_LEFT" prefHeight="41.0" prefWidth="900.0" spacing="20" style="-fx-background-color: linear-gradient(to right, #FFF0F5, #B3E5FC); -fx-padding: 10;">
+        <HBox alignment="CENTER_LEFT" prefHeight="41.0" prefWidth="900.0" spacing="20" style="-fx-background-color: linear-gradient(to right, #89CFF0,lavender); -fx-padding: 10;">
          <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
             <image>
-               <Image url="@../assets/Logo.png" />
+               <Image url="@../../assets/Logo.png" />
             </image>
          </ImageView>
             <Label style="-fx-font-size: 22px; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox" />
@@ -33,19 +33,40 @@
     <center>
         <StackPane style="-fx-background-color: linear-gradient(to bottom right, #ffffff, #f0faff);">
             <children>
-                <VBox alignment="CENTER" spacing="5">
+                <VBox alignment="CENTER" prefHeight="375.0" prefWidth="418.0" spacing="5">
                     <children>
                   <Label prefHeight="85.0" prefWidth="231.0" style="-fx-font-size: 30; -fx-font-weight: bold; -fx-font-family: 'Lucida Handwriting', 'Mistral', 'Cursive'; -fx-text-fill: #34495e; -fx-effect: dropshadow(three-pass-box, rgba(47, 128, 237, 0.2), 15, 0, 0, 5); -fx-padding: 0 0 10 0;" text="WELCOME TO" textAlignment="CENTER" />
+                  <HBox prefHeight="100.0" prefWidth="200.0">
+                     <children>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../assets/Dance%20Fox%20GIF.gif" />
+                           </image>
+                        </ImageView>
+                         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                             <image>
+                                 <Image url="@../../assets/Dance%20Fox%20GIF.gif" />
+                             </image>
+                         </ImageView>
+                         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                         <image>
+                             <Image url="@../../assets/Dance%20Fox%20GIF.gif" />
+                         </image>
+                     </ImageView>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../assets/Dance%20Fox%20GIF.gif" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../assets/Dance%20Fox%20GIF.gif" />
+                           </image>
+                        </ImageView>
+                     </children>
+                  </HBox>
                         <Label style="-fx-font-size: 60px;                                       -fx-font-weight: bold;                                       -fx-font-family: 'Lucida Handwriting', 'Mistral', 'Cursive';                                       -fx-text-fill: linear-gradient(to right, #4b0082, #2f80ed);                                       -fx-effect: dropshadow(three-pass-box, rgba(47, 128, 237, 0.2), 15, 0, 0, 5);                                       -fx-padding: 0 0 10 0;" text="SnowFox" textAlignment="CENTER">
                         </Label>
-
-                        <HBox alignment="CENTER">
-                            <Region prefHeight="2" prefWidth="120" style="-fx-background-color: #2f80ed; -fx-opacity: 0.3;" />
-                            <Label style="-fx-text-fill: #2f80ed; -fx-font-size: 15px;" text=" ❄ " />
-                            <Region prefHeight="2" prefWidth="120" style="-fx-background-color: #2f80ed; -fx-opacity: 0.3;" />
-                        </HBox>
-
-                        <Label style="-fx-font-size: 16px;                                       -fx-text-fill: #34495e;                                       -fx-font-family: 'Segoe UI Semibold';                                       -fx-opacity: 0.8;                                       -fx-padding: 10 0 0 0;" text="~ Nơi những phiên đấu giá trở nên kỳ diệu ~" />
                     </children>
                 </VBox>
             </children>
@@ -54,9 +75,9 @@
 
     <!-- Footer -->
     <bottom>
-        <HBox prefHeight="22.0" prefWidth="600.0" style="-fx-background-color: linear-gradient(to right, #FFF0F5, #B3E5FC); -fx-padding: 8;" BorderPane.alignment="CENTER">
+        <HBox prefHeight="22.0" prefWidth="600.0" style="-fx-background-color: #b3c6ff; -fx-padding: 8;" BorderPane.alignment="CENTER">
             <children>
-                <Label alignment="CENTER" prefHeight="18.0" prefWidth="876.0" style="-fx-font-size: 12px;" text="© 2026 SnowFox - Studio SnowFlake" textAlignment="CENTER" textFill="#902a2a" />
+                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="901.0" style="-fx-font-size: 12px;" text="© 2026 SnowFox - Studio SnowFlake" textAlignment="CENTER" textFill="#902a2a" />
             </children>
         </HBox>
     </bottom>

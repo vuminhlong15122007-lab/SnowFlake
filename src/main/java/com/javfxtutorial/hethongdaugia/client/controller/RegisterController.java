@@ -31,7 +31,7 @@ public class RegisterController {
     @FXML
     public void clickBackToLogin(ActionEvent event){
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/login.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml"));
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.setScene(new Scene(root));
             stage.show();
@@ -92,13 +92,13 @@ public class RegisterController {
 
                     Stage stage = new Stage();
                     stage.setTitle("Tạo Tài Khoản Thành Công");
-                    FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/popUpSignUp.fxml"));
+                    FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/fxml/popUpSignUp.fxml"));
                     stage.initStyle(StageStyle.DECORATED);
                     Scene scene = new Scene(fxmlLoader.load());
                     stage.setScene(scene);
                     stage.show();
                     try {
-                        Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/login.fxml"));
+                        Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml"));
                         Stage stage1 = (Stage) ((Node) event.getSource()).getScene().getWindow();
                         stage1.setScene(new Scene(root));
                         stage1.show();

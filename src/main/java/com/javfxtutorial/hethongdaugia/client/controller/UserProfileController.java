@@ -50,17 +50,17 @@ public class UserProfileController {
 
     @FXML
     public void clickToBackToSceneMain(ActionEvent event) {
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/SceneMain.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
     }
 
     @FXML
     public void clickToLogOut(ActionEvent event) {
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/login.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
     }
 
     @FXML
     public void clickToSellerMangement(ActionEvent event) {
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/quan_ly_san_pham_seller.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/quan_ly_san_pham_seller.fxml");
     }
 
     @FXML
@@ -152,7 +152,7 @@ public class UserProfileController {
     @FXML
     public void clickToResetPassword() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/reset_password.fxml"));
+            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/reset_password.fxml"));
             Stage stage = new Stage();
             stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
             stage.setScene(new Scene(root));
