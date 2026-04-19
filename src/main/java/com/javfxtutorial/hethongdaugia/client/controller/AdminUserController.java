@@ -31,6 +31,10 @@ public class AdminUserController implements  Initializable {
     @FXML private TableColumn<User, String> colStatus;
     @FXML private Button deleteButton;
     @FXML private Button reload;
+    @FXML private TextField searchField;
+    @FXML private Button btnSearch;
+    @FXML private Button dltSearch;
+    private ObservableList<User> danhSach;
 
     private UserDAO nguoiDungDAO = UserDAO.getInstance();
     @Override
@@ -44,7 +48,7 @@ public class AdminUserController implements  Initializable {
     }
     @FXML
     private void loadUserData(){
-        ObservableList<User> danhSach = FXCollections.observableArrayList(nguoiDungDAO.selectAll());
+        danhSach = FXCollections.observableArrayList(nguoiDungDAO.selectAll());
         userTable.setItems(danhSach);
     }
     //cap nhat thong tin
@@ -189,6 +193,36 @@ public class AdminUserController implements  Initializable {
         stage.setScene(scene);
         stage.show();
     }
+    //tim kiem
+    @FXML
+    public void clickToSearch(){
+        String textWord = searchField.getText();
+
+        if(textWord == null || textWord.trim().isEmpty()){
+            userTable.setItems(danhSach);
+            return;
+        }
+        //tao danh sach ket qua
+        ObservableList<User> result = FXCollections.observableArrayList();
+        String keyword = textWord.toLowerCase().trim();
+
+        for (User user : danhSach){
+            if(String.valueOf(user.getId()).toLowerCase().contains(keyword) ||
+                    user.getEmail().toLowerCase().contains(keyword) ||
+                    user.getName().toLowerCase().contains(keyword)){
+                result.add(user);
+            }
+        }
+        userTable.setItems(result);
+
+        System.out.println("Đã tìm thấy " + result.size() + " kết quả");
+    }
+    //xoa tim kiem
+    public void clickToDeleteSearch(){
+        searchField.clear();
+        userTable.setItems(danhSach);
+    }
+
     private void showAlert(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
