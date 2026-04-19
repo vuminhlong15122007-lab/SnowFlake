@@ -3,10 +3,7 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.Command.AddAuctionCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Command.GetAuctionStatusCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Command.GetAuctionsBySellerIdCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.*;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
@@ -93,14 +90,13 @@ public class SellerManagementController {
 
     String imagePath = "/com/javfxtutorial/hethongdaugia/assets/Logo.png"  ;
 
-    @FXML public void luuSp( ActionEvent event){       // btn Lưu
+    @FXML public void luuSp( ActionEvent event) throws IOException {       // btn Lưu
         try{
             Auction auction = getInfo();
 
             //thêm auction vào DAO và hiện ra list bên trái
             ServerConnection connection = new ServerConnection();
-
-            Command cm = new AddAuctionCommand();
+            AddAuctionCommand cm = new AddAuctionCommand();
             cm.addData("Auction", auction);
             new Thread(() -> {     // Tao 1 luong phụ để để gửi dữ liệu về server và chuyển dữ liệu từ server về
                 try {
@@ -110,6 +106,7 @@ public class SellerManagementController {
                         if (response.isSuccess()) {
                             Auction savedAuction = (Auction) response.getPayLoad();
                             observable.add(savedAuction);
+                            showAlert("Thành công", "Thêm sản phẩm thành công!");
                         } else{
                             System.out.println(response.getMessage());
                         }
@@ -118,6 +115,7 @@ public class SellerManagementController {
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("Lỗi kết nối server!");
+                    showAlert("Lỗi!!", "Xem lại nội dung mình nhập");
 //
                 }
             }).start();
@@ -179,28 +177,41 @@ public class SellerManagementController {
     }
 
     @FXML
-    public void deleteAuction(ActionEvent event) {  // xử lý nút xóA
+    public void deleteAuction(ActionEvent event) throws IOException {  // xử lý nút xóA
         Auction selected = productList.getSelectionModel().getSelectedItem();  // Lấy ttin sản phẩm đang được chọn ( của listView)
         if (selected == null) {
             System.out.println(" Vui lòng nhấn chọn sản phẩm");
         }
 
-        DeleteAuctionCommand cmd = new DeleteAuctionCommand(selected);  // tạo yêu cầu xóa sp cso ID ..
+        GetAuctionStatusCommand cmd = new GetAuctionStatusCommand(selected);
         ServerConnection connection = new ServerConnection();
         new Thread(() -> {
             try {
                 connection.sendCommand(cmd);
                 Response resp = connection.receiveResponse(); // gửi yêu cầu lên server và server xử lý
-                Platform.runLater(() -> {
-                    if (resp.isSuccess()) {  //check xem yc đã đc thực hiện chx
-                        observable.remove(selected);// xóa sp khỏi ds
-                    }
-                });
+                AuctionStatus nowStatus = (AuctionStatus) resp.getPayLoad();
+                if(nowStatus == AuctionStatus.NOT_START){
+                    DeleteAuctionCommand cm = new DeleteAuctionCommand(selected);  // tạo yêu cầu xóa sp cso ID ..
+                    connection.sendCommand(cm);
+                    Response rp = connection.receiveResponse(); // gửi yêu cầu lên server và server xử lý
+                    Platform.runLater(() -> {
+                        if (rp.isSuccess()) {  //check xem yc đã đc thực hiện chx
+                            observable.remove(selected);// xóa sp khỏi ds
+                            showAlert("Thành công", "Xóa sản phẩm thành công!" );
+                        }else{
+                            System.out.println(resp.getMessage());
+                        }
+                    });
+                }else{
+                    showAlert("Không xóa sửa sản phẩm", "Phiên đấu giá đang diễn ra hoặc đã kết thúc");
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
-
+                showAlert("Lỗi!!!", "Xem lại thao tác!");
             }
         }).start();
+
     }
 
     @FXML
@@ -212,53 +223,84 @@ public class SellerManagementController {
     public void hienThiChiTietSanPham(Auction auction){
         nameField.setText(auction.getItem().getName());          // Thu thap du lieu ma nguoi dung da nhap
         descriptionField.setText(auction.getItem().getDescription());
-        priceField.setText(String.valueOf(auction.getCurrentPrice()));
+        priceField.setText(String.format("%,.0f", auction.getCurrentPrice()));
         tfstepPrice.setText(String.valueOf(auction.getStepPrice()));
+        LocalDateTime start = auction.getStartingTime();
+        if (start != null) {
+            startDatePicker.setValue(start.toLocalDate());
+            startHourSpinner.getValueFactory().setValue(start.getHour());
+            startMinuteSpinner.getValueFactory().setValue(start.getMinute());
+        }
+
+        // Hiển thị thời gian kết thúc
+        LocalDateTime end = auction.getEndingTime();
+        if (end != null) {
+            endDatePicker.setValue(end.toLocalDate());
+            endHourSpinner.getValueFactory().setValue(end.getHour());
+            endMinuteSpinner.getValueFactory().setValue(end.getMinute());
+        }
+
         // ẢNH - CHƯA XỬ LÝ LẤY RA
     }
 
 
     @FXML
-    public void suaSp  (ActionEvent event){  // Xử lý nuts Sửa
+    public void suaSp  (ActionEvent event) throws IOException, IllegalStateException{  // Xử lý nuts Sửa
         Auction selected = productList.getSelectionModel().getSelectedItem();  // Lấy ttin sản phẩm đang được chọn ( của listView)
         if (selected == null) {
             System.out.println(" Vui lòng nhấn chọn sản phẩm");
         }
-
-        GetAuctionStatusCommand cmd = new GetAuctionStatusCommand(selected);
+        GetAuctionStatusCommand statusCmd = new GetAuctionStatusCommand(selected);
         ServerConnection connection = new ServerConnection();
 
         new Thread(() -> { //Tạo 1 luồng giao diện mới và giao công vc cho luồng
-            try {
-                connection.sendCommand(cmd);
-                Response resp = connection.receiveResponse();   //cmd biến thành dãy bit gửi qua mạng => server xưr lý => gửi về một Response chứa danh sách Item.
+            try{
+                connection.sendCommand(statusCmd);
+                Response resp = connection.receiveResponse();
 
+                if (!resp.isSuccess()) {
+                    Platform.runLater(() -> showAlert("Lỗi", resp.getMessage()));
+                }
+
+                // 1. Lấy dữ liệu từ form NGAY BÂY GIỜ (trên UI Thread)
+                Auction auction = getInfo();
+                auction.setAuctionId(selected.getAuctionId());
+                auction.getItem().setItemId(selected.getItem().getItemId());
 
                 AuctionStatus nowStatus = (AuctionStatus) resp.getPayLoad();
                 if(nowStatus == AuctionStatus.NOT_START){
-                    Auction auction = getInfo();
-                    Command cm = new AddAuctionCommand();
-                    cm.addData("Auction", auction);
-                    Response response = connection.receiveResponse();
-                    Platform.runLater(() -> {   // gọi Thread Main cập nhận giao diện
-                        if (response.isSuccess()) {
-                            Auction savedAuction = (Auction) response.getPayLoad();
-                            observable.add(savedAuction);
-                        } else{
-                            System.out.println(response.getMessage());
+                    UpdateAuctionCommand cmd = new UpdateAuctionCommand(auction);
+                    connection.sendCommand(cmd);
+                    Response rp = connection.receiveResponse();
+                    Platform.runLater(() -> {
+                        if (rp.isSuccess()) {
+                            int index = observable.indexOf(selected);
+                            observable.set(index, auction);
+                            productList.refresh();
+                            showAlert("Thành công", "Sửa sản phẩm thành công");
+                        }else{
+                            System.out.println(resp.getMessage());
                         }
                     });
-
                 }else{
-                    showAlert("Không thể sửa sản phẩm", "Phiên đấu giá đang chạy hoặc đã kết thúc");
+                    Platform.runLater(() ->
+                            showAlert("Không thể xóa", "Phiên đấu giá đang diễn ra hoặc đã kết thúc")
+                    );
                 }
-
 
             } catch (Exception e) {
                 e.printStackTrace();
+                Platform.runLater(() -> showAlert("Lỗi!!!", "Xem lại thao tác!"));
 
+            } finally {
+                try {
+                    connection.close(); // <-- THÊM DÒNG NÀY
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }).start();
+
 
     }
 

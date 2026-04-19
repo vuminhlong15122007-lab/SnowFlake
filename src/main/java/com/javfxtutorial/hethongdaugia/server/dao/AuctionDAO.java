@@ -30,7 +30,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
     @Override
     public int insert(Auction auction) {
         int result = 0;
-        String sql = "INSERT INTO Auction(item_id, seller_id, init_price, step_price, starting_time, ending_time, auctionStatus) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Auction(item_id, seller_id, init_price, step_price, current_price, winning_price, starting_time, ending_time, auctionStatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = JDBCUtil.getConnection();
              PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
@@ -39,10 +39,11 @@ public class AuctionDAO implements DAOInterface<Auction> {
             pst.setInt(2, auction.getSellerId());
             pst.setDouble(3, auction.getInitPrice());
             pst.setDouble(4, auction.getStepPrice());
-            pst.setTimestamp(5, Timestamp.valueOf(auction.getStartingTime()));
-            pst.setTimestamp(6, Timestamp.valueOf(auction.getEndingTime()));
-            pst.setString(7, String.valueOf(auction.getStatus()));
-
+            pst.setDouble(5, auction.getCurrentPrice());
+            pst.setDouble(6, auction.getWinningPrice());
+            pst.setTimestamp(7, Timestamp.valueOf(auction.getStartingTime()));
+            pst.setTimestamp(8, Timestamp.valueOf(auction.getEndingTime()));
+            pst.setString(9, String.valueOf(auction.getStatus()));
             System.out.println("Bạn đang thực thi thêm Auction: " + sql);
             result = pst.executeUpdate();
 
@@ -213,6 +214,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
 
             try (ResultSet resultSet = pst.executeQuery()) {
                 if (resultSet.next()) {
+                    result = mapResultSet(resultSet);
                 }
             }
 
@@ -225,7 +227,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
         return result;
     }
 
-    public ArrayList<Auction> selectBySellerId(int id) {      // lấy auction dựa trên itemId
+    public ArrayList<Auction> selectBySellerId(int id) {      // lấy auction dựa trên sellerID
         ArrayList<Auction> list = new ArrayList<>();
         String sql = BASE_QUERY + "WHERE i.idseller = ?";
 

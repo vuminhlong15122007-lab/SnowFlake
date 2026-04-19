@@ -21,8 +21,9 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+
 import java.net.URL;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -30,16 +31,11 @@ import java.util.ResourceBundle;
 public class LiveAuctionController implements Initializable {
     Auction currentAuction;
     ServerConnection connection = new ServerConnection();
-    @FXML
-    TextField priceInput_tf;
-    @FXML
-    Label highestPayer_tf;
-    @FXML
-    Label currentPrice_tf;
-    @FXML
-    Label stepPrice_tf;
-    @FXML
-    Label itemNameLb;
+    @FXML TextField priceInput_tf;
+    @FXML Label highestPayer_tf;
+    @FXML Label currentPrice_tf;
+    @FXML Label stepPrice_tf;
+    @FXML Label itemNameLb;
 
     @FXML
     public void goMenu(ActionEvent event){
@@ -62,7 +58,7 @@ public class LiveAuctionController implements Initializable {
         bid.setBidderId(ClientModel.getInstance().getCurrentUser().getId());
         bid.setAmount(Double.parseDouble(priceInput_tf.getText()));
         bid.setAuctionId(ClientModel.getInstance().getCurrentAuction().getAuctionId());
-        bid.setTimestamp(LocalDate.now());
+        bid.setTimestamp(LocalDateTime.now());
 
 
 

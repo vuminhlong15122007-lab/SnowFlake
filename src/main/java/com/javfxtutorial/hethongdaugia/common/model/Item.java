@@ -49,6 +49,8 @@ public class Item implements Serializable {
     public void setSellerId(int sellerId) {this.sellerId = sellerId;}
     public String getSellerName() {return sellerName;}
     public void setSellerName(String sellerName) {this.sellerName = sellerName;}
+//    public abstract  String getCategory();         // "Electronics" / "Art" / "Vehicle"
+
 }
 
 

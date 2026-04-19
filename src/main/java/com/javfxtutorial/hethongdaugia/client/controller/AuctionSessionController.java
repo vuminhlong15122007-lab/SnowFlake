@@ -41,7 +41,7 @@ public class AuctionSessionController {
         ItemNameLabel.setText(item.getName());
         SellerNameText.setText(item.getSellerName());
         StartTimeText.setText(String.valueOf(auction.getStartingTime()));
-        ItemPriceText.setText(String.valueOf(auction.getInitPrice()));
+        ItemPriceText.setText(String.format("%,.0f VNĐ", auction.getCurrentPrice()));
         AuctionStatusText.setText(String.valueOf(auction.getStatus()));
     }
 

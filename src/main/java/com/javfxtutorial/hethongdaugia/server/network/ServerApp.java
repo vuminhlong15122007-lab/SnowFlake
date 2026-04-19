@@ -8,7 +8,7 @@ import java.net.Socket;
 public class ServerApp {
     private static final int PORT = 5000;
 
-    static void main(String[] args) {
+    public static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Server đã khởi động, đang lắng nghe trên cổng " + PORT);
             while (true) {

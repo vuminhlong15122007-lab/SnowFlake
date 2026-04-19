@@ -27,7 +27,8 @@ public class BidDAO  {
             pstmt.setInt(2, bid.getAuctionId());
             pstmt.setDouble(3, bid.getAmount());
             // Convert LocalDate sang java.sql.Date
-            pstmt.setDate(4, Date.valueOf(bid.getTimestamp()));
+//            pstmt.setDate(4, Date.valueOf(bid.getTimestamp()));
+            pstmt.setTimestamp(4, Timestamp.valueOf(bid.getTimestamp()));
 
             int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;
@@ -53,8 +54,8 @@ public class BidDAO  {
                     bid.setBidderId(rs.getInt("bidder_id"));
                     bid.setAuctionId(rs.getInt("auction_id"));
                     bid.setAmount(rs.getDouble("amount"));
-                    // Convert java.sql.Date về LocalDate
-                    bid.setTimestamp(rs.getDate("timestamp").toLocalDate());
+                    // Convert java.sql.Date về LocalDateTime
+                    bid.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
 
                     bids.add(bid);
                 }
@@ -80,7 +81,7 @@ public class BidDAO  {
                     bid.setBidderId(rs.getInt("bidder_id"));
                     bid.setAuctionId(rs.getInt("auction_id"));
                     bid.setAmount(rs.getDouble("amount"));
-                    bid.setTimestamp(rs.getDate("timestamp").toLocalDate());
+                    bid.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
                     return bid;
                 }
             }

@@ -4,8 +4,6 @@ import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
-import javafx.scene.control.Alert;
-
 import java.time.LocalDateTime;
 
 public class AuctionManger {
@@ -58,12 +56,5 @@ public class AuctionManger {
         return auction.getStatus();
     }
 
-    //hien thi alert
-    public void showAlert(String title, String message){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
+
 }

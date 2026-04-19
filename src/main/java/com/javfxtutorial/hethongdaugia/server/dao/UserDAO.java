@@ -11,9 +11,15 @@ import java.sql.Statement;
 import java.util.ArrayList;
 
 public class UserDAO implements DAOInterface<User> {
-    public static UserDAO getInstance() {
-        return new UserDAO();
+    private static UserDAO instance;
+    private UserDAO(){}
+    public static UserDAO getInstance(){
+        if (instance == null){
+            instance = new UserDAO();
+        }
+        return instance;
     }
+
 
     @Override
     public int insert(User user) {

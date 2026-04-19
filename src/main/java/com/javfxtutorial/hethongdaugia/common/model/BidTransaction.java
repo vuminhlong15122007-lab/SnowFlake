@@ -1,16 +1,16 @@
 package com.javfxtutorial.hethongdaugia.common.model;
 
 import java.io.Serializable;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class BidTransaction implements Serializable {
     private int bidId;
     private int bidderId;
     private int auctionId;
     private double amount;
-    private LocalDate timestamp;
+    private LocalDateTime timestamp;
 
-    public BidTransaction(int bidderId, int auctionId, double amount, LocalDate timestamp) {
+    public BidTransaction(int bidderId, int auctionId, double amount, LocalDateTime timestamp) {
         this.bidderId = bidderId;
         this.auctionId = auctionId;
         this.amount = amount;
@@ -52,11 +52,11 @@ public class BidTransaction implements Serializable {
         this.amount = amount;
     }
 
-    public LocalDate getTimestamp() {
+    public LocalDateTime getTimestamp() {
         return timestamp;
     }
 
-    public void setTimestamp(LocalDate timestamp) {
+    public void setTimestamp(LocalDateTime timestamp) {
         this.timestamp = timestamp;
     }
 }
