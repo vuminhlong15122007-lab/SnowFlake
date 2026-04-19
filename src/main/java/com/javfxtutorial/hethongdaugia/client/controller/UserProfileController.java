@@ -167,7 +167,7 @@ public class UserProfileController {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Chon anh dai dien");
         fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter("Anh", ".png", ".jpg", ".jpeg", ".gif")
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif")
         );
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();

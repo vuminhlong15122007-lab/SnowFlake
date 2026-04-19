@@ -1,10 +1,8 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
-
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.application.Platform;
@@ -17,6 +15,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -27,132 +26,137 @@ import javafx.stage.Stage;
 import java.io.IOException;
 import java.util.ArrayList;
 
-
 public class AuctionController {
+    @FXML private ListView<Auction> featuredProductList;
+    @FXML private TextField searchField;
+    @FXML private Button btnHome;
+    @FXML private Button btnLiveAuction;
+    @FXML private Button btnmanageProducts;
+    @FXML private Button btnprofile;
 
-    @FXML ListView<Auction>  featuredProductList;
-    @FXML TextField searchField;
-    @FXML Button btnHome;      // 4 cai button chx co hanh dong vs lk man khac
-    @FXML Button btnLiveAuction;
-    @FXML Button btnmanageProducts;
-    @FXML Button btnprofile;
-
-
-    // Khoi tao danh sach Observable
-    private ObservableList<Auction> observable = FXCollections.observableArrayList();
+    private final ObservableList<Auction> observable = FXCollections.observableArrayList();
 
     @FXML
-    public void initialize(){
-        featuredProductList.setSelectionModel(null); //khi chọn không bị đổi màu
-        // Ep listView gian rong ra het co
-        VBox.setVgrow(featuredProductList, Priority.ALWAYS); // listView tu gian rong het co theo chieu doc
-        featuredProductList.setMaxWidth(Double.MAX_VALUE ); // gian rong het co theo chieu rong
+    public void initialize() {
+        VBox.setVgrow(featuredProductList, Priority.ALWAYS);
+        featuredProductList.setMaxWidth(Double.MAX_VALUE);
+        featuredProductList.setCellFactory(lv -> new ProductCell());
 
-        // load du lieu
-        loadData();
+        FilteredList<Auction> filterData = new FilteredList<>(observable, auction -> true);
+        searchField.textProperty().addListener((obs, oldValue, newValue) ->
+                filterData.setPredicate(auction -> {
+                    if (newValue == null || newValue.isBlank()) {
+                        return true;
+                    }
+                    if (auction == null || auction.getItem() == null || auction.getItem().getName() == null) {
+                        return false;
+                    }
+                    return auction.getItem().getName().toLowerCase().contains(newValue.toLowerCase());
+                })
+        );
 
-        // Xu ly o tim kiem - TexField
-        // 1.Khoi tao  FilteredList - loc du lieu de hien thi
-        FilteredList<Auction>  filterData = new FilteredList<>(observable, p-> true );
-
-        //2.Lang nghe o nhap du lieu
-        searchField.textProperty().addListener((observable, oldValue, newValue) ->
-                filterData.setPredicate(auction->
-                {
-                    if (newValue == null|| newValue.isEmpty()) return true; // o nhap vao du lieu trong => ds ban dau
-                    String isLowerCase = newValue.toLowerCase(); // chuyen chu nguoi dung thanh chu thuong
-                    String isLowerCase2 = auction.getItem().getName().toLowerCase(); // chuyen ten sp trong item thanh chu thuong
-                    return isLowerCase2.contains(isLowerCase); // sp trong system chi can chua ten sp ma ng nhap thi se in ra ten sp trong system do
-
-                }));
-
-
-        featuredProductList.setCellFactory(lv -> new ProductCell());  //lệnh cài đặt cách hiển thị cho ListView.
         featuredProductList.setItems(filterData);
+        loadData();
     }
 
-
-    public void loadData(){
-       //observable.add(new Item()
+    public void loadData() {
         Command cmd = new GetAllAuctionsCommand();
         ServerConnection connection = new ServerConnection();
-        new Thread(() -> { //Tạo 1 luồng giao diện mới và giao công vc cho luồng
+
+        new Thread(() -> {
             try {
                 connection.sendCommand(cmd);
-                Response resp = connection.receiveResponse();  //cmd biến thành dãy bit gửi qua mạng => server xưr lý => gửi về một Response chứa danh sách Item.
-                connection.close();
-                Platform.runLater(() -> {          //luồng phụ gọi để luồng chính xử lý
-                    if (resp.isSuccess()) {  // kiểm tra xem có nhận được danh sách cân ko
-                        ArrayList<Auction> auctions = (ArrayList<Auction>) resp.getPayLoad();  // lấy đồ ra
-                        observable.setAll(auctions); // sắp xếp lên listView
+                Response resp = connection.receiveResponse();
+
+                Platform.runLater(() -> {
+                    if (resp == null) {
+                        showAlert("Loi tai du lieu", "Server khong tra ve du lieu phien dau gia.");
+                        return;
                     }
+
+                    if (!resp.isSuccess()) {
+                        showAlert("Loi tai du lieu", resp.getMessage());
+                        return;
+                    }
+
+                    Object payload = resp.getPayLoad();
+                    if (!(payload instanceof ArrayList<?> payloadList)) {
+                        showAlert("Loi tai du lieu", "Du lieu tra ve khong dung dinh dang.");
+                        return;
+                    }
+
+                    ArrayList<Auction> auctions = new ArrayList<>();
+                    for (Object item : payloadList) {
+                        if (item instanceof Auction auction) {
+                            auctions.add(auction);
+                        }
+                    }
+
+                    observable.setAll(auctions);
                 });
             } catch (Exception e) {
                 e.printStackTrace();
-
+                Platform.runLater(() -> showAlert("Khong the load phien dau gia", "Kiem tra server localhost:5000 va log loi trong console."));
+            } finally {
+                try {
+                    connection.close();
+                } catch (IOException ignored) {
+                }
             }
         }).start();
     }
 
-
-
-
-
-
-    public void logOut1(ActionEvent event){
+    public void logOut1(ActionEvent event) {
         try {
-
-            // Nap man hinh giao dien man_hinh_sp
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/login.fxml"));
-            Parent root = loader.load();  // tim file FXML doc ban ve va tao giao dien xac ( chua co bo nao)
-
-            // Lech chuyen man
+            Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.getScene().setRoot(root);  //Chuyen man = setRoot
-
-        }catch(IOException e){
+            stage.getScene().setRoot(root);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void manageProducts(ActionEvent event){
+    public void manageProducts(ActionEvent event) {
         try {
-
-            // Nap man hinh giao dien man_hinh_sp
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/quan_ly_san_pham_seller.fxml"));
-            Parent root = loader.load();  // tim file FXML doc ban ve va tao giao dien xac ( chua co bo nao)
-
-            // Lech chuyen man
+            Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.getScene().setRoot(root);  //Chuyen man = setRoot
-
-        }catch(IOException e){
+            stage.getScene().setRoot(root);
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
     @FXML
-    public void btnHome(ActionEvent event){
-        try{
+    public void btnHome(ActionEvent event) {
+        try {
             Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/SceneMain.fxml"));
-            Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     @FXML
-    public void goToProfile(ActionEvent event){
-        try{
+    public void goToProfile(ActionEvent event) {
+        try {
             Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/man_hinh_hien_thong_tin_User.fxml"));
-            Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
+            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             Scene scene = new Scene(root);
             stage.setScene(scene);
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
+    private void showAlert(String title, String message) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 }

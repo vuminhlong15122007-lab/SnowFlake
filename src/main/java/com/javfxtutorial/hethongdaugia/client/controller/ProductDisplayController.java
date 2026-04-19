@@ -11,11 +11,14 @@ import javafx.scene.Parent;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Base64;
 
 public class ProductDisplayController {
     @FXML private Label EndingtimeLabel;
@@ -25,7 +28,7 @@ public class ProductDisplayController {
     @FXML private Label StartTimeLabel;
     @FXML private Button ThamGiaDauGiaBtn;
     @FXML private Button btnMenu;
-    @FXML private ImageView imgSanPham;
+    @FXML private ImageView itemImageView;
     @FXML private Label lbLoaisp;
     @FXML private Label lbTenngban;
     @FXML private Label lbTimer;
@@ -41,6 +44,25 @@ public class ProductDisplayController {
         lbTenngban.setText(item.getSellerName());
         ItemNameLabel.setText(item.getName());
         ItemPriceLabel.setText(String.valueOf(auction.getInitPrice()));
+        String base64Data = auction.getItem().getImage();
+        if (base64Data == null || base64Data.isBlank()) {
+            if (itemImageView != null) {
+                itemImageView.setImage(null);
+            }
+            return;
+        }
+
+        try {
+            byte[] imageBytes = Base64.getDecoder().decode(base64Data);
+            if (itemImageView != null) {
+                itemImageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
+            }
+        } catch (IllegalArgumentException e) {
+            System.err.println("Loi load anh: " + e.getMessage());
+            if (itemImageView != null) {
+                itemImageView.setImage(null);
+            }
+        }
     }
 
     @FXML

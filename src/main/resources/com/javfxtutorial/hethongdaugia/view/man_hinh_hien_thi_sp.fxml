@@ -29,7 +29,7 @@
                         <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2f80ed;" text="🔍 CHI TIẾT PHIÊN ĐẤU GIÁ" />
                         <StackPane prefHeight="180.0" style="-fx-background-color: #f9f9f9; -fx-background-radius: 10; -fx-border-color: #ddd; -fx-border-radius: 10;">
                             <children>
-                                <ImageView fx:id="imgSanPham" fitHeight="174.0" fitWidth="351.0" pickOnBounds="true" preserveRatio="true" />
+                                <ImageView fx:id="itemImageView" fitHeight="174.0" fitWidth="351.0" pickOnBounds="true" preserveRatio="true" />
                             </children>
                         </StackPane>
                         <Label fx:id="ItemNameLabel" style="-fx-font-weight: bold; -fx-font-size: 18px;" text="Mô hình Cáo Tuyết" textAlignment="CENTER" />

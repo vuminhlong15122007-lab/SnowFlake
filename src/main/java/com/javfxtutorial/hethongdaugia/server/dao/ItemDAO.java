@@ -38,7 +38,7 @@ public class ItemDAO implements DAOInterface<Item> {
             pst.setInt(1, item.getSellerId());
             pst.setString(2, item.getName());
             pst.setString(3, item.getDescription());
-            pst.setString(4, item.getImagePath());
+            pst.setString(4, item.getImage());
 
 
             System.out.println("Bạn đang thực thi thêm Item: " + item.getName());
@@ -83,7 +83,7 @@ public class ItemDAO implements DAOInterface<Item> {
             // Gán giá trị cho các dấu ? trong mệnh đề SET
             pst.setString(1, item.getName());
             pst.setString(2, item.getDescription());
-            pst.setString(3, item.getImagePath());
+            pst.setString(3, item.getImage());
 
 
             // Gán giá trị cho dấu ? trong mệnh đề WHERE (Quan trọng nhất)

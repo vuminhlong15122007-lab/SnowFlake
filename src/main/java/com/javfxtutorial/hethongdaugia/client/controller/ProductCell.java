@@ -1,38 +1,36 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ListCell;
-import com.javfxtutorial.hethongdaugia.common.model.Item;
+
 import java.io.IOException;
 
 public class ProductCell extends ListCell<Auction> {
     @Override
-    protected void updateItem(Auction auction, boolean empty){  // method cua class cha da la protected
-        super.updateItem(auction,empty);
-        if(empty||auction == null){  // Tuc la man hinh da khong hien thi sp nua . tinh nang cua ListView
-            setText(null); // lam null chu de tai sd lai cai itemphien... y
+    protected void updateItem(Auction auction, boolean empty) {
+        super.updateItem(auction, empty);
+
+        if (empty || auction == null) {
+            setText(null);
             setGraphic(null);
-            }else{
-                try{
-                    // Nap man hinh giao dien itemphien..
-                    FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/itemphiendaugia.fxml"));
-                    Parent root = loader.load(); // tim FXML de doc giao dien va tao giao dien xac
+            return;
+        }
 
-                // Truyen vao controller
-                    AuctionSessionController controller = loader.getController();
-                    controller.setData(auction); // truyen vao du lieu cho Itemphien...
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/itemphiendaugia.fxml"));
+            Parent root = loader.load();
 
-                    setGraphic(root); // hien thi giao dien xac da tao ra man hinh
+            AuctionSessionController controller = loader.getController();
+            controller.setData(auction);
 
-            }catch (IOException e){
-                e.printStackTrace();
-            } catch (ClassNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
+            setText(null);
+            setGraphic(root);
+        } catch (Exception e) {
+            e.printStackTrace();
+            setGraphic(null);
+            setText(auction.getItem() != null ? auction.getItem().getName() : "Khong the hien thi phien dau gia");
         }
     }
-
 }

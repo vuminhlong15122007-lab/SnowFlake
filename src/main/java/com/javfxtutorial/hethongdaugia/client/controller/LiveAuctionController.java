@@ -18,12 +18,16 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.ResourceBundle;
 
@@ -31,11 +35,12 @@ import java.util.ResourceBundle;
 public class LiveAuctionController implements Initializable {
     Auction currentAuction;
     ServerConnection connection = new ServerConnection();
-    @FXML TextField priceInput_tf;
-    @FXML Label highestPayer_tf;
-    @FXML Label currentPrice_tf;
-    @FXML Label stepPrice_tf;
-    @FXML Label itemNameLb;
+    @FXML private TextField priceInput_tf;
+    @FXML private Label highestPayer_tf;
+    @FXML private Label currentPrice_tf;
+    @FXML private Label stepPrice_tf;
+    @FXML private Label itemNameLb;
+    @FXML private ImageView itemImageView;
 
     @FXML
     public void goMenu(ActionEvent event){
@@ -78,6 +83,25 @@ public class LiveAuctionController implements Initializable {
         stepPrice_tf.setText(String.valueOf(currentAuction.getStepPrice()));
         highestPayer_tf.setText(String.valueOf(currentAuction.getWinnerId()));
         itemNameLb.setText(ClientModel.getInstance().getCurrentItem().getName());
+        String base64Data = currentAuction.getItem().getImage();
+        if (base64Data == null || base64Data.isBlank()) {
+            if (itemImageView != null) {
+                itemImageView.setImage(null);
+            }
+            return;
+        }
+
+        try {
+            byte[] imageBytes = Base64.getDecoder().decode(base64Data);
+            if (itemImageView != null) {
+                itemImageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
+            }
+        } catch (IllegalArgumentException e) {
+            System.err.println("Loi load anh: " + e.getMessage());
+            if (itemImageView != null) {
+                itemImageView.setImage(null);
+            }
+        }
         System.out.println("Đã load xong giao diện");
 
         connectToServer();
