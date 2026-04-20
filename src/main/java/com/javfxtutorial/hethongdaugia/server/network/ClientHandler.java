@@ -36,7 +36,7 @@ public class ClientHandler extends Thread {
                 out.writeObject(rp);
             }
         } catch (IOException | ClassNotFoundException e) {
-            System.out.println("Client ngừng kết nối");;
+            System.out.println("Client ngừng kết nối");
         } finally {
             // 3. Khi Client đóng app hoặc rớt mạng, xóa khỏi danh sách
             clients.remove(this);

@@ -12,7 +12,16 @@ public class ImageHelper {
         if (base64Data == null || base64Data.isBlank()){
             return null;
         }
-        byte[] imageBytes = Base64.getDecoder().decode(base64Data);
+        // đoạn này AI bảo thêm vào để làm clean cho base64
+        String cleanData = base64Data;
+        if (base64Data.startsWith("data:")) {
+            int commaIndex = base64Data.indexOf(',');
+            if (commaIndex > 0) {
+                cleanData = base64Data.substring(commaIndex + 1);
+            }
+        }
+        // dù t thấy cũng không hiểu cái qq j đang diễn ra
+        byte[] imageBytes = Base64.getDecoder().decode(cleanData);
         return new Image(new ByteArrayInputStream(imageBytes));
     }
     // load ảnh lên ImageView

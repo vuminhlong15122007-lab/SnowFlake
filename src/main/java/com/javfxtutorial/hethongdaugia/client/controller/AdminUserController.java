@@ -1,9 +1,11 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
+
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteUserCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllUsersCommand;
 import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
-import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -23,8 +25,7 @@ import java.util.ResourceBundle;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
-
-public class AdminUserController implements  Initializable {
+public class AdminUserController implements Initializable {
     @FXML private TableView<User> userTable;
     @FXML private TableColumn<User, Integer> colId;
     @FXML private TableColumn<User, String> colUsername;
@@ -38,8 +39,6 @@ public class AdminUserController implements  Initializable {
     @FXML private Button btnSearch;
     @FXML private Button dltSearch;
     private ObservableList<User> danhSach;
-
-    private UserDAO nguoiDungDAO = UserDAO.getInstance();
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
@@ -50,59 +49,66 @@ public class AdminUserController implements  Initializable {
         loadUserData();
     }
     @FXML
-    private void loadUserData(){
-        danhSach = FXCollections.observableArrayList(nguoiDungDAO.selectAll());
-        userTable.setItems(danhSach);
+    private void loadUserData() {
+        new Thread(() -> {
+            ServerConnection connection = null;
+            try {
+                connection = ServerConnection.getInstance();
+                Command cmd = new GetAllUsersCommand();
+                connection.sendCommand(cmd);
+                Response resp = connection.receiveResponse();
+                if (resp.isSuccess()) {
+                    List<User> users = (List<User>) resp.getPayLoad();
+                    javafx.application.Platform.runLater(() -> {
+                        danhSach = FXCollections.observableArrayList(users);
+                        userTable.setItems(danhSach);
+                    });
+                } else {
+                    javafx.application.Platform.runLater(() ->
+                            showAlert("Lỗi", resp.getMessage())
+                    );
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                javafx.application.Platform.runLater(() ->
+                        showAlert("Lỗi", "Không thể kết nối Server")
+                );
+            } finally {
+                if (connection != null) {
+                    try { connection.close(); } catch (IOException ex) {}
+                }
+            }
+        }).start();
     }
-    //cap nhat thong tin
     @FXML
     private Button btnEditUser;
     @FXML
-    public void getUpdateAdmin(ActionEvent event){
-        try{
+    public void getUpdateAdmin(ActionEvent event) {
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/update_admin.fxml"));
             Parent root = loader.load();
             Stage popupStage = new Stage();
-
-            // 1. (Tùy chọn) Thiết lập tính năng Modality
-            // Nếu bạn muốn người dùng bắt buộc phải thao tác và đóng pop-up này
             popupStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
-
-            // 2. (Tùy chọn) Đặt tiêu đề cho pop-up
-            popupStage.setTitle("Thêm User mới");
-
-            // 3. Khởi tạo Scene và gắn vào Stage mới
+            popupStage.setTitle("sửa thông tin admin");
             Scene scene = new Scene(root);
             popupStage.setScene(scene);
-
-            // 4. Hiển thị pop-up
             popupStage.show();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void clickButtonExit(ActionEvent event){
-        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
+    public void clickButtonExit(ActionEvent event) {
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
     }
-    public void clickToAddUser(ActionEvent event){
-        try{
+    public void clickToAddUser(ActionEvent event) {
+        try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/Popupmanhinhsuathongtinadmin.fxml"));
             Parent root = loader.load();
             Stage popupStage = new Stage();
-
-            // 1. (Tùy chọn) Thiết lập tính năng Modality
-            // Nếu bạn muốn người dùng bắt buộc phải thao tác và đóng pop-up này
-            // trước khi có thể click vào màn hình chính bên dưới, hãy bỏ comment dòng sau:
             popupStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
-
-            // 2. (Tùy chọn) Đặt tiêu đề cho pop-up
             popupStage.setTitle("Thêm User mới");
-
-            // 3. Khởi tạo Scene và gắn vào Stage mới
             Scene scene = new Scene(root);
             popupStage.setScene(scene);
-
-            // 4. Hiển thị pop-up
             popupStage.show();
         } catch (Exception e) {
             e.printStackTrace();
@@ -125,9 +131,7 @@ public class AdminUserController implements  Initializable {
                 "\nSố điện thoại: " + selectUser.getSdt());
         ButtonType yes = new ButtonType("Có", ButtonBar.ButtonData.YES);
         ButtonType no = new ButtonType("Không", ButtonBar.ButtonData.NO);
-        //gan 2 nut vao thay ok, cancle mac dinh
         confirmAlert.getButtonTypes().setAll(yes, no);
-        //cho nguoi dung bam
         ButtonType result = confirmAlert.showAndWait().orElse(null);
         //neu co
         if(result == yes){
@@ -152,6 +156,7 @@ public class AdminUserController implements  Initializable {
         }
 
     }
+    connection.close();
 }
     @FXML private Button btnResetPassword;
     @FXML
@@ -170,52 +175,47 @@ public class AdminUserController implements  Initializable {
         }
     }
 
-
-    public void reLoad(ActionEvent event){
-        userTable.getItems().clear();
-        List<User> freshData = nguoiDungDAO.selectAll();
-        userTable.getItems().addAll(freshData);
+    public void reLoad(ActionEvent event) {
+        loadUserData(); // ✅ Gọi lại method loadUserData() thay vì gọi DAO
         System.out.println("Dữ liệu đã được cập nhật!");
-
     }
+
     @FXML private Button logOutAd;
     @FXML
     public void logOut(ActionEvent event) {
-        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
     }
-    //tim kiem
+
     @FXML
-    public void clickToSearch(){
+    public void clickToSearch() {
         String textWord = searchField.getText();
 
-        if(textWord == null || textWord.trim().isEmpty()){
+        if (textWord == null || textWord.trim().isEmpty()) {
             userTable.setItems(danhSach);
             return;
         }
-        //tao danh sach ket qua
+
         ObservableList<User> result = FXCollections.observableArrayList();
         String keyword = textWord.toLowerCase().trim();
 
-        for (User user : danhSach){
-            if(String.valueOf(user.getId()).toLowerCase().contains(keyword) ||
+        for (User user : danhSach) {
+            if (String.valueOf(user.getId()).toLowerCase().contains(keyword) ||
                     user.getEmail().toLowerCase().contains(keyword) ||
-                    user.getName().toLowerCase().contains(keyword)){
+                    user.getName().toLowerCase().contains(keyword)) {
                 result.add(user);
             }
         }
         userTable.setItems(result);
-
         System.out.println("Đã tìm thấy " + result.size() + " kết quả");
     }
-    //xoa tim kiem
-    public void clickToDeleteSearch(){
+
+    public void clickToDeleteSearch() {
         searchField.clear();
         userTable.setItems(danhSach);
     }
 
     @FXML
-    public void clickToGoItemAdmin(ActionEvent event){
-        changeScene(event , "/com/javfxtutorial/hethongdaugia/view/fxml/Quan_Ly_Product_Admin.fxml" );
+    public void clickToGoItemAdmin(ActionEvent event) {
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Quan_Ly_Product_Admin.fxml");
     }
-
 }

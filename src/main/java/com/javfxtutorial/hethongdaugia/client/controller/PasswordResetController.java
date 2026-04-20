@@ -39,10 +39,6 @@ public class PasswordResetController {
     public void loadUserInfo(){
         User currentUser = ClientModel.getInstance().getCurrentUser();
         if (currentUser != null){
-            txtoldPW.setText(currentUser.getPassWord());
-            txtNewPW.setText("");
-            txtConfirmPW.setText("");
-        }else{
             txtoldPW.setText("");
             txtNewPW.setText("");
             txtConfirmPW.setText("");
