@@ -63,7 +63,7 @@ public class AdminUpdateController {
         }
 
         //tao command gui len server
-        ServerConnection connection = new ServerConnection();
+        ServerConnection connection = ServerConnection.getInstance();
         UpdateProfileCommand cmd = new UpdateProfileCommand();
         cmd.addData("userId", currentUser.getId());
         cmd.addData("username", newName);
@@ -84,6 +84,5 @@ public class AdminUpdateController {
         }else{
             showAlert("Thất bại", rp.getMessage());
         }
-        connection.close();
     }
 }

@@ -60,7 +60,7 @@ public class PasswordResetController {
         }
 
         //tao command gui len server
-        ServerConnection connection = new ServerConnection();
+        ServerConnection connection = ServerConnection.getInstance();
         ResetPassWordCommand cmd = new ResetPassWordCommand();
         cmd.addData("userId", currentUser.getId());
         cmd.addData("passWord", newPW);
@@ -79,6 +79,5 @@ public class PasswordResetController {
         }else{
             showAlert("Thất bại", rp.getMessage());
         }
-        connection.close();
     }
 }

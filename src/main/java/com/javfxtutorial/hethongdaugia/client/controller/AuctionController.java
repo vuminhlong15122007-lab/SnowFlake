@@ -64,13 +64,11 @@ public class AuctionController {
 
     public void loadData() {
         Command cmd = new GetAllAuctionsCommand();
-        ServerConnection connection = new ServerConnection();
-
+        ServerConnection connection = ServerConnection.getInstance();
         new Thread(() -> {
             try {
                 connection.sendCommand(cmd);
                 Response resp = connection.receiveResponse();
-
                 Platform.runLater(() -> {
                     if (resp == null) {
                         showAlert("Loi tai du lieu", "Server khong tra ve du lieu phien dau gia.");
@@ -100,11 +98,6 @@ public class AuctionController {
             } catch (Exception e) {
                 e.printStackTrace();
                 Platform.runLater(() -> showAlert("Khong the load phien dau gia", "Kiem tra server localhost:5000 va log loi trong console."));
-            } finally {
-                try {
-                    connection.close();
-                } catch (IOException ignored) {
-                }
             }
         }).start();
     }

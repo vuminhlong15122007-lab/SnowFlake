@@ -117,9 +117,9 @@ public class AdminUserController implements Initializable {
     @FXML private Button btnDeleteUser;
     @FXML
     public void clickToDeleteUser() throws IOException {
-        ServerConnection connection = null;
+        ServerConnection connection =ServerConnection.getInstance();
         User selectUser = userTable.getSelectionModel().getSelectedItem();
-        if (selectUser == null) {
+        if (selectUser == null){
             showAlert("Lỗi", "Vui lòng chọn người dùng cần xóa");
             return;
         }
@@ -133,38 +133,39 @@ public class AdminUserController implements Initializable {
         ButtonType no = new ButtonType("Không", ButtonBar.ButtonData.NO);
         confirmAlert.getButtonTypes().setAll(yes, no);
         ButtonType result = confirmAlert.showAndWait().orElse(null);
-        if (result == yes) {
-            try {
-                connection = new ServerConnection();
-                DeleteUserCommand cmd = new DeleteUserCommand();
-                cmd.addData("userId", selectUser.getId());
-                cmd.addData("username", selectUser.getName());
-                cmd.addData("email", selectUser.getEmail());
-                cmd.addData("phone", selectUser.getSdt());
-                connection.sendCommand(cmd);
-                Response rp = connection.receiveResponse();
-                if (rp.isSuccess()) {
-                    showAlert("Xóa thành công", rp.getMessage());
-                    userTable.getItems().remove(selectUser);
-                } else {
-                    showAlert("Lỗi", rp.getMessage());
-                }
-            } catch (Exception e) {
-                showAlert("Lỗi", "Có lỗi xảy ra khi kết nối với server: " + e.getMessage());
-            } finally {
-                if (connection != null) {
-                    try { connection.close(); } catch (IOException ex) {}
-                }
-            }
-        }
-    }
+        //neu co
+        if(result == yes){
+            //tao command gui len server
+            DeleteUserCommand cmd = new DeleteUserCommand();
+            cmd.addData("userId", selectUser.getId());
+            cmd.addData("username", selectUser.getName());
+            cmd.addData("email", selectUser.getEmail());
+            cmd.addData("phone", selectUser.getSdt());
 
+        try {
+            connection.sendCommand(cmd);
+            Response rp = connection.receiveResponse();
+            if (rp.isSuccess()){
+                showAlert("Xóa thành công", rp.getMessage());
+                userTable.getItems().remove(selectUser);
+            } else {
+                showAlert("Lỗi", rp.getMessage());
+            }
+        } catch (Exception e) {
+            showAlert("Lỗi", "Có lỗi xảy ra khi kết nối với server: " + e.getMessage());
+        }
+
+    }
+    connection.close();
+}
     @FXML private Button btnResetPassword;
     @FXML
     public void clickToResetPW(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/reset_password.fxml"));
+
             Stage stage = new Stage();
+            //khong dong cua so cu ma khoa cua so cu o phía  sau
             stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
             Scene scene = new Scene(root);
             stage.setScene(scene);

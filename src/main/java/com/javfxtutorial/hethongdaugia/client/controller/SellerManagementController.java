@@ -98,7 +98,7 @@ public class SellerManagementController {
             Auction auction = getInfo();
 
             //thêm auction vào DAO và hiện ra list bên trái
-            ServerConnection connection = new ServerConnection();
+            ServerConnection connection =ServerConnection.getInstance();
             AddAuctionCommand cm = new AddAuctionCommand();
             cm.addData("Auction", auction);
             new Thread(() -> {     // Tao 1 luong phụ để để gửi dữ liệu về server và chuyển dữ liệu từ server về
@@ -157,7 +157,7 @@ public class SellerManagementController {
         int sellerId = ClientModel.getInstance().getCurrentUser().getId();
 // Lấy ID của user đang đăng nhập => gửi lên server => server lọc sp của sellerId lưu vào cmd
 
-        ServerConnection connection = new ServerConnection(); // mở đường dây liên lạc với server
+        ServerConnection connection = ServerConnection.getInstance(); // mở đường dây liên lạc với server
         Command cmd = new GetAuctionsBySellerIdCommand();
         cmd.addData("sellerId", sellerId);
 
@@ -187,7 +187,7 @@ public class SellerManagementController {
         }
 
         GetAuctionStatusCommand cmd = new GetAuctionStatusCommand(selected);
-        ServerConnection connection = new ServerConnection();
+        ServerConnection connection = ServerConnection.getInstance();
         new Thread(() -> {
             try {
                 connection.sendCommand(cmd);
@@ -280,7 +280,7 @@ public class SellerManagementController {
             System.out.println(" Vui lòng nhấn chọn sản phẩm");
         }
         GetAuctionStatusCommand statusCmd = new GetAuctionStatusCommand(selected);
-        ServerConnection connection = new ServerConnection();
+        ServerConnection connection = ServerConnection.getInstance();
 
         new Thread(() -> { //Tạo 1 luồng giao diện mới và giao công vc cho luồng
             try{
@@ -321,12 +321,6 @@ public class SellerManagementController {
                 e.printStackTrace();
                 Platform.runLater(() -> showAlert("Lỗi!!!", "Xem lại thao tác!"));
 
-            } finally {
-                try {
-                    connection.close(); // <-- THÊM DÒNG NÀY
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
             }
         }).start();
 
