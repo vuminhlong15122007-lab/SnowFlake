@@ -15,6 +15,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -39,9 +40,13 @@ public class LiveAuctionController implements Initializable {
     @FXML private Label stepPrice_tf;
     @FXML private Label itemNameLb;
     @FXML private ImageView itemImageView;
+    @FXML private Button placeBidButton;
+    @FXML private Label lbTimeLeft;
+    private TimeLeft timer; //
 
     @FXML
     public void goMenu(ActionEvent event){
+        timer.stop();
         try{
             connection.close();
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml"));
@@ -77,8 +82,8 @@ public class LiveAuctionController implements Initializable {
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         currentAuction = ClientModel.getInstance().getCurrentAuction();
-        currentPrice_tf.setText(String.valueOf(currentAuction.getCurrentPrice()));
-        stepPrice_tf.setText(String.valueOf(currentAuction.getStepPrice()));
+        currentPrice_tf.setText(String.format("%,.0f VND", currentAuction.getCurrentPrice()));
+        stepPrice_tf.setText(String.format("%,.0f VND", currentAuction.getCurrentPrice()));
         highestPayer_tf.setText(String.valueOf(currentAuction.getWinnerId()));
         itemNameLb.setText(ClientModel.getInstance().getCurrentItem().getName());
         String base64Data = currentAuction.getItem().getImage();
@@ -103,6 +108,14 @@ public class LiveAuctionController implements Initializable {
         System.out.println("Đã load xong giao diện");
 
         connectToServer();
+
+        // Xu ly ddh time
+        timer = new TimeLeft(lbTimeLeft, currentAuction.getEndingTime());
+        timer.setOnFinished(() -> { //Khi het h thif khoa nut dat gia lai
+            placeBidButton.setDisable(true); //vo hieu hoa nut chuyen sang mau xam mo
+            placeBidButton.setText("Đã kết thúc");
+        });
+        timer.start();
     }
 
     private void connectToServer(){ //Khởi tạo một luồng riêng để luôn nhận phản hồi từ server mà không gây lag, đơ)

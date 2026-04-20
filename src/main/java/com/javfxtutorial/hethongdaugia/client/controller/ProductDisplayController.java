@@ -31,7 +31,8 @@ public class ProductDisplayController {
     @FXML private ImageView itemImageView;
     @FXML private Label lbLoaisp;
     @FXML private Label lbTenngban;
-    @FXML private Label lbTimer;
+    @FXML private Label lbtimeLeft;
+    private TimeLeft timer;
 
 
     private Item item = ClientModel.getInstance().getCurrentItem();
@@ -43,7 +44,8 @@ public class ProductDisplayController {
         EndingtimeLabel.setText(String.valueOf(auction.getEndingTime()));
         lbTenngban.setText(item.getSellerName());
         ItemNameLabel.setText(item.getName());
-        ItemPriceLabel.setText(String.valueOf(auction.getInitPrice()));
+        ItemPriceLabel.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
+
         String base64Data = auction.getItem().getImage();
         if (base64Data == null || base64Data.isBlank()) {
             if (itemImageView != null) {
@@ -68,12 +70,22 @@ public class ProductDisplayController {
     @FXML
     public void initialize() {
         setData();
+        if (auction.getStatus().toString().equals("RUNNING")) {
+            timer = new TimeLeft(lbtimeLeft, auction.getEndingTime());
+            timer.start();
+        }else if ( auction.getStatus().toString().equals("NOT_START")) {
+            lbtimeLeft.setText("CHƯA BẮT ĐẦU");
+            lbtimeLeft.setStyle("-fx-text-fill: #888888;");
+        } else {
+            lbtimeLeft.setText("ĐÃ KẾT THÚC");
+            lbtimeLeft.setStyle("-fx-text-fill: #888888;");
+        }
     }
 
     @FXML
-    public void QuaylaiMenu(ActionEvent event) {
+    public void QuaylaiPhienDauGia(ActionEvent event) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/auction_list.fxml"));
             Parent root = loader.load();
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
             stage.getScene().setRoot(root);
