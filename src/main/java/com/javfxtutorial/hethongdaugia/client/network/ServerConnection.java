@@ -15,8 +15,15 @@ public class ServerConnection {
     private Socket clientSocket;
     private ObjectOutputStream out;
     private ObjectInputStream in;
+    private static ServerConnection instance;
+    public static ServerConnection getInstance(){
+        if (instance == null){
+            instance = new ServerConnection();
+        }
+        return instance;
+    }
 
-    public ServerConnection(){
+    private ServerConnection(){
         //khởi tạo socket connect tới server và luông để truyền/ nhận dữ liệu
         try {
             this.clientSocket = new Socket(IP, PORT);
@@ -26,13 +33,6 @@ public class ServerConnection {
             System.out.println("Không kết nối được server");
         }
 
-    }
-
-    public ObjectOutputStream getOut() {
-        return out;
-    }
-    public ObjectInputStream getIn() {
-        return in;
     }
 
     // Gửi command và chờ response (đồng bộ)

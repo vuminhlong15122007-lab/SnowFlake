@@ -72,7 +72,7 @@ public class Edit_User_Popup_Controller {
             return;
         }
         if (!name.isEmpty() && !email.isEmpty() && selectRole != null){
-            ServerConnection connection = new ServerConnection();
+            ServerConnection connection = ServerConnection.getInstance();
             Command cmd = new AddAccountCommand();
             cmd.addData("username", name);
             cmd.addData("password", password);
@@ -94,8 +94,6 @@ public class Edit_User_Popup_Controller {
             }else{
                 showAlert("Đăng ký không thành công", rp.getMessage());
             }
-                connection.close();
-
         }
     }
 }

@@ -32,7 +32,7 @@ public class LoginController {
     public void clickLogin(ActionEvent event) throws IOException, ClassNotFoundException {
         String username = Username.getText();
         String password = Password.getText();
-        ServerConnection connection = new ServerConnection();
+        ServerConnection connection = ServerConnection.getInstance();
         Command cmd = new LoginCommand();
         cmd.addData("username", username);
         cmd.addData("password", password);
@@ -52,7 +52,6 @@ public class LoginController {
         } else {
             System.out.println(rp.getMessage());
         }
-        connection.close();
     }
 
     public void clickCreateAccount(ActionEvent event) {

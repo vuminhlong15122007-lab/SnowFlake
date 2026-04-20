@@ -76,7 +76,7 @@ public class RegisterController {
 
         if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
             if (password.equals(confirmPassword)){
-                ServerConnection connection = new ServerConnection();
+                ServerConnection connection = ServerConnection.getInstance();
                 Command cmd = new RegisterCommand();
                 cmd.addData("username", name);
                 cmd.addData("password", password);
@@ -97,8 +97,6 @@ public class RegisterController {
                 }else{
                     showAlert("Đăng ký không thành công", rp.getMessage());
                 }
-                connection.close();
-
             }
         }
     }

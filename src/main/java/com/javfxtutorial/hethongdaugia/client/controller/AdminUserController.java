@@ -111,7 +111,7 @@ public class AdminUserController implements  Initializable {
     @FXML private Button btnDeleteUser;
     @FXML
     public void clickToDeleteUser() throws IOException {
-        ServerConnection connection = new ServerConnection();
+        ServerConnection connection =ServerConnection.getInstance();
         User selectUser = userTable.getSelectionModel().getSelectedItem();
         if (selectUser == null){
             showAlert("Lỗi", "Vui lòng chọn người dùng cần xóa");
@@ -152,7 +152,6 @@ public class AdminUserController implements  Initializable {
         }
 
     }
-    connection.close();
 }
     @FXML private Button btnResetPassword;
     @FXML

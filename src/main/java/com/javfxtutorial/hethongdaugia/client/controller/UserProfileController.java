@@ -98,13 +98,8 @@ public class UserProfileController {
             return;
         }
 
-        ServerConnection connection = new ServerConnection();
+        ServerConnection connection = ServerConnection.getInstance();
         try {
-            if (connection.getOut() == null || connection.getIn() == null) {
-                showAlert("Loi", "Khong the ket noi toi server.");
-                return;
-            }
-
             UpdateProfileCommand cmd = new UpdateProfileCommand();
             cmd.addData("userId", currentUser.getId());
             cmd.addData("username", newName);

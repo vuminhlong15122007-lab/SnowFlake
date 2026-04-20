@@ -57,11 +57,9 @@ public class AdminItemController implements  Initializable {
 
     private void loadItemData() throws IOException, ClassNotFoundException {
         Command cmd = new GetAllAuctionsCommand();
-        ServerConnection connection = new ServerConnection();
+        ServerConnection connection = ServerConnection.getInstance();
         connection.sendCommand(cmd);
         Response rp = connection.receiveResponse();
-        connection.close();
-
         ArrayList<Auction> auctionlist = (ArrayList<Auction>) rp.getPayLoad();
         ObservableList<Auction> danhSach = FXCollections.observableArrayList(auctionlist);
         itemTable.setItems(danhSach);
@@ -75,7 +73,7 @@ public class AdminItemController implements  Initializable {
     }
     @FXML
     public void clickToDeleteItem() throws IOException, ClassNotFoundException {
-        ServerConnection connection = new ServerConnection();
+        ServerConnection connection = ServerConnection.getInstance();
         Auction selectItem = itemTable.getSelectionModel().getSelectedItem();
         if (selectItem == null) {
             showAlert("Lỗi", "Vui lòng chọn sản phẩm cần xóa");
@@ -108,8 +106,6 @@ public class AdminItemController implements  Initializable {
             }
 
             }catch(Exception e){}
-
-        connection.close();
     }
 
 

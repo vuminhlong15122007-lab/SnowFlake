@@ -37,7 +37,7 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 public class LiveAuctionController implements Initializable {
     Auction currentAuction;
-    ServerConnection connection = new ServerConnection();
+    ServerConnection connection = ServerConnection.getInstance();
     @FXML private TextField priceInput_tf;
     @FXML private Label highestPayer_tf;
     @FXML private Label currentPrice_tf;
@@ -51,13 +51,11 @@ public class LiveAuctionController implements Initializable {
     @FXML
     public void goMenu(ActionEvent event) throws IOException{
         timer.stop();
-        connection.close();
         changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
     }
     @FXML
     public void clickToGoProductDisplayInfo(ActionEvent event) throws IOException{
         timer.stop();
-        connection.close();
         changeScene(event , "/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thi_sp.fxml");
     }
 
@@ -135,11 +133,6 @@ public class LiveAuctionController implements Initializable {
                     }
 
                 } catch (IOException | ClassNotFoundException e) {
-                    try {
-                        connection.close();
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
-                    }
                     throw new RuntimeException(e);
                 }
             }
