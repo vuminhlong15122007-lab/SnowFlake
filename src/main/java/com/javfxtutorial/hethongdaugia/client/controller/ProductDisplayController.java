@@ -20,6 +20,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Base64;
 
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
+
 public class ProductDisplayController {
     @FXML private Label EndingtimeLabel;
     @FXML private Label ItemNameLabel;
@@ -83,43 +86,23 @@ public class ProductDisplayController {
     }
 
     @FXML
-    public void QuaylaiPhienDauGia(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/auction_list.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.getScene().setRoot(root);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void QuaylaiMenu(ActionEvent event) {
+        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
     }
 
 
     @FXML
     public void goToManHinhDauGiaTrucTiep(ActionEvent event) {
         if (auction.getStatus() == AuctionStatus.RUNNING) {
-        try {
             System.out.println("Phiên đấu giá hiện tại: " + ClientModel.getInstance().getCurrentAuction());
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/dau_gia_truc_tiep.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.getScene().setRoot(root);
-        } catch (IOException e) {
-            e.printStackTrace();}
+            changeScene(event ,"/com/javfxtutorial/hethongdaugia/view/fxml/dau_gia_truc_tiep.fxml");
+
         } else {
             if (auction.getStatus() == AuctionStatus.CLOSED){
                 showAlert("Không thể vào phiên đấu giá", "Đã hết phiên đấu giá");}
             else if (auction.getStatus() == AuctionStatus.NOT_START){
                 showAlert("Không thể vào phiên đấu giá", "Chưa bắt đầu phiên đấu giá");}
         }
-    }
-    //hien thi alert
-    public void showAlert(String title, String message){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }
 

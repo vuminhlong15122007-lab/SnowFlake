@@ -23,6 +23,9 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
+
 public class AdminItemController implements  Initializable {
     @FXML private TableView<Auction> itemTable;
     @FXML private TableColumn<Auction,Integer> colId ;
@@ -65,15 +68,10 @@ public class AdminItemController implements  Initializable {
     }
 
     public void clickButtonExit(ActionEvent event){
-        try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
+    }
+    public void clickToGoUserAdmin(ActionEvent event){
+        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/Quan_Ly_User_Admin.fxml");
     }
     @FXML
     public void clickToDeleteItem() throws IOException, ClassNotFoundException {
@@ -115,10 +113,6 @@ public class AdminItemController implements  Initializable {
     }
 
 
-}private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
-    }}
+
+}
+}

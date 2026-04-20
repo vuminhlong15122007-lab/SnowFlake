@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
 
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
+
 public class AuctionSessionController {
     @FXML private Label AuctionStatusText;
     @FXML private Label ItemNameLabel;
@@ -85,17 +87,9 @@ public class AuctionSessionController {
 
     @FXML
     public void clickToLiveAuction(ActionEvent event) {
-        try {
             ClientModel.getInstance().setCurrentItem(item);
             ClientModel.getInstance().setCurrentAuction(auction);
+            changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thi_sp.fxml");
 
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thi_sp.fxml"));
-            Parent root = loader.load();
-
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.getScene().setRoot(root);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }

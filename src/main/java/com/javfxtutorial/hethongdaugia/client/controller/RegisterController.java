@@ -20,6 +20,9 @@ import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
+
 public class RegisterController {
     @FXML public TextField PhoneNumber;
     @FXML private TextField Username;
@@ -29,15 +32,8 @@ public class RegisterController {
     @FXML private Label message;
 
     @FXML
-    public void clickBackToLogin(ActionEvent event){
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml"));
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
-            stage.show();
-    } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public void clickBackToLogin(ActionEvent event) {
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
     }
     public void clickSignUp(ActionEvent event) throws IOException, ClassNotFoundException {
         String name = Username.getText();
@@ -89,7 +85,6 @@ public class RegisterController {
                 connection.sendCommand(cmd);
                 Response rp = connection.receiveResponse();
                 if (rp.isSuccess()){
-
                     Stage stage = new Stage();
                     stage.setTitle("Tạo Tài Khoản Thành Công");
                     FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/fxml/popUpSignUp.fxml"));
@@ -97,14 +92,8 @@ public class RegisterController {
                     Scene scene = new Scene(fxmlLoader.load());
                     stage.setScene(scene);
                     stage.show();
-                    try {
-                        Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml"));
-                        Stage stage1 = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                        stage1.setScene(new Scene(root));
-                        stage1.show();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+                    changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
+
                 }else{
                     showAlert("Đăng ký không thành công", rp.getMessage());
                 }
@@ -112,13 +101,6 @@ public class RegisterController {
 
             }
         }
-    }
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
     }
 
 }

@@ -34,6 +34,9 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Base64;
 
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
+
 public class SellerManagementController {
     @FXML private TextField nameField;
     @FXML private TextArea descriptionField;
@@ -55,15 +58,8 @@ public class SellerManagementController {
     // Khoi tao danh sach Observable
     private ObservableList<Auction> observable = FXCollections.observableArrayList();
 
-    public void goMenu(ActionEvent event){    // xu ly chuyen nut
-        try{
-            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml"));
-            Stage stage = (Stage) ((Node)event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
+    public void goMenu(ActionEvent event) {    // xu ly chuyen nut
+        changeScene(event , "/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
     }
 
     public Auction getInfo(){
@@ -334,15 +330,6 @@ public class SellerManagementController {
         }).start();
 
 
-    }
-
-    //hien thi alert
-    public void showAlert(String title, String message){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
 }

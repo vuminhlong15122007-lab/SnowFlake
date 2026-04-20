@@ -63,19 +63,13 @@
                 <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
             </padding>
 
-            <Label text="Chi tiết sản phẩm">
-                <font>
-                    <Font name="System Bold" size="18.0" />
-                </font>
-            </Label>
-         <ImageView fitHeight="177.0" fitWidth="268.0" pickOnBounds="true" preserveRatio="true" />
-
             <Label text="Thao tác quản trị">
                 <font>
                     <Font name="System Bold" size="16.0" />
                 </font>
             </Label>
             <Button fx:id="btnDeleteProduct" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToDeleteItem" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;" text="XÓA SẢN PHẨM" />
+            <Button fx:id="UserAdmin" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToGoUserAdmin" style="-fx-background-color: pink; -fx-text-fill: white; -fx-font-weight: bold;" text="Quản lý User cho Admin" />
 
         </VBox>
     </right>

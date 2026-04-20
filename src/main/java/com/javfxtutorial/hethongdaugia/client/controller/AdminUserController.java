@@ -20,6 +20,9 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
+
 
 public class AdminUserController implements  Initializable {
     @FXML private TableView<User> userTable;
@@ -79,15 +82,7 @@ public class AdminUserController implements  Initializable {
         }
     }
     public void clickButtonExit(ActionEvent event){
-        try{
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            Scene scene = new Scene(root);
-            stage.setScene(scene);
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
+        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
     }
     public void clickToAddUser(ActionEvent event){
         try{
@@ -186,12 +181,8 @@ public class AdminUserController implements  Initializable {
     }
     @FXML private Button logOutAd;
     @FXML
-    public void logOut(ActionEvent event) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml"));
-        Scene scene = new Scene(root);
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        stage.setScene(scene);
-        stage.show();
+    public void logOut(ActionEvent event) {
+        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
     }
     //tim kiem
     @FXML
@@ -223,12 +214,9 @@ public class AdminUserController implements  Initializable {
         userTable.setItems(danhSach);
     }
 
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
+    @FXML
+    public void clickToGoItemAdmin(ActionEvent event){
+        changeScene(event , "/com/javfxtutorial/hethongdaugia/view/fxml/Quan_Ly_Product_Admin.fxml" );
     }
 
 }

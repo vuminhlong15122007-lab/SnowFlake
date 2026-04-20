@@ -16,6 +16,8 @@ import javafx.stage.Stage;
 import java.awt.event.ActionEvent;
 import java.io.IOException;
 
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
+
 public class PasswordResetController {
     @FXML private TextField txtoldPW;
     @FXML private TextField txtNewPW;
@@ -83,14 +85,4 @@ public class PasswordResetController {
         }
         connection.close();
     }
-
-    //hien thi alert
-    public void showAlert(String title, String message){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
-
 }

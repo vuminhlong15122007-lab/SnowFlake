@@ -30,6 +30,9 @@ import java.time.LocalDateTime;
 import java.util.Base64;
 import java.util.ResourceBundle;
 
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
+
 
 public class LiveAuctionController implements Initializable {
     Auction currentAuction;
@@ -45,18 +48,10 @@ public class LiveAuctionController implements Initializable {
     private TimeLeft timer; //
 
     @FXML
-    public void goMenu(ActionEvent event){
+    public void goMenu(ActionEvent event) throws IOException{
         timer.stop();
-        try{
-            connection.close();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.getScene().setRoot(root);
-
-        }catch (IOException e){
-            e.printStackTrace();
-        }
+        connection.close();
+        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
     }
 
     @FXML
@@ -164,14 +159,5 @@ public class LiveAuctionController implements Initializable {
         });
         thread.setDaemon(true);
         thread.start();
-    }
-
-    //hien thi alert
-    public void showAlert(String title, String message){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }
