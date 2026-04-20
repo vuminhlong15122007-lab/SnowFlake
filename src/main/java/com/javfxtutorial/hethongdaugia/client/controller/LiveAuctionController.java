@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
@@ -88,29 +89,9 @@ public class LiveAuctionController implements Initializable {
         highestPayer_tf.setText(String.valueOf(currentAuction.getWinnerId()));
         itemNameLb.setText(ClientModel.getInstance().getCurrentItem().getName());
         String base64Data = currentAuction.getItem().getImage();
-        if (base64Data == null || base64Data.isBlank()) {
-            if (itemImageView != null) {
-                itemImageView.setImage(null);
-            }
-            return;
-        }
-
-        try {
-            byte[] imageBytes = Base64.getDecoder().decode(base64Data);
-            if (itemImageView != null) {
-                itemImageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
-            }
-        } catch (IllegalArgumentException e) {
-            System.err.println("Loi load anh: " + e.getMessage());
-            if (itemImageView != null) {
-                itemImageView.setImage(null);
-            }
-        }
+        ImageHelper.loadBase64ToImageView(itemImageView,base64Data);
         System.out.println("Đã load xong giao diện");
-
         connectToServer();
-
-        // Xu ly ddh time
         timer = new TimeLeft(lbTimeLeft, currentAuction.getEndingTime());
         timer.setOnFinished(() -> { //Khi het h thif khoa nut dat gia lai
             placeBidButton.setDisable(true); //vo hieu hoa nut chuyen sang mau xam mo

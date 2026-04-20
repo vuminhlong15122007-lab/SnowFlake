@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import javafx.fxml.FXML;
@@ -22,24 +23,7 @@ public class SellerProductController {
         lbProductName.setText(auction.getItem().getName());
         ItemID.setText(String.valueOf(auction.getItem().getItemId()));
         String base64Data = auction.getItem().getImage();
-        if (base64Data == null || base64Data.isBlank()) {
-            if (itemImageView1 != null) {
-                itemImageView1.setImage(null);
-            }
-            return;
-        }
-
-        try {
-            byte[] imageBytes = Base64.getDecoder().decode(base64Data);
-            if (itemImageView1 != null) {
-                itemImageView1.setImage(new Image(new ByteArrayInputStream(imageBytes)));
-            }
-        } catch (IllegalArgumentException e) {
-            System.err.println("Loi load anh: " + e.getMessage());
-            if (itemImageView1 != null) {
-                itemImageView1.setImage(null);
-            }
-        }
+        ImageHelper.loadBase64ToImageView(itemImageView1 , base64Data);
     }
 
 

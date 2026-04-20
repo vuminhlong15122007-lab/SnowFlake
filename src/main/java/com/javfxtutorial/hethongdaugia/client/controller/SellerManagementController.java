@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
@@ -232,11 +233,11 @@ public class SellerManagementController {
 
         try {
             byte[] fileContent = Files.readAllBytes(selectedFile.toPath());
-            String base64String = Base64.getEncoder().encodeToString(fileContent);
             Item item = ClientModel.getInstance().getCurrentItem();
-            image = base64String;
+            String base64Data = ImageHelper.fileToBase64(fileContent);
+            image = base64Data;
             if (item != null) {
-                item.setImage(base64String);
+                item.setImage(base64Data);
             }
             if (Image != null) {
                 Image.setImage(new Image(new ByteArrayInputStream(fileContent)));

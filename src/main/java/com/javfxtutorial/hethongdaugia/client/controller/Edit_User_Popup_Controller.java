@@ -17,6 +17,8 @@ import javafx.stage.StageStyle;
 
 import java.io.IOException;
 
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
+
 public class Edit_User_Popup_Controller {
     @FXML private TextField txtName;
     @FXML private TextField txtEmail;
@@ -95,12 +97,5 @@ public class Edit_User_Popup_Controller {
                 connection.close();
 
         }
-    }
-    private void showAlert(String title, String content) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(content);
-        alert.showAndWait();
     }
 }

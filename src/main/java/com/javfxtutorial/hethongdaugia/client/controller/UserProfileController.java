@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.Util.UIUtils.*;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
@@ -78,24 +79,7 @@ public class UserProfileController {
         updatePhoneText.setText(currentUser.getSdt());
 
         String base64Data = currentUser.getImagePath();
-        if (base64Data == null || base64Data.isBlank()) {
-            if (myImageView != null) {
-                myImageView.setImage(null);
-            }
-            return;
-        }
-
-        try {
-            byte[] imageBytes = Base64.getDecoder().decode(base64Data);
-            if (myImageView != null) {
-                myImageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
-            }
-        } catch (IllegalArgumentException e) {
-            System.err.println("Loi load anh: " + e.getMessage());
-            if (myImageView != null) {
-                myImageView.setImage(null);
-            }
-        }
+        ImageHelper.loadBase64ToImageView( myImageView, base64Data);
     }
 
     @FXML
@@ -178,20 +162,16 @@ public class UserProfileController {
         if (selectedFile == null) {
             return;
         }
-
-        try {
-            byte[] fileContent = Files.readAllBytes(selectedFile.toPath());
-            String base64String = Base64.getEncoder().encodeToString(fileContent);
+        try{
+        byte[] fileContent = Files.readAllBytes(selectedFile.toPath());
+        String base64Data = ImageHelper.fileToBase64(fileContent);
+        ImageHelper.loadBase64ToImageView( myImageView, base64Data);
             User user = ClientModel.getInstance().getCurrentUser();
             if (user != null) {
-                user.setImagePath(base64String);
+                user.setImagePath(base64Data);
             }
-            if (myImageView != null) {
-                myImageView.setImage(new Image(new ByteArrayInputStream(fileContent)));
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            showAlert("Loi", "Khong the tai anh len!");
+        }catch(Exception e){
+
         }
     }
     private String safeTrim(String value) {

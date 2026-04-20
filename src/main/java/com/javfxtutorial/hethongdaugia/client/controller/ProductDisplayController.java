@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
@@ -50,24 +51,7 @@ public class ProductDisplayController {
         ItemPriceLabel.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
 
         String base64Data = auction.getItem().getImage();
-        if (base64Data == null || base64Data.isBlank()) {
-            if (itemImageView != null) {
-                itemImageView.setImage(null);
-            }
-            return;
-        }
-
-        try {
-            byte[] imageBytes = Base64.getDecoder().decode(base64Data);
-            if (itemImageView != null) {
-                itemImageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
-            }
-        } catch (IllegalArgumentException e) {
-            System.err.println("Loi load anh: " + e.getMessage());
-            if (itemImageView != null) {
-                itemImageView.setImage(null);
-            }
-        }
+        ImageHelper.loadBase64ToImageView(itemImageView,base64Data);
     }
 
     @FXML

@@ -13,6 +13,8 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
+
 public class AdminUpdateController {
     @FXML private TextField txtName;
     @FXML private TextField txtEmail;
@@ -83,14 +85,5 @@ public class AdminUpdateController {
             showAlert("Thất bại", rp.getMessage());
         }
         connection.close();
-    }
-
-    //hien thi alert
-    public void showAlert(String title, String message){
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 }

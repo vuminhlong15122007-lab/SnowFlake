@@ -110,14 +110,7 @@ public class AuctionController {
     }
 
     public void logOut1(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml"));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.getScene().setRoot(root);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
     }
 
     public void manageProducts(ActionEvent event) {
