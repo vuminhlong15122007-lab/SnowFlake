@@ -151,6 +151,7 @@ public class SellerManagementController {
                 hienThiChiTietSanPham(newVal);      // LUÔN hiển thị thông tin
             }
         });
+
     }
 
     private void loadMyProducts() throws IOException, ClassNotFoundException {
@@ -311,9 +312,13 @@ public class SellerManagementController {
                             System.out.println(resp.getMessage());
                         }
                     });
+                } else if ((nowStatus == AuctionStatus.RUNNING)){
+                    Platform.runLater(() ->
+                            showAlert("Không thể sửa", "Phiên đấu giá đang diễn ")
+                    );
                 }else{
                     Platform.runLater(() ->
-                            showAlert("Không thể xóa", "Phiên đấu giá đang diễn ra hoặc đã kết thúc")
+                            showAlert("Không thể sửa", "Phiên đấu giá đa kết thúc ")
                     );
                 }
 
