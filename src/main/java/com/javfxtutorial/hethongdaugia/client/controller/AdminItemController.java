@@ -5,18 +5,15 @@ import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
-import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.net.URL;
@@ -35,8 +32,6 @@ public class AdminItemController implements  Initializable {
     @FXML private TableColumn<Auction,String> colCategory;
     @FXML private TableColumn<Auction,String> colOwner;
     @FXML private TableColumn<Auction,String> colStatus;
-
-    private ItemDAO  itemDAO = ItemDAO.getInstance();
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {

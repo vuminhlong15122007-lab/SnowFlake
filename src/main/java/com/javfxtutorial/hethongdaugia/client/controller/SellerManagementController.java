@@ -120,7 +120,7 @@ public class SellerManagementController {
                     System.out.println("Lỗi kết nối server!");
                     showAlert("Lỗi!!", "Xem lại nội dung mình nhập");
 //
-                }
+                }finally{ try {connection.close();}catch (IOException e){} }
             }).start();
 
         } catch (NumberFormatException e) {
