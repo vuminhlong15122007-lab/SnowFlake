@@ -33,7 +33,7 @@ public class UIUtils {
             FXMLLoader loader = new FXMLLoader(UIUtils.class.getResource(fxmlPath));
             Parent root = loader.load(); // Lỗi thường nằm ở dòng này
             Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.setScene(new Scene(root));
+            stage.getScene().setRoot(root);
         } catch (IOException e) {
             e.printStackTrace(); // Xem chi tiết lỗi trong Console
             showAlert("Lỗi", "Không thể tải màn hình: " + fxmlPath);

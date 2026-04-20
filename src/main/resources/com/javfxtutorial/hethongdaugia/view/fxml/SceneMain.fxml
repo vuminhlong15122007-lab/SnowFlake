@@ -14,8 +14,8 @@
             </image>
          </ImageView>
             <Label style="-fx-font-size: 22px; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox" />
-            <Region HBox.hgrow="ALWAYS" />
-            <Button fx:id="logoutButton" onAction="#goLogin" prefHeight="32.0" prefWidth="90.0" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12;" text="Đăng xuất" />
+         <Pane prefHeight="70.0" prefWidth="516.0" />
+            <Button fx:id="logoutButton" onAction="#goLogin" prefHeight="32.0" prefWidth="102.0" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12;" text="Đăng xuất" />
         </HBox>
     </top>
 
