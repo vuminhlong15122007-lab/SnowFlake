@@ -53,7 +53,7 @@ public class AdminUserController implements Initializable {
         new Thread(() -> {
             ServerConnection connection = null;
             try {
-                connection = new ServerConnection();
+                connection = ServerConnection.getInstance();
                 Command cmd = new GetAllUsersCommand();
                 connection.sendCommand(cmd);
                 Response resp = connection.receiveResponse();
