@@ -19,16 +19,17 @@ public class BidDAO  {
 
     // 1. CREATE: Lưu một lượt đặt giá mới vào database
     public boolean insertBid(BidTransaction bid) {
-        String sql = "INSERT INTO bid_transaction (bidder_id, auction_id, amount, timestamp) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO bid_transaction (bidder_id, bidder_name, auction_id, amount, timestamp) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection connection = JDBCUtil.getConnection();
              PreparedStatement pstmt = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pstmt.setInt(1, bid.getBidderId());
-            pstmt.setInt(2, bid.getAuctionId());
-            pstmt.setDouble(3, bid.getAmount());
+            pstmt.setString(2, bid.getBidderName());
+            pstmt.setInt(3, bid.getAuctionId());
+            pstmt.setDouble(4, bid.getAmount());
             // Convert LocalDate sang java.sql.Date
 //            pstmt.setDate(4, Date.valueOf(bid.getTimestamp()));
-            pstmt.setTimestamp(4, Timestamp.valueOf(bid.getTimestamp()));
+            pstmt.setTimestamp(5, Timestamp.valueOf(bid.getTimestamp()));
 
             int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;
@@ -39,8 +40,8 @@ public class BidDAO  {
     }
 
     // 2. READ: Lấy toàn bộ lịch sử đặt giá của một phiên đấu giá (Sắp xếp từ cao xuống thấp)
-    public List<BidTransaction> getBidsByAuctionId(int auctionId) {
-        List<BidTransaction> bids = new ArrayList<>();
+    public ArrayList<BidTransaction> getBidsByAuctionId(int auctionId) {
+       ArrayList<BidTransaction> bids = new ArrayList<>();
         String sql = "SELECT * FROM bid_transaction WHERE auction_id = ? ORDER BY amount DESC";
 
         try (Connection connection = JDBCUtil.getConnection();
@@ -52,11 +53,11 @@ public class BidDAO  {
                     BidTransaction bid = new BidTransaction();
                     bid.setBidId(rs.getInt("bid_id"));
                     bid.setBidderId(rs.getInt("bidder_id"));
+                    bid.setBidderName(rs.getString("bidder_name"));
                     bid.setAuctionId(rs.getInt("auction_id"));
                     bid.setAmount(rs.getDouble("amount"));
                     // Convert java.sql.Date về LocalDateTime
                     bid.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
-
                     bids.add(bid);
                 }
             }
@@ -79,6 +80,7 @@ public class BidDAO  {
                     BidTransaction bid = new BidTransaction();
                     bid.setBidId(rs.getInt("bid_id"));
                     bid.setBidderId(rs.getInt("bidder_id"));
+                    bid.setBidderName(rs.getString("bidder_name"));
                     bid.setAuctionId(rs.getInt("auction_id"));
                     bid.setAmount(rs.getDouble("amount"));
                     bid.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
