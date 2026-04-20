@@ -53,6 +53,12 @@ public class LiveAuctionController implements Initializable {
         connection.close();
         changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
     }
+    @FXML
+    public void clickToGoProductDisplayInfo(ActionEvent event) throws IOException{
+        timer.stop();
+        connection.close();
+        changeScene(event , "/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thi_sp.fxml");
+    }
 
     @FXML
     public void placeBid (ActionEvent event) throws IOException, ClassNotFoundException {

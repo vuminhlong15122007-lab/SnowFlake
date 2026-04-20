@@ -87,7 +87,7 @@ public class ProductDisplayController {
 
     @FXML
     public void QuaylaiMenu(ActionEvent event) {
-        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
+        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/auction_list.fxml");
     }
 
 

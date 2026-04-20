@@ -50,7 +50,7 @@
                         <VBox alignment="CENTER" prefHeight="60.0" style="-fx-background-color: #fff0f0; -fx-background-radius: 10; -fx-border-color: #ffcccc; -fx-alignment: CENTER;">
                             <children>
                                 <Label style="-fx-alignment: CENTER;" text="THỜI GIAN CÒN LẠI" textAlignment="CENTER" textFill="#c0392b" />
-                                <Label fx:id="lbtimeLeft" prefHeight="38.0" prefWidth="98.0" style="-fx-font-weight: bold; -fx-font-size: 24px; -fx-alignment: CENTER;" text="00:25:40" textAlignment="CENTER" textFill="#e74c3c">
+                                <Label fx:id="lbtimeLeft" prefHeight="38.0" prefWidth="185.0" style="-fx-font-weight: bold; -fx-font-size: 24px; -fx-alignment: CENTER;" text="00:25:40" textAlignment="CENTER" textFill="#e74c3c">
                            <font>
                               <Font size="18.0" />
                            </font></Label>
