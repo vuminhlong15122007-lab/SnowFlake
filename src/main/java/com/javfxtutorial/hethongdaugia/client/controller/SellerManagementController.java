@@ -207,12 +207,17 @@ public class SellerManagementController {
                         }
                     });
                 }else{
-                    showAlert("Không xóa sửa sản phẩm", "Phiên đấu giá đang diễn ra hoặc đã kết thúc");
+                    Platform.runLater(() -> {
+                        showAlert("Không xóa sửa sản phẩm", "Phiên đấu giá đang diễn ra hoặc đã kết thúc");
+                    });
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
-                showAlert("Lỗi!!!", "Xem lại thao tác!");
+                Platform.runLater(() -> {
+                    showAlert("Lỗi!!!", "Xem lại thao tác!");
+                });
+
             }
         }).start();
 
