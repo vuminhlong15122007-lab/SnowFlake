@@ -17,12 +17,7 @@ public class PlaceBidCommand extends Command {
         BidTransaction bid = (BidTransaction) this.getData("bid");
         Auction currentAuction = (Auction) this.getData("currentAuction");
         if (AuctionManger.getInstance().placeBid(currentAuction, bid)){//nếu đặt giá thành công trả về true
-            try {
                 BidDAO.getInstance().insertBid(bid);
-                ClientHandler.broadcast(new Response(true, "Đặt giá thành công", bid, this));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
             return new Response(true, "Đặt Bid thành công", bid, this);
         }
         return new Response(false, "Cần đặt giá cao hơn giá hiện tại + bước giá", bid, this);

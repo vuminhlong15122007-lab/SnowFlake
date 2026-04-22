@@ -17,7 +17,7 @@ public class ServerConnection {
     private ObjectInputStream in;
     private static ServerConnection instance;
     public static ServerConnection getInstance(){
-        if (instance == null){
+        if (instance == null || !instance.isConnected()){
             instance = new ServerConnection();
         }
         return instance;
@@ -53,5 +53,12 @@ public class ServerConnection {
         if (clientSocket != null) {
             this.clientSocket.close();
         }
+    }
+
+    public boolean isConnected(){
+        if (instance.clientSocket.isClosed()){
+            return false;
+        }
+        return true;
     }
 }

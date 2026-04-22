@@ -16,8 +16,7 @@ public class ServerApp {
                 System.out.println("Client kết nối từ: " + clientSocket.getInetAddress());
                 // Mỗi client được xử lý trong một thread riêng
                 ClientHandler handler = new ClientHandler(clientSocket);
-                Thread thread = new Thread(handler);
-                thread.start();
+                handler.start();
             }
         } catch (IOException e) {
             System.err.println("Lỗi server: " + e.getMessage());

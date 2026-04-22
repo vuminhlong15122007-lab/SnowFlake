@@ -6,7 +6,6 @@ import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
-import com.javfxtutorial.hethongdaugia.server.manager.ItemManager;
 
 import java.util.ArrayList;
 

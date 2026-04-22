@@ -1,6 +1,7 @@
 package com.javfxtutorial.hethongdaugia.server.network;
 
 
+import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
@@ -13,12 +14,13 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ClientHandler extends Thread {
     private Socket clientSocket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    private static ArrayList<ClientHandler> clients = new ArrayList<>();
+    private static List<ClientHandler> clients = new CopyOnWriteArrayList<>();
 
     public ClientHandler(Socket socket) {
         this.clientSocket = socket;
@@ -33,7 +35,14 @@ public class ClientHandler extends Thread {
             while (true) { //luôn chờ command của client
                 Command cmd = (Command) in.readObject();
                 Response rp = cmd.handle();
-                out.writeObject(rp);
+                if (cmd instanceof PlaceBidCommand){
+                    out.writeObject(rp);
+                    out.flush();
+                    broadcast(rp, this);
+                } else {
+                    out.writeObject(rp);
+                    out.flush();
+                }
             }
         } catch (IOException | ClassNotFoundException e) {
             System.out.println("Client ngừng kết nối");
@@ -50,18 +59,17 @@ public class ClientHandler extends Thread {
         }
     }
 
-    public static void broadcast(Response rp) throws IOException {
-        Iterator<ClientHandler> iterator = clients.iterator();
-        while (iterator.hasNext()){
-            ClientHandler client = iterator.next();
+    public static void broadcast(Response rp, ClientHandler sender) {
+        for (ClientHandler client: clients){
+            if (client == sender) continue;
             try {
-                client.out.writeObject(rp);
-                client.out.flush();
-            }  catch (IOException e){
-                if (client.clientSocket != null){
-                    client.clientSocket.close();
+                synchronized (client.out){
+                    client.out.writeObject(rp);
+                    client.out.flush();
                 }
-                iterator.remove();
+            } catch (IOException e) {
+                clients.remove(client);
+                System.out.println("Client mất kết nối, đã xóa khỏi danh sách");
             }
         }
     }

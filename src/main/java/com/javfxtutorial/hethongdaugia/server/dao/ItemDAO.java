@@ -111,27 +111,6 @@ public class ItemDAO implements DAOInterface<Item> {
         return result;
     }
     public int delete(Item item){
-//        int result = 0;
-//        try {
-//            //tao ket noi
-//            Connection connection = JDBCUtil.getConnection();
-//            //tao doi tuong statement
-//            Statement st = connection.createStatement();
-//            //thuc thi lenh sql
-//            String sql = "DELETE FROM Item " + " WHERE ItemId='" + item.getItemId() + "'";
-//            System.out.println(sql);
-//            result = st.executeUpdate(sql);
-//            if (result > 0){
-//                System.out.println("Xóa Item thành công");
-//            }
-//            else{
-//                System.out.println("Xóa thất bại");
-//            }
-//            JDBCUtil.closeConnection(connection);
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return result;
         Connection connection = JDBCUtil.getConnection();
         try {
             connection.setAutoCommit(false); // Bắt đầu transaction

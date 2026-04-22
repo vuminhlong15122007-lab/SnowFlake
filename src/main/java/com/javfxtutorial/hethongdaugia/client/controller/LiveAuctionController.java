@@ -14,22 +14,15 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.ResourceBundle;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
@@ -37,6 +30,7 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 
 public class LiveAuctionController implements Initializable {
+    private volatile boolean running = true;
     Auction currentAuction;
     ServerConnection connection = ServerConnection.getInstance();
     @FXML private TextField priceInput_tf;
@@ -56,6 +50,7 @@ public class LiveAuctionController implements Initializable {
     @FXML
     public void goMenu(ActionEvent event) throws IOException{
         timer.stop();
+        running = false; //đóng while khi chuyển sang màn khác
         changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
     }
     @FXML
@@ -111,6 +106,7 @@ public class LiveAuctionController implements Initializable {
         setCurrentAuctionInfoToScene();
         setBidHistorytoScene();
         connectToServer();
+        running = true;
 
         // thời gian còn lại
         timer = new TimeLeft(lbTimeLeft, currentAuction.getEndingTime());
@@ -123,13 +119,12 @@ public class LiveAuctionController implements Initializable {
 
     private void connectToServer(){ //Khởi tạo một luồng riêng để luôn nhận phản hồi từ server mà không gây lag, đơ)
         Thread thread = new Thread(() -> {
-            while (true){
+            while (running){
                 try {
                     Response rp = connection.receiveResponse();
                     if (rp.getCommand() instanceof PlaceBidCommand){ //liên tục cập nhật giá cao nhất
                         //lấy giá mới từ server trả về (mỗi khi có client đặt giá, server sẽ thông báo cho tất cả client đang hoạt động)
                         BidTransaction bid = (BidTransaction) rp.getPayLoad();
-
                         if (ClientModel.getInstance().getCurrentUser().getName().equals(bid.getBidderName())){
                             Platform.runLater(() -> {
                             showAlert("Trạng thái đặt bid", rp.getMessage());});
