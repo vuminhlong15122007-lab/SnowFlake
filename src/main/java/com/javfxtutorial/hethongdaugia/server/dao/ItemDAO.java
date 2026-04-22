@@ -65,6 +65,7 @@ public class ItemDAO implements DAOInterface<Item> {
             e.printStackTrace();
             throw new RuntimeException("Lỗi thao tác DB khi thêm Item", e);
         }
+        JDBCUtil.closeConnection(connection);
 
         return result;
     }
