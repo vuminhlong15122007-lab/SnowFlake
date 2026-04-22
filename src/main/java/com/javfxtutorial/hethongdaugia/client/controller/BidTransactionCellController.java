@@ -13,7 +13,7 @@ public class BidTransactionCellController {
     private Label timestampLabel;
 
     public void setData(BidTransaction bidTransaction){
-        amountLabel.setText(String.valueOf(bidTransaction.getAmount()));
+        amountLabel.setText(String.format("%,.0f VND", bidTransaction.getAmount()));
         bidderNameLabel.setText(bidTransaction.getBidderName());
         timestampLabel.setText(bidTransaction.getTimestamp().toString());
     }
