@@ -1,3 +1,4 @@
+<img width="1031" height="567" alt="classdiagram" src="https://github.com/user-attachments/assets/0f71095a-a1d5-4043-a6b7-6d894a394824" />
 
     Thiết kế clas : <Cả nhóm>
         Item : <Diệu Anh> chức năng : lưu trữ thông tin của Item
