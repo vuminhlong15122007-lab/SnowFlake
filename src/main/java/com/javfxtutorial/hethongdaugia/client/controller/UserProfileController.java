@@ -122,12 +122,6 @@ public class UserProfileController {
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
             showAlert("Loi", "Khong the cap nhat thong tin. Kiem tra log server de biet chi tiet.");
-        } finally {
-            try {
-                connection.close();
-            } catch (IOException e) {
-                System.err.println("Loi dong ket noi: " + e.getMessage());
-            }
         }
     }
 

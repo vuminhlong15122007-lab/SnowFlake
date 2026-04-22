@@ -19,7 +19,6 @@ import java.io.IOException;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 public class PasswordResetController {
-    @FXML private TextField txtoldPW;
     @FXML private TextField txtNewPW;
     @FXML private TextField txtConfirmPW;
     @FXML private Button btnCancel;
@@ -39,7 +38,6 @@ public class PasswordResetController {
     public void loadUserInfo(){
         User currentUser = ClientModel.getInstance().getCurrentUser();
         if (currentUser != null){
-            txtoldPW.setText("");
             txtNewPW.setText("");
             txtConfirmPW.setText("");
         }

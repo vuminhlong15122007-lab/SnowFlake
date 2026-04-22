@@ -14,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
@@ -27,6 +28,7 @@ public class LoginController {
     @FXML private PasswordField Password ;
     @FXML private Button login;
     @FXML private Button sign_in;
+    @FXML private Label message;
 
     @FXML
     public void clickLogin(ActionEvent event) throws IOException, ClassNotFoundException {
@@ -50,6 +52,7 @@ public class LoginController {
 
             }
         } else {
+            message.setText("Sai tên hoặc mật khẩu!");
             System.out.println(rp.getMessage());
         }
     }
