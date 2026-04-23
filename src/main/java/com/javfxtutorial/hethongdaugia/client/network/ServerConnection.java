@@ -46,7 +46,7 @@ public class ServerConnection {
         }
     }
 
-    public Response receiveResponse() throws IOException, ClassNotFoundException {
+    public synchronized Response receiveResponse() throws IOException, ClassNotFoundException {
         return (Response) in.readObject();
     }
     public void close() throws IOException {
