@@ -4,7 +4,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane stylesheets="@../css/global.css" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="500.0" prefWidth="900.0" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AuctionController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AuctionController">
    <top>
       <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-background-color: linear-gradient(to right, #FFF0F5, #B3E5FC); -fx-padding: 10;">
          <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
@@ -21,10 +21,10 @@
    </top>
    <left>
       <VBox spacing="15" style="-fx-background-color: #f0f8ff; -fx-padding: 15; -fx-pref-width: 180;">
-         <Button fx:id="btnHome" onAction="#btnHome" prefHeight="27.0" prefWidth="146.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold;" text="Trang chủ" />
-         <Button fx:id="btnLiveAuction" prefHeight="27.0" prefWidth="146.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-text-fill: white; -fx-border-radius: 6; -fx-font-weight: bold;" text="Phiên đấu giá " />
-         <Button fx:id="btnmanageProducts" onAction="#manageProducts" prefHeight="27.0" prefWidth="146.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Quản lý sản phẩm" />
-         <Button fx:id="btnprofile" onAction="#goToProfile" prefHeight="27.0" prefWidth="146.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Thông tin người dùng" />
+         <Button fx:id="btnHome" onAction="#btnHome" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold;" text="Trang chủ" />
+         <Button fx:id="btnLiveAuction" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-text-fill: white; -fx-border-radius: 6; -fx-font-weight: bold;" text="Phiên đấu giá " />
+         <Button fx:id="btnmanageProducts" onAction="#manageProducts" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Quản lý sản phẩm" />
+         <Button fx:id="btnprofile" onAction="#goToProfile" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Thông tin người dùng" />
       </VBox>
    </left>
 
@@ -42,7 +42,7 @@
    <bottom>
       <HBox prefHeight="22.0" prefWidth="600.0" style="-fx-background-color: linear-gradient(to right, #FFF0F5, #B3E5FC); -fx-padding: 8;" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" prefHeight="18.0" prefWidth="876.0" style="-fx-font-size: 12px;" text="© 2026 SnowFox - Studio SnowFlake" textAlignment="CENTER" textFill="#902a2a" />
+            <Label alignment="CENTER" prefHeight="18.0" prefWidth="1255.0" style="-fx-font-size: 12px;" text="© 2026 SnowFox - Studio SnowFlake" textAlignment="CENTER" textFill="#902a2a" />
          </children>
       </HBox>
    </bottom>

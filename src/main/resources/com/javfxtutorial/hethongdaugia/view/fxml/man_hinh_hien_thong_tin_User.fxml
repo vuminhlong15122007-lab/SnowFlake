@@ -5,7 +5,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="500" prefWidth="900.0" style="-fx-background-color: #eef5fb;" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.UserProfileController">
+<BorderPane prefHeight="720" prefWidth="1280.0" style="-fx-background-color: #eef5fb;" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.UserProfileController">
 
    <!-- HEADER -->
    <top>
@@ -15,7 +15,7 @@
             <image>
                <Image url="@../../assets/ClassicLogo.png" />
             </image></ImageView>
-         <Label graphicTextGap="15.0" prefHeight="30.0" prefWidth="735.0" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, purple, blue);" text="SnowFox - Tài Khoản">
+         <Label graphicTextGap="15.0" prefHeight="30.0" prefWidth="1060.0" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, purple, blue);" text="SnowFox - Tài Khoản">
             <effect>
                <Blend />
             </effect></Label>
@@ -32,13 +32,13 @@
                <Image url="@../../assets/Logo.png" />
             </image></ImageView>
 
-         <Button prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Thông tin cá nhân" />
+         <Button prefHeight="40.0" prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Thông tin cá nhân" />
 
-         <Button prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Lịch sử đấu giá" />
+         <Button prefHeight="40.0" prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Lịch sử đấu giá" />
 
-         <Button onAction="#clickToSellerMangement" prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Sản phẩm của tôi" />
+         <Button onAction="#clickToSellerMangement" prefHeight="40.0" prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Sản phẩm của tôi" />
 
-         <Button fx:id="logOut" onAction="#clickToLogOut" prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Đăng xuất" />
+         <Button fx:id="logOut" onAction="#clickToLogOut" prefHeight="40.0" prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Đăng xuất" />
       </VBox>
    </left>
 
@@ -46,18 +46,18 @@
    <center>
       <VBox alignment="TOP_CENTER" style="-fx-padding: 20; -fx-background-color: white;">
 
-         <VBox spacing="12" style="-fx-background-color: white;                          -fx-padding: 20;                          -fx-background-radius: 10;                          -fx-border-color: #d6e2ee;                          -fx-border-radius: 10;">
+         <VBox prefHeight="594.0" prefWidth="1059.0" spacing="12" style="-fx-background-color: white;                          -fx-padding: 20;                          -fx-background-radius: 10;                          -fx-border-color: #d6e2ee;                          -fx-border-radius: 10;">
 
             <Label style="-fx-font-size: 14; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, #56ccf2, #2f80ed);" text="Thông tin cá nhân" />
 
             <!-- AVATAR -->
             <HBox alignment="CENTER_LEFT" spacing="10">
-               <Pane prefHeight="122.0" prefWidth="122.0" style="-fx-border-color: black;">
+               <Pane prefHeight="200.0" prefWidth="200.0" style="-fx-border-color: black;">
                   <children>
-                     <ImageView fx:id="myImageView" fitHeight="122.0" fitWidth="122.0" nodeOrientation="INHERIT" />
+                     <ImageView fx:id="myImageView" fitHeight="200.0" fitWidth="200.0" nodeOrientation="INHERIT" />
                   </children>
                </Pane>
-               <Button onAction="#clickToChooseImage" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Đổi ảnh" />
+               <Button onAction="#clickToChooseImage" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Đổi ảnh" />
             </HBox>
 
             <!-- FORM -->
@@ -88,9 +88,9 @@
 
             <!-- BUTTON -->
             <HBox spacing="10">
-               <Button fx:id="updateInfo" onAction="#handleUpdateInfo" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Cập nhật" />
+               <Button fx:id="updateInfo" onAction="#handleUpdateInfo" prefHeight="40.0" prefWidth="90.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold;" text="Cập nhật" />
 
-               <Button fx:id="resetPW" onAction="#clickToResetPassword" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-font-weight: bold; -fx-text-fill: white;" text="Đổi mật khẩu" />
+               <Button fx:id="resetPW" onAction="#clickToResetPassword" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-font-weight: bold; -fx-text-fill: white;" text="Đổi mật khẩu" />
             </HBox>
 
          </VBox>
@@ -99,7 +99,7 @@
    <bottom>
       <HBox prefHeight="22.0" prefWidth="600.0" style="-fx-background-color: #b3c6ff; -fx-padding: 8;" BorderPane.alignment="CENTER">
          <children>
-            <Label alignment="CENTER" prefHeight="18.0" prefWidth="876.0" style="-fx-text-fill: white; -fx-font-size: 12px;" text="© 2026 SnowFox - Studio SnowFlake" textAlignment="CENTER" />
+            <Label alignment="CENTER" prefHeight="18.0" prefWidth="1267.0" style="-fx-text-fill: white; -fx-font-size: 12px;" text="© 2026 SnowFox - Studio SnowFlake" textAlignment="CENTER" />
          </children>
       </HBox>
    </bottom>

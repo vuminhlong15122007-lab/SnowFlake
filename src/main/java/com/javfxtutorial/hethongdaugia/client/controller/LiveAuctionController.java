@@ -15,6 +15,9 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 
@@ -22,6 +25,7 @@ import java.io.IOException;
 
 import java.net.URL;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -41,6 +45,14 @@ public class LiveAuctionController implements Initializable {
     @FXML private ImageView itemImageView;
     @FXML private Button placeBidButton;
     @FXML private Label lbTimeLeft;
+    @FXML
+    private LineChart<Number, Number> priceChart;
+    @FXML
+    private NumberAxis xAxis;
+    @FXML
+    private NumberAxis yAxis;
+    @FXML
+    private XYChart.Series<Number, Number> priceSeries;
 
     @FXML private ListView<BidTransaction> bidHistory;
     private ObservableList<BidTransaction> observable = FXCollections.observableArrayList();
@@ -79,7 +91,6 @@ public class LiveAuctionController implements Initializable {
     }
 
     public void setBidHistorytoScene(){
-        //hiển thị lsu đấu giá (nếu có)
         Command cmd = new GetBidHistoryCommand();
         cmd.addData("auctionId", currentAuction.getAuctionId());
         connection.sendCommand(cmd);
@@ -106,6 +117,7 @@ public class LiveAuctionController implements Initializable {
         setCurrentAuctionInfoToScene();
         setBidHistorytoScene();
         connectToServer();
+        initializePriceChart();
         running = true;
 
         // thời gian còn lại
@@ -116,22 +128,34 @@ public class LiveAuctionController implements Initializable {
         });
         timer.start();
     }
+    private void initializePriceChart() {
+        priceSeries = new XYChart.Series<>();
+        priceSeries.setName("Diễn biến giá"); // Tên của đường dữ liệu trong chú thích
+        priceChart.getData().add(priceSeries); // Gắn dữ liệu vào biểu đồ
 
-    private void connectToServer(){ //Khởi tạo một luồng riêng để luôn nhận phản hồi từ server mà không gây lag, đơ)
+        // (Tùy chọn) Cấu hình để biểu đồ đẹp hơn
+        priceChart.setAnimated(false); // Tắt hiệu ứng động để cập nhật mượt mà
+        priceChart.setCreateSymbols(false); // Ẩn các chấm tròn tại mỗi điểm dữ liệu
+    }
+
+
+    private void connectToServer() {
         Thread thread = new Thread(() -> {
-            while (running){
+            while (running) {
                 try {
                     Response rp = connection.receiveResponse();
-                    if (rp.getCommand() instanceof PlaceBidCommand){ //liên tục cập nhật giá cao nhất
-                        //lấy giá mới từ server trả về (mỗi khi có client đặt giá, server sẽ thông báo cho tất cả client đang hoạt động)
+
+                    // Xử lý lệnh đặt giá
+                    if (rp.getCommand() instanceof PlaceBidCommand) {
                         BidTransaction bid = (BidTransaction) rp.getPayLoad();
-                        if (ClientModel.getInstance().getCurrentUser().getName().equals(bid.getBidderName())){
+                        if (ClientModel.getInstance().getCurrentUser().getName().equals(bid.getBidderName())) {
                             Platform.runLater(() -> {
-                            showAlert("Trạng thái đặt bid", rp.getMessage());});
+                                showAlert("Trạng thái đặt bid", rp.getMessage());
+                            });
                         }
 
                         if (rp.isSuccess()) {
-                            if (bid.getAuctionId() == currentAuction.getAuctionId()) { //kiểm tra xem có trùng id auction không
+                            if (bid.getAuctionId() == currentAuction.getAuctionId()) {
                                 double newPrice = bid.getAmount();
                                 String bidderName = bid.getBidderName();
                                 int bidderId = bid.getBidderId();
@@ -140,31 +164,52 @@ public class LiveAuctionController implements Initializable {
                                 currentAuction.setWinnerId(bidderId);
                                 currentAuction.setWinningPrice(newPrice);
 
-
-                                //trong javafx, chỉ có luồng chính mới có thể sửa UI, gọi platform runlater để gọi luồng chính cập nhật giao diện
                                 Platform.runLater(() -> {
-                                    observable.add(bid);
+                                    observable.add(bid); // THÊM vào danh sách
                                     currentPrice_tf.setText(Double.toString(newPrice));
                                     highestPayer_tf.setText(bidderName);
+
+                                    // VẼ điểm mới - số thứ tự = vị trí trong danh sách
+                                    int bidSequenceNumber = observable.size();
+                                    XYChart.Data<Number, Number> newDataPoint = new XYChart.Data<>(bidSequenceNumber, newPrice);
+                                    priceSeries.getData().add(newDataPoint);
                                 });
                             }
                         }
-
                     }
 
-                    if (rp.getCommand() instanceof GetBidHistoryCommand){
+                    // Xử lý lệnh lấy lịch sử
+                    if (rp.getCommand() instanceof GetBidHistoryCommand) {
                         if (rp.isSuccess()) {
                             ArrayList<BidTransaction> bidList = (ArrayList<BidTransaction>) rp.getPayLoad();
-                            Platform.runLater(() -> {observable.addAll(bidList);});
+
+                            // 1. Đảo ngược danh sách để hiển thị từ cũ đến mới
+                            java.util.Collections.reverse(bidList);
+
+                            Platform.runLater(() -> {
+                                // CHỈ vẽ lịch sử nếu biểu đồ đang trống
+                                if (priceSeries.getData().isEmpty()) {
+                                    observable.setAll(bidList); // Dùng setAll thay vì addAll để tránh trùng lặp nếu có
+
+                                    // Vẽ toàn bộ lịch sử
+                                    for (int i = 0; i < observable.size(); i++) {
+                                        BidTransaction historicalBid = observable.get(i);
+                                        // i + 1 là số thứ tự lượt đặt giá (từ 1, 2, 3...)
+                                        priceSeries.getData().add(new XYChart.Data<>(i + 1, historicalBid.getAmount()));
+                                    }
+                                }
+                            });
                         }
                     }
 
                 } catch (IOException | ClassNotFoundException e) {
-                    throw new RuntimeException(e);
+                    e.printStackTrace();
+                    running = false;
                 }
             }
         });
         thread.setDaemon(true);
         thread.start();
     }
+
 }

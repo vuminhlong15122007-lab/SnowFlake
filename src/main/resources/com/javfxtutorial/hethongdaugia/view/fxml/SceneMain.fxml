@@ -4,7 +4,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="500" prefWidth="900" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.HomeController">
+<BorderPane prefHeight="720" prefWidth="1280" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.HomeController">
     <!-- Header -->
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="41.0" prefWidth="900.0" spacing="20" style="-fx-background-color: linear-gradient(to right, #89CFF0,lavender); -fx-padding: 10;">
@@ -14,7 +14,7 @@
             </image>
          </ImageView>
             <Label style="-fx-font-size: 22px; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox" />
-         <Pane prefHeight="70.0" prefWidth="516.0" />
+         <Pane prefHeight="71.0" prefWidth="927.0" />
             <Button fx:id="logoutButton" onAction="#goLogin" prefHeight="32.0" prefWidth="102.0" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12;" text="Đăng xuất" />
         </HBox>
     </top>
@@ -22,10 +22,10 @@
     <!-- Sidebar menu -->
     <left>
         <VBox spacing="15" style="-fx-padding: 15; -fx-pref-width: 180;">
-            <Button fx:id="homeButton" prefHeight="27.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold;" text="Trang chủ" />
-            <Button fx:id="liveAuctionButton" onAction="#goAuction" prefHeight="27.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Phiên đấu giá " />
-            <Button fx:id="manageProductsButton" onAction="#manageProducts" prefHeight="27.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Quản lý sản phẩm" />
-            <Button fx:id="profileButton" onAction="#goToProfile" prefHeight="27.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Thông tin người dùng" />
+            <Button fx:id="homeButton" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold;" text="Trang chủ" />
+            <Button fx:id="liveAuctionButton" onAction="#goAuction" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Phiên đấu giá " />
+            <Button fx:id="manageProductsButton" onAction="#manageProducts" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Quản lý sản phẩm" />
+            <Button fx:id="profileButton" onAction="#goToProfile" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Thông tin người dùng" />
         </VBox>
     </left>
 
@@ -40,27 +40,37 @@
                      <children>
                         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../assets/Dance%20Fox%20GIF.gif" />
+                              <Image url="@../../assets/Fox.gif" />
                            </image>
                         </ImageView>
                          <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                              <image>
-                                 <Image url="@../../assets/Dance%20Fox%20GIF.gif" />
+                                 <Image url="@../../assets/Fox.gif" />
                              </image>
                          </ImageView>
                          <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                          <image>
-                             <Image url="@../../assets/Dance%20Fox%20GIF.gif" />
+                             <Image url="@../../assets/Fox.gif" />
                          </image>
                      </ImageView>
                         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../assets/Dance%20Fox%20GIF.gif" />
+                              <Image url="@../../assets/Fox.gif" />
                            </image>
                         </ImageView>
                         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../assets/Dance%20Fox%20GIF.gif" />
+                              <Image url="@../../assets/Fox.gif" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../assets/Fox.gif" />
+                           </image>
+                        </ImageView>
+                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                           <image>
+                              <Image url="@../../assets/Fox.gif" />
                            </image>
                         </ImageView>
                      </children>
