@@ -120,7 +120,7 @@ public class AdminUserController implements Initializable {
         ServerConnection connection =ServerConnection.getInstance();
         User selectUser = userTable.getSelectionModel().getSelectedItem();
         if (selectUser == null){
-            showAlert("Lỗi", "Vui lòng chọn người dùng cần xóa");
+            showAlert("Lỗi", "Vui lòng chọn người dùng cần xóa" , "WrongCat.gif");
             return;
         }
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
@@ -146,13 +146,13 @@ public class AdminUserController implements Initializable {
             connection.sendCommand(cmd);
             Response rp = connection.receiveResponse();
             if (rp.isSuccess()){
-                showAlert("Xóa thành công", rp.getMessage());
+                showAlert("Xóa thành công", rp.getMessage() , "Kiss.gif");
                 userTable.getItems().remove(selectUser);
             } else {
-                showAlert("Lỗi", rp.getMessage());
+                showAlert("Lỗi", rp.getMessage() , "WrongCat.gif");
             }
         } catch (Exception e) {
-            showAlert("Lỗi", "Có lỗi xảy ra khi kết nối với server: " + e.getMessage());
+            showAlert("Lỗi", "Có lỗi xảy ra khi kết nối với server: " + e.getMessage() , "Wait.gif");
         }
 
     }

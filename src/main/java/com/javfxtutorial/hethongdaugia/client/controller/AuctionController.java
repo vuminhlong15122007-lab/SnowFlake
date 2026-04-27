@@ -71,18 +71,18 @@ public class AuctionController {
                 Response resp = connection.receiveResponse();
                 Platform.runLater(() -> {
                     if (resp == null) {
-                        showAlert("Loi tai du lieu", "Server khong tra ve du lieu phien dau gia.");
+                        showAlert("Loi tai du lieu", "Server khong tra ve du lieu phien dau gia." , "Loading.gif");
                         return;
                     }
 
                     if (!resp.isSuccess()) {
-                        showAlert("Loi tai du lieu", resp.getMessage());
+                        showAlert("Loi tai du lieu", resp.getMessage() , "Loading.gif");
                         return;
                     }
 
                     Object payload = resp.getPayLoad();
                     if (!(payload instanceof ArrayList<?> payloadList)) {
-                        showAlert("Loi tai du lieu", "Du lieu tra ve khong dung dinh dang.");
+                        showAlert("Loi tai du lieu", "Du lieu tra ve khong dung dinh dang." , "Loading.gif");
                         return;
                     }
 
@@ -97,7 +97,7 @@ public class AuctionController {
                 });
             } catch (Exception e) {
                 e.printStackTrace();
-                Platform.runLater(() -> showAlert("Khong the load phien dau gia", "Kiem tra server localhost:5000 va log loi trong console."));
+                Platform.runLater(() -> showAlert("Khong the load phien dau gia", "Kiem tra server localhost:5000 va log loi trong console." , "Loading.gif"));
             }
         }).start();
     }

@@ -53,7 +53,7 @@ public class PasswordResetController {
 
         User currentUser = ClientModel.getInstance().getCurrentUser();
         if(currentUser == null){
-            showAlert("Lỗi", "Chưa đăng nhập");
+            showAlert("Lỗi", "Chưa đăng nhập" , "Wait.gif");
             return;
         }
 
@@ -72,10 +72,10 @@ public class PasswordResetController {
 
             //load lai man hinh
             loadUserInfo();
-            showAlert("Thành công", "Cập nhật mật khẩu thành công");
+            showAlert("Thành công", "Cập nhật mật khẩu thành công" , "FunnyCat.gif");
 
         }else{
-            showAlert("Thất bại", rp.getMessage());
+            showAlert("Thất bại", rp.getMessage() , "Wait.gif");
         }
     }
 }

@@ -87,7 +87,7 @@ public class UserProfileController {
         String newEmail = safeTrim(updateEmailText.getText());
         String newPhone = safeTrim(updatePhoneText.getText());
         if (newName.isEmpty() || newEmail.isEmpty() || newPhone.isEmpty()) {
-            showAlert("Loi", "Vui long nhap day du ten, email va so dien thoai.");
+            showAlert("Loi", "Vui long nhap day du ten, email va so dien thoai." , "Wait.gif");
             return;
         }
 
@@ -106,15 +106,15 @@ public class UserProfileController {
                 User updatedUser = (User) response.getPayLoad();
                 ClientModel.getInstance().setCurrentUser(updatedUser);
                 loadUserInfo();
-                showAlert("Thanh cong", "Cap nhat thong tin thanh cong");
+                showAlert("Thành công", "Cập nhật thông tin thành công" , "Happy.gif");
                 return;
             }
 
             String message = response == null ? "Khong nhan duoc phan hoi tu server." : response.getMessage();
-            showAlert("That bai", message);
+            showAlert("That bai", message , "False.gif");
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
-            showAlert("Loi", "Khong the cap nhat thong tin. Kiem tra log server de biet chi tiet.");
+            showAlert("Loi", "Khong the cap nhat thong tin. Kiem tra log server de biet chi tiet." , "Loading.gif");
         }
     }
 

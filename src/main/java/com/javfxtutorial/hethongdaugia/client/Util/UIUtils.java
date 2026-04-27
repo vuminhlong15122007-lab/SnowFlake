@@ -6,19 +6,59 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
 
 import java.io.IOException;
 
 public class UIUtils {
     // method để hiện method Alert
+    // Dùng icon mặc định
     public static void showAlert(String title, String message) {
+        showAlert(title, message, "/com/javfxtutorial/hethongdaugia/assets/Logo.png", "/com/javfxtutorial/hethongdaugia/assets/Fox.gif");
+    }
+
+    //  Cho phép đổi Meme
+    public static void showAlert(String title, String message, String meme) {
+        String memePath = "/com/javfxtutorial/hethongdaugia/assets/" + meme;
+        showAlert(title, message, "/com/javfxtutorial/hethongdaugia/assets/Logo.png", memePath);
+    }
+
+    // Full ảnh + meme
+    public static void showAlert(String title, String message, String iconPath, String memePath) {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+
+        // Xử lý thay đổi Meme (Dấu ! mặc định)
+        if (memePath != null) {
+            try {
+                Image memeImg = new Image(UIUtils.class.getResourceAsStream(memePath));
+                ImageView imageView = new ImageView(memeImg);
+                imageView.setFitHeight(100);
+                imageView.setFitWidth(100);
+                imageView.setPreserveRatio(true);
+                alert.setGraphic(imageView);
+            } catch (Exception e) {
+                System.err.println("Không load được meme tại: " + memePath);
+            }
+        }
+
+        // Xử lý thay đổi Icon nhỏ trên thanh tiêu đề
+        if (iconPath != null) {
+            try {
+                Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                stage.getIcons().add(new Image(UIUtils.class.getResourceAsStream(iconPath)));
+            } catch (Exception e) {
+                System.err.println("Không load được icon tại: " + iconPath);
+            }
+        }
+
         alert.showAndWait();
     }
+
     //  method để hiện ra lỗi
     public static void showError(String title, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);

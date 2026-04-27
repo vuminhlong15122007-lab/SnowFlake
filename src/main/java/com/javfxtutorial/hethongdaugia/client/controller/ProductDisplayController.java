@@ -20,10 +20,7 @@ public class ProductDisplayController {
     @FXML private Label ItemPriceLabel;
     @FXML private Label LbMotasp;
     @FXML private Label StartTimeLabel;
-    @FXML private Button ThamGiaDauGiaBtn;
-    @FXML private Button btnMenu;
     @FXML private ImageView itemImageView;
-    @FXML private Label lbLoaisp;
     @FXML private Label lbTenngban;
     @FXML private Label lbtimeLeft;
     private TimeLeft timer;

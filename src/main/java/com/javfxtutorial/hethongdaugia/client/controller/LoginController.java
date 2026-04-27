@@ -26,8 +26,6 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 public class LoginController {
     @FXML private TextField Username ;
     @FXML private PasswordField Password ;
-    @FXML private Button login;
-    @FXML private Button sign_in;
     @FXML private Label message;
 
     @FXML

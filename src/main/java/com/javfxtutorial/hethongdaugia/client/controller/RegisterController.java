@@ -95,7 +95,7 @@ public class RegisterController {
                     changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
 
                 }else{
-                    showAlert("Đăng ký không thành công", rp.getMessage());
+                    showAlert("Đăng ký không thành công", rp.getMessage() , "False.gif");
                 }
             }
         }

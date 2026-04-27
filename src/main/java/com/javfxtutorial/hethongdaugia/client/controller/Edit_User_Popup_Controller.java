@@ -92,7 +92,7 @@ public class Edit_User_Popup_Controller {
                 stage.setScene(scene);
                 stage.show();
             }else{
-                showAlert("Đăng ký không thành công", rp.getMessage());
+                showAlert("Đăng ký không thành công", rp.getMessage() , "False.gif");
             }
         }
     }

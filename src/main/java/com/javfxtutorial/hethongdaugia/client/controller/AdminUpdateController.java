@@ -80,9 +80,9 @@ public class AdminUpdateController {
 
             //load lai man hinh
             loadUserInfo();
-            showAlert("Thành công", "Cập nhật thông tin thành công");
+            showAlert("Thành công", "Cập nhật thông tin thành công" , "FunnyCat.gif");
         }else{
-            showAlert("Thất bại", rp.getMessage());
+            showAlert("Thất bại", rp.getMessage() , "WrongCat.gif");
         }
     }
 }

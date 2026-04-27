@@ -94,10 +94,10 @@ public class AdminItemController implements  Initializable {
             Response rp = connection.receiveResponse();
 
             if (rp.isSuccess()) {
-                showAlert("Xóa thành công", rp.getMessage());
+                showAlert("Xóa thành công", rp.getMessage() , "FunnyCat.gif");
                 loadItemData();//load lai bang
             } else {
-                showAlert("Lỗi", rp.getMessage());
+                showAlert("Lỗi", rp.getMessage() , "Wrong.gif");
             }
 
             }catch(Exception e){}

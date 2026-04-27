@@ -109,7 +109,7 @@ public class SellerManagementController {
                         if (response.isSuccess()) {
                             Auction savedAuction = (Auction) response.getPayLoad();
                             observable.add(savedAuction);
-                            showAlert("Thành công", "Thêm sản phẩm thành công!");
+                            showAlert("Thành công", "Thêm sản phẩm thành công!", "Happy.gif");
                         } else{
                             System.out.println(response.getMessage());
                         }
@@ -118,7 +118,7 @@ public class SellerManagementController {
                 } catch (Exception e) {
                     e.printStackTrace();
                     System.out.println("Lỗi kết nối server!");
-                    showAlert("Lỗi!!", "Xem lại nội dung mình nhập");
+                    showAlert("Lỗi!!", "Xem lại nội dung mình nhập" , "Wait.gif");
 //
                 }finally{ try {connection.close();}catch (IOException e){} }
             }).start();
@@ -201,21 +201,21 @@ public class SellerManagementController {
                     Platform.runLater(() -> {
                         if (rp.isSuccess()) {  //check xem yc đã đc thực hiện chx
                             observable.remove(selected);// xóa sp khỏi ds
-                            showAlert("Thành công", "Xóa sản phẩm thành công!" );
+                            showAlert("Thành công", "Xóa sản phẩm thành công!" , "Happy.gif");
                         }else{
                             System.out.println(resp.getMessage());
                         }
                     });
                 }else{
                     Platform.runLater(() -> {
-                        showAlert("Không xóa sửa sản phẩm", "Phiên đấu giá đang diễn ra hoặc đã kết thúc");
+                        showAlert("Không xóa sửa sản phẩm", "Phiên đấu giá đang diễn ra hoặc đã kết thúc" , "False.gif");
                     });
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
                 Platform.runLater(() -> {
-                    showAlert("Lỗi!!!", "Xem lại thao tác!");
+                    showAlert("Lỗi!!!", "Xem lại thao tác!", "Wait.gif");
                 });
 
             }
@@ -250,7 +250,7 @@ public class SellerManagementController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Lỗi", "Không thể tải ảnh lên!");
+            showAlert("Lỗi", "Không thể tải ảnh lên!" , "False.gif");
         }
     }
 
@@ -294,7 +294,7 @@ public class SellerManagementController {
                 Response resp = connection.receiveResponse();
 
                 if (!resp.isSuccess()) {
-                    Platform.runLater(() -> showAlert("Lỗi", resp.getMessage()));
+                    Platform.runLater(() -> showAlert("Lỗi", resp.getMessage() , "False.gif"));
                 }
 
                 // 1. Lấy dữ liệu từ form NGAY BÂY GIỜ (trên UI Thread)
@@ -312,24 +312,24 @@ public class SellerManagementController {
                             int index = observable.indexOf(selected);
                             observable.set(index, auction);
                             productList.refresh();
-                            showAlert("Thành công", "Sửa sản phẩm thành công");
+                            showAlert("Thành công", "Sửa sản phẩm thành công" , "Happy.gif");
                         }else{
                             System.out.println(resp.getMessage());
                         }
                     });
                 } else if ((nowStatus == AuctionStatus.RUNNING)){
                     Platform.runLater(() ->
-                            showAlert("Không thể sửa", "Phiên đấu giá đang diễn ")
+                            showAlert("Không thể sửa", "Phiên đấu giá đang diễn " , "False.gif")
                     );
                 }else{
                     Platform.runLater(() ->
-                            showAlert("Không thể sửa", "Phiên đấu giá đa kết thúc ")
+                            showAlert("Không thể sửa", "Phiên đấu giá đa kết thúc " , "False.gif")
                     );
                 }
 
             } catch (Exception e) {
                 e.printStackTrace();
-                Platform.runLater(() -> showAlert("Lỗi!!!", "Xem lại thao tác!"));
+                Platform.runLater(() -> showAlert("Lỗi!!!", "Xem lại thao tác!" , "Wait.gif"));
 
             }
         }).start();
