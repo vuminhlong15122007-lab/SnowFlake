@@ -73,7 +73,7 @@
                <TextField fx:id="updatePhoneText" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
                <Label fx:id="roleLabel" text="Vai trò:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-               <Label prefHeight="27.0" prefWidth="101.0" style="-fx-background-color: linear-gradient(to right,yellow, gold); -fx-text-fill: blue; -fx-padding: 5 12 5 12; -fx-background-radius: 10;" text="Bidder / Selller" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+               <Label alignment="CENTER_RIGHT" prefHeight="27.0" prefWidth="103.0" style="-fx-background-color: linear-gradient(to right,yellow, gold); -fx-text-fill: blue; -fx-padding: 5 12 5 12; -fx-background-radius: 10;" text="Bidder / Selller" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                <columnConstraints>
                   <ColumnConstraints />
                   <ColumnConstraints />

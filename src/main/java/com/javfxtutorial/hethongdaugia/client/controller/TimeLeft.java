@@ -44,7 +44,7 @@ public class TimeLeft {       // Class tái sd — truyền vào Label và end l
             label.setText("00:00:00");
             label.setStyle("-fx-text-fill: #888888; -fx-font-weight: bold;");
             stop();
-            if (onFinished != null) onFinished.run();    //neeus co hd can sau khi het gio, thi no se chay
+            if (onFinished != null) onFinished.run();    //nếu co hd can sau khi het gio, thi no se chay
         } else {
             label.setStyle("-fx-text-fill: #d9534f; -fx-font-weight: bold;");
         }

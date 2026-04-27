@@ -46,13 +46,6 @@ public class UserProfileController {
     }
 
     @FXML
-    public void displayImage(Image img) {
-        if (img != null && myImageView != null) {
-            myImageView.setImage(img);
-        }
-    }
-
-    @FXML
     public void clickToBackToSceneMain(ActionEvent event) {
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
         }

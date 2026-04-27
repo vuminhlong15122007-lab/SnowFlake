@@ -22,8 +22,6 @@ public class SellerProductController {
         ItemID.setText(String.valueOf(auction.getItem().getItemId()));
         String base64Data = auction.getItem().getImage();
         ImageHelper.loadBase64ToImageView(itemImageView1 , base64Data);
-
-
     }
 
 

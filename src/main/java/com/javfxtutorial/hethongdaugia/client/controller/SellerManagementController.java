@@ -250,7 +250,7 @@ public class SellerManagementController {
             }
         } catch (Exception e) {
             e.printStackTrace();
-            showAlert("Loi", "Khong the tai anh len!");
+            showAlert("Lỗi", "Không thể tải ảnh lên!");
         }
     }
 
