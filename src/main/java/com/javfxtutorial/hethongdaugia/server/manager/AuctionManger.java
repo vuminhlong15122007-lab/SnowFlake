@@ -155,23 +155,60 @@ public class AuctionManger {
     }
 
 //
+//public synchronized boolean placeBid(Auction auctionFromClient, BidTransaction bid) {
+//    Auction auction = activeAuctions.get(bid.getAuctionId());
+//    if (auction == null) return false;
+//
+//    if (checkValidBid(auction, bid.getAmount())) {
+//        auction.setCurrentPrice(bid.getAmount());
+//        auction.setWinnerId(bid.getBidderId());
+//
+//        // CHỈ LƯU Ở ĐÂY: Đảm bảo dữ liệu nhất quán
+//        com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO.getInstance().update(auction);
+//        com.javfxtutorial.hethongdaugia.server.dao.BidDAO.getInstance().insertBid(bid);
+//
+//        // Broadcast cho mọi người
+//        Response rp = new Response(true, "Giá mới", bid, new PlaceBidCommand());
+//        ClientHandler.broadcast(rp, null);
+//
+//        // Kích hoạt Bot
+//        checkAndExecuteAutoBids(auction);
+//        return true;
+//    }
+//    return false;
+//}
 public synchronized boolean placeBid(Auction auctionFromClient, BidTransaction bid) {
+    // 1. Kiểm tra trong RAM trước
     Auction auction = activeAuctions.get(bid.getAuctionId());
-    if (auction == null) return false;
 
+    // 2. NẾU RAM TRỐNG: Chủ động nạp từ Database lên RAM
+    if (auction == null) {
+        System.out.println("RAM trống, đang nạp đấu giá " + bid.getAuctionId() + " từ DB...");
+        auction = AuctionDAO.getInstance().selectById(bid.getAuctionId());
+
+        if (auction != null) {
+            // Nạp vào RAM để các lượt bid sau (và cả Bot) dùng chung một đối tượng này
+            activeAuctions.put(auction.getAuctionId(), auction);
+        } else {
+            // Nếu cả DB cũng không có phiên này thì mới báo lỗi
+            return false;
+        }
+    }
+
+    // 3. Tiến hành kiểm tra giá như bình thường
     if (checkValidBid(auction, bid.getAmount())) {
         auction.setCurrentPrice(bid.getAmount());
         auction.setWinnerId(bid.getBidderId());
 
-        // CHỈ LƯU Ở ĐÂY: Đảm bảo dữ liệu nhất quán
-        com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO.getInstance().update(auction);
-        com.javfxtutorial.hethongdaugia.server.dao.BidDAO.getInstance().insertBid(bid);
+        // Cập nhật Database
+        AuctionDAO.getInstance().update(auction);
+        BidDAO.getInstance().insertBid(bid);
 
-        // Broadcast cho mọi người
+        // Phát thông báo cho mọi người
         Response rp = new Response(true, "Giá mới", bid, new PlaceBidCommand());
         ClientHandler.broadcast(rp, null);
 
-        // Kích hoạt Bot
+        // Kích hoạt Bot (nếu có ai đó đã đăng ký Bot cho phiên này)
         checkAndExecuteAutoBids(auction);
         return true;
     }
