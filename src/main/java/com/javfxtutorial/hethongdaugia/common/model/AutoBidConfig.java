@@ -4,16 +4,21 @@ import java.io.Serializable;
 
 public class AutoBidConfig implements Serializable {
     private int userId;
+    private String userName;
     private int auctionId;
     private double maxPrice;
     private boolean isActive;
 
-    public AutoBidConfig(int userId, int auctionId, double maxPrice, boolean isActive) {
+    public AutoBidConfig(int userId,String userName, int auctionId, double maxPrice, boolean isActive) {
         this.userId = userId;
+        this.userName = userName;
         this.auctionId = auctionId;
         this.maxPrice = maxPrice;
         this.isActive = isActive;
     }
+
+    public String getUserName() {return userName;}
+    public void setUserName(String userName) {this.userName = userName;}
 
     public AutoBidConfig() {}
 
