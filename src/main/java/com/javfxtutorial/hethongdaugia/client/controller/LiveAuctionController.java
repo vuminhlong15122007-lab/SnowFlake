@@ -1,16 +1,20 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
+import com.javfxtutorial.hethongdaugia.client.Util.UIUtils;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteUserCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.AutoBidCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetBidHistoryCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
+import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.application.Platform;
@@ -61,7 +65,9 @@ public class LiveAuctionController implements Initializable, ResponseListener {
     @FXML private ListView<BidTransaction> bidHistory;
     private ObservableList<BidTransaction> observable = FXCollections.observableArrayList();
 
-    private TimeLeft timer; //
+    private TimeLeft timer;
+    @FXML private TextField autoMaxPrice_tf; // Ô nhập giá trần
+    @FXML private ToggleButton autoBidToggle; // Nút bật/tắt chế độ tự động
 
     @FXML
     public void goMenu(ActionEvent event) throws IOException{
@@ -148,6 +154,49 @@ public class LiveAuctionController implements Initializable, ResponseListener {
         priceChart.setCreateSymbols(false); // Ẩn các chấm tròn tại mỗi điểm dữ liệu
     }
 
+    @FXML
+    public void onAutoBidToggle(ActionEvent event) {
+        if (autoBidToggle.isSelected()) {
+            try {
+                // Lấy giá tối đa từ giao diện
+                double maxPrice = Double.parseDouble(autoMaxPrice_tf.getText());
+                User nowUser = ClientModel.getInstance().getCurrentUser();
+                // Tạo cấu hình Bot cho người dùng hiện tại
+                AutoBidConfig config = new AutoBidConfig(nowUser.getId(), nowUser.getName(), currentAuction.getAuctionId(), maxPrice, true);
+
+                // Gửi lệnh lên Server
+                Command cmd = new AutoBidCommand();
+                cmd.addData("autoBidConfig", config);
+                NetworkManager networkManager = NetworkManager.getInstance();
+                networkManager.register(AutoBidCommand.class, this);
+                connection.sendCommand(cmd);
+
+                // Tạm thời khóa ô nhập giá để tránh thay đổi khi bot đang chạy
+                autoMaxPrice_tf.setDisable(true);
+                autoBidToggle.setText("Bot đang chạy...");
+            } catch (NumberFormatException e) {
+                UIUtils.showAlert("Lỗi nhập liệu", "Vui lòng nhập một số tiền hợp lệ!");
+                autoBidToggle.setSelected(false);
+            }
+        } else {
+            // Xử lý khi người dùng tắt Bot
+            autoMaxPrice_tf.setDisable(false);
+            autoBidToggle.setText("AutoBid");
+
+            stopAutoBid();
+        }
+    }
+    private void stopAutoBid() {
+        AutoBidConfig config = new AutoBidConfig();
+        config.setUserId(ClientModel.getInstance().getCurrentUser().getId());
+        config.setAuctionId(currentAuction.getAuctionId());
+        config.setActive(false);
+
+        Command cmd = new AutoBidCommand();
+        cmd.addData("autoBidConfig", config);
+        connection.sendCommand(cmd);
+    }
+
 
     @Override
     public void onResponse(Response rp) {
@@ -155,7 +204,7 @@ public class LiveAuctionController implements Initializable, ResponseListener {
             BidTransaction bid = (BidTransaction) rp.getPayLoad();
             if (ClientModel.getInstance().getCurrentUser().getName().equals(bid.getBidderName())) {
                 Platform.runLater(() -> {
-                    showAlert("Trạng thái đặt bid", rp.getMessage());
+                                showAlert("Trạng thái đặt bid", rp.getMessage());
                 });
             }
 
@@ -170,11 +219,11 @@ public class LiveAuctionController implements Initializable, ResponseListener {
                     currentAuction.setWinningPrice(newPrice);
 
                     Platform.runLater(() -> {
-                        observable.add(bid); // THÊM vào danh sách
-                        currentPrice_tf.setText(Double.toString(newPrice));
+                                        observable.add(bid); // Thêm vào ListView
+                                        currentPrice_tf.setText(String.format("%,.0f VND", newPrice));
                         highestPayer_tf.setText(bidderName);
 
-                        // VẼ điểm mới - số thứ tự = vị trí trong danh sách
+                                        // VẼ điểm mới lên LineChart theo số thứ tự lượt bid
                         int bidSequenceNumber = observable.size();
                         XYChart.Data<Number, Number> newDataPoint = new XYChart.Data<>(bidSequenceNumber, newPrice);
                         priceSeries.getData().add(newDataPoint);
@@ -186,23 +235,28 @@ public class LiveAuctionController implements Initializable, ResponseListener {
             if (rp.isSuccess()) {
                 ArrayList<BidTransaction> bidList = (ArrayList<BidTransaction>) rp.getPayLoad();
 
-                // 1. Đảo ngược danh sách để hiển thị từ cũ đến mới
+                            // 1. Đảo ngược danh sách để hiển thị từ cũ đến mới
                 java.util.Collections.reverse(bidList);
 
                 Platform.runLater(() -> {
-                    // CHỈ vẽ lịch sử nếu biểu đồ đang trống
+                                // CHỈ vẽ lịch sử nếu biểu đồ đang trống
                     if (priceSeries.getData().isEmpty()) {
-                        observable.setAll(bidList); // Dùng setAll thay vì addAll để tránh trùng lặp nếu có
+                                    observable.setAll(bidList); // Dùng setAll thay vì addAll để tránh trùng lặp nếu có
 
-                        // Vẽ toàn bộ lịch sử
+                                    // Vẽ toàn bộ lịch sử
                         for (int i = 0; i < observable.size(); i++) {
                             BidTransaction historicalBid = observable.get(i);
-                            // i + 1 là số thứ tự lượt đặt giá (từ 1, 2, 3...)
+                                        // i + 1 là số thứ tự lượt đặt giá (từ 1, 2, 3...)
                             priceSeries.getData().add(new XYChart.Data<>(i + 1, historicalBid.getAmount()));
                         }
                     }
                 });
             }
+        }
+        if (rp.getCommand().getClass() == AutoBidCommand.class) {
+            Platform.runLater(() -> {
+                UIUtils.showAlert("Hệ thống AutoBid", rp.getMessage());
+            });
         }
     }
 }

@@ -82,9 +82,14 @@
 
                 <!-- Khu vực đặt giá -->
                 <HBox alignment="CENTER" spacing="10">
-                    <TextField fx:id="priceInput_tf" promptText="Nhập giá của bạn..." style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
+                    <TextField fx:id="priceInput_tf" alignment="CENTER" promptText="Nhập giá của bạn..." style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
                 </HBox>
                  <Button fx:id="placeBidButton" onAction="#placeBid" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="Đặt giá" />
+                <HBox alignment="CENTER" spacing="10">
+                    <TextField fx:id="autoMaxPrice_tf" alignment="CENTER" promptText="Nhập giá tối đa bạn muốn AutoBid" style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-border-color: #b3c6ff; -fx-border-radius: 5;" />
+                </HBox>
+                <ToggleButton fx:id="autoBidToggle" onAction="#onAutoBidToggle" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 6;" text="AutoBid" />
+
             </VBox>
          <VBox prefHeight="558.0" prefWidth="513.0">
             <children>

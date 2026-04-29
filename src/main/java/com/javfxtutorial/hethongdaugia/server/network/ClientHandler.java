@@ -35,13 +35,18 @@ public class ClientHandler extends Thread {
             while (true) { //luôn chờ command của client
                 Command cmd = (Command) in.readObject();
                 Response rp = cmd.handle();
-                if (cmd instanceof PlaceBidCommand){
-                    out.writeObject(rp);
-                    out.flush();
-                    broadcast(rp, this);
+                if (rp != null) {
+                    if (cmd instanceof PlaceBidCommand && rp.isSuccess()) {
+//                        broadcast(rp, null); // Gửi cho mọi người
+                    } else {
+                        synchronized (out) {
+                            out.writeObject(rp);
+                            out.flush();
+                            out.reset(); // Quan trọng: Tránh cache dữ liệu cũ
+                        }
+                    }
                 } else {
-                    out.writeObject(rp);
-                    out.flush();
+                    System.err.println("Cảnh báo: Command " + cmd.getClass().getSimpleName() + " trả về null!");
                 }
             }
         } catch (IOException | ClassNotFoundException e ) {
@@ -66,11 +71,12 @@ public class ClientHandler extends Thread {
 
     public static void broadcast(Response rp, ClientHandler sender) {
         for (ClientHandler client: clients){
-            if (client == sender) continue;
+            if (sender != null && client == sender) continue;
             try {
                 synchronized (client.out){
                     client.out.writeObject(rp);
                     client.out.flush();
+                    client.out.reset();
                 }
             } catch (IOException e) {
                 clients.remove(client);
