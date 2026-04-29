@@ -2,9 +2,13 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
+import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
+import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
+import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteUserCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetBidHistoryCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
@@ -33,7 +37,7 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 
-public class LiveAuctionController implements Initializable {
+public class LiveAuctionController implements Initializable, ResponseListener {
     private volatile boolean running = true;
     Auction currentAuction;
     ServerConnection connection = ServerConnection.getInstance();
@@ -64,6 +68,9 @@ public class LiveAuctionController implements Initializable {
         timer.stop();
         running = false; //đóng while khi chuyển sang màn khác
         changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
+        NetworkManager networkManager = NetworkManager.getInstance();
+        networkManager.unregister(PlaceBidCommand.class, this);
+        networkManager.unregister(GetBidHistoryCommand.class, this);
     }
     @FXML
     public void clickToGoProductDisplayInfo(ActionEvent event) throws IOException{
@@ -86,14 +93,18 @@ public class LiveAuctionController implements Initializable {
         Command cmd = new PlaceBidCommand();
         cmd.addData("bid", bid);
         cmd.addData("currentAuction", currentAuction);
+        NetworkManager networkManager = NetworkManager.getInstance();
+        networkManager.register(PlaceBidCommand.class, this);
         connection.sendCommand(cmd);
-        System.out.println("Đã send command");
+        System.out.println("Đã send bidcommand");
     }
 
     public void setBidHistorytoScene(){
         Command cmd = new GetBidHistoryCommand();
         cmd.addData("auctionId", currentAuction.getAuctionId());
         connection.sendCommand(cmd);
+        NetworkManager networkManager = NetworkManager.getInstance();
+        networkManager.register(GetBidHistoryCommand.class, this);
         bidHistory.setItems(observable);
         bidHistory.setCellFactory((ListView<BidTransaction> listview) -> new BidTransactionCell());
     }
@@ -116,7 +127,6 @@ public class LiveAuctionController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         setCurrentAuctionInfoToScene();
         setBidHistorytoScene();
-        connectToServer();
         initializePriceChart();
         running = true;
 
@@ -139,77 +149,60 @@ public class LiveAuctionController implements Initializable {
     }
 
 
-    private void connectToServer() {
-        Thread thread = new Thread(() -> {
-            while (running) {
-                try {
-                    Response rp = connection.receiveResponse();
+    @Override
+    public void onResponse(Response rp) {
+        if (rp.getCommand().getClass() == PlaceBidCommand.class) {
+            BidTransaction bid = (BidTransaction) rp.getPayLoad();
+            if (ClientModel.getInstance().getCurrentUser().getName().equals(bid.getBidderName())) {
+                Platform.runLater(() -> {
+                    showAlert("Trạng thái đặt bid", rp.getMessage());
+                });
+            }
 
-                    // Xử lý lệnh đặt giá
-                    if (rp.getCommand() instanceof PlaceBidCommand) {
-                        BidTransaction bid = (BidTransaction) rp.getPayLoad();
-                        if (ClientModel.getInstance().getCurrentUser().getName().equals(bid.getBidderName())) {
-                            Platform.runLater(() -> {
-                                showAlert("Trạng thái đặt bid", rp.getMessage());
-                            });
-                        }
+            if (rp.isSuccess()) {
+                if (bid.getAuctionId() == currentAuction.getAuctionId()) {
+                    double newPrice = bid.getAmount();
+                    String bidderName = bid.getBidderName();
+                    int bidderId = bid.getBidderId();
 
-                        if (rp.isSuccess()) {
-                            if (bid.getAuctionId() == currentAuction.getAuctionId()) {
-                                double newPrice = bid.getAmount();
-                                String bidderName = bid.getBidderName();
-                                int bidderId = bid.getBidderId();
+                    currentAuction.setCurrentPrice(newPrice);
+                    currentAuction.setWinnerId(bidderId);
+                    currentAuction.setWinningPrice(newPrice);
 
-                                currentAuction.setCurrentPrice(newPrice);
-                                currentAuction.setWinnerId(bidderId);
-                                currentAuction.setWinningPrice(newPrice);
+                    Platform.runLater(() -> {
+                        observable.add(bid); // THÊM vào danh sách
+                        currentPrice_tf.setText(Double.toString(newPrice));
+                        highestPayer_tf.setText(bidderName);
 
-                                Platform.runLater(() -> {
-                                    observable.add(bid); // THÊM vào danh sách
-                                    currentPrice_tf.setText(Double.toString(newPrice));
-                                    highestPayer_tf.setText(bidderName);
-
-                                    // VẼ điểm mới - số thứ tự = vị trí trong danh sách
-                                    int bidSequenceNumber = observable.size();
-                                    XYChart.Data<Number, Number> newDataPoint = new XYChart.Data<>(bidSequenceNumber, newPrice);
-                                    priceSeries.getData().add(newDataPoint);
-                                });
-                            }
-                        }
-                    }
-
-                    // Xử lý lệnh lấy lịch sử
-                    if (rp.getCommand() instanceof GetBidHistoryCommand) {
-                        if (rp.isSuccess()) {
-                            ArrayList<BidTransaction> bidList = (ArrayList<BidTransaction>) rp.getPayLoad();
-
-                            // 1. Đảo ngược danh sách để hiển thị từ cũ đến mới
-                            java.util.Collections.reverse(bidList);
-
-                            Platform.runLater(() -> {
-                                // CHỈ vẽ lịch sử nếu biểu đồ đang trống
-                                if (priceSeries.getData().isEmpty()) {
-                                    observable.setAll(bidList); // Dùng setAll thay vì addAll để tránh trùng lặp nếu có
-
-                                    // Vẽ toàn bộ lịch sử
-                                    for (int i = 0; i < observable.size(); i++) {
-                                        BidTransaction historicalBid = observable.get(i);
-                                        // i + 1 là số thứ tự lượt đặt giá (từ 1, 2, 3...)
-                                        priceSeries.getData().add(new XYChart.Data<>(i + 1, historicalBid.getAmount()));
-                                    }
-                                }
-                            });
-                        }
-                    }
-
-                } catch (IOException | ClassNotFoundException e) {
-                    e.printStackTrace();
-                    running = false;
+                        // VẼ điểm mới - số thứ tự = vị trí trong danh sách
+                        int bidSequenceNumber = observable.size();
+                        XYChart.Data<Number, Number> newDataPoint = new XYChart.Data<>(bidSequenceNumber, newPrice);
+                        priceSeries.getData().add(newDataPoint);
+                    });
                 }
             }
-        });
-        thread.setDaemon(true);
-        thread.start();
-    }
+        }
+        if (rp.getCommand().getClass() == GetBidHistoryCommand.class) {
+            if (rp.isSuccess()) {
+                ArrayList<BidTransaction> bidList = (ArrayList<BidTransaction>) rp.getPayLoad();
 
+                // 1. Đảo ngược danh sách để hiển thị từ cũ đến mới
+                java.util.Collections.reverse(bidList);
+
+                Platform.runLater(() -> {
+                    // CHỈ vẽ lịch sử nếu biểu đồ đang trống
+                    if (priceSeries.getData().isEmpty()) {
+                        observable.setAll(bidList); // Dùng setAll thay vì addAll để tránh trùng lặp nếu có
+
+                        // Vẽ toàn bộ lịch sử
+                        for (int i = 0; i < observable.size(); i++) {
+                            BidTransaction historicalBid = observable.get(i);
+                            // i + 1 là số thứ tự lượt đặt giá (từ 1, 2, 3...)
+                            priceSeries.getData().add(new XYChart.Data<>(i + 1, historicalBid.getAmount()));
+                        }
+                    }
+                });
+            }
+        }
+    }
 }

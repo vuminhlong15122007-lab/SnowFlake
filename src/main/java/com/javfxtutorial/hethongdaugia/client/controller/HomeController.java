@@ -29,12 +29,6 @@ public class HomeController {
 
     @FXML
     public void goLogin(ActionEvent event){
-        ServerConnection connection = ServerConnection.getInstance();
-        try {
-            connection.close();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
         changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
     }
 

@@ -16,8 +16,8 @@ public class DeleteUserCommand extends Command {
         boolean success = UserManager.getInstance().deleteUser(userId, username, email, phone);
 
         if(success){
-            return new Response(true, "Xóa user thành công", null);
+            return new Response(true, "Xóa user thành công", null, this);
         }
-        return new Response(false, "Xóa thất bại", null);
+        return new Response(false, "Xóa thất bại", null, this);
     }
 }

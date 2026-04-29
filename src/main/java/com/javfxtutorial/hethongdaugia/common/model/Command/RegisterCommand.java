@@ -13,12 +13,12 @@ public class RegisterCommand extends Command {
         String username1 = (String) this.getData("username");
         boolean isUsernameExisted = UserManager.getInstance().checkExistedUsername(username1);
         if (isUsernameExisted){
-            return new Response(false, "username đã tồn tại", null);
+            return new Response(false, "username đã tồn tại", null, this);
         }
         String password = (String) this.getData("password");
         String email = (String) this.getData("email");
         String sdt = (String) this.getData("sdt");
         UserDAO.getInstance().insert(new User(username1, password, email, sdt, AccountType.USER));
-        return new Response(true, "tạo tài khoản thành công", null);
+        return new Response(true, "tạo tài khoản thành công", null, this);
     }
 }

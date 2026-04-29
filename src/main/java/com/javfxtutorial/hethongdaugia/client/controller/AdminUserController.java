@@ -1,7 +1,10 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
+import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteUserCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllUsersCommand;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
@@ -25,7 +28,7 @@ import java.util.ResourceBundle;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
-public class AdminUserController implements Initializable {
+public class AdminUserController implements Initializable, ResponseListener {
     @FXML private TableView<User> userTable;
     @FXML private TableColumn<User, Integer> colId;
     @FXML private TableColumn<User, String> colUsername;
@@ -51,33 +54,11 @@ public class AdminUserController implements Initializable {
     @FXML
     private void loadUserData() {
         new Thread(() -> {
-            ServerConnection connection = null;
-            try {
-                connection = ServerConnection.getInstance();
-                Command cmd = new GetAllUsersCommand();
-                connection.sendCommand(cmd);
-                Response resp = connection.receiveResponse();
-                if (resp.isSuccess()) {
-                    List<User> users = (List<User>) resp.getPayLoad();
-                    javafx.application.Platform.runLater(() -> {
-                        danhSach = FXCollections.observableArrayList(users);
-                        userTable.setItems(danhSach);
-                    });
-                } else {
-                    javafx.application.Platform.runLater(() ->
-                            showAlert("Lỗi", resp.getMessage())
-                    );
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                javafx.application.Platform.runLater(() ->
-                        showAlert("Lỗi", "Không thể kết nối Server")
-                );
-            } finally {
-                if (connection != null) {
-                    try { connection.close(); } catch (IOException ex) {}
-                }
-            }
+            ServerConnection connection = ServerConnection.getInstance();
+            Command cmd = new GetAllUsersCommand();
+            connection.sendCommand(cmd);
+            NetworkManager networkManager = NetworkManager.getInstance();
+            networkManager.register(GetAllUsersCommand.class, this);
         }).start();
     }
     @FXML
@@ -114,11 +95,12 @@ public class AdminUserController implements Initializable {
             e.printStackTrace();
         }
     }
+    User selectUser;
     @FXML private Button btnDeleteUser;
     @FXML
     public void clickToDeleteUser() throws IOException {
         ServerConnection connection =ServerConnection.getInstance();
-        User selectUser = userTable.getSelectionModel().getSelectedItem();
+        selectUser = userTable.getSelectionModel().getSelectedItem();
         if (selectUser == null){
             showAlert("Lỗi", "Vui lòng chọn người dùng cần xóa" , "WrongCat.gif");
             return;
@@ -134,7 +116,7 @@ public class AdminUserController implements Initializable {
         confirmAlert.getButtonTypes().setAll(yes, no);
         ButtonType result = confirmAlert.showAndWait().orElse(null);
         //neu co
-        if(result == yes){
+        if(result == yes) {
             //tao command gui len server
             DeleteUserCommand cmd = new DeleteUserCommand();
             cmd.addData("userId", selectUser.getId());
@@ -142,21 +124,10 @@ public class AdminUserController implements Initializable {
             cmd.addData("email", selectUser.getEmail());
             cmd.addData("phone", selectUser.getSdt());
 
-        try {
             connection.sendCommand(cmd);
-            Response rp = connection.receiveResponse();
-            if (rp.isSuccess()){
-                showAlert("Xóa thành công", rp.getMessage() , "Kiss.gif");
-                userTable.getItems().remove(selectUser);
-            } else {
-                showAlert("Lỗi", rp.getMessage() , "WrongCat.gif");
-            }
-        } catch (Exception e) {
-            showAlert("Lỗi", "Có lỗi xảy ra khi kết nối với server: " + e.getMessage() , "Wait.gif");
+            NetworkManager networkManager = NetworkManager.getInstance();
+            networkManager.register(DeleteUserCommand.class, this);
         }
-
-    }
-    connection.close();
 }
     @FXML private Button btnResetPassword;
     @FXML
@@ -217,5 +188,34 @@ public class AdminUserController implements Initializable {
     @FXML
     public void clickToGoItemAdmin(ActionEvent event) {
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Quan_Ly_Product_Admin.fxml");
+    }
+
+    @Override
+    public void onResponse(Response rp) {
+        if (rp.getCommand().getClass() == DeleteUserCommand.class) {
+            if (rp.isSuccess()) {
+                showAlert("Xóa thành công", rp.getMessage(), "Kiss.gif");
+                userTable.getItems().remove(selectUser);
+            } else {
+                showAlert("Lỗi", rp.getMessage(), "WrongCat.gif");
+            }
+            NetworkManager networkManager = NetworkManager.getInstance();
+            networkManager.unregister(DeleteUserCommand.class, this);
+        }
+        if (rp.getCommand().getClass() == GetAllUsersCommand.class) {
+            if (rp.isSuccess()) {
+                List<User> users = (List<User>) rp.getPayLoad();
+                javafx.application.Platform.runLater(() -> {
+                    danhSach = FXCollections.observableArrayList(users);
+                    userTable.setItems(danhSach);
+                });
+            } else {
+                javafx.application.Platform.runLater(() ->
+                        showAlert("Lỗi", rp.getMessage())
+                );
+            }
+            NetworkManager networkManager = NetworkManager.getInstance();
+            networkManager.unregister(GetAllUsersCommand.class, this);
+        }
     }
 }

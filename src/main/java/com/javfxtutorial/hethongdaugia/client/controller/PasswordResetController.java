@@ -1,7 +1,10 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
+import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
+import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.ResetPassWordCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand;
 import com.javfxtutorial.hethongdaugia.common.model.User;
@@ -18,7 +21,7 @@ import java.io.IOException;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
-public class PasswordResetController {
+public class PasswordResetController implements ResponseListener {
     @FXML private TextField txtNewPW;
     @FXML private TextField txtConfirmPW;
     @FXML private Button btnCancel;
@@ -43,15 +46,18 @@ public class PasswordResetController {
         }
     }
 
+    User currentUser;
+    String newPW;
+
     @FXML
     public void updatePW() throws IOException, ClassNotFoundException {
         //lay du lieu tu o nhap
-        String newPW = txtNewPW.getText();
+        newPW = txtNewPW.getText();
         String confirmPW = txtConfirmPW.getText();
 
         //lay user hien tai
 
-        User currentUser = ClientModel.getInstance().getCurrentUser();
+        currentUser = ClientModel.getInstance().getCurrentUser();
         if(currentUser == null){
             showAlert("Lỗi", "Chưa đăng nhập" , "Wait.gif");
             return;
@@ -64,11 +70,15 @@ public class PasswordResetController {
         cmd.addData("passWord", newPW);
 
         connection.sendCommand(cmd);
-        Response rp = connection.receiveResponse();
+        NetworkManager networkManager = NetworkManager.getInstance();
+        networkManager.register(ResetPassWordCommand.class, this);
+    }
 
+    @Override
+    public void onResponse(Response rp) {
         if(rp.isSuccess()){
             currentUser.setPassWord(newPW);
-           // System.out.println("PW từ server: " + newUser.getPassWord());
+            // System.out.println("PW từ server: " + newUser.getPassWord());
 
             //load lai man hinh
             loadUserInfo();
@@ -77,5 +87,8 @@ public class PasswordResetController {
         }else{
             showAlert("Thất bại", rp.getMessage() , "Wait.gif");
         }
+        NetworkManager networkManager = NetworkManager.getInstance();
+        networkManager.unregister(ResetPassWordCommand.class, this);
+
     }
 }

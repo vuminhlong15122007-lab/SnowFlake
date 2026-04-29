@@ -8,12 +8,13 @@ import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
 import com.javfxtutorial.hethongdaugia.server.manager.UserManager;
 
 public class AddAccountCommand extends Command {
+
     @Override
     public Response handle() {
         String username1 = (String) this.getData("username");
         boolean isUsernameExisted = UserManager.getInstance().checkExistedUsername(username1);
         if (isUsernameExisted){
-            return new Response(false, "username đã tồn tại", null);
+            return new Response(false, "username đã tồn tại", null, this);
         }
         String password = (String) this.getData("password");
         String email = (String) this.getData("email");
@@ -26,6 +27,6 @@ public class AddAccountCommand extends Command {
             e.printStackTrace();
         }
         UserDAO.getInstance().insert(new User(username1, password, email, sdt, role));
-        return new Response(true, "tạo tài khoản thành công", null);
+        return new Response(true, "tạo tài khoản thành công", null, this);
     }
 }

@@ -19,6 +19,6 @@ public class GetAllAuctionsCommand extends Command {
             AuctionStatus status = AuctionManger.getInstance().refreshAuctionStatus(auction);
             auction.setStatus(status);
         }
-        return new Response(true, "Lấy thành công", allAuctions);
+        return new Response(true, "Lấy thành công", allAuctions, this);
     }
 }

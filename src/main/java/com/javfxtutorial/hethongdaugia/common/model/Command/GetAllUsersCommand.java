@@ -12,10 +12,10 @@ public class GetAllUsersCommand extends Command {
     public Response handle() {
         try {
             List<User> users = UserDAO.getInstance().selectAll();
-            return new Response(true, "Lấy danh sách user thành công", users);
+            return new Response(true, "Lấy danh sách user thành công", users, this);
         } catch (Exception e) {
             e.printStackTrace();
-            return new Response(false, "Lỗi server: " + e.getMessage(), null);
+            return new Response(false, "Lỗi server: " + e.getMessage(), null, this);
         }
     }
 }

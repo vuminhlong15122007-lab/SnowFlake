@@ -1,10 +1,14 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.MainApplication;
+import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
+import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,7 +23,7 @@ import java.io.IOException;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
-public class Edit_User_Popup_Controller {
+public class Edit_User_Popup_Controller implements ResponseListener {
     @FXML private TextField txtName;
     @FXML private TextField txtEmail;
     @FXML private TextField txtPhoneNumber;
@@ -41,9 +45,10 @@ public class Edit_User_Popup_Controller {
                 "USER",
                 "ADMIN"));
     }
-
+    ActionEvent saveEvent;
     @FXML
     public void clickToSave(ActionEvent event) throws IOException, ClassNotFoundException {
+        saveEvent = event;
         String name = txtName.getText();
         String email = txtEmail.getText();
         String sdt = txtPhoneNumber.getText();
@@ -80,20 +85,34 @@ public class Edit_User_Popup_Controller {
             cmd.addData("sdt", sdt);
             cmd.addData("accountType", selectRole);
             connection.sendCommand(cmd);
-            Response rp = connection.receiveResponse();
-            if (rp.isSuccess()) {
-                Stage stage1 = (Stage) ((Node) event.getSource()).getScene().getWindow();
-                stage1.close();
-                Stage stage = new Stage();
-                stage.setTitle("Tạo Tài Khoản Thành Công");
-                FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/fxml/popUpSignUp.fxml"));
-                stage.initStyle(StageStyle.DECORATED);
-                Scene scene = new Scene(fxmlLoader.load());
-                stage.setScene(scene);
-                stage.show();
-            }else{
-                showAlert("Đăng ký không thành công", rp.getMessage() , "False.gif");
-            }
+            NetworkManager networkManager = NetworkManager.getInstance();
+            networkManager.register(AddAccountCommand.class, this);
         }
+    }
+
+    @Override
+    public void onResponse(Response rp) {
+        Platform.runLater(() -> {
+        if (rp.isSuccess()) {
+            Stage stage1 = (Stage) ((Node) saveEvent.getSource()).getScene().getWindow();
+            stage1.close();
+            Stage stage = new Stage();
+            stage.setTitle("Tạo Tài Khoản Thành Công");
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/fxml/popUpSignUp.fxml"));
+            stage.initStyle(StageStyle.DECORATED);
+            Scene scene = null;
+            try {
+                scene = new Scene(fxmlLoader.load());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            stage.setScene(scene);
+            stage.show();
+        }else{
+            showAlert("Đăng ký không thành công", rp.getMessage() , "False.gif");
+        }
+        });
+        NetworkManager networkManager = NetworkManager.getInstance();
+        networkManager.unregister(AddAccountCommand.class, this);
     }
 }

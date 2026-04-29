@@ -1,4 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
+import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
+import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand;
@@ -23,7 +25,7 @@ import java.util.ResourceBundle;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
-public class AdminItemController implements  Initializable {
+public class AdminItemController implements  Initializable, ResponseListener {
     @FXML private TableView<Auction> itemTable;
     @FXML private TableColumn<Auction,Integer> colId ;
     @FXML private TableColumn<Auction,String> colItemName;
@@ -39,7 +41,7 @@ public class AdminItemController implements  Initializable {
         colItemName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getItem().getName()));
         colCategory.setCellValueFactory(new PropertyValueFactory<>("status")); //truyền bừa
         colOwner.setCellValueFactory(new PropertyValueFactory<>("sellerId"));
-        colStartPrice.setCellValueFactory(new PropertyValueFactory<>("initPrice"));
+        colStartPrice.setCellValueFactory(new PropertyValueFactory<>("currentPrice"));
         colStepPrice.setCellValueFactory(new PropertyValueFactory<>("stepPrice"));
         colCategory.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getItem().getDescription()));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
@@ -54,10 +56,9 @@ public class AdminItemController implements  Initializable {
         Command cmd = new GetAllAuctionsCommand();
         ServerConnection connection = ServerConnection.getInstance();
         connection.sendCommand(cmd);
-        Response rp = connection.receiveResponse();
-        ArrayList<Auction> auctionlist = (ArrayList<Auction>) rp.getPayLoad();
-        ObservableList<Auction> danhSach = FXCollections.observableArrayList(auctionlist);
-        itemTable.setItems(danhSach);
+        NetworkManager networkManager = NetworkManager.getInstance();
+        networkManager.register(GetAllAuctionsCommand.class, this);
+
     }
 
     public void clickButtonExit(ActionEvent event){
@@ -89,21 +90,37 @@ public class AdminItemController implements  Initializable {
         //neu co
         if (result == yes) {
             DeleteAuctionCommand cmd = new DeleteAuctionCommand(selectItem);
-            try{
             connection.sendCommand(cmd);
-            Response rp = connection.receiveResponse();
-
-            if (rp.isSuccess()) {
-                showAlert("Xóa thành công", rp.getMessage() , "FunnyCat.gif");
-                loadItemData();//load lai bang
-            } else {
-                showAlert("Lỗi", rp.getMessage() , "Wrong.gif");
-            }
-
-            }catch(Exception e){}
+            NetworkManager networkManager = NetworkManager.getInstance();
+            networkManager.register(DeleteAuctionCommand.class, this);
     }
 
 
 
 }
+
+    @Override
+    public void onResponse(Response rp) {
+        if (rp.getCommand().getClass() == DeleteAuctionCommand.class) {
+            if (rp.isSuccess()) {
+                showAlert("Xóa thành công", rp.getMessage(), "FunnyCat.gif");
+                try {
+                    loadItemData();//load lai bang
+                } catch (IOException | ClassNotFoundException ex) {
+                    throw new RuntimeException(ex);
+                }
+            } else {
+                showAlert("Lỗi", rp.getMessage(), "Wrong.gif");
+            }
+            NetworkManager networkManager = NetworkManager.getInstance();
+            networkManager.unregister(DeleteAuctionCommand.class, this);
+        }
+        if (rp.getCommand().getClass() == GetAllAuctionsCommand.class) {
+            ArrayList<Auction> auctionlist = (ArrayList<Auction>) rp.getPayLoad();
+            ObservableList<Auction> danhSach = FXCollections.observableArrayList(auctionlist);
+            itemTable.setItems(danhSach);
+            NetworkManager networkManager = NetworkManager.getInstance();
+            networkManager.register(GetAllAuctionsCommand.class, this);
+        }
+    }
 }

@@ -1,8 +1,11 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
+import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllUsersCommand;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.application.Platform;
@@ -29,7 +32,7 @@ import java.util.ArrayList;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
-public class AuctionController {
+public class AuctionController implements ResponseListener {
     @FXML private ListView<Auction> featuredProductList;
     @FXML private TextField searchField;
     @FXML private Button btnHome;
@@ -66,39 +69,9 @@ public class AuctionController {
         Command cmd = new GetAllAuctionsCommand();
         ServerConnection connection = ServerConnection.getInstance();
         new Thread(() -> {
-            try {
-                connection.sendCommand(cmd);
-                Response resp = connection.receiveResponse();
-                Platform.runLater(() -> {
-                    if (resp == null) {
-                        showAlert("Loi tai du lieu", "Server khong tra ve du lieu phien dau gia." , "Loading.gif");
-                        return;
-                    }
-
-                    if (!resp.isSuccess()) {
-                        showAlert("Loi tai du lieu", resp.getMessage() , "Loading.gif");
-                        return;
-                    }
-
-                    Object payload = resp.getPayLoad();
-                    if (!(payload instanceof ArrayList<?> payloadList)) {
-                        showAlert("Loi tai du lieu", "Du lieu tra ve khong dung dinh dang." , "Loading.gif");
-                        return;
-                    }
-
-                    ArrayList<Auction> auctions = new ArrayList<>();
-                    for (Object item : payloadList) {
-                        if (item instanceof Auction auction) {
-                            auctions.add(auction);
-                        }
-                    }
-
-                    observable.setAll(auctions);
-                });
-            } catch (Exception e) {
-                e.printStackTrace();
-                Platform.runLater(() -> showAlert("Khong the load phien dau gia", "Kiem tra server localhost:5000 va log loi trong console." , "Loading.gif"));
-            }
+            connection.sendCommand(cmd);
+            NetworkManager networkManager = NetworkManager.getInstance();
+            networkManager.register(GetAllAuctionsCommand.class, this);
         }).start();
     }
 
@@ -122,5 +95,37 @@ public class AuctionController {
     @FXML
     public void goToProfile(ActionEvent event) {
             changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thong_tin_User.fxml");
+    }
+
+    @Override
+    public void onResponse(Response rp) {
+        Platform.runLater(() -> {
+            if (rp == null) {
+                showAlert("Loi tai du lieu", "Server khong tra ve du lieu phien dau gia." , "Loading.gif");
+                return;
+            }
+
+            if (!rp.isSuccess()) {
+                showAlert("Loi tai du lieu", rp.getMessage() , "Loading.gif");
+                return;
+            }
+
+            Object payload = rp.getPayLoad();
+            if (!(payload instanceof ArrayList<?> payloadList)) {
+                showAlert("Loi tai du lieu", "Du lieu tra ve khong dung dinh dang." , "Loading.gif");
+                return;
+            }
+
+            ArrayList<Auction> auctions = new ArrayList<>();
+            for (Object item : payloadList) {
+                if (item instanceof Auction auction) {
+                    auctions.add(auction);
+                }
+            }
+            observable.setAll(auctions);
+        });
+
+        NetworkManager networkManager = NetworkManager.getInstance();
+        networkManager.unregister(GetAllAuctionsCommand.class, this);
     }
 }

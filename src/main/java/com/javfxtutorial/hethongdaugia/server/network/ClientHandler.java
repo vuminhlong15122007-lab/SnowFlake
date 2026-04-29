@@ -44,7 +44,7 @@ public class ClientHandler extends Thread {
                     out.flush();
                 }
             }
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e ) {
             System.out.println("Client ngừng kết nối");
             try {
                 clientSocket.close();

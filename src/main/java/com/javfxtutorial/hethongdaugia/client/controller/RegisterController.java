@@ -1,10 +1,14 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.MainApplication;
+import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
+import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Command.RegisterCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.ResetPassWordCommand;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -23,19 +27,20 @@ import java.io.IOException;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
-public class RegisterController {
+public class RegisterController implements ResponseListener {
     @FXML public TextField PhoneNumber;
     @FXML private TextField Username;
     @FXML private TextField Email;
     @FXML private PasswordField Password;
     @FXML private PasswordField Confirm_Password;
     @FXML private Label message;
-
+    ActionEvent signUpEvent;
     @FXML
     public void clickBackToLogin(ActionEvent event) {
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
     }
     public void clickSignUp(ActionEvent event) throws IOException, ClassNotFoundException {
+        signUpEvent = event;
         String name = Username.getText();
         String password = Password.getText();
         String email = Email.getText();
@@ -83,23 +88,37 @@ public class RegisterController {
                 cmd.addData("email", email);
                 cmd.addData("sdt", sdt);
                 connection.sendCommand(cmd);
-                Response rp = connection.receiveResponse();
-                if (rp.isSuccess()){
-                    Stage stage = new Stage();
-                    stage.setTitle("Tạo Tài Khoản Thành Công");
-                    FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/fxml/popUpSignUp.fxml"));
-                    stage.initStyle(StageStyle.DECORATED);
-                    Scene scene = new Scene(fxmlLoader.load());
-                    stage.setScene(scene);
-                    stage.show();
-                    changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
+                NetworkManager networkManager = NetworkManager.getInstance();
+                networkManager.register(RegisterCommand.class, this);
 
-                }else{
-                    showAlert("Đăng ký không thành công", rp.getMessage() , "False.gif");
-                }
             }
         }
     }
 
+    @Override
+    public void onResponse(Response rp) {
+        Platform.runLater(() -> {
+        if (rp.isSuccess()){
+            Stage stage = new Stage();
+            stage.setTitle("Tạo Tài Khoản Thành Công");
+            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/fxml/popUpSignUp.fxml"));
+            stage.initStyle(StageStyle.DECORATED);
+            Scene scene = null;
+            try {
+                scene = new Scene(fxmlLoader.load());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            stage.setScene(scene);
+            stage.show();
+            changeScene(signUpEvent,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
+
+        }else{
+            showAlert("Đăng ký không thành công", rp.getMessage() , "False.gif");
+        }
+        });
+        NetworkManager networkManager = NetworkManager.getInstance();
+        networkManager.unregister(RegisterCommand.class, this);
+    }
 }
 

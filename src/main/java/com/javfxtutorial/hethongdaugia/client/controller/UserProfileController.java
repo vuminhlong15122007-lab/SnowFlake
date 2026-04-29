@@ -3,10 +3,14 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.Util.UIUtils.*;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
+import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
+import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -30,7 +34,7 @@ import java.util.Base64;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
-public class UserProfileController {
+public class UserProfileController implements ResponseListener {
     @FXML private Label usernameLabel;
     @FXML private Label emailLabel;
     @FXML private Label phoneLabel;
@@ -92,30 +96,17 @@ public class UserProfileController {
         }
 
         ServerConnection connection = ServerConnection.getInstance();
-        try {
-            UpdateProfileCommand cmd = new UpdateProfileCommand();
-            cmd.addData("userId", currentUser.getId());
-            cmd.addData("username", newName);
-            cmd.addData("email", newEmail);
-            cmd.addData("phone", newPhone);
-            cmd.addData("avt", currentUser.getImagePath());
 
-            connection.sendCommand(cmd);
-            Response response = connection.receiveResponse();
-            if (response != null && response.isSuccess() && response.getPayLoad() instanceof User) {
-                User updatedUser = (User) response.getPayLoad();
-                ClientModel.getInstance().setCurrentUser(updatedUser);
-                loadUserInfo();
-                showAlert("Thành công", "Cập nhật thông tin thành công" , "Happy.gif");
-                return;
-            }
+        UpdateProfileCommand cmd = new UpdateProfileCommand();
+        cmd.addData("userId", currentUser.getId());
+        cmd.addData("username", newName);
+        cmd.addData("email", newEmail);
+        cmd.addData("phone", newPhone);
+        cmd.addData("avt", currentUser.getImagePath());
 
-            String message = response == null ? "Khong nhan duoc phan hoi tu server." : response.getMessage();
-            showAlert("That bai", message , "False.gif");
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-            showAlert("Loi", "Khong the cap nhat thong tin. Kiem tra log server de biet chi tiet." , "Loading.gif");
-        }
+        NetworkManager networkManager = NetworkManager.getInstance();
+        networkManager.register(UpdateProfileCommand.class, this);
+        connection.sendCommand(cmd);
     }
 
     @FXML
@@ -158,5 +149,23 @@ public class UserProfileController {
     }
     private String safeTrim(String value) {
         return value == null ? "" : value.trim();
+    }
+
+    @Override
+    public void onResponse(Response response) {
+        NetworkManager networkManager = NetworkManager.getInstance();
+        networkManager.unregister(UpdateProfileCommand.class, this);
+        Platform.runLater(() -> {
+            if (response != null && response.isSuccess() && response.getPayLoad() instanceof User) {
+                User updatedUser = (User) response.getPayLoad();
+                ClientModel.getInstance().setCurrentUser(updatedUser);
+                loadUserInfo();
+                showAlert("Thành công", "Cập nhật thông tin thành công", "Happy.gif");
+                return;
+            }
+
+            String message = response == null ? "Khong nhan duoc phan hoi tu server." : response.getMessage();
+            showAlert("That bai", message, "False.gif");
+        });
     }
 }

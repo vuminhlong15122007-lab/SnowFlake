@@ -15,6 +15,6 @@ public class GetAuctionsBySellerIdCommand extends Command {
         int sellerId = (int) this.getData("sellerId");
         // Gọi AuctionDAO để lấy danh sách Auction theo sellerId
         ArrayList<Auction> auctions = AuctionDAO.getInstance().selectBySellerId(sellerId);
-        return new Response(true, "Thành công", auctions);
+        return new Response(true, "Thành công", auctions, this);
     }
 }

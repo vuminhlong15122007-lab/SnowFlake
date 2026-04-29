@@ -19,10 +19,10 @@ public class UpdateProfileCommand extends Command {
             if (updateUser != null) {
                 return new Response(true, "Cap nhat thanh cong", updateUser);
             }
-            return new Response(false, "Cap nhat that bai", null);
+            return new Response(false, "Cap nhat that bai", null, this);
         } catch (Exception e) {
             e.printStackTrace();
-            return new Response(false, "Khong the cap nhat thong tin.", null);
+            return new Response(false, "Khong the cap nhat thong tin.", null, this);
         }
     }
 }

@@ -32,11 +32,13 @@ public class ServerConnection {
         } catch (IOException e) {
             System.out.println("Không kết nối được server");
         }
+        NetworkManager networkManager = NetworkManager.getInstance();
+        networkManager.start();
 
     }
 
     // Gửi command và chờ response (đồng bộ)
-    public void sendCommand(Command cmd) {
+    public synchronized void sendCommand(Command cmd) {
         try {
             out.writeObject(cmd);
             out.flush();
@@ -56,7 +58,7 @@ public class ServerConnection {
     }
 
     public boolean isConnected(){
-        if (instance.clientSocket.isClosed()){
+        if (instance.clientSocket == null){
             return false;
         }
         return true;

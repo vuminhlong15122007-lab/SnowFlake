@@ -12,8 +12,8 @@ public class LoginCommand extends Command {
         String password = (String) this.getData("password");
         User user = UserManager.getInstance().authenticate(username, password);
         if (user != null) {
-            return new Response(true, "Đăng nhập thành công", user);
+            return new Response(true, "Đăng nhập thành công", user, this);
         }
-        return new Response(false, "Sai tên hoặc mật khẩu", null);
+        return new Response(false, "Sai tên hoặc mật khẩu", null, this);
     }
 }

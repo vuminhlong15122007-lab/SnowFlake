@@ -1,7 +1,10 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
+import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
+import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
@@ -15,7 +18,7 @@ import java.io.IOException;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
-public class AdminUpdateController {
+public class AdminUpdateController implements ResponseListener {
     @FXML private TextField txtName;
     @FXML private TextField txtEmail;
     @FXML private TextField txtPhone;
@@ -71,8 +74,13 @@ public class AdminUpdateController {
         cmd.addData("phone", newPhone);
 
         connection.sendCommand(cmd);
-        Response rp = connection.receiveResponse();
+        NetworkManager networkManager = NetworkManager.getInstance();
+        networkManager.register(UpdateProfileCommand.class, this);
 
+    }
+
+    @Override
+    public void onResponse(Response rp) {
         if(rp.isSuccess()){
             //cap nhat lai clientmodel voi user moi
             User updateUser = (User) rp.getPayLoad();
@@ -84,5 +92,7 @@ public class AdminUpdateController {
         }else{
             showAlert("Thất bại", rp.getMessage() , "WrongCat.gif");
         }
+        NetworkManager networkManager = NetworkManager.getInstance();
+        networkManager.unregister(GetAllAuctionsCommand.class, this);
     }
 }

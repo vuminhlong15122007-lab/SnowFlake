@@ -18,9 +18,9 @@ public class AddAuctionCommand extends Command{ //Dùng để thêm sản phẩm
         auction.getItem().setItemId(item.getItemId());
         int result1 = AuctionDAO.getInstance().insert(auction);
         if (result1 > 0 && result2 > 0){
-            return new Response(true, "Thêm sản phẩm mới thành công", auction);
+            return new Response(true, "Thêm sản phẩm mới thành công", auction, this);
         }
-        return new Response(false, "Lỗi!!! Thêm thất bại", null);
+        return new Response(false, "Lỗi!!! Thêm thất bại", null, this);
     }
 
 }
