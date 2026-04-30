@@ -3,49 +3,137 @@ package com.javfxtutorial.hethongdaugia.server.manager;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
-import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
-import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.BidDAO;
+import com.javfxtutorial.hethongdaugia.server.network.BidListener;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class AuctionManger {
 
-    private static AuctionManger instance;
+    // ── Singleton thread-safe ─────────────────────────
+    private static volatile AuctionManger instance;
 
-    private AuctionManger() {
-    }
+    private AuctionManger() {}
 
     public static AuctionManger getInstance() {
         if (instance == null) {
-            instance = new AuctionManger();
+            synchronized (AuctionManger.class) {
+                if (instance == null) { // double-check
+                    instance = new AuctionManger();
+                }
+            }
         }
         return instance;
     }
 
-    public Auction getCurrentAuction(int auctionId) {
-        return AuctionDAO.getInstance().selectById(auctionId);
-    }
+    // ── Observer: auctionId → list listener ──────────
+    private final Map<Integer, List<BidListener>> auctionSubscribers
+            = new ConcurrentHashMap<>();
 
-    private Map<Integer, List<AutoBidConfig>> autoBidRegistry = new ConcurrentHashMap<>();
+    // ── RAM cache ────────────────────────────────────
+    private final Map<Integer, Auction> activeAuctions
+            = new ConcurrentHashMap<>();
 
-    public synchronized boolean checkValidBid(Auction currentAuction, double amount) {
-        double currentPrice = currentAuction.getCurrentPrice();
-        if (amount >= currentPrice + currentAuction.getStepPrice()) {
-            return true;
+    // ── AutoBid registry ─────────────────────────────
+    private final Map<Integer, List<AutoBidConfig>> autoBidRegistry
+            = new ConcurrentHashMap<>();
+
+    // ─────────────────────────────────────────────────
+    // SUBSCRIBE / UNSUBSCRIBE
+    // ─────────────────────────────────────────────────
+    public void registerToAuction(BidListener listener, int auctionId) {
+        if (auctionSubscribers.containsKey(auctionId)) {
+            auctionSubscribers.get(auctionId).add(listener);
+        } else {
+            auctionSubscribers.put(auctionId, new CopyOnWriteArrayList<>(List.of(listener)));
         }
-        return false;
+        System.out.println("Đã thêm " + listener + "vào phòng auction có id: " +  auctionId);
     }
 
+    public void unregisterFromAuction(BidListener listener, int auctionId) {
+        List<BidListener> list = auctionSubscribers.get(auctionId);
+        if (list != null) list.remove(listener);
+        System.out.println("Client hủy đăng ký auction #" + auctionId);
+    }
+
+    // ─────────────────────────────────────────────────
+    // PLACE BID — logic chính
+    // ─────────────────────────────────────────────────
+    public synchronized boolean placeBid(BidTransaction bid,
+                                      ClientHandler senderThread) {
+        // 1. Lấy auction từ RAM
+        Auction auction = activeAuctions.get(bid.getAuctionId());
+
+        // 2. Nếu RAM trống → nạp từ DB
+        if (auction == null) {
+            auction = AuctionDAO.getInstance().selectById(bid.getAuctionId());
+            if (auction == null) return false; // auction không tồn tại
+            activeAuctions.put(auction.getAuctionId(), auction);
+        }
+        System.out.println("Đã lấy xong auction từ bidAuctionId");
+
+        // 3. Kiểm tra hợp lệ
+        if (!checkValidBid(auction, bid.getAmount())) {
+            System.out.println("Giá không hợp lệ");
+            return false; // giá không hợp lệ
+        }
+        System.out.println("Bid hợp lệ");
+
+        // 4. Cập nhật auction trong RAM
+        auction.setCurrentPrice(bid.getAmount());
+        auction.setWinnerId(bid.getBidderId());
+        auction.setWinningPrice(bid.getAmount());
+
+        System.out.println("Đã cập nhật lại auction");
+
+        // 5. Lưu DB
+        AuctionDAO.getInstance().update(auction);
+        BidDAO.getInstance().insertBid(bid);
+        System.out.println("Đã lưu vào database");
+
+        // 6. Thông báo cho tất cả subscriber của auction này
+        notifySubscribers(bid.getAuctionId(), bid, senderThread);
+
+//
+        // 7. Kích hoạt AutoBid nếu có
+        checkAndExecuteAutoBids(auction);
+        return true;
+    }
+
+    // ─────────────────────────────────────────────────
+    // NOTIFY — thông báo cho tất cả subscriber
+    // ─────────────────────────────────────────────────
+    private void notifySubscribers(int auctionId,
+                                   BidTransaction bid,
+                                   ClientHandler sender) {
+        List<BidListener> list = auctionSubscribers.get(auctionId);
+        if (list == null || list.isEmpty()) return;
+        list.forEach(listener -> listener.onPlaceBid(bid, sender));
+    }
+
+
+    // ─────────────────────────────────────────────────
+    // CHECK VALID BID
+    // ─────────────────────────────────────────────────
+    public boolean checkValidBid(Auction auction, double amount) {
+        return amount >= auction.getCurrentPrice() + auction.getStepPrice();
+    }
+
+    // ─────────────────────────────────────────────────
+    // AUCTION STATUS
+    // ─────────────────────────────────────────────────
     public AuctionStatus refreshAuctionStatus(Auction auction) {
         AuctionStatus previousStatus = auction.getStatus();
+
         if (LocalDateTime.now().isBefore(auction.getStartingTime())) {
             auction.setStatus(AuctionStatus.NOT_START);
         } else if (LocalDateTime.now().isAfter(auction.getEndingTime())) {
@@ -53,82 +141,20 @@ public class AuctionManger {
         } else {
             auction.setStatus(AuctionStatus.RUNNING);
         }
+
         if (previousStatus != auction.getStatus()) {
             AuctionDAO.getInstance().update(auction);
         }
         return auction.getStatus();
     }
 
-    private void checkAndExecuteAutoBids(Auction auction) {
-        List<AutoBidConfig> configs = autoBidRegistry.get(auction.getAuctionId());
-        if (configs == null || configs.isEmpty()) return;
-
-        // 1. Lấy danh sách các bot đủ điều kiện (MaxPrice >= Giá hiện tại + Bước giá)
-        double step = auction.getStepPrice();
-        double minRequired = auction.getCurrentPrice() + step;
-
-        List<AutoBidConfig> eligibleBots = new ArrayList<>();
-        for (AutoBidConfig c : configs) {
-            if (c.isActive() && c.getMaxPrice() >= minRequired) {
-                eligibleBots.add(c);
-            }
-        }
-
-        if (eligibleBots.isEmpty()) return;
-
-        // 2. Sắp xếp các bot theo MaxPrice giảm dần để tìm người cao nhất và thứ hai
-        eligibleBots.sort((b1, b2) -> Double.compare(b2.getMaxPrice(), b1.getMaxPrice()));
-
-        AutoBidConfig winnerBot = eligibleBots.get(0);
-
-        // Nếu người đang thắng hiện tại đã là bot có MaxPrice cao nhất thì không cần đè thêm
-        if (winnerBot.getUserId() == auction.getWinnerId()) return;
-
-        double finalAmount;
-        if (eligibleBots.size() == 1) {
-            // Trường hợp 1: Chỉ có 1 bot đủ điều kiện vượt qua giá hiện tại
-            // Giá mới = Giá hiện tại + 1 lần bước giá
-            finalAmount = minRequired;
-        } else {
-            // Trường hợp 2: Có ít nhất 2 bot đang "đấu" nhau
-            // Giá mới = MaxPrice của người thứ hai + bước giá
-            double secondMax = eligibleBots.get(1).getMaxPrice();
-            finalAmount = secondMax + step;
-
-            // Đảm bảo giá mới không vượt quá giới hạn (MaxPrice) của người thắng
-            if (finalAmount > winnerBot.getMaxPrice()) {
-                finalAmount = winnerBot.getMaxPrice();
-            }
-
-            // Đảm bảo giá mới vẫn phải cao hơn mức tối thiểu hiện tại
-            if (finalAmount < minRequired) {
-                finalAmount = minRequired;
-            }
-        }
-
-        // 3. Thực hiện đặt giá tự động cho winnerBot
-        BidTransaction autoBid = new BidTransaction();
-        autoBid.setBidderId(winnerBot.getUserId());
-        autoBid.setAuctionId(auction.getAuctionId());
-        autoBid.setAmount(finalAmount);
-        autoBid.setTimestamp(java.time.LocalDateTime.now());
-        autoBid.setBidderName(winnerBot.getUserName());
-
-        // Gọi lại placeBid để cập nhật DB và Broadcast cho mọi người
-        this.placeBid(auction, autoBid);
-    }
-
-    // 1. Quản lý các phiên đấu giá đang diễn ra trong RAM để đảm bảo tất cả dùng chung 1 đối tượng
-    private Map<Integer, Auction> activeAuctions = new java.util.concurrent.ConcurrentHashMap<>();
-    // Phương thức để nạp Auction vào RAM khi phiên đấu giá bắt đầu
-    public void addActiveAuction(Auction auction) {
-        activeAuctions.put(auction.getAuctionId(), auction);
-    }
-
+    // ─────────────────────────────────────────────────
+    // AUTO BID — giữ nguyên logic của người khác viết
+    // ─────────────────────────────────────────────────
     public synchronized boolean registerAutoBid(AutoBidConfig config) {
         List<AutoBidConfig> configs = autoBidRegistry.computeIfAbsent(
                 config.getAuctionId(),
-                k -> java.util.Collections.synchronizedList(new ArrayList<>())
+                k -> Collections.synchronizedList(new ArrayList<>())
         );
 
         synchronized (configs) {
@@ -137,13 +163,13 @@ public class AuctionManger {
             if (config.isActive()) {
                 configs.add(config);
 
-                // 2. LẤY TỪ RAM: Đảm bảo Bot đấu trên đúng đối tượng mà mọi người đang xem
                 Auction current = activeAuctions.get(config.getAuctionId());
-
-                // Nếu chưa có trong RAM, lúc này mới nạp từ DAO (chỉ nạp 1 lần duy nhất)
                 if (current == null) {
-                    current = AuctionDAO.getInstance().selectById(config.getAuctionId());
-                    if (current != null) activeAuctions.put(current.getAuctionId(), current);
+                    current = AuctionDAO.getInstance()
+                            .selectById(config.getAuctionId());
+                    if (current != null) {
+                        activeAuctions.put(current.getAuctionId(), current);
+                    }
                 }
 
                 if (current != null) {
@@ -154,64 +180,50 @@ public class AuctionManger {
         return true;
     }
 
-//
-//public synchronized boolean placeBid(Auction auctionFromClient, BidTransaction bid) {
-//    Auction auction = activeAuctions.get(bid.getAuctionId());
-//    if (auction == null) return false;
-//
-//    if (checkValidBid(auction, bid.getAmount())) {
-//        auction.setCurrentPrice(bid.getAmount());
-//        auction.setWinnerId(bid.getBidderId());
-//
-//        // CHỈ LƯU Ở ĐÂY: Đảm bảo dữ liệu nhất quán
-//        com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO.getInstance().update(auction);
-//        com.javfxtutorial.hethongdaugia.server.dao.BidDAO.getInstance().insertBid(bid);
-//
-//        // Broadcast cho mọi người
-//        Response rp = new Response(true, "Giá mới", bid, new PlaceBidCommand());
-//        ClientHandler.broadcast(rp, null);
-//
-//        // Kích hoạt Bot
-//        checkAndExecuteAutoBids(auction);
-//        return true;
-//    }
-//    return false;
-//}
-public synchronized boolean placeBid(Auction auctionFromClient, BidTransaction bid) {
-    // 1. Kiểm tra trong RAM trước
-    Auction auction = activeAuctions.get(bid.getAuctionId());
+    private void checkAndExecuteAutoBids(Auction auction) {
+        List<AutoBidConfig> configs = autoBidRegistry
+                .get(auction.getAuctionId());
+        if (configs == null || configs.isEmpty()) return;
 
-    // 2. NẾU RAM TRỐNG: Chủ động nạp từ Database lên RAM
-    if (auction == null) {
-        System.out.println("RAM trống, đang nạp đấu giá " + bid.getAuctionId() + " từ DB...");
-        auction = AuctionDAO.getInstance().selectById(bid.getAuctionId());
+        double step = auction.getStepPrice();
+        double minRequired = auction.getCurrentPrice() + step;
 
-        if (auction != null) {
-            // Nạp vào RAM để các lượt bid sau (và cả Bot) dùng chung một đối tượng này
-            activeAuctions.put(auction.getAuctionId(), auction);
-        } else {
-            // Nếu cả DB cũng không có phiên này thì mới báo lỗi
-            return false;
+        List<AutoBidConfig> eligibleBots = new ArrayList<>();
+        for (AutoBidConfig c : configs) {
+            if (c.isActive() && c.getMaxPrice() >= minRequired) {
+                eligibleBots.add(c);
+            }
         }
+        if (eligibleBots.isEmpty()) return;
+
+        eligibleBots.sort((b1, b2) ->
+                Double.compare(b2.getMaxPrice(), b1.getMaxPrice()));
+
+        AutoBidConfig winnerBot = eligibleBots.get(0);
+        if (winnerBot.getUserId() == auction.getWinnerId()) return;
+
+        double finalAmount;
+        if (eligibleBots.size() == 1) {
+            finalAmount = minRequired;
+        } else {
+            double secondMax = eligibleBots.get(1).getMaxPrice();
+            finalAmount = secondMax + step;
+            if (finalAmount > winnerBot.getMaxPrice()) {
+                finalAmount = winnerBot.getMaxPrice();
+            }
+            if (finalAmount < minRequired) {
+                finalAmount = minRequired;
+            }
+        }
+
+        BidTransaction autoBid = new BidTransaction();
+        autoBid.setBidderId(winnerBot.getUserId());
+        autoBid.setAuctionId(auction.getAuctionId());
+        autoBid.setAmount(finalAmount);
+        autoBid.setTimestamp(LocalDateTime.now());
+        autoBid.setBidderName(winnerBot.getUserName());
+
+        // Gọi lại placeBid — dùng sender = null vì là bot
+        this.placeBid(autoBid, null);
     }
-
-    // 3. Tiến hành kiểm tra giá như bình thường
-    if (checkValidBid(auction, bid.getAmount())) {
-        auction.setCurrentPrice(bid.getAmount());
-        auction.setWinnerId(bid.getBidderId());
-
-        // Cập nhật Database
-        AuctionDAO.getInstance().update(auction);
-        BidDAO.getInstance().insertBid(bid);
-
-        // Phát thông báo cho mọi người
-        Response rp = new Response(true, "Giá mới", bid, new PlaceBidCommand());
-        ClientHandler.broadcast(rp, null);
-
-        // Kích hoạt Bot (nếu có ai đó đã đăng ký Bot cho phiên này)
-        checkAndExecuteAutoBids(auction);
-        return true;
-    }
-    return false;
-}
 }

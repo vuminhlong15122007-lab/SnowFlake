@@ -4,11 +4,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ServerApp {
     private static final int PORT = 5000;
+    private static volatile int userCount = 0;
 
-    public static void main(String[] args) {
+     static void main(String[] args) {
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Server đã khởi động, đang lắng nghe trên cổng " + PORT);
             while (true) {

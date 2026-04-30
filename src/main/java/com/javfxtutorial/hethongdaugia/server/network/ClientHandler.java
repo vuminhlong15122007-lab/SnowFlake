@@ -1,26 +1,18 @@
 package com.javfxtutorial.hethongdaugia.server.network;
 
 
+import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
-import com.javfxtutorial.hethongdaugia.common.model.User;
-import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
-import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
-import com.javfxtutorial.hethongdaugia.server.manager.UserManager;
 
 import java.io.*;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
-public class ClientHandler extends Thread {
+public class ClientHandler extends Thread implements BidListener {
     private Socket clientSocket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
-    private static List<ClientHandler> clients = new CopyOnWriteArrayList<>();
 
     public ClientHandler(Socket socket) {
         this.clientSocket = socket;
@@ -29,21 +21,20 @@ public class ClientHandler extends Thread {
     @Override
     public void run() {
         try {
-            in = new ObjectInputStream(clientSocket.getInputStream());
+            System.out.println("Luồng "+ this.getName() +" đang chạy");
+            ClientHandlerContextHolder.set(this);
+            System.out.println("Vừa khởi tạo "+ ClientHandlerContextHolder.get().getName());
             out = new ObjectOutputStream(clientSocket.getOutputStream());
-           clients.add(this);
+            in = new ObjectInputStream(clientSocket.getInputStream());
+
             while (true) { //luôn chờ command của client
                 Command cmd = (Command) in.readObject();
                 Response rp = cmd.handle();
                 if (rp != null) {
-                    if (cmd instanceof PlaceBidCommand && rp.isSuccess()) {
-//                        broadcast(rp, null); // Gửi cho mọi người
-                    } else {
-                        synchronized (out) {
-                            out.writeObject(rp);
-                            out.flush();
-                            out.reset(); // Quan trọng: Tránh cache dữ liệu cũ
-                        }
+                    synchronized (out) {
+                        out.writeObject(rp);
+                        out.flush();
+                        out.reset(); // Quan trọng: Tránh cache dữ liệu cũ
                     }
                 } else {
                     System.err.println("Cảnh báo: Command " + cmd.getClass().getSimpleName() + " trả về null!");
@@ -58,7 +49,6 @@ public class ClientHandler extends Thread {
             }
         } finally {
             // 3. Khi Client đóng app hoặc rớt mạng, xóa khỏi danh sách
-            clients.remove(this);
             if (clientSocket != null) {
                 try {
                     clientSocket.close();
@@ -69,18 +59,16 @@ public class ClientHandler extends Thread {
         }
     }
 
-    public static void broadcast(Response rp, ClientHandler sender) {
-        for (ClientHandler client: clients){
-            if (sender != null && client == sender) continue;
+    @Override
+    public void onPlaceBid(BidTransaction bid, ClientHandler senderThread) { // chỉ gửi cho người kph sender
+        Response rp = null;
+        if (!senderThread.equals(this)) {
+            rp = new Response(true, "Có người mới đặt giá", bid, new PlaceBidCommand());
             try {
-                synchronized (client.out){
-                    client.out.writeObject(rp);
-                    client.out.flush();
-                    client.out.reset();
-                }
+                out.writeObject(rp);
+                System.out.println("Đã gửi PlaceBidCommand về cho luồng" + this.getName());
             } catch (IOException e) {
-                clients.remove(client);
-                System.out.println("Client mất kết nối, đã xóa khỏi danh sách");
+                System.out.println("Lỗi outputStream");
             }
         }
     }
