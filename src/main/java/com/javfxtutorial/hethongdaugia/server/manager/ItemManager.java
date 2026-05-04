@@ -22,15 +22,15 @@ public class ItemManager {
     Item currentItem;
 
 
-
-    public boolean deleteItem(int itemId) {
-        // Tạo đối tượng Item chỉ chứa itemId
-        Item item = new Item();
-        item.setItemId(itemId);
-
-        // Gọi DAO với đối tượng Item
-        int rows = ItemDAO.getInstance().delete(item);
-        return rows > 0;
-    }
+//
+//    public boolean deleteItem(int itemId) {
+//        // Tạo đối tượng Item chỉ chứa itemId
+//        Item item = new Item();
+//        item.setItemId(itemId);
+//
+//        // Gọi DAO với đối tượng Item
+//        int rows = ItemDAO.getInstance().delete(item);
+//        return rows > 0;
+//    }
 
 }

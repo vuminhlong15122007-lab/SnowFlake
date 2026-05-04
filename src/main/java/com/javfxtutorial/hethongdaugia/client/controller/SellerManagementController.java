@@ -70,8 +70,14 @@ public class SellerManagementController implements ResponseListener {
     public Auction getInfo(){
         String name = nameField.getText();          // Thu thap du lieu ma nguoi dung da nhap
         String description = descriptionField.getText();
-        double initPrice = Double.parseDouble(priceField.getText());
-        double stepPrice  = Double.parseDouble(tfstepPrice.getText());
+        // SỬA: xóa tất cả dấu phẩy/chấm phân cách trước khi parse
+        String rawPrice = priceField.getText().replace(",", "").replace(".", "");
+        // Nhưng cần giữ dấu chấm thập phân nếu có — cách an toàn hơn:
+        String rawPrice2 = priceField.getText().replaceAll("[^0-9.]", "");
+        double initPrice = Double.parseDouble(rawPrice2);
+
+        String rawStep = tfstepPrice.getText().replaceAll("[^0-9.]", "");
+        double stepPrice = Double.parseDouble(rawStep);
 
         // Xu ly thoi gian
         LocalDate ngayBD = startDatePicker.getValue();
@@ -206,7 +212,7 @@ public class SellerManagementController implements ResponseListener {
     public void hienThiChiTietSanPham(Auction auction){
         nameField.setText(auction.getItem().getName());          // Thu thap du lieu ma nguoi dung da nhap
         descriptionField.setText(auction.getItem().getDescription());
-        priceField.setText(String.format("%,.0f", auction.getCurrentPrice()));
+        priceField.setText(String.valueOf((long) auction.getCurrentPrice())); // VD: "1500000"
         tfstepPrice.setText(String.valueOf(auction.getStepPrice()));
         LocalDateTime start = auction.getStartingTime();
         if (start != null) {
