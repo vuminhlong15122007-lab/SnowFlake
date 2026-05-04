@@ -10,6 +10,7 @@ public class BidTransaction implements Serializable {
     private int auctionId;
     private double amount;
     private LocalDateTime timestamp;
+    private LocalDateTime newEndingTime;
 
     public BidTransaction(String bidderName, int auctionId, double amount, LocalDateTime timestamp) {
         this.bidderName = bidderName;
@@ -20,6 +21,10 @@ public class BidTransaction implements Serializable {
 
     public BidTransaction() {
     }
+
+    public LocalDateTime getNewEndingTime() {return newEndingTime;}
+
+    public void setNewEndingTime(LocalDateTime newEndingTime) {this.newEndingTime = newEndingTime;}
 
     public int getBidId() {
         return bidId;

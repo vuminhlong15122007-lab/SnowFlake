@@ -33,7 +33,4 @@ public class ItemManager {
         return rows > 0;
     }
 
-
-
-
 }

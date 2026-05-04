@@ -9,6 +9,7 @@ import com.javfxtutorial.hethongdaugia.server.dao.BidDAO;
 import com.javfxtutorial.hethongdaugia.server.network.BidListener;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -18,6 +19,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class AuctionManger {
+    //Néue có người đắtj giá X s cuối thì ra hạn thêm Y
+    private static final long ANTI_SNIPE_X_SECONDS = 60;
+    private static final long ANTI_SNIPE_Y_SECONDS = 60;
 
     // ── Singleton thread-safe ─────────────────────────
     private static volatile AuctionManger instance;
@@ -94,6 +98,17 @@ public class AuctionManger {
         auction.setWinningPrice(bid.getAmount());
 
         System.out.println("Đã cập nhật lại auction");
+        // Logic gia hạn phiên đấu giá
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime endingTime = auction.getEndingTime();
+        long secondsLeft = Duration.between(now, endingTime).toSeconds();
+        LocalDateTime endTimeNew;
+        if( secondsLeft <= ANTI_SNIPE_X_SECONDS && secondsLeft > 0){
+            endTimeNew = endingTime.plusSeconds(ANTI_SNIPE_Y_SECONDS);
+            auction.setEndingTime(endTimeNew);
+            System.out.println("GIA HAN PHIEN DAU GIA THANH CONG");
+            AuctionDAO.getInstance().update(auction);
+        }else{ endTimeNew = endingTime;}
 
         // 5. Lưu DB
         AuctionDAO.getInstance().update(auction);
@@ -101,9 +116,9 @@ public class AuctionManger {
         System.out.println("Đã lưu vào database");
 
         // 6. Thông báo cho tất cả subscriber của auction này
+        bid.setNewEndingTime(endTimeNew);
         notifySubscribers(bid.getAuctionId(), bid, senderThread);
 
-//
         // 7. Kích hoạt AutoBid nếu có
         checkAndExecuteAutoBids(auction);
         return true;
@@ -226,4 +241,7 @@ public class AuctionManger {
         // Gọi lại placeBid — dùng sender = null vì là bot
         this.placeBid(autoBid, null);
     }
+
+
+
 }

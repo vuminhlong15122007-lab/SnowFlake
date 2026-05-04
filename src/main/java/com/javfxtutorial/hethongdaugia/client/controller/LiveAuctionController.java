@@ -51,21 +51,17 @@ public class LiveAuctionController implements Initializable, ResponseListener {
     @FXML private ImageView itemImageView;
     @FXML private Button placeBidButton;
     @FXML private Label lbTimeLeft;
-    @FXML
-    private LineChart<Number, Number> priceChart;
-    @FXML
-    private NumberAxis xAxis;
-    @FXML
-    private NumberAxis yAxis;
-    @FXML
-    private XYChart.Series<Number, Number> priceSeries;
-
+    @FXML private LineChart<Number, Number> priceChart;
+    @FXML private NumberAxis xAxis;
+    @FXML private NumberAxis yAxis;
+    @FXML private XYChart.Series<Number, Number> priceSeries;
     @FXML private ListView<BidTransaction> bidHistory;
-    private ObservableList<BidTransaction> observable = FXCollections.observableArrayList();
-
-    private TimeLeft timer;
     @FXML private TextField autoMaxPrice_tf; // Ô nhập giá trần
     @FXML private ToggleButton autoBidToggle; // Nút bật/tắt chế độ tự động
+
+    private ObservableList<BidTransaction> observable = FXCollections.observableArrayList();
+    private TimeLeft timer;
+
 
     @FXML
     public void goMenu(ActionEvent event) throws IOException{
@@ -224,7 +220,23 @@ public class LiveAuctionController implements Initializable, ResponseListener {
                 currentAuction.setCurrentPrice(newPrice);
                 currentAuction.setWinnerId(bidderId);
                 currentAuction.setWinningPrice(newPrice);
+                if (bid.getNewEndingTime() != null) {
+                    LocalDateTime newEnd = bid.getNewEndingTime();
+                    currentAuction.setEndingTime(newEnd);
 
+                    Platform.runLater(() -> { // Khởi động lại tgian ms
+                        timer.stop();
+                        timer = new TimeLeft(lbTimeLeft, newEnd);
+                        timer.setOnFinished(() -> {
+                            placeBidButton.setDisable(true);
+                            placeBidButton.setText("Đã kết thúc");
+                        });
+                        timer.start();
+
+                        // (Tùy chọn) Hiện thông báo cho user biết
+                        showAlert("Gia hạn", "Phiên được gia hạn thêm 60 giây!");
+                    });
+                }
                 Platform.runLater(() -> {
                     observable.add(bid); // Thêm vào ListView
                     //set lại giá

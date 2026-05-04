@@ -1,12 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import java.lang.String?>
+<?import javafx.collections.FXCollections?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Spinner?>
+<?import javafx.scene.control.SpinnerValueFactory.IntegerSpinnerValueFactory?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="720" prefWidth="1280.0" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.SellerManagementController">
+<BorderPane prefHeight="720" prefWidth="1280.0" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.SellerManagementController">
 
-    <!-- ==================== HEADER ==================== -->
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="55.0" prefWidth="737.0" spacing="15" style="-fx-background-color: linear-gradient(to right, #89CFF0, lavender); -fx-padding: 0 15;">
 
@@ -24,12 +37,10 @@
         </HBox>
     </top>
 
-    <!-- ==================== NỘI DUNG CHÍNH ==================== -->
     <center>
         <HBox fillHeight="true" spacing="10" style="-fx-padding: 10; -fx-background-color: transparent;">
 
-            <!-- ==================== DANH SÁCH SẢN PHẨM (TRÁI) ==================== -->
-            <VBox prefHeight="484.0" prefWidth="240.0" spacing="8" style="-fx-background-color: #ffffff; -fx-padding: 10; -fx-background-radius: 8; -fx-border-color: #b3c6ff; -fx-border-radius: 8;" HBox.hgrow="NEVER">
+            <VBox prefHeight="618.0" prefWidth="315.0" spacing="8" style="-fx-background-color: #ffffff; -fx-padding: 10; -fx-background-radius: 8; -fx-border-color: #b3c6ff; -fx-border-radius: 8;" HBox.hgrow="NEVER">
 
                 <Label style="-fx-font-size: 14px; -fx-text-fill: #333366; -fx-font-weight: bold;" text="Danh sách sản phẩm" />
 
@@ -41,12 +52,10 @@
                 </HBox>
             </VBox>
 
-            <!-- ==================== FORM CHI TIẾT (PHẢI) ==================== -->
             <VBox spacing="6" style="-fx-background-color: lavender; -fx-padding: 12; -fx-background-radius: 8; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 4, 0, 0, 1);" HBox.hgrow="ALWAYS">
 
                 <Label style="-fx-font-size: 14px; -fx-text-fill: #4b0082; -fx-font-weight: bold;" text="Chi tiết sản phẩm" />
 
-                <!-- Ảnh + nút tải ảnh -->
                 <HBox alignment="CENTER_LEFT" prefHeight="121.0" prefWidth="440.0" spacing="10">
                     <ImageView fx:id="Image" fitHeight="246.0" fitWidth="192.0" pickOnBounds="true" preserveRatio="true">
                         <image>
@@ -56,21 +65,23 @@
                     <Button fx:id="btupImg" onAction="#clickToChooseImage" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-font-size: 11px; -fx-padding: 5 10;" text="Tải ảnh lên" />
                 </HBox>
 
-                <!-- Tên sản phẩm -->
                 <TextField fx:id="nameField" prefHeight="38.0" prefWidth="440.0" promptText="Tên sản phẩm" style="-fx-border-color: #b3c6ff; -fx-border-radius: 4; -fx-background-radius: 4; -fx-font-size: 12px;" />
 
-                <!-- Mô tả -->
+                <ComboBox fx:id="categoryComboBox" prefHeight="38.0" prefWidth="440.0" promptText="Chọn phân loại" style="-fx-border-color: #b3c6ff; -fx-border-radius: 4; -fx-background-radius: 4; -fx-font-size: 12px;">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+
                 <TextArea fx:id="descriptionField" prefHeight="162.0" prefWidth="984.0" promptText="Mô tả sản phẩm" style="-fx-border-color: #b3c6ff; -fx-border-radius: 4; -fx-font-size: 11px;" wrapText="true" />
 
                 <HBox prefHeight="34.0" prefWidth="440.0" spacing="8">
-                    <!-- Giá khởi điểm -->
                     <TextField fx:id="priceField" promptText="Giá khởi điểm" style="-fx-border-color: #b3c6ff; -fx-border-radius: 4; -fx-background-radius: 4; -fx-font-size: 12px;" HBox.hgrow="ALWAYS" />
 
-                    <!-- Bước giá -->
                     <TextField fx:id="tfstepPrice" promptText="Bước giá" style="-fx-border-color: #b3c6ff; -fx-border-radius: 4; -fx-background-radius: 4; -fx-font-size: 12px;" HBox.hgrow="ALWAYS" />
                 </HBox>
 
-                <!-- Thời gian bắt đầu -->
                 <HBox alignment="CENTER_LEFT" prefHeight="37.0" prefWidth="440.0" spacing="5">
                     <Label prefWidth="55" style="-fx-text-fill: #333366; -fx-font-weight: bold; -fx-font-size: 11px;" text="Bắt đầu:" />
                     <DatePicker fx:id="startDatePicker" prefWidth="110" promptText="Chọn ngày" style="-fx-font-size: 11px;" />
@@ -88,7 +99,6 @@
                     <Label style="-fx-font-size: 11px;" text="Phút" />
                 </HBox>
 
-                <!-- Thời gian kết thúc -->
                 <HBox alignment="CENTER_LEFT" prefHeight="40.0" prefWidth="440.0" spacing="5">
                     <Label prefWidth="55" style="-fx-text-fill: #333366; -fx-font-weight: bold; -fx-font-size: 11px;" text="Kết thúc:" />
                     <DatePicker fx:id="endDatePicker" prefWidth="110" promptText="Chọn ngày" style="-fx-font-size: 11px;" />
@@ -106,7 +116,6 @@
                     <Label style="-fx-font-size: 11px;" text="Phút" />
                 </HBox>
 
-                <!-- Nút Lưu -->
                 <HBox alignment="CENTER">
                     <Button fx:id="saveButton" onAction="#luuSp" prefWidth="100" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 5 0; -fx-font-size: 12px;" text="Lưu" />
                 </HBox>
@@ -115,7 +124,6 @@
         </HBox>
     </center>
 
-    <!-- ==================== FOOTER ==================== -->
     <bottom>
         <HBox alignment="CENTER" style="-fx-background-color: #b3c6ff; -fx-padding: 5;">
             <Label style="-fx-text-fill: white; -fx-font-size: 11px;" text="© 2026 SnowFox - Studio SnowFlake" />
