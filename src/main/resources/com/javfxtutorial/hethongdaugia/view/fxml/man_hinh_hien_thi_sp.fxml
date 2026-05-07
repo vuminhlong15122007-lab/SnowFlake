@@ -7,7 +7,7 @@
 
 <BorderPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #f0f8ff;" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.ProductDisplayController">
     <top>
-        <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: linear-gradient(to right, #FFF0F5, #E1BEE7, #B3E5FC); -fx-padding: 0 20;">
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: linear-gradient(to right, #89CFF0,lavender); -fx-padding: 0 20;">
             <children>
                 <ImageView fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
                     <image>
@@ -32,7 +32,7 @@
                                 <ImageView fx:id="itemImageView" fitHeight="323.0" fitWidth="351.0" pickOnBounds="true" preserveRatio="true" />
                             </children>
                         </StackPane>
-                        <Label fx:id="ItemNameLabel" style="-fx-font-weight: bold; -fx-font-size: 18px;" text="Mô hình Cáo Tuyết" textAlignment="CENTER" />
+                        <Label fx:id="ItemNameLabel" style="-fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, blue , purple); -fx-font-size: 18px;" text="Mô hình Cáo Tuyết" textAlignment="CENTER" />
                   <HBox prefHeight="25.0" prefWidth="441.0">
                      <children>
                         <Label prefHeight="31.0" prefWidth="59.0" text="Giá tiền : ">
@@ -47,10 +47,10 @@
                         </Label>
                      </children>
                   </HBox>
-                        <VBox alignment="CENTER" prefHeight="60.0" style="-fx-background-color: #fff0f0; -fx-background-radius: 10; -fx-border-color: #ffcccc; -fx-alignment: CENTER;">
+                        <VBox alignment="CENTER" prefHeight="60.0" style="-fx-background-color: lightgreen; -fx-background-radius: 10; -fx-border-color: #ffcccc; -fx-alignment: CENTER;">
                             <children>
-                                <Label style="-fx-alignment: CENTER;" text="THỜI GIAN CÒN LẠI" textAlignment="CENTER" textFill="#c0392b" />
-                                <Label fx:id="lbtimeLeft" prefHeight="38.0" prefWidth="172.0" style="-fx-font-weight: bold; -fx-font-size: 24px; -fx-alignment: CENTER;" text="00:25:40" textAlignment="CENTER" textFill="#e74c3c">
+                                <Label style="-fx-alignment: CENTER; -fx-text-fill: green;" text="THỜI GIAN CÒN LẠI" textAlignment="CENTER" textFill="#c0392b" />
+                                <Label fx:id="lbtimeLeft" prefHeight="38.0" prefWidth="172.0" style="-fx-font-weight: bold; -fx-font-size: 24px; -fx-text-fill: green; -fx-alignment: CENTER;" text="00:25:40" textAlignment="CENTER" textFill="#e74c3c">
                            <font>
                               <Font size="18.0" />
                            </font></Label>
@@ -61,7 +61,7 @@
 
                 <VBox spacing="10.0" style="-fx-background-color: #f4f7f6; -fx-padding: 15;">
                     <children>
-                        <Label style="-fx-font-weight: bold; -fx-font-size: 16px;" text="📦 THÔNG TIN SẢN PHẨM " />
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, blue , purple); -fx-font-size: 16px;" text="📦 THÔNG TIN SẢN PHẨM " />
                         <VBox prefHeight="210.0" prefWidth="461.0" spacing="5.0" style="-fx-background-color: white; -fx-padding: 10; -fx-background-radius: 10;">
                             <children>
                         <HBox prefHeight="25.0" prefWidth="441.0">

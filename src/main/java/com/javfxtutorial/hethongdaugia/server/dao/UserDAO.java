@@ -139,21 +139,21 @@ public class UserDAO implements DAOInterface<User> {
         return null;
     }
 
-    public ArrayList<User> selectByCondition(String condition) {
-        ArrayList<User> result = new ArrayList<>();
-        String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE " + condition;
-        try (Connection connection = JDBCUtil.getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
-            while (resultSet.next()) {
-                result.add(mapUser(resultSet));
-            }
-        } catch (SQLException | IllegalArgumentException e) {
-            System.err.println("Loi lay user theo dieu kien: " + e.getMessage());
-        }
-
-        return result;
-    }
+//    public ArrayList<User> selectByCondition(String condition) {
+//        ArrayList<User> result = new ArrayList<>();
+//        String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE " + condition;
+//        try (Connection connection = JDBCUtil.getConnection();
+//             Statement statement = connection.createStatement();
+//             ResultSet resultSet = statement.executeQuery(sql)) {
+//            while (resultSet.next()) {
+//                result.add(mapUser(resultSet));
+//            }
+//        } catch (SQLException | IllegalArgumentException e) {
+//            System.err.println("Loi lay user theo dieu kien: " + e.getMessage());
+//        }
+//
+//        return result;
+//    }
 
     public User selectByUsername(String username) {
         String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE name = ?";
