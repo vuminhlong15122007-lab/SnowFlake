@@ -14,11 +14,9 @@ public enum ErrorCode {
 
     BID_SELF_BID("BID-002", "Không thể tự đặt giá sản phẩm của mình", 400),
 
-    BID_AUCTION_ENDED("BID-003", "Phiên đấu giá đã kết thúc", 400),
+    BID_MINIMUM_NOT_MET("BID-003", "Giá đặt chưa đạt mức tối thiểu", 400),
 
-    BID_MINIMUM_NOT_MET("BID-004", "Giá đặt chưa đạt mức tối thiểu", 400),
-
-    BID_AMOUNT_EXCEEDS_LIMIT("BID-005", "Giá đấu vượt quá giới hạn", 400),
+    BID_AMOUNT_EXCEEDS_LIMIT("BID-004", "Giá đấu vượt quá giới hạn", 400),
 
     //loi phien dau gia
 
