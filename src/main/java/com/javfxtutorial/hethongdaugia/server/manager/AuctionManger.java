@@ -98,6 +98,7 @@ public class AuctionManger {
         auction.setWinningPrice(bid.getAmount());
 
         System.out.println("Đã cập nhật lại auction");
+
         // Logic gia hạn phiên đấu giá
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime endingTime = auction.getEndingTime();

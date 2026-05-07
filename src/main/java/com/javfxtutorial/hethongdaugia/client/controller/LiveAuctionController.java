@@ -220,7 +220,8 @@ public class LiveAuctionController implements Initializable, ResponseListener {
                 currentAuction.setCurrentPrice(newPrice);
                 currentAuction.setWinnerId(bidderId);
                 currentAuction.setWinningPrice(newPrice);
-                if (bid.getNewEndingTime() != null) {
+                //
+                if (bid.getNewEndingTime() != bid.getTimestamp()) {
                     LocalDateTime newEnd = bid.getNewEndingTime();
                     currentAuction.setEndingTime(newEnd);
 
@@ -232,11 +233,9 @@ public class LiveAuctionController implements Initializable, ResponseListener {
                             placeBidButton.setText("Đã kết thúc");
                         });
                         timer.start();
-
-                        // (Tùy chọn) Hiện thông báo cho user biết
-                        showAlert("Gia hạn", "Phiên được gia hạn thêm 60 giây!");
                     });
                 }
+
                 Platform.runLater(() -> {
                     observable.add(bid); // Thêm vào ListView
                     //set lại giá
