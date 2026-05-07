@@ -7,7 +7,7 @@
 <StackPane id="loginPane" prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.LoginController">
 
     <children>
-        <Pane style="-fx-background-color: linear-gradient(to right, #e0f7ff, #ffffff, #d6f0ff);" />
+        <Pane style="-fx-background-color: linear-gradient(to right, #e0f7ff, #ffffff, #d6f0ff); -fx-border-color: #b3c6ff;" />
 
         <AnchorPane maxHeight="556.0" maxWidth="985.0" prefHeight="556.0" prefWidth="985.0">
             <children>
@@ -28,15 +28,15 @@
                     </children>
                 </VBox>
 
-                <VBox alignment="CENTER" layoutX="550.0" layoutY="33.0" prefHeight="496.0" prefWidth="358.0" spacing="15" style="-fx-background-color: rgba(255,255,255,0.6);                              -fx-background-radius: 25;                              -fx-padding: 30;                              -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 25, 0, 0, 10);">
+                <VBox alignment="CENTER" layoutX="550.0" layoutY="33.0" prefHeight="496.0" prefWidth="358.0" spacing="15" style="-fx-background-color: rgba(255,255,255,0.65); -fx-background-radius: 25; -fx-padding: 30; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 25, 0, 0, 10);">
                     <children>
                         <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2b5876;" text="Login" />
-                        <TextField fx:id="Username" prefHeight="40" promptText="Username" style="-fx-background-radius: 10;" />
-                        <PasswordField fx:id="Password" prefHeight="40" promptText="Password" style="-fx-background-radius: 10;" />
+                        <TextField fx:id="Username" prefHeight="40" promptText="Username" style="-fx-background-radius: 12; -fx-border-color: #b3c6ff; -fx-border-radius: 12; -fx-background-color: #ffffff;" />
+                        <PasswordField fx:id="Password" prefHeight="40" promptText="Password" style="-fx-background-radius: 12; -fx-border-color: #b3c6ff; -fx-border-radius: 12; -fx-background-color: #ffffff;" />
 
-                        <Button fx:id="login" onAction="#clickLogin" prefHeight="40" prefWidth="220" style="-fx-background-radius: 20;                                        -fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed);                                        -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="LOGIN" />
+                        <Button fx:id="login" onAction="#clickLogin" prefHeight="40" prefWidth="210.0" style="-fx-background-radius: 20;                                        -fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed);                                        -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="LOGIN" />
 
-                        <Button id="sign_in" fx:id="sign_in" onAction="#clickCreateAccount" prefHeight="35" prefWidth="220" style="-fx-background-radius: 20; -fx-background-color: transparent;                                        -fx-border-color: #2f80ed; -fx-border-radius: 20;                                        -fx-text-fill: #2f80ed; -fx-cursor: hand;" text="CREATE ACCOUNT" />
+                        <Button id="sign_in" fx:id="sign_in" onAction="#clickCreateAccount" prefHeight="40.0" prefWidth="210.0" style="-fx-background-radius: 20; -fx-background-color: transparent;                                        -fx-border-color: #2f80ed; -fx-border-radius: 20;                                        -fx-text-fill: #2f80ed; -fx-cursor: hand;" text="CREATE ACCOUNT" />
                   <Label fx:id="message" alignment="CENTER" prefHeight="18.0" prefWidth="272.0" textAlignment="CENTER" textFill="RED" />
                     </children>
                 </VBox>
