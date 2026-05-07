@@ -16,15 +16,15 @@
          <Region HBox.hgrow="ALWAYS" />
          <TextField fx:id="searchField" promptText="Tìm kiếm phiên đấu giá..." style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-background-radius: 5; -fx-border-radius: 5;" />
          <Button mnemonicParsing="false" style="-fx-background-color: #2f80ed; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10; -fx-border-radius: 10;" text="Search" />
-         <Button fx:id="logOut1" mnemonicParsing="false" onAction="#logOut1" prefHeight="32.0" prefWidth="90.0" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12;" text="Đăng xuất" />
       </HBox>
    </top>
    <left>
       <VBox spacing="15" style="-fx-background-color: #f0f8ff; -fx-padding: 15; -fx-pref-width: 180;">
-         <Button fx:id="btnHome" onAction="#btnHome" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold;" text="Trang chủ" />
-         <Button fx:id="btnLiveAuction" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-text-fill: white; -fx-border-radius: 6; -fx-font-weight: bold;" text="Phiên đấu giá " />
-         <Button fx:id="btnmanageProducts" onAction="#manageProducts" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Quản lý sản phẩm" />
-         <Button fx:id="btnprofile" onAction="#goToProfile" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Thông tin người dùng" />
+         <Button fx:id="btnHome" onAction="#btnHome" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Trang chủ" />
+         <Button fx:id="btnLiveAuction" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Phiên đấu giá " />
+         <Button fx:id="btnmanageProducts" onAction="#manageProducts" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Quản lý sản phẩm" />
+         <Button fx:id="btnprofile" onAction="#goToProfile" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Thông tin người dùng" />
+         <Button fx:id="logOut1" mnemonicParsing="false" onAction="#logOut1" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Đăng xuất" />
       </VBox>
    </left>
 

@@ -4,6 +4,7 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
+<?import javafx.scene.paint.*?>
 <?import javafx.scene.text.*?>
 
 <BorderPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminUserController">
@@ -27,7 +28,7 @@
             <TextField fx:id="searchField" prefWidth="250.0" promptText="Tìm kiếm (Tên, Email, ID)..." style="-fx-background-radius: 15;" />
             <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#clickToSearch" prefHeight="26.0" prefWidth="76.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 15;" text="Tìm kiếm" />
          <Button fx:id="dltSearch" alignment="CENTER" mnemonicParsing="false" onAction="#clickToDeleteSearch" prefHeight="26.0" prefWidth="66.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 15;" text=" Xóa " textAlignment="CENTER" />
-         <Button fx:id="logOutAd" mnemonicParsing="false" onAction="#logOut" prefHeight="26.0" prefWidth="75.0" style="-fx-background-color: #3498db; -fx-text-fill: while; -fx-background-radius: 15;" text="Thoát" textFill="WHITE" />
+         <Button fx:id="logOutAd" mnemonicParsing="false" onAction="#logOut" prefHeight="26.0" prefWidth="80.0" style="-fx-background-color: #3498db; -fx-text-fill: while; -fx-background-radius: 15;" text="Thoát" textFill="WHITE" />
         </HBox>
     </top>
 
@@ -37,23 +38,20 @@
                 <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
             </padding>
 
-            <Label text="Danh sách tài khoản hệ thống">
+            <Label style="-fx-text-fill: linear-gradient(to right, blue, purple);" text="Danh sách tài khoản hệ thống">
                 <font>
                     <Font name="System Bold" size="16.0" />
                 </font>
             </Label>
-            <TableView fx:id="userTable" VBox.vgrow="ALWAYS">
+            <TableView fx:id="userTable" prefHeight="532.0" prefWidth="985.0" style="-fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="colId" prefWidth="40" text="ID" />
-                    <TableColumn fx:id="colUsername" prefWidth="120" text="Tên đăng nhập" />
-                    <TableColumn fx:id="colEmail" prefWidth="158.39993286132812" text="Email" />
-                    <TableColumn fx:id="colPhone" prefWidth="107.20001220703125" text="Sđt" />
-                    <TableColumn fx:id="colRole" minWidth="0.0" prefWidth="84.0" text="Vai trò" />
-                    <TableColumn fx:id="colStatus" prefWidth="78.4000244140625" text="Trạng thái" />
+                    <TableColumn fx:id="colId" prefWidth="62.00000113248825" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="ID" />
+                    <TableColumn fx:id="colUsername" prefWidth="192.99998092651367" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="Tên đăng nhập" />
+                    <TableColumn fx:id="colEmail" prefWidth="353.3999938964844" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="Email" />
+                    <TableColumn fx:id="colPhone" prefWidth="199.20001220703125" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="Số điện thoại" />
+                    <TableColumn fx:id="colRole" prefWidth="78.0" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="Vai trò" />
+                    <TableColumn fx:id="colStatus" prefWidth="77.7999267578125" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="Trạng thái" />
                 </columns>
-                <columnResizePolicy>
-                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                </columnResizePolicy>
             </TableView>
         </VBox>
     </center>
@@ -68,6 +66,22 @@
                 <font>
                     <Font name="System Bold" size="16.0" />
                 </font>
+            <textFill>
+               <LinearGradient endX="1.0" endY="1.0">
+                  <stops>
+                     <Stop>
+                        <color>
+                           <Color green="0.06666667014360428" blue="1.0" />
+                        </color>
+                     </Stop>
+                     <Stop offset="1.0">
+                        <color>
+                           <Color red="0.9166666865348816" blue="1.0" />
+                        </color>
+                     </Stop>
+                  </stops>
+               </LinearGradient>
+            </textFill>
             </Label>
 
             <Button fx:id="btnAddUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToAddUser" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold;" text="+ Thêm người dùng mới" />

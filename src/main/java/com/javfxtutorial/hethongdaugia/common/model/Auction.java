@@ -25,7 +25,7 @@ public class Auction implements Serializable {
     private LocalDateTime startingTime;
     private LocalDateTime endingTime;
 
-    // Trạng thái của phiên đấu giá (VD: PENDING, ONGOING, ENDED, CANCELLED)
+    // Trạng thái của phiên đấu giá
     private AuctionStatus status;
 
     // ID của người chiến thắng (sau khi phiên kết thúc)
