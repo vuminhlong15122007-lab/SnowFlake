@@ -23,7 +23,7 @@ public class HomeController {
 
     @FXML
     public void goAuction(ActionEvent event){
-        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/auction_list.fxml");
+        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml");
     }
 
 

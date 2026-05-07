@@ -9,6 +9,9 @@ public class Item implements Serializable {
     private String image; // ảnh đã được mã hóa
     private String sellerName;
 
+    private String category;
+
+
     public Item(int sellerId, String name, String description, String image, String sellerName) {
         this.sellerId = sellerId;
         this.name = name;
@@ -49,7 +52,8 @@ public class Item implements Serializable {
     public String getSellerName() {return sellerName;}
     public void setSellerName(String sellerName) {this.sellerName = sellerName;}
 
-
+    public String getCategory() { return category; }
+    public void setCategory(String category) { this.category = category; }
 }
 
 

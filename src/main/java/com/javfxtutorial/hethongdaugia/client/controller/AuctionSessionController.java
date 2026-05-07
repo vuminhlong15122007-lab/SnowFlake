@@ -1,95 +1,107 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
+import com.sun.jdi.Value;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.stage.Stage;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Base64;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 
 public class AuctionSessionController {
-    @FXML private Label AuctionStatusText;
-    @FXML private Label ItemNameLabel;
-    @FXML private Label ItemPriceText;
-    @FXML private Label SellerNameText;
-    @FXML private Label StartTimeText;
-    @FXML private ImageView Image;
+    // ── Dùng chung cho tất cả cell ──
+    @FXML private Label lbProductName;
+    @FXML private Label lbSellerName;
+    @FXML private Label lbPrice;
+    @FXML private Label lbCategory;
+    @FXML private Label statusBadge;
+    @FXML private ImageView productImage;
+    @FXML private Button actionButton;
 
-    private Item item;
+    // ── Riêng cho cell ENDED ──
+    @FXML private Label lbWinner;
+
     private Auction auction;
 
-    public void setData(Auction auction) throws IOException, ClassNotFoundException {
-        if (auction == null || auction.getAuctionId() <= 0 || auction.getItem() == null) {
-            return;
-        }
-
+    public void setData(Auction auction) {
+        if (auction == null || auction.getItem() == null) return;
         this.auction = auction;
-        this.item = auction.getItem();
 
-        ItemNameLabel.setText(item.getName());
-        SellerNameText.setText(item.getSellerName());
-        StartTimeText.setText(String.valueOf(auction.getStartingTime()));
-        ItemPriceText.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
-        AuctionStatusText.setText(String.valueOf(auction.getStatus()));
-        Image.setImage(loadImage(item.getImage()));
+        // Thông tin chung
+        safeSet(lbProductName, auction.getItem().getName());
+        safeSet(lbSellerName, auction.getItem().getSellerName());
+        safeSet(lbCategory, auction.getItem().getCategory());
+
+        // Load ảnh
+        loadImage(auction.getItem().getImage());
+
+        // Xử lý theo trạng thái
+        switch (auction.getStatus()) {
+            case RUNNING:
+                safeSet(statusBadge, "ĐANG DIỄN RA");
+                if (statusBadge != null) statusBadge.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 2 8; -fx-background-radius: 8;");
+                safeSet(lbPrice, String.format("%,.0f VND", auction.getCurrentPrice()));
+                if (actionButton != null) {
+                    actionButton.setDisable(false);
+                    actionButton.setStyle("-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-cursor: hand;");
+                    actionButton.setOnAction(this::clickToLiveAuction);
+                }
+                break;
+
+            case NOT_START:
+                safeSet(statusBadge, "SẮP DIỄN RA");
+                if (statusBadge != null) statusBadge.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 2 8; -fx-background-radius: 8;");
+                safeSet(lbPrice, String.format("%,.0f VND", auction.getInitPrice()));
+                if (actionButton != null) {
+                    actionButton.setDisable(true);
+                    actionButton.setStyle("-fx-background-color: #bdc3c7; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20;");
+                }
+                break;
+
+            case CLOSED:
+                safeSet(lbPrice, String.format("%,.0f VND", auction.getWinningPrice()));
+                safeSet(lbWinner, String.valueOf(auction.getWinnerId()));
+                break;
+        }
     }
 
-    private Image loadImage(String imageData) {
-        if (imageData == null || imageData.isBlank()) {
-            return null;
-        }
-
-        String trimmed = imageData.trim();
-
-        try {
-            String normalized = stripDataUriPrefix(trimmed);
-            byte[] imageBytes = Base64.getDecoder().decode(normalized);
-            Image image = new Image(new ByteArrayInputStream(imageBytes));
-            if (!image.isError()) {
-                return image;
-            }
-        } catch (IllegalArgumentException ignored) {
-        }
-
-        String resourcePath = trimmed.startsWith("/") ? trimmed : "/" + trimmed;
-        try (InputStream inputStream = getClass().getResourceAsStream(resourcePath)) {
-            if (inputStream == null) {
-                return null;
-            }
-
-            Image image = new Image(inputStream);
-            return image.isError() ? null : image;
-        } catch (IOException ignored) {
-            return null;
+    private String getCategoryName(Item item) {
+        String className = item.getClass().getSimpleName();
+        switch (className) {
+            case "Art": return "Art";
+            case "Vehicle": return "Vehicle";
+            case "Electronics": return "Electronics";
+            default: return "Khác";
         }
     }
 
-    private String stripDataUriPrefix(String imageData) {
-        int separatorIndex = imageData.indexOf(',');
-        if (imageData.startsWith("data:") && separatorIndex >= 0) {
-            return imageData.substring(separatorIndex + 1);
-        }
-        return imageData;
+    private void safeSet(Label label, String text) {
+        if (label != null) label.setText(text);
+    }
+
+    private void loadImage(String imageData) {
+        if (productImage == null || imageData == null || imageData.isBlank()) return;
+        ImageHelper.loadBase64ToImageView(productImage, imageData);
     }
 
     @FXML
     public void clickToLiveAuction(ActionEvent event) {
-            ClientModel.getInstance().setCurrentItem(item);
-            ClientModel.getInstance().setCurrentAuction(auction);
-            changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thi_sp.fxml");
+        if (auction == null) return;
+        ClientModel.getInstance().setCurrentAuction(auction);
+        ClientModel.getInstance().setCurrentItem(auction.getItem());
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thi_sp.fxml");
+    }
 
+    @FXML
+    public void BtAuction(ActionEvent event) {
+        if (auction == null) return;
+        ClientModel.getInstance().setCurrentAuction(auction);
+        ClientModel.getInstance().setCurrentItem(auction.getItem());
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/dau_gia_truc_tiep.fxml");
     }
 }
