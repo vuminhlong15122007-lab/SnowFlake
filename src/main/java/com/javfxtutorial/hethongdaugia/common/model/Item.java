@@ -8,7 +8,6 @@ public class Item implements Serializable {
     private String description;
     private String image; // ảnh đã được mã hóa
     private String sellerName;
-
     private String category;
 
 
