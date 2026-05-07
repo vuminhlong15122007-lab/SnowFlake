@@ -33,11 +33,11 @@
                     <children>
                         <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: #2b5876;" text="Register" />
 
-                        <TextField fx:id="Username" prefHeight="35" promptText="Username" style="-fx-background-radius: 12;" />
-                        <TextField fx:id="Email" prefHeight="35" promptText="Email" style="-fx-background-radius: 12;" />
-                        <TextField fx:id="PhoneNumber" prefHeight="35" promptText="Phone number" style="-fx-background-radius: 12;" />
-                        <PasswordField fx:id="Password" prefHeight="35" promptText="Password" style="-fx-background-radius: 12;" />
-                        <PasswordField fx:id="Confirm_Password" prefHeight="35" promptText="Confirm Password" style="-fx-background-radius: 12;" />
+                        <TextField fx:id="Username" prefHeight="35" promptText="Username" style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #b3c6ff; -fx-border-radius: 12;" />
+                        <TextField fx:id="Email" prefHeight="35" promptText="Email" style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #b3c6ff; -fx-border-radius: 12;" />
+                        <TextField fx:id="PhoneNumber" prefHeight="35" promptText="Phone number" style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #b3c6ff; -fx-border-radius: 12;" />
+                        <PasswordField fx:id="Password" prefHeight="35" promptText="Password" style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #b3c6ff; -fx-border-radius: 12;" />
+                        <PasswordField fx:id="Confirm_Password" prefHeight="35" promptText="Confirm Password" style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #b3c6ff; -fx-border-radius: 12;" />
 
                         <CheckBox style="-fx-text-fill: #4e7ea8;" text="I agree to Terms" />
 

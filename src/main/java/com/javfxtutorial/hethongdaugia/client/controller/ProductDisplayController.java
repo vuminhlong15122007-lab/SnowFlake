@@ -10,6 +10,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
+import javafx.scene.layout.VBox;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
@@ -23,6 +24,9 @@ public class ProductDisplayController {
     @FXML private ImageView itemImageView;
     @FXML private Label lbTenngban;
     @FXML private Label lbtimeLeft;
+    @FXML private Label UI01;
+    @FXML private VBox UI02;
+    @FXML private Button ThamGiaDauGiaBtn;
     private TimeLeft timer;
 
 
@@ -49,10 +53,18 @@ public class ProductDisplayController {
             timer.start();
         }else if ( auction.getStatus().toString().equals("NOT_START")) {
             lbtimeLeft.setText("CHƯA BẮT ĐẦU");
-            lbtimeLeft.setStyle("-fx-text-fill: #888888;");
+            UI01.setStyle("-fx-text-fill: orange; -fx-alignment: CENTER;");
+            UI02.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: orange; -fx-alignment: CENTER;");
+            lbtimeLeft.setStyle("-fx-text-fill: orange;");
+            ThamGiaDauGiaBtn.setText("Chưa thể tham gia");
+            ThamGiaDauGiaBtn.setStyle("-fx-background-color: linear-gradient(to right, red, orange); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25; -fx-cursor: hand;");
         } else {
             lbtimeLeft.setText("ĐÃ KẾT THÚC");
-            lbtimeLeft.setStyle("-fx-text-fill: #888888;");
+            UI01.setStyle("-fx-text-fill: red; -fx-alignment: CENTER;");
+            UI02.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: red; -fx-alignment: CENTER;");
+            lbtimeLeft.setStyle("-fx-text-fill: red;");
+            ThamGiaDauGiaBtn.setText("Phiên đấu giá đã đóng");
+            ThamGiaDauGiaBtn.setStyle("-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25; -fx-cursor: hand;");
         }
     }
 

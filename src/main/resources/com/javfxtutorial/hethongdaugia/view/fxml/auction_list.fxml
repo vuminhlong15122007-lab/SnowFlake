@@ -20,11 +20,11 @@
    </top>
    <left>
       <VBox spacing="15" style="-fx-background-color: #f0f8ff; -fx-padding: 15; -fx-pref-width: 180;">
-         <Button fx:id="btnHome" onAction="#btnHome" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold;" text="Trang chủ" />
-         <Button fx:id="btnLiveAuction" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-text-fill: white; -fx-border-radius: 6; -fx-font-weight: bold;" text="Phiên đấu giá " />
-         <Button fx:id="btnmanageProducts" onAction="#manageProducts" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Quản lý sản phẩm" />
-         <Button fx:id="btnprofile" onAction="#goToProfile" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Thông tin người dùng" />
-         <Button fx:id="logOut1" mnemonicParsing="false" onAction="#logOut1" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, pink, red); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Đăng xuất" />
+         <Button fx:id="btnHome" onAction="#btnHome" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Trang chủ" />
+         <Button fx:id="btnLiveAuction" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Phiên đấu giá " />
+         <Button fx:id="btnmanageProducts" onAction="#manageProducts" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Quản lý sản phẩm" />
+         <Button fx:id="btnprofile" onAction="#goToProfile" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Thông tin người dùng" />
+         <Button fx:id="logOut1" mnemonicParsing="false" onAction="#logOut1" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Đăng xuất" />
       </VBox>
    </left>
 

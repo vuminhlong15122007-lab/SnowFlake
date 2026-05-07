@@ -42,17 +42,14 @@
             </Label>
             <TableView fx:id="itemTable" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="colId" prefWidth="60.0" text="Mã SP" />
-                    <TableColumn fx:id="colItemName" prefWidth="200.0" text="Tên sản phẩm" />
-                    <TableColumn fx:id="colCategory" prefWidth="120.0" text="Danh mục" />
-                    <TableColumn fx:id="colOwner" prefWidth="120.0" text="Người đăng" />
-                    <TableColumn fx:id="colStartPrice" prefWidth="120.0" text="Giá hiện tại" />
-                    <TableColumn fx:id="colStepPrice" prefWidth="120.0" text="Bước giá" />
-                    <TableColumn fx:id="colStatus" prefWidth="100.0" text="Trạng thái" />
+                    <TableColumn fx:id="colId" prefWidth="83.60001200437546" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="Mã SP" />
+                    <TableColumn fx:id="colItemName" prefWidth="224.3999786376953" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="Tên sản phẩm" />
+                    <TableColumn fx:id="colCategory" prefWidth="113.0" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="Danh mục" />
+                    <TableColumn fx:id="colOwner" prefWidth="121.5999755859375" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="Người đăng" />
+                    <TableColumn fx:id="colStartPrice" prefWidth="134.20001220703125" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="Giá hiện tại" />
+                    <TableColumn fx:id="colStepPrice" prefWidth="173.0" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="Bước giá" />
+                    <TableColumn fx:id="colStatus" prefWidth="93.5999755859375" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="Trạng thái" />
                 </columns>
-                <columnResizePolicy>
-                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
-                </columnResizePolicy>
             </TableView>
         </VBox>
     </center>

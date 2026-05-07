@@ -21,11 +21,11 @@
     <!-- Sidebar menu -->
     <left>
         <VBox spacing="15" style="-fx-padding: 15; -fx-pref-width: 180;">
-            <Button fx:id="homeButton" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-text-fill: white; -fx-background-radius: 6; -fx-font-weight: bold;" text="Trang chủ" />
-            <Button fx:id="liveAuctionButton" onAction="#goAuction" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Phiên đấu giá " />
-            <Button fx:id="manageProductsButton" onAction="#manageProducts" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Quản lý sản phẩm" />
-            <Button fx:id="profileButton" onAction="#goToProfile" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, skyblue, #2f80ed); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Thông tin người dùng" />
-            <Button fx:id="logoutButton" onAction="#goLogin" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, pink, red); -fx-font-weight: bold; -fx-border-radius: 6; -fx-text-fill: white;" text="Đăng xuất" />
+            <Button fx:id="homeButton" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Trang chủ" />
+            <Button fx:id="liveAuctionButton" onAction="#goAuction" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Phiên đấu giá " />
+            <Button fx:id="manageProductsButton" onAction="#manageProducts" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Quản lý sản phẩm" />
+            <Button fx:id="profileButton" onAction="#goToProfile" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Thông tin người dùng" />
+            <Button fx:id="logoutButton" onAction="#goLogin" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Đăng xuất" />
         </VBox>
     </left>
 
@@ -38,11 +38,6 @@
                   <Label prefHeight="85.0" prefWidth="231.0" style="-fx-font-size: 30; -fx-font-weight: bold; -fx-font-family: 'Lucida Handwriting', 'Mistral', 'Cursive'; -fx-text-fill: #34495e; -fx-effect: dropshadow(three-pass-box, rgba(47, 128, 237, 0.2), 15, 0, 0, 5); -fx-padding: 0 0 10 0;" text="WELCOME TO" textAlignment="CENTER" />
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../assets/Fox.gif" />
-                           </image>
-                        </ImageView>
                         <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
                            <image>
                               <Image url="@../../assets/Fox.gif" />
@@ -72,7 +67,7 @@
     <bottom>
         <HBox prefHeight="22.0" prefWidth="600.0" style="-fx-background-color: #b3c6ff; -fx-padding: 8;" BorderPane.alignment="CENTER">
             <children>
-                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="901.0" style="-fx-font-size: 12px;" text="© 2026 SnowFox - Studio SnowFlake" textAlignment="CENTER" textFill="#902a2a" />
+                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="1288.0" style="-fx-font-size: 12px;" text="© 2026 SnowFox - Studio SnowFlake" textAlignment="CENTER" textFill="#902a2a" />
             </children>
         </HBox>
     </bottom>

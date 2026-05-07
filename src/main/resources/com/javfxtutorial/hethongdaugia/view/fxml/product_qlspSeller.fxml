@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
-<HBox fx:id="hbxProduct" alignment="CENTER_LEFT" prefWidth="250.0" spacing="10.0" style="-fx-background-color: #f8f9fa; -fx-background-radius: 12; -fx-border-color: #e0e0e0; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.SellerProductController">
+<HBox fx:id="hbxProduct" alignment="CENTER_LEFT" prefWidth="250.0" spacing="10.0" style="-fx-background-color: #f8f9fa; -fx-background-radius: 12; -fx-border-color: #e0e0e0; -fx-border-radius: 12;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.SellerProductController">
     <children>
         <ImageView fx:id="itemImageView1" fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true" />
 
@@ -27,7 +26,7 @@
             </children>
         </VBox>
 
-        <Label fx:id="lbStatus" style="-fx-text-fill: #27ae6C0; -fx-font-size: 10px;" text="●" textFill="#eb0000" />
+        <Label fx:id="lbStatus" prefHeight="46.0" prefWidth="23.0" style="-fx-text-fill: #27ae6C0; -fx-font-size: 30; -fx-text-fill: green;" text="●" />
     </children>
     <padding>
         <Insets bottom="8.0" left="10.0" right="10.0" top="8.0" />
