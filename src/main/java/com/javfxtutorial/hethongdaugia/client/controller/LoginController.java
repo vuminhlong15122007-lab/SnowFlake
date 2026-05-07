@@ -22,6 +22,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
@@ -30,6 +32,7 @@ import java.util.ResourceBundle;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 
 public class LoginController implements ResponseListener, Initializable {
+    private static final Logger log = LoggerFactory.getLogger(LoginController.class);
     @FXML private TextField Username ;
     @FXML private PasswordField Password ;
     @FXML private Label message;
@@ -70,16 +73,17 @@ public class LoginController implements ResponseListener, Initializable {
             ClientModel.getInstance().setCurrentUser(user);
             Platform.runLater(() -> {
                 if (user.getAccountType() == AccountType.USER) {
-                    System.out.println(rp.getMessage());
+                    log.info(rp.getMessage());
                     changeScene(loginEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
                 } else if (user.getAccountType() == AccountType.ADMIN) {
-                    System.out.println(rp.getMessage());
+                    log.info(rp.getMessage());
                     changeScene(loginEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/Quan_Ly_User_Admin.fxml");
-
-                } else {
-                    message.setText("Sai tên hoặc mật khẩu!");
-                    System.out.println(rp.getMessage());
                 }
+            });
+        }else {
+            Platform.runLater(() -> {
+                message.setText("Sai tên hoặc mật khẩu!");
+                log.info(rp.getMessage());
             });
         }
     }
