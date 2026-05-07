@@ -5,6 +5,7 @@ import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.application.Platform;
@@ -13,9 +14,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
-import javafx.scene.control.ListView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 
@@ -27,35 +26,126 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 public class AuctionController implements ResponseListener {
     @FXML private ListView<Auction> featuredProductList;
     @FXML private TextField searchField;
-    @FXML private Button btnHome;
-    @FXML private Button btnLiveAuction;
-    @FXML private Button btnmanageProducts;
-    @FXML private Button btnprofile;
+    @FXML private Label sectionTitle;
+    @FXML private Button btnAll, btnUpcoming, btnRunning, btnEnded;
+    @FXML private Button btnHome, btnmanageProducts, btnprofile, btnLiveAuction, logOut1;
+    @FXML private ComboBox<String> categoryFilter;
 
     private final ObservableList<Auction> observable = FXCollections.observableArrayList();
+    private FilteredList<Auction> filterData;
+    private AuctionStatus currentStatus = null;   // null = Tất cả
 
     @FXML
     public void initialize() {
         VBox.setVgrow(featuredProductList, Priority.ALWAYS);
         featuredProductList.setMaxWidth(Double.MAX_VALUE);
         featuredProductList.setCellFactory(lv -> new ProductCell());
-
-        FilteredList<Auction> filterData = new FilteredList<>(observable, auction -> true);
-        searchField.textProperty().addListener((obs, oldValue, newValue) ->
-                filterData.setPredicate(auction -> {
-                    if (newValue == null || newValue.isBlank()) {
-                        return true;
-                    }
-                    if (auction == null || auction.getItem() == null || auction.getItem().getName() == null) {
-                        return false;
-                    }
-                    return auction.getItem().getName().toLowerCase().contains(newValue.toLowerCase());
-                })
-        );
-
+        // Tạo FilteredList
+        filterData = new FilteredList<>(observable, auction -> true);
         featuredProductList.setItems(filterData);
+        // ========== THÊM: Tìm kiếm ==========
+        searchField.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
+
+        // ========== THÊM: ComboBox loại sản phẩm ==========
+        categoryFilter.getItems().addAll("Tất cả loại", "Art", "Vehicle", "Electronics", "Khác");
+        categoryFilter.setValue("Tất cả loại");
+        categoryFilter.valueProperty().addListener((obs, oldVal, newVal) -> applyFilters());
+
+        // ========== THÊM: Nút lọc trạng thái ==========
+        btnAll.setOnAction(e -> {
+            currentStatus = null;
+            updateSectionTitle("TẤT CẢ PHIÊN ĐẤU GIÁ");
+            setActiveButton(btnAll);
+            applyFilters();
+        });
+        btnUpcoming.setOnAction(e -> {
+            currentStatus = AuctionStatus.NOT_START;
+            updateSectionTitle("PHIÊN SẮP DIỄN RA");
+            setActiveButton(btnUpcoming);
+            applyFilters();
+        });
+        btnRunning.setOnAction(e -> {
+            currentStatus = AuctionStatus.RUNNING;
+            updateSectionTitle("PHIÊN ĐANG DIỄN RA");
+            setActiveButton(btnRunning);
+            applyFilters();
+        });
+        btnEnded.setOnAction(e -> {
+            currentStatus = AuctionStatus.CLOSED;
+            updateSectionTitle("PHIÊN ĐÃ KẾT THÚC");
+            setActiveButton(btnEnded);
+            applyFilters();
+        });
+
         loadData();
     }
+
+    // ========== THÊM: Hàm áp dụng tất cả bộ lọc ==========
+    private void applyFilters() {
+        filterData.setPredicate(auction -> {
+            if (auction == null || auction.getItem() == null) return false;
+
+            // 1. Tìm kiếm theo tên
+            String search = searchField.getText();
+            if (search != null && !search.isBlank()) {
+                String name = auction.getItem().getName();
+                if (name == null || !name.toLowerCase().contains(search.toLowerCase())) {
+                    return false;
+                }
+            }
+
+            // 2. Lọc theo trạng thái
+            if (currentStatus != null && auction.getStatus() != currentStatus) {
+                return false;
+            }
+
+            // 3. Lọc theo loại sản phẩm
+            String selectedCategory = categoryFilter.getValue();
+            if (selectedCategory != null && !selectedCategory.equals("Tất cả loại")) {
+                String auctionCategory = getCategoryName(auction);
+                if (!selectedCategory.equals(auctionCategory)) {
+                    return false;
+                }
+            }
+
+            return true;
+        });
+    }
+
+    // ========== THÊM: Lấy tên loại từ class của Item ==========
+    private String getCategoryName(Auction auction) {
+        String className = auction.getItem().getClass().getSimpleName();
+        switch (className) {
+            case "Art": return "Art";
+            case "Vehicle": return "Vehicle";
+            case "Electronics": return "Electronics";
+            default: return "Khác";
+        }
+    }
+
+    // ========== THÊM: Cập nhật tiêu đề ==========
+    private void updateSectionTitle(String title) {
+        if (sectionTitle != null) {
+            sectionTitle.setText("📋  " + title);
+        }
+    }
+
+    // ========== THÊM: Đổi màu nút đang active ==========
+    private void setActiveButton(Button active) {
+        Button[] buttons = {btnAll, btnUpcoming, btnRunning, btnEnded};
+        String activeStyle = "-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15;";
+        String inactiveStyle = "-fx-background-color: white; -fx-text-fill: #7f8c8d; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15; -fx-border-color: #dcdde1; -fx-border-radius: 8;";
+        for (Button b : buttons) {
+            b.setStyle(b == active ? activeStyle : inactiveStyle);
+        }
+    }
+
+
+
+
+
+
+
 
     public void loadData() {
         Command cmd = new GetAllAuctionsCommand();

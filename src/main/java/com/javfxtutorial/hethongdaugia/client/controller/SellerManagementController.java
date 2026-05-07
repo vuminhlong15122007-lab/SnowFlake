@@ -96,6 +96,7 @@ public class SellerManagementController implements ResponseListener {
         String sellerName = ClientModel.getInstance().getCurrentUser().getName();
 
         Item item = new Item(sellerId, name, description, image, sellerName);
+        item.setCategory(categoryComboBox.getValue());
         Auction auction = new Auction(item, sellerId, initPrice, stepPrice, tGianBD, tGianKT, AuctionStatus.NOT_START);
 
         return auction;

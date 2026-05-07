@@ -65,7 +65,7 @@ public class AuctionSessionController {
 
             case CLOSED:
                 safeSet(lbPrice, String.format("%,.0f VND", auction.getWinningPrice()));
-                safeSet(lbWinner, String.valueOf(auction.getWinnerId()));
+                safeSet(lbCategory, "Loại: " + (auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
                 break;
         }
     }
