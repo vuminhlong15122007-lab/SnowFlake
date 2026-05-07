@@ -99,33 +99,23 @@ public class AuctionController implements ResponseListener {
 
     @Override
     public void onResponse(Response rp) {
-        Platform.runLater(() -> {
-            if (rp == null) {
-                showAlert("Loi tai du lieu", "Server khong tra ve du lieu phien dau gia." , "Loading.gif");
-                return;
-            }
-
-            if (!rp.isSuccess()) {
-                showAlert("Loi tai du lieu", rp.getMessage() , "Loading.gif");
-                return;
-            }
-
-            Object payload = rp.getPayLoad();
-            if (!(payload instanceof ArrayList<?> payloadList)) {
-                showAlert("Loi tai du lieu", "Du lieu tra ve khong dung dinh dang." , "Loading.gif");
-                return;
-            }
-
-            ArrayList<Auction> auctions = new ArrayList<>();
-            for (Object item : payloadList) {
-                if (item instanceof Auction auction) {
-                    auctions.add(auction);
+        if (rp.getCommand().getClass() == GetAllAuctionsCommand.class) {
+            Platform.runLater(() -> {
+                if (rp == null) {
+                    showAlert("Loi tai du lieu", "Server khong tra ve du lieu phien dau gia.", "Loading.gif");
+                    return;
                 }
-            }
-            observable.setAll(auctions);
-        });
 
-        NetworkManager networkManager = NetworkManager.getInstance();
-        networkManager.unregister(GetAllAuctionsCommand.class, this);
+                if (!rp.isSuccess()) {
+                    showAlert("Loi tai du lieu", rp.getMessage(), "Loading.gif");
+                    return;
+                }
+
+                ArrayList<Auction> auctions = (ArrayList<Auction>) rp.getPayLoad();
+                observable.setAll(auctions);
+            });
+            NetworkManager networkManager = NetworkManager.getInstance();
+            networkManager.unregister(GetAllAuctionsCommand.class, this);
+        }
     }
 }
