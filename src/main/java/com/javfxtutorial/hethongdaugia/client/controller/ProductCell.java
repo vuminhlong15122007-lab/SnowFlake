@@ -20,24 +20,11 @@ public class ProductCell extends ListCell<Auction> {
 
         try {
             String fxmlFile;
-            AuctionStatus status = auction.getStatus();
-
-            if (status == AuctionStatus.RUNNING) {
-                fxmlFile = "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionCellRunning.fxml";
-            } else if (status == AuctionStatus.NOT_START) {
-                fxmlFile = "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionCellUpComing.fxml";
-            } else if (status == AuctionStatus.CLOSED) {
-                fxmlFile = "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionCellEnd.fxml";
-            } else {
-                fxmlFile = "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionCellRunning.fxml";
-            }
-
+            fxmlFile = "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionCellEnd.fxml";
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
             Parent root = loader.load();
-
             AuctionSessionController controller = loader.getController();
             controller.setData(auction);
-
             setText(null);
             setGraphic(root);
         } catch (Exception e) {

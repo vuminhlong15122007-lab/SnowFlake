@@ -43,23 +43,24 @@ public class NetworkManager {
     public void start() {
         Thread thread = new Thread(() -> {
             while (true) {
-                // BƯỚC 1: Đọc response từ socket
-                // Block ở đây cho đến khi server gửi gì đó
                 Response rp = null;
                 try {
                     rp = ServerConnection.getInstance().receiveResponse();
                 } catch (IOException | ClassNotFoundException e) {
                     System.out.println("Không kết nối được server");
+                    break;
                 }
-
-                // BƯỚC 2: Tìm ai đang quan tâm response này
-                Class<?> commandType = rp.getCommand().getClass();
-                if (listeners != null) {
-                    for (ResponseListener listener : listeners.get(commandType)) {
-                        if (listener != null) {
-                            listener.onResponse(rp);
+                try {
+                    Class<?> commandType = rp.getCommand().getClass();
+                    if (listeners != null) {
+                        for (ResponseListener listener : listeners.get(commandType)) {
+                            if (listener != null) {
+                                listener.onResponse(rp);
+                            }
                         }
                     }
+                }catch(Exception e ){
+                    System.out.println("Giá trị trả về là null");
                 }
             }
 
