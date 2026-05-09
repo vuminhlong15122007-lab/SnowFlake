@@ -95,7 +95,7 @@ public class UserProfileController implements ResponseListener {
             return;
         }
 
-        ServerConnection connection = ServerConnection.getInstance();
+        ServerConnection connection = NetworkManager.getConnection();
 
         UpdateProfileCommand cmd = new UpdateProfileCommand();
         cmd.addData("userId", currentUser.getId());

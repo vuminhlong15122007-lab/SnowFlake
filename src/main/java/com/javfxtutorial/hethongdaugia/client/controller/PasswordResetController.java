@@ -64,7 +64,7 @@ public class PasswordResetController implements ResponseListener {
         }
 
         //tao command gui len server
-        ServerConnection connection = ServerConnection.getInstance();
+        ServerConnection connection = NetworkManager.getConnection();
         ResetPassWordCommand cmd = new ResetPassWordCommand();
         cmd.addData("userId", currentUser.getId());
         cmd.addData("passWord", newPW);

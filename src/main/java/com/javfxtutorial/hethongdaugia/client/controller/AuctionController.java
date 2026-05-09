@@ -149,7 +149,7 @@ public class AuctionController implements ResponseListener {
 
     public void loadData() {
         Command cmd = new GetAllAuctionsCommand();
-        ServerConnection connection = ServerConnection.getInstance();
+        ServerConnection connection = NetworkManager.getConnection();
         new Thread(() -> {
             connection.sendCommand(cmd);
             NetworkManager networkManager = NetworkManager.getInstance();

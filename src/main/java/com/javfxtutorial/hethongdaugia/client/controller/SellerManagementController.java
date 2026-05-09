@@ -109,7 +109,7 @@ public class SellerManagementController implements ResponseListener {
             Auction auction = getInfo();
 
             //thêm auction vào DAO và hiện ra list bên trái
-            ServerConnection connection =ServerConnection.getInstance();
+            ServerConnection connection =NetworkManager.getConnection();
             NetworkManager networkManager = NetworkManager.getInstance();
             networkManager.register(AddAuctionCommand.class, this);
             AddAuctionCommand cm = new AddAuctionCommand();
@@ -155,7 +155,7 @@ public class SellerManagementController implements ResponseListener {
 // Lấy ID của user đang đăng nhập => gửi lên server => server lọc sp của sellerId lưu vào cmd
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.register(GetAuctionsBySellerIdCommand.class, this);
-        ServerConnection connection = ServerConnection.getInstance(); // mở đường dây liên lạc với server
+        ServerConnection connection = NetworkManager.getConnection(); // mở đường dây liên lạc với server
         Command cmd = new GetAuctionsBySellerIdCommand();
         cmd.addData("sellerId", sellerId);
         connection.sendCommand(cmd);
@@ -169,7 +169,7 @@ public class SellerManagementController implements ResponseListener {
         }
 
 
-        ServerConnection connection = ServerConnection.getInstance();
+        ServerConnection connection = NetworkManager.getConnection();
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.register(DeleteAuctionCommand.class, this);
 
@@ -242,7 +242,7 @@ public class SellerManagementController implements ResponseListener {
         }
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.register(UpdateAuctionCommand.class, this);
-        ServerConnection connection = ServerConnection.getInstance();
+        ServerConnection connection = NetworkManager.getConnection();
         // 1. Lấy dữ liệu từ form NGAY BÂY GIỜ (trên UI Thread)
         Auction auction = getInfo();
         auction.setAuctionId(selectedAuction.getAuctionId());
