@@ -72,7 +72,6 @@ public class NetworkManager {
           }
         }
 
-
         Response rp = null;
         try {
           rp = connection.receiveResponse();
@@ -80,14 +79,17 @@ public class NetworkManager {
           log.error("Lỗi khi đọc response");
           continue;
         }
-        // BƯỚC 2: Tìm ai đang quan tâm response này
-        Class<?> commandType = rp.getCommand().getClass();
-        if (listeners != null) {
-          for (ResponseListener listener : listeners.get(commandType)) {
-            if (listener != null) {
-              listener.onResponse(rp);
+        try {
+          Class<?> commandType = rp.getCommand().getClass();
+          if (listeners != null) {
+            for (ResponseListener listener : listeners.get(commandType)) {
+              if (listener != null) {
+                listener.onResponse(rp);
+              }
             }
           }
+        } catch (NullPointerException e) {
+          log.error("Giá trị trả về là null");
         }
       }
 

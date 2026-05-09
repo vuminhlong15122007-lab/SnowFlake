@@ -78,23 +78,40 @@ public class LiveAuctionController implements Initializable, ResponseListener {
     }
 
     @FXML
-    public void placeBid (ActionEvent event) throws IOException, ClassNotFoundException {
+    public void placeBid(ActionEvent event) {
         System.out.println("Bạn vừa ấn placeBid");
 
-        //lấy ttin của bid
-        BidTransaction bid = new BidTransaction();
-        bid.setBidderId(ClientModel.getInstance().getCurrentUser().getId());
-        bid.setBidderName(ClientModel.getInstance().getCurrentUser().getName());
-        bid.setAmount(Double.parseDouble(priceInput_tf.getText()));
-        bid.setAuctionId(currentAuction.getAuctionId());
-        bid.setTimestamp(LocalDateTime.now());
+        try {
+            // 1. Lấy text và loại bỏ các dấu phẩy, khoảng trắng (nếu người dùng có nhập)
+            String rawInput = priceInput_tf.getText().replace(",", "").replace(".", "").trim();
+            double inputAmount = Double.parseDouble(rawInput);
 
+            // 2. Validate sớm ngay tại Client (Giảm tải cho Server)
+            double minRequired = currentAuction.getCurrentPrice() + currentAuction.getStepPrice();
+            if (inputAmount < minRequired) {
+                UIUtils.showAlert("Lỗi đặt giá", String.format("Bạn phải đặt tối thiểu %,.0f VND (Giá hiện tại + Bước giá)", minRequired));
+                return;
+            }
 
-        Command cmd = new PlaceBidCommand();
-        cmd.addData("bid", bid);
-        connection.sendCommand(cmd);
-        System.out.println("Đã send bidcommand");
-        // gửi command
+            // 3. Đóng gói gửi Server nếu qua cửa
+            BidTransaction bid = new BidTransaction();
+            bid.setBidderId(ClientModel.getInstance().getCurrentUser().getId());
+            bid.setBidderName(ClientModel.getInstance().getCurrentUser().getName());
+            bid.setAmount(inputAmount);
+            bid.setAuctionId(currentAuction.getAuctionId());
+            bid.setTimestamp(LocalDateTime.now());
+
+            Command cmd = new PlaceBidCommand();
+            cmd.addData("bid", bid);
+            connection.sendCommand(cmd);
+            System.out.println("Đã send bidcommand với giá: " + inputAmount);
+
+        } catch (NumberFormatException e) {
+            // Báo lỗi cho người dùng thay vì Crash app
+            UIUtils.showAlert("Lỗi nhập liệu", "Vui lòng chỉ nhập số tiền hợp lệ (ví dụ: 1500000)!");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public void setBidHistorytoScene(){
@@ -217,55 +234,85 @@ public class LiveAuctionController implements Initializable, ResponseListener {
                 String bidderName = bid.getBidderName();
                 int bidderId = bid.getBidderId();
 
-                currentAuction.setCurrentPrice(newPrice);
-                currentAuction.setWinnerId(bidderId);
-                currentAuction.setWinningPrice(newPrice);
-                //
-                if (bid.getNewEndingTime() != bid.getTimestamp()) {
-                    LocalDateTime newEnd = bid.getNewEndingTime();
-                    currentAuction.setEndingTime(newEnd);
-
-                    Platform.runLater(() -> { // Khởi động lại tgian ms
-                        timer.stop();
-                        timer = new TimeLeft(lbTimeLeft, newEnd);
-                        timer.setOnFinished(() -> {
-                            placeBidButton.setDisable(true);
-                            placeBidButton.setText("Đã kết thúc");
-                        });
-                        timer.start();
-                    });
-                }
-
                 Platform.runLater(() -> {
-                    observable.add(bid); // Thêm vào ListView
-                    //set lại giá
-                    currentPrice_tf.setText(String.format("%,.0f VND", newPrice));
-                    highestPayer_tf.setText(bidderName);
+                    // 1. Xử lý lịch sử (ListView):
+                    int insertIndex = 0;
+                    while (insertIndex < observable.size() && observable.get(insertIndex).getAmount() > bid.getAmount()) {
+                        insertIndex++;
+                    }
+                    observable.add(insertIndex, bid);
+                    if (observable.size() > 1000) { // giới hạn chỉ 1000 lịch sử gần nhất
+                        observable.remove(1000, observable.size());
+                    }
 
-                    // VẼ điểm mới lên LineChart theo số thứ tự lượt bid
-                    int bidSequenceNumber = observable.size();
-                    XYChart.Data<Number, Number> newDataPoint = new XYChart.Data<>(bidSequenceNumber, newPrice);
-                    priceSeries.getData().add(newDataPoint);
-                    });
+                    // dòng này sẽ dùng để sort lại bảng
+                    //FXCollections.sort(observable, (b1, b2) -> Double.compare(b2.getAmount(), b1.getAmount()));
+
+                    // 2. CHỐNG ẢO GIÁC ĐI LÙI (Bảo vệ giao diện chính)
+                    // Chỉ cho phép cập nhật thông tin chung khi giá nhận được LỚN HƠN giá đang hiển thị
+                    if (newPrice > currentAuction.getCurrentPrice()) {
+
+                        // Cập nhật lại Model đang lưu trong RAM
+                        currentAuction.setCurrentPrice(newPrice);
+                        currentAuction.setWinnerId(bidderId);
+                        currentAuction.setWinningPrice(newPrice);
+
+                        // Cập nhật các Label hiển thị bên trái màn hình
+                        currentPrice_tf.setText(String.format("%,.0f VND", newPrice));
+                        highestPayer_tf.setText(bidderName);
+
+                        // Cập nhật Biểu đồ đường (LineChart)
+                        int bidSequenceNumber = priceSeries.getData().size() + 1;
+                        XYChart.Data<Number, Number> newDataPoint = new XYChart.Data<>(bidSequenceNumber, newPrice);
+                        priceSeries.getData().add(newDataPoint);
+
+                        // Cập nhật lại đồng hồ đếm ngược nếu có gia hạn (Anti-snipe)
+                        // Lưu ý: Dùng .equals() để so sánh thời gian thay vì !=
+                        if (bid.getNewEndingTime() != null && !bid.getNewEndingTime().equals(bid.getTimestamp())) {
+                            LocalDateTime newEnd = bid.getNewEndingTime();
+                            currentAuction.setEndingTime(newEnd);
+
+                            if (timer != null) timer.stop(); // Dừng bộ đếm cũ
+                            timer = new TimeLeft(lbTimeLeft, newEnd);
+                            timer.setOnFinished(() -> {
+                                placeBidButton.setDisable(true);
+                                placeBidButton.setText("Đã kết thúc");
+                            });
+                            timer.start();
+                        }
+                    } else {
+                        // (Tùy chọn) In log ra console để bạn dễ theo dõi những luồng dữ liệu bị chậm
+                        System.out.println("Đã chặn gói tin tới muộn: " + newPrice + " nhỏ hơn giá hiện tại " + currentAuction.getCurrentPrice());
+                    }
+                });
                 }
             }
         if (rp.getCommand().getClass() == GetBidHistoryCommand.class) {
             NetworkManager networkManager = NetworkManager.getInstance();
             networkManager.unregister(GetBidHistoryCommand.class, this);
+
             if (rp.isSuccess()) {
                 ArrayList<BidTransaction> bidList = (ArrayList<BidTransaction>) rp.getPayLoad();
-                // 1. Đảo ngược danh sách để hiển thị từ cũ đến mới
-                java.util.Collections.reverse(bidList);
-                Platform.runLater(() -> {
-                                // CHỈ vẽ lịch sử nếu biểu đồ đang trống
-                    if (priceSeries.getData().isEmpty()) {
-                                    observable.setAll(bidList); // Dùng setAll thay vì addAll để tránh trùng lặp nếu có
 
-                                    // Vẽ toàn bộ lịch sử
-                        for (int i = 0; i < observable.size(); i++) {
+                Platform.runLater(() -> {
+                    if (priceSeries.getData().isEmpty()) {
+
+                        // LẬT NGƯỢC HIỂN THỊ Ở ĐÂY:
+                        // Sắp xếp danh sách lịch sử theo Giá.
+                        // - Dùng b2 so sánh b1: Giá cao nhất (mới nhất) nằm TRÊN CÙNG.
+                        // - Nếu bạn muốn Giá cao nhất nằm DƯỚI CÙNG, đổi thành: Double.compare(b1.getAmount(), b2.getAmount())
+                        bidList.sort((b1, b2) -> Double.compare(b2.getAmount(), b1.getAmount()));
+
+                        observable.setAll(bidList);
+
+                        // VẼ BIỂU ĐỒ:
+                        // Vì danh sách observable đang xếp Giá Cao -> Giá Thấp (Mới -> Cũ)
+                        // Để biểu đồ vẽ đúng chiều thời gian đi tới (Cũ -> Mới), ta phải duyệt mảng ngược từ dưới lên trên.
+                        int soThuTuLuotBid = 1;
+                        for (int i = observable.size() - 1; i >= 0; i--) {
                             BidTransaction historicalBid = observable.get(i);
-                                        // i + 1 là số thứ tự lượt đặt giá (từ 1, 2, 3...)
-                            priceSeries.getData().add(new XYChart.Data<>(i + 1, historicalBid.getAmount()));
+                            priceSeries.getData().add(new XYChart.Data<>(soThuTuLuotBid, historicalBid.getAmount()));
+                            soThuTuLuotBid++;
                         }
                     }
                 });

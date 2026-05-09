@@ -1,12 +1,13 @@
 package com.javfxtutorial.hethongdaugia.server.network;
 
-
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ClientHandler extends Thread implements BidListener {
@@ -21,64 +22,60 @@ public class ClientHandler extends Thread implements BidListener {
     @Override
     public void run() {
         try {
-            System.out.println("Luồng "+ this.getName() +" đang chạy");
+            System.out.println("Luong " + this.getName() + " dang chay");
             ClientHandlerContextHolder.set(this);
-            System.out.println("Vừa khởi tạo "+ ClientHandlerContextHolder.get().getName());
+            System.out.println("Vua khoi tao " + ClientHandlerContextHolder.get().getName());
             out = new ObjectOutputStream(clientSocket.getOutputStream());
             in = new ObjectInputStream(clientSocket.getInputStream());
 
-            while (true) { //luôn chờ command của client
+            while (true) {
                 Command cmd = (Command) in.readObject();
                 Response rp = cmd.handle();
                 if (rp != null) {
                     synchronized (out) {
                         out.writeObject(rp);
                         out.flush();
-                        out.reset(); // Quan trọng: Tránh cache dữ liệu cũ
+                        out.reset();
                     }
                 } else {
-                    System.err.println("Cảnh báo: Command " + cmd.getClass().getSimpleName() + " trả về null!");
+                    System.err.println("Canh bao: Command " + cmd.getClass().getSimpleName() + " tra ve null!");
                 }
             }
-        } catch (IOException | ClassNotFoundException e ) {
-            System.out.println("Client ngừng kết nối");
+        } catch (IOException | ClassNotFoundException e) {
+            System.out.println("Client ngung ket noi");
             try {
                 clientSocket.close();
             } catch (IOException ex) {
                 throw new RuntimeException(ex);
             }
         } finally {
-            // 3. Khi Client đóng app hoặc rớt mạng, xóa khỏi danh sách
+            ClientHandlerContextHolder.clear();
             if (clientSocket != null) {
                 try {
                     clientSocket.close();
                 } catch (IOException e) {
-                    System.out.println("Client ngắt kết nối");
+                    System.out.println("Client ngat ket noi");
                 }
             }
         }
     }
 
     @Override
-    public void onPlaceBid(BidTransaction bid, ClientHandler senderThread) { // chỉ gửi cho người kph sender
-        Response rp = null;
-        if (!senderThread.equals(this)) {
-            rp = new Response(true, "Có người mới đặt giá", bid, new PlaceBidCommand());
-            try {
+    public void onPlaceBid(BidTransaction bid, ClientHandler senderThread) {
+        if (senderThread == this || out == null) {
+            return;
+        }
+
+        Response rp = new Response(true, "Co nguoi moi dat gia", bid, new PlaceBidCommand());
+        try {
+            synchronized (out) {
                 out.writeObject(rp);
-                System.out.println("Đã gửi PlaceBidCommand về cho luồng" + this.getName());
-            } catch (IOException e) {
-                System.out.println("Lỗi outputStream");
+                out.flush();
+                out.reset();
             }
+            System.out.println("Da gui PlaceBidCommand ve cho luong " + this.getName());
+        } catch (IOException e) {
+            System.out.println("Loi outputStream");
         }
     }
 }
-
-// khi thao tác trên controller
-// -> controller mở connection gửi command đến server -> server mở thread clienthandler
-// -> clienthandler nhận command, gọi đến phương thức command.handle()
-// (ở đây server không quan tâm Command loại gì, nó chỉ gọi đến phương tức handle, còn logic handle command ở trong phương thức rồi)
-// phương thức này cũng chả về rp, xong server gửi lại client là xong
-
-
-
