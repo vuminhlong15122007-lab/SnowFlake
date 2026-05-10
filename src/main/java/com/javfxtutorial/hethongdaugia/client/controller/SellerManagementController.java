@@ -126,7 +126,7 @@ public class SellerManagementController implements ResponseListener {
                     brandElecField.getText(), modelField.getText());
         } else {
             item = new Item(sellerName, sellerId, itemId, name, description, image,
-                    ItemCategory.valueOf(cat)); // dùng constructor có category
+                    ItemCategory.valueOf(cat));
         }
 
         Auction auction = new Auction(item, sellerId, initPrice, stepPrice, tGianBD, tGianKT, AuctionStatus.NOT_START);
@@ -170,7 +170,7 @@ public class SellerManagementController implements ResponseListener {
         productList.setCellFactory((ListView<Auction> listView) -> new ProductCell2()); // trả về một instance của ProductCell2 –class tự load giao diện cell tùy chỉnh
 
         //phan loai sp
-        categoryComboBox.getItems().addAll("Art", "Vehicle", "Electronics");
+        categoryComboBox.getItems().addAll("Art", "Vehicle", "Electronics", "Khác");
         categoryComboBox.valueProperty().addListener((obs, oldVal, newVal) -> showCategoryFields(newVal));
 
 
