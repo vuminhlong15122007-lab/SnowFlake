@@ -1,5 +1,7 @@
 package com.javfxtutorial.hethongdaugia.server.dao;
 
+import com.javfxtutorial.hethongdaugia.common.model.Art;
+import com.javfxtutorial.hethongdaugia.common.model.Item;
 import javafx.collections.ObservableList;
 
 import java.util.ArrayList;

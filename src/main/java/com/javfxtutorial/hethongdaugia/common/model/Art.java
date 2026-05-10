@@ -13,6 +13,12 @@ public class Art extends Item {
         this.yearCreated = yearCreated;
         this.title = title;
     }
+    // Thêm vào class Art
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.setCategory(ItemCategory.Art);
+    }
 
     public Art() {super();}
 

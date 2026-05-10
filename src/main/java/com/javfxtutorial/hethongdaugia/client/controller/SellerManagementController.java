@@ -98,29 +98,36 @@ public class SellerManagementController implements ResponseListener {
         //Lấy xong dữ liệu người dùng nhập vào
         int sellerId = ClientModel.getInstance().getCurrentUser().getId();
         String sellerName = ClientModel.getInstance().getCurrentUser().getName();
-        String cat = categoryComboBox.getValue();
 
-        Item item;
-        if(cat == "Art"){
-             item = new Art(sellerName, sellerId, selectedAuction.getItem().getItemId(), name, description, image,
-                    artistField.getText(),
-                    parseInt(yearCreatedField.getText()),
-                    artTitleField.getText());
-        }else if(cat == "Vehicle"){
-            item = new Vehicle(sellerName, sellerId, selectedAuction.getItem().getItemId(), name, description, image,
-                    licensePlateField.getText(),
-                    parseInt(vehicleYearField.getText()),
-                    brandVehicleField.getText(),
-                    colorField.getText());
-        }else if(cat == "Electronics"){
-            item = new Electronics(sellerName, sellerId, selectedAuction.getItem().getItemId(), name, description, image,
-                    brandElecField.getText(),
-                    modelField.getText());
+        int itemId;
+        if (selectedAuction == null){
+            itemId = 0;
         }else{
-            item = new Item(sellerId, name, description, image, sellerName);
+            itemId = selectedAuction.getItem().getItemId();
         }
 
-        item.setCategory(ItemCategory.valueOf(cat));
+        // Trong method getInfo()
+        String cat = categoryComboBox.getValue();
+        if (cat == null) {
+            showAlert("Lỗi", "Vui lòng chọn danh mục sản phẩm!", "Wait.gif");
+            return null; // hoặc throw exception
+        }
+
+        Item item;
+        if (cat.equals("Art")) {
+            item = new Art(sellerName, sellerId, itemId, name, description, image,
+                    artistField.getText(), parseInt(yearCreatedField.getText()), artTitleField.getText());
+        } else if (cat.equals("Vehicle")) {
+            item = new Vehicle(sellerName, sellerId, itemId, name, description, image,
+                    licensePlateField.getText(), parseInt(vehicleYearField.getText()),
+                    brandVehicleField.getText(), colorField.getText());
+        } else if (cat.equals("Electronics")) {
+            item = new Electronics(sellerName, sellerId, itemId, name, description, image,
+                    brandElecField.getText(), modelField.getText());
+        } else {
+            item = new Item(sellerName, sellerId, itemId, name, description, image,
+                    ItemCategory.valueOf(cat)); // dùng constructor có category
+        }
 
         Auction auction = new Auction(item, sellerId, initPrice, stepPrice, tGianBD, tGianKT, AuctionStatus.NOT_START);
 
@@ -132,6 +139,7 @@ public class SellerManagementController implements ResponseListener {
     @FXML public void luuSp( ActionEvent event) throws IOException {       // btn Lưu
         try{
             Auction auction = getInfo();
+            if (auction == null) return; // category null hoặc validation fail
 
             //thêm auction vào DAO và hiện ra list bên trái
             ServerConnection connection =NetworkManager.getConnection();
@@ -212,11 +220,11 @@ public class SellerManagementController implements ResponseListener {
 
     @FXML
     public void deleteAuction(ActionEvent event) throws IOException {  // xử lý nút xóA
-        selectedAuction = productList.getSelectionModel().getSelectedItem();  // Lấy ttin sản phẩm đang được chọn ( của listView)
+        selectedAuction = productList.getSelectionModel().getSelectedItem();
         if (selectedAuction == null) {
-            System.out.println(" Vui lòng nhấn chọn sản phẩm");
+            showAlert("Lỗi", "Vui lòng chọn sản phẩm cần xóa!", "Wait.gif");
+            return;
         }
-
 
         ServerConnection connection = NetworkManager.getConnection();
         NetworkManager networkManager = NetworkManager.getInstance();
@@ -285,15 +293,17 @@ public class SellerManagementController implements ResponseListener {
 
     @FXML
     public void suaSp  (ActionEvent event) throws IOException, IllegalStateException{  // Xử lý nuts Sửa
-        selectedAuction = productList.getSelectionModel().getSelectedItem();  // Lấy ttin sản phẩm đang được chọn ( của listView)
+        selectedAuction = productList.getSelectionModel().getSelectedItem();
         if (selectedAuction == null) {
-            System.out.println(" Vui lòng nhấn chọn sản phẩm");
+            showAlert("Lỗi", "Vui lòng chọn sản phẩm cần sửa!", "Wait.gif");
+            return;
         }
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.register(UpdateAuctionCommand.class, this);
         ServerConnection connection = NetworkManager.getConnection();
         // 1. Lấy dữ liệu từ form NGAY BÂY GIỜ (trên UI Thread)
         Auction auction = getInfo();
+        if (auction == null) return; // category null hoặc validation fail
         auction.setAuctionId(selectedAuction.getAuctionId());
         auction.getItem().setItemId(selectedAuction.getItem().getItemId());
         UpdateAuctionCommand cmd = new UpdateAuctionCommand(auction);

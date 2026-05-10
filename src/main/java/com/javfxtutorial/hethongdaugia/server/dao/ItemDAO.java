@@ -2,6 +2,7 @@ package com.javfxtutorial.hethongdaugia.server.dao;
 
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
+import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
@@ -24,51 +25,35 @@ public class ItemDAO implements DAOInterface<Item> {
         return  instance;
     }
     public int insert(Item item) {
-        // 1. Viết câu SQL phù hợp với bảng Item
-        Connection connection = JDBCUtil.getConnection();
-        String sql = "INSERT INTO Item (idseller, name, description, imagePath, sellerName, category ) VALUES (?,?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Item (idseller, name, description, imagePath, sellerName, category) VALUES (?, ?, ?, ?, ?, ?)";
         int result = 0;
+        try (Connection conn = JDBCUtil.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
-        // 2. Sử dụng try-with-resources để tự động quản lý kết nối
-        try (
-             PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
-
-            // 3. Truyền tham số an toàn vào câu SQL
-            // Lưu ý chọn đúng kiểu dữ liệu: setString, setDouble, setInt...
             pst.setInt(1, item.getSellerId());
             pst.setString(2, item.getName());
             pst.setString(3, item.getDescription());
             pst.setString(4, item.getImage());
             pst.setString(5, item.getSellerName());
+            pst.setString(6, item.getCategory().name());
 
-            System.out.println("Bạn đang thực thi thêm Item: " + item.getName());
-
-            // 4. Thực thi
             result = pst.executeUpdate();
-
             if (result > 0) {
-                System.out.println("Tạo Item thành công");
-
-                // 5. Lấy ID tự động sinh ra gán lại cho object
                 try (ResultSet rs = pst.getGeneratedKeys()) {
                     if (rs.next()) {
-                        int newId = rs.getInt(1);
-                        item.setItemId(newId);
-                        System.out.println("ID tự động tạo cho Item là: " + item.getItemId());
+                        item.setItemId(rs.getInt(1));
                     }
                 }
+                System.out.println("Tạo Item thành công, ID: " + item.getItemId());
             } else {
                 System.out.println("Tạo Item thất bại");
             }
-
         } catch (SQLException e) {
             e.printStackTrace();
-            throw new RuntimeException("Lỗi thao tác DB khi thêm Item", e);
         }
-        JDBCUtil.closeConnection(connection);
-
         return result;
     }
+    
     @Override
     public int update(Item item) {
         int result = 0;
@@ -160,13 +145,17 @@ public class ItemDAO implements DAOInterface<Item> {
             ResultSet resultSet = st.executeQuery(sql);
             //lấy dữ liệu
             while (resultSet.next()){
+                String sellerName = resultSet.getString("sellerName");
                 int idseller = resultSet.getInt("idseller");
                 int iditem = resultSet.getInt("itemid");
                 String name = resultSet.getString("name");
                 String description = resultSet.getString("description");
                 String imagePath = resultSet.getString("imagePath");
+                String categoryStr = resultSet.getString("category");
+                ItemCategory category = (categoryStr != null) ? ItemCategory.valueOf(categoryStr) : null;
+                Item item = new Item(sellerName, idseller,iditem, name, description, imagePath, category);
 
-                Item item = new Item(idseller,iditem, name, description, imagePath);
+
                 result.add(item);
             }
             JDBCUtil.closeConnection(connection);
@@ -192,7 +181,10 @@ public class ItemDAO implements DAOInterface<Item> {
                 String description = resultSet.getString("description");
                 String imagePath = resultSet.getString("imagePath");
                 String sellerName = resultSet.getString("sellerName");
-                result = new Item(itemId, idseller, name,description, imagePath, sellerName);
+                String categoryStr = resultSet.getString("category");
+                ItemCategory category = (categoryStr != null) ? ItemCategory.valueOf(categoryStr) : null;
+                result = new Item(sellerName, idseller,itemId, name, description, imagePath, category);
+
             }
             //dong ket noi
             JDBCUtil.closeConnection(connection);
@@ -219,7 +211,9 @@ public class ItemDAO implements DAOInterface<Item> {
                 String description = resultSet.getString("description");
                 String imagePath = resultSet.getString("imagePath");
                 String sellerName = resultSet.getString("sellerName");
-                Item item = new Item(itemId, idseller, name,description, imagePath, sellerName);
+                String categoryStr = resultSet.getString("category");
+                ItemCategory category = (categoryStr != null) ? ItemCategory.valueOf(categoryStr) : null;
+                Item item = new Item(sellerName, idseller,itemId, name, description, imagePath, category);
                 result.add(item);
             }
             //dong ket noi

@@ -15,6 +15,12 @@ public class Vehicle extends Item {
         this.brand = brand;
         this.color = color;
     }
+    // Thêm vào class Vehicle
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.setCategory(ItemCategory.Vehicle);
+    }
 
     public Vehicle() {super();}
 
