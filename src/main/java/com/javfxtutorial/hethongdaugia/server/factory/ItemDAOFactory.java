@@ -12,14 +12,11 @@ public abstract class ItemDAOFactory {
     public abstract DAOInterface createItemDAO();
 
     public static ItemDAOFactory getFactory(ItemCategory category){
-        if(category == ItemCategory.Vehicle){
-            return new VehicleDAOFactory();
-        } else if (category == ItemCategory.Art) {
-            return new ArtDAOFactory();
-        } else if (category == ItemCategory.Electronics) {
-            return new ElectronicsDAOFactory();
-        }
-        return null;
+        if(category == ItemCategory.Vehicle) { return new VehicleDAOFactory(); }
+        else if (category == ItemCategory.Art) { return new ArtDAOFactory(); }
+        else if (category == ItemCategory.Electronics) { return new ElectronicsDAOFactory(); }
+        return new DefaultItemDAOFactory(); // ← thêm factory mặc định
+
     }
 
 }

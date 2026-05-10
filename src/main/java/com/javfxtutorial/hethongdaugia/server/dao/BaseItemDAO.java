@@ -38,6 +38,7 @@ public abstract class BaseItemDAO<T extends Item> implements DAOInterface<T> {
             pst.setInt(4, item.getItemId());
             return pst.executeUpdate();
         } catch (SQLException e) {
+            System.err.println("insertBase THẤT BẠI: " + e.getMessage()); // ← thêm dòng này
             e.printStackTrace();
             return 0;
         }

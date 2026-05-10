@@ -126,8 +126,9 @@ public class SellerManagementController implements ResponseListener {
                     brandElecField.getText(), modelField.getText());
         } else {
             item = new Item(sellerName, sellerId, itemId, name, description, image,
-                    ItemCategory.valueOf(cat));
+                    ItemCategory.Khác);
         }
+
 
         Auction auction = new Auction(item, sellerId, initPrice, stepPrice, tGianBD, tGianKT, AuctionStatus.NOT_START);
 
@@ -151,10 +152,10 @@ public class SellerManagementController implements ResponseListener {
 
         } catch (NumberFormatException e) {
             e.printStackTrace();
-            System.out.println("Lỗi không nhập đúng format");
+            showAlert("Lỗi nhập liệu", "Vui lòng nhập đúng định dạng số!");
         } catch (NullPointerException e) {
             e.printStackTrace();
-            System.out.println("Lỗi đinh dạng");
+            showAlert("Lỗi", "Vui lòng điền đầy đủ thông tin!");
         }
     }
 
