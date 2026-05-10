@@ -20,15 +20,11 @@ public enum ErrorCode {
 
     //loi phien dau gia
 
-    AUC_NOT_ACTIVE("AUC-001", "Phiên đấu giá chưa bắt đầu hoặc đã kết thúc", 400),
+    AUC_NOT_FOUND("AUC-001", "Không tìm thấy phiên đấu giá", 404),
 
-    AUC_EXPIRED("AUC-002", "Phiên đấu giá đã hết hạn", 400),
+    AUC_ALREADY_ENDED("AUC-002", "Phiên đấu giá đã kết thúc từ trước", 400),
 
-    AUC_NOT_FOUND("AUC-003", "Không tìm thấy phiên đấu giá", 404),
-
-    AUC_ALREADY_ENDED("AUC-004", "Phiên đấu giá đã kết thúc từ trước", 400),
-
-    AUC_NOT_STARTED("AUC-005", "Phiên đấu giá chưa bắt đầu", 400),
+    AUC_NOT_STARTED("AUC-003", "Phiên đấu giá chưa bắt đầu", 400),
 
     //loi data
 
