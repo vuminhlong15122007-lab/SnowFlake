@@ -36,7 +36,7 @@ public class AuctionSessionController {
         // Thông tin chung
         safeSet(lbProductName, auction.getItem().getName());
         safeSet(lbSellerName, auction.getItem().getSellerName());
-        safeSet(lbCategory, auction.getItem().getCategory());
+        safeSet(lbCategory, String.valueOf(auction.getItem().getCategory()));
 
         safeSet(lbWinner, auction.getWinnerId() != 0 ? String.valueOf(auction.getWinnerId()) : "Không có người đấu giá");
         // Load ảnh
