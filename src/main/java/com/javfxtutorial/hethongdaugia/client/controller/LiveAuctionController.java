@@ -42,7 +42,7 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 public class LiveAuctionController implements Initializable, ResponseListener {
     private volatile boolean running = true;
     Auction currentAuction;
-    ServerConnection connection = ServerConnection.getInstance();
+    ServerConnection connection = NetworkManager.getConnection();
     @FXML private TextField priceInput_tf;
     @FXML private Label highestPayer_tf;
     @FXML private Label currentPrice_tf;

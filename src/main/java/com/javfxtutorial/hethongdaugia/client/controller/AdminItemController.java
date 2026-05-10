@@ -54,7 +54,7 @@ public class AdminItemController implements  Initializable, ResponseListener {
 
     private void loadItemData() throws IOException, ClassNotFoundException {
         Command cmd = new GetAllAuctionsCommand();
-        ServerConnection connection = ServerConnection.getInstance();
+        ServerConnection connection = NetworkManager.getConnection();
         connection.sendCommand(cmd);
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.register(GetAllAuctionsCommand.class, this);
@@ -69,7 +69,7 @@ public class AdminItemController implements  Initializable, ResponseListener {
     }
     @FXML
     public void clickToDeleteItem() throws IOException, ClassNotFoundException {
-        ServerConnection connection = ServerConnection.getInstance();
+        ServerConnection connection = NetworkManager.getConnection();
         Auction selectItem = itemTable.getSelectionModel().getSelectedItem();
         if (selectItem == null) {
             showAlert("Lỗi", "Vui lòng chọn sản phẩm cần xóa");
