@@ -1,4 +1,4 @@
-package com.javfxtutorial.hethongdaugia.common.model.Factory;
+package com.javfxtutorial.hethongdaugia.common.model.factory;
 
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 

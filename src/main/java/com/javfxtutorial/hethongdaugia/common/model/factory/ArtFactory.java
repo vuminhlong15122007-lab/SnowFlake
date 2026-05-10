@@ -1,4 +1,4 @@
-package com.javfxtutorial.hethongdaugia.common.model.Factory;
+package com.javfxtutorial.hethongdaugia.common.model.factory;
 
 import com.javfxtutorial.hethongdaugia.common.model.Art;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
@@ -24,6 +24,6 @@ public class ArtFactory extends ItemFactory{
 
     @Override
     public Item createItem() {
-        return new Art( sellerId, name,  description,  image,  sellerName,  artist,  yearCreated,  title);
+        return new Art();
     }
 }

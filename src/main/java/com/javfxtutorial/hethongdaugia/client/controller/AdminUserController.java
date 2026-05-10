@@ -54,7 +54,7 @@ public class AdminUserController implements Initializable, ResponseListener {
     @FXML
     private void loadUserData() {
         new Thread(() -> {
-            ServerConnection connection = ServerConnection.getInstance();
+            ServerConnection connection = NetworkManager.getConnection();
             Command cmd = new GetAllUsersCommand();
             connection.sendCommand(cmd);
             NetworkManager networkManager = NetworkManager.getInstance();
@@ -99,7 +99,7 @@ public class AdminUserController implements Initializable, ResponseListener {
     @FXML private Button btnDeleteUser;
     @FXML
     public void clickToDeleteUser() throws IOException {
-        ServerConnection connection =ServerConnection.getInstance();
+        ServerConnection connection =NetworkManager.getConnection();
         selectUser = userTable.getSelectionModel().getSelectedItem();
         if (selectUser == null){
             showAlert("Lỗi", "Vui lòng chọn người dùng cần xóa" , "WrongCat.gif");

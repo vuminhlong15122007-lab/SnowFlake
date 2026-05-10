@@ -1,12 +1,14 @@
 package com.javfxtutorial.hethongdaugia.common.model;
 
+import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
+
 public class Art extends Item {
     private String artist;
     private int yearCreated;
     private String title;
 
-    public Art(int sellerId, String name, String description, String image, String sellerName, String artist, int yearCreated, String title) {
-        super(sellerId, name, description, image, sellerName);
+    public Art(String sellerName, int sellerId, int itemId, String name, String description, String image, String artist, int yearCreated, String title) {
+        super(sellerName, sellerId, itemId, name, description, image, ItemCategory.Art);
         this.artist = artist;
         this.yearCreated = yearCreated;
         this.title = title;

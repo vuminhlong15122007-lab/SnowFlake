@@ -26,7 +26,7 @@ public class ItemDAO implements DAOInterface<Item> {
     public int insert(Item item) {
         // 1. Viết câu SQL phù hợp với bảng Item
         Connection connection = JDBCUtil.getConnection();
-        String sql = "INSERT INTO Item (idseller, name, description, imagePath ) VALUES (?,?, ?, ?)";
+        String sql = "INSERT INTO Item (idseller, name, description, imagePath, sellerName, category ) VALUES (?,?, ?, ?, ?, ?)";
         int result = 0;
 
         // 2. Sử dụng try-with-resources để tự động quản lý kết nối
@@ -39,7 +39,7 @@ public class ItemDAO implements DAOInterface<Item> {
             pst.setString(2, item.getName());
             pst.setString(3, item.getDescription());
             pst.setString(4, item.getImage());
-
+            pst.setString(5, item.getSellerName());
 
             System.out.println("Bạn đang thực thi thêm Item: " + item.getName());
 

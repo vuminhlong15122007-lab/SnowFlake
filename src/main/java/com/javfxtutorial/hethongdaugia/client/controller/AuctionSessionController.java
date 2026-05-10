@@ -4,7 +4,6 @@ import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
-import com.sun.jdi.Value;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -22,6 +21,8 @@ public class AuctionSessionController {
     @FXML private Label statusBadge;
     @FXML private ImageView productImage;
     @FXML private Button actionButton;
+    @FXML private Label nguoidandau;
+    @FXML private Label gia ;
 
     // ── Riêng cho cell ENDED ──
     @FXML private Label lbWinner;
@@ -35,22 +36,30 @@ public class AuctionSessionController {
         // Thông tin chung
         safeSet(lbProductName, auction.getItem().getName());
         safeSet(lbSellerName, auction.getItem().getSellerName());
-        safeSet(lbCategory, auction.getItem().getCategory());
+        safeSet(lbCategory, String.valueOf(auction.getItem().getCategory()));
 
+        safeSet(lbWinner, auction.getWinnerId() != 0 ? String.valueOf(auction.getWinnerId()) : "Không có người đấu giá");
         // Load ảnh
-        loadImage(auction.getItem().getImage());
+        if (!(productImage == null || auction.getItem().getImage() == null || auction.getItem().getImage().isBlank()))
+        {ImageHelper.loadBase64ToImageView(productImage, auction.getItem().getImage());} ;
+
 
         // Xử lý theo trạng thái
         switch (auction.getStatus()) {
             case RUNNING:
-                safeSet(statusBadge, "ĐANG DIỄN RA");
-                if (statusBadge != null) statusBadge.setStyle("-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 2 8; -fx-background-radius: 8;");
+                statusBadge.setText("ĐANG DIỄN RA");
+                if (statusBadge != null) statusBadge.setStyle("-fx-background-color: green; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 2 8; -fx-background-radius: 8;");
                 safeSet(lbPrice, String.format("%,.0f VND", auction.getCurrentPrice()));
                 if (actionButton != null) {
                     actionButton.setDisable(false);
+                    actionButton.setText("THAM GIA");
                     actionButton.setStyle("-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-cursor: hand;");
                     actionButton.setOnAction(this::clickToLiveAuction);
+
                 }
+                if (nguoidandau != null) nguoidandau.setText("Người dẫn đầu : ");
+                if (lbWinner != null) lbWinner.setText(""+auction.getWinnerId());
+                gia.setText("Giá hiện tại : ");
                 break;
 
             case NOT_START:
@@ -59,13 +68,18 @@ public class AuctionSessionController {
                 safeSet(lbPrice, String.format("%,.0f VND", auction.getInitPrice()));
                 if (actionButton != null) {
                     actionButton.setDisable(true);
-                    actionButton.setStyle("-fx-background-color: #bdc3c7; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20;");
+                    actionButton.setText("CHƯA BẮT ĐẦU");
+                    actionButton.setStyle("-fx-background-color: linear-gradient(to right, red, #f39c12); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20;");
                 }
+                gia.setText("Giá khởi điểm : ");
+                if (nguoidandau != null) nguoidandau.setText("Người dẫn đầu : ");
+                lbWinner.setText(null);
                 break;
 
             case CLOSED:
                 safeSet(lbPrice, String.format("%,.0f VND", auction.getWinningPrice()));
                 safeSet(lbCategory, "Loại: " + (auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
+                if (lbWinner != null) lbWinner.setText(""+auction.getWinnerId());
                 break;
         }
     }
@@ -84,10 +98,7 @@ public class AuctionSessionController {
         if (label != null) label.setText(text);
     }
 
-    private void loadImage(String imageData) {
-        if (productImage == null || imageData == null || imageData.isBlank()) return;
-        ImageHelper.loadBase64ToImageView(productImage, imageData);
-    }
+
 
     @FXML
     public void clickToLiveAuction(ActionEvent event) {
