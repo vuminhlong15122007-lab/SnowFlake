@@ -7,7 +7,7 @@ import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
 import com.javfxtutorial.hethongdaugia.server.manager.UserManager;
 
-public class AddAccoun tCommand extends Command {
+public class AddAccountCommand extends Command {
 
     @Override
     public Response handle() {
