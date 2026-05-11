@@ -13,8 +13,6 @@ import com.javfxtutorial.hethongdaugia.common.model.Command.*;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
-import com.javfxtutorial.hethongdaugia.server.manager.AuctionManger;
-import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -31,7 +29,6 @@ import java.io.IOException;
 
 import java.net.URL;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 

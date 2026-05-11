@@ -18,21 +18,21 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class AuctionManger {
+public class AuctionManager {
     //Néue có người đắtj giá X s cuối thì ra hạn thêm Y
     private static final long ANTI_SNIPE_X_SECONDS = 60;
     private static final long ANTI_SNIPE_Y_SECONDS = 60;
 
     // ── Singleton thread-safe ─────────────────────────
-    private static volatile AuctionManger instance;
+    private static volatile AuctionManager instance;
 
-    private AuctionManger() {}
+    private AuctionManager() {}
 
-    public static AuctionManger getInstance() {
+    public static AuctionManager getInstance() {
         if (instance == null) {
-            synchronized (AuctionManger.class) {
+            synchronized (AuctionManager.class) {
                 if (instance == null) { // double-check
-                    instance = new AuctionManger();
+                    instance = new AuctionManager();
                 }
             }
         }

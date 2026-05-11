@@ -7,14 +7,8 @@ import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.DAOInterface;
-import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
-import com.javfxtutorial.hethongdaugia.server.dao.JDBCUtil;
 import com.javfxtutorial.hethongdaugia.server.factory.ItemDAOFactory;
-import com.javfxtutorial.hethongdaugia.server.manager.AuctionManger;
-import com.javfxtutorial.hethongdaugia.server.manager.ItemManager;
-
-import java.sql.Connection;
-import java.sql.SQLException;
+import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
 
 public class DeleteAuctionCommand extends Command {
     private Auction auction;
@@ -22,7 +16,7 @@ public class DeleteAuctionCommand extends Command {
 
     @Override
     public Response handle() {
-        AuctionStatus status = AuctionManger.getInstance().refreshAuctionStatus(auction);
+        AuctionStatus status = AuctionManager.getInstance().refreshAuctionStatus(auction);
         if (status == AuctionStatus.NOT_START) {
             int result1 = AuctionDAO.getInstance().delete(auction);
             ItemDAOFactory factory = ItemDAOFactory.getFactory(auction.getItem().getCategory());
