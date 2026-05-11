@@ -77,7 +77,7 @@ public class Edit_User_Popup_Controller implements ResponseListener {
             return;
         }
         if (!name.isEmpty() && !email.isEmpty() && selectRole != null){
-            ServerConnection connection = ServerConnection.getInstance();
+            ServerConnection connection = NetworkManager.getConnection();
             Command cmd = new AddAccountCommand();
             cmd.addData("username", name);
             cmd.addData("password", password);

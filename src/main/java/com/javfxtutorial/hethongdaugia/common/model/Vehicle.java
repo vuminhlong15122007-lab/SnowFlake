@@ -1,17 +1,25 @@
 package com.javfxtutorial.hethongdaugia.common.model;
 
+import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
+
 public class Vehicle extends Item {
     private String licensePlate;
     private int year;
     private String brand;
     private String color;
 
-    public Vehicle(int sellerId, String name, String description, String image, String sellerName, String licensePlate, int year, String brand, String color) {
-        super(sellerId, name, description, image, sellerName);
+    public Vehicle(String sellerName, int sellerId, int itemId, String name, String description, String image, String licensePlate, int year, String brand, String color) {
+        super(sellerName, sellerId, itemId, name, description, image, ItemCategory.Vehicle);
         this.licensePlate = licensePlate;
         this.year = year;
         this.brand = brand;
         this.color = color;
+    }
+    // Thêm vào class Vehicle
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.setCategory(ItemCategory.Vehicle);
     }
 
     public Vehicle() {super();}

@@ -40,7 +40,8 @@ public class LoginController implements ResponseListener, Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        ServerConnection connection = ServerConnection.getInstance();
+        ServerConnection connection = NetworkManager.getConnection();
+        NetworkManager.getInstance().start();
     }
 
     @FXML
@@ -49,7 +50,7 @@ public class LoginController implements ResponseListener, Initializable {
         String username = Username.getText();
         String password = Password.getText();
         new Thread(() -> {
-            ServerConnection connection = ServerConnection.getInstance();
+            ServerConnection connection = NetworkManager.getConnection();
             Command cmd = new LoginCommand();
             cmd.addData("username", username);
             cmd.addData("password", password);

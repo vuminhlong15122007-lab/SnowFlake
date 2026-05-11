@@ -66,7 +66,7 @@ public class AdminUpdateController implements ResponseListener {
         }
 
         //tao command gui len server
-        ServerConnection connection = ServerConnection.getInstance();
+        ServerConnection connection = NetworkManager.getConnection();
         UpdateProfileCommand cmd = new UpdateProfileCommand();
         cmd.addData("userId", currentUser.getId());
         cmd.addData("username", newName);

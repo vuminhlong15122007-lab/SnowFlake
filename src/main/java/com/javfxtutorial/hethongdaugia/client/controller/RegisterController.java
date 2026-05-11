@@ -81,7 +81,7 @@ public class RegisterController implements ResponseListener {
 
         if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
             if (password.equals(confirmPassword)){
-                ServerConnection connection = ServerConnection.getInstance();
+                ServerConnection connection = NetworkManager.getConnection();
                 Command cmd = new RegisterCommand();
                 cmd.addData("username", name);
                 cmd.addData("password", password);

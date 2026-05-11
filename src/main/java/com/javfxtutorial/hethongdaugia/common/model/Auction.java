@@ -77,78 +77,59 @@ public class Auction implements Serializable {
     public void setAuctionId(int auctionId) {
         this.auctionId = auctionId;
     }
-
     public Item getItem() {return item;}
     public void setItem(Item item) {this.item = item;}
-
     public int getSellerId() {
         return sellerId;
     }
-
     public void setSellerId(int sellerId) {
         this.sellerId = sellerId;
     }
-
     public double getInitPrice() {
         return initPrice;
     }
-
     public void setInitPrice(double initPrice) {
         this.initPrice = initPrice;
     }
-
     public double getCurrentPrice() {
         return currentPrice;
     }
-
     public void setCurrentPrice(double currentPrice) {
         this.currentPrice = currentPrice;
     }
-
     public double getStepPrice() {
         return stepPrice;
     }
-
     public void setStepPrice(double stepPrice) {
         this.stepPrice = stepPrice;
     }
-
     public double getWinningPrice() {
         return winningPrice;
     }
-
     public void setWinningPrice(double winningPrice) {
         this.winningPrice = winningPrice;
     }
-
     public LocalDateTime getStartingTime() {
         return startingTime;
     }
-
     public void setStartingTime(LocalDateTime startingTime) {
         this.startingTime = startingTime;
     }
-
     public LocalDateTime getEndingTime() {
         return endingTime;
     }
-
     public void setEndingTime(LocalDateTime endingTime) {
         this.endingTime = endingTime;
     }
-
     public AuctionStatus getStatus() {
         return status;
     }
-
     public void setStatus(AuctionStatus status) {
         this.status = status;
     }
-
     public int getWinnerId() {
         return winnerId;
     }
-
     public void setWinnerId(int winnerId) {
         this.winnerId = winnerId;
     }

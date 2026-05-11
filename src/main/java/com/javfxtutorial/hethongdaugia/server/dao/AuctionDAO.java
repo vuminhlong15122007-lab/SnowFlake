@@ -61,9 +61,10 @@ public class AuctionDAO implements DAOInterface<Auction> {
       } else {
         System.out.println("Tạo Auction thất bại");
       }
-    } catch (SQLException e) {
+    }  catch (SQLException e) {
       e.printStackTrace();
-      throw new RuntimeException("Lỗi thao tác DB khi thêm Auction", e);
+      return 0; // ← thay thế
+
     }
     return result;
   }

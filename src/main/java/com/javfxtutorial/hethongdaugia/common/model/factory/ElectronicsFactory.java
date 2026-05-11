@@ -1,4 +1,4 @@
-package com.javfxtutorial.hethongdaugia.common.model.Factory;
+package com.javfxtutorial.hethongdaugia.common.model.factory;
 
 import com.javfxtutorial.hethongdaugia.common.model.Electronics;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
@@ -26,6 +26,6 @@ public class ElectronicsFactory extends ItemFactory {
 
     @Override
     public Item createItem() {
-        return new Electronics(sellerId, name, description, image, sellerName, brand, model);
+        return new Electronics();
     }
 }
