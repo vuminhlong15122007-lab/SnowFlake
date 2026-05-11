@@ -21,7 +21,7 @@ public class ParticipatedAuctionCell extends ListCell<Auction> {
       fxmlFile = "/com/javfxtutorial/hethongdaugia/view/fxml/ParticipatedAuctionCell.fxml";
       FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
       Parent root = loader.load();
-      ParticipatedAuctionController controller = loader.getController();
+      ParticipatedAuctionCellController controller = loader.getController();
       controller.setData(auction);
       setText(null);
       setGraphic(root);

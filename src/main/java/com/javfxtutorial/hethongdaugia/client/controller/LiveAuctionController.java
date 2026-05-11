@@ -39,7 +39,7 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 
-public class LiveAuctionController implements Initializable, ResponseListener {
+public class LiveAuctionController implements  ResponseListener {
     private volatile boolean running = true;
     Auction currentAuction;
     ServerConnection connection = NetworkManager.getConnection();
@@ -138,8 +138,8 @@ public class LiveAuctionController implements Initializable, ResponseListener {
 
 
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    @FXML
+    public void initialize() {
         // register để nhận command của người khác nữa
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.register(PlaceBidCommand.class, this);

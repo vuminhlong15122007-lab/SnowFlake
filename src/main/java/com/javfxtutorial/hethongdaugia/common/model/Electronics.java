@@ -11,12 +11,6 @@ public class Electronics extends Item{
         this.brand = brand;
         this.model = model;
     }
-    // Thêm vào class Electronics
-    private void readObject(java.io.ObjectInputStream in)
-            throws java.io.IOException, ClassNotFoundException {
-        in.defaultReadObject();
-        this.setCategory(ItemCategory.Electronics);
-    }
 
     public Electronics() { super(); }
     public String getBrand() {return brand;}
