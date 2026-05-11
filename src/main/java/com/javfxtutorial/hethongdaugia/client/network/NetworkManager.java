@@ -7,12 +7,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Map;
 
 import static java.lang.Thread.sleep;
 
@@ -25,8 +23,6 @@ public class NetworkManager {
     listeners = new ConcurrentHashMap<>();
   }
 
-  ;
-
   public static NetworkManager getInstance() {
     if (instance == null) {
       instance = new NetworkManager();
@@ -38,14 +34,14 @@ public class NetworkManager {
     ServerConnection connection = null;
     try {
       connection = ServerConnection.getInstance();
-    } catch (IOException _) {
-      log.error("Không tìm thấy server");
+    } catch (IOException e) {
+      log.error("Không tìm thấy server: {}", e.getMessage());
     }
     return connection;
   }
 
   public void register(Class<?> commandClass, ResponseListener listener) {
-    if (listeners.containsKey(commandClass)) { // nếu đã có cmd tồn tại thì thêm vào list th
+    if (listeners.containsKey(commandClass)) {
       listeners.get(commandClass).add(listener);
     } else {
       listeners.put(commandClass, new CopyOnWriteArrayList<>(List.of(listener)));
@@ -53,7 +49,8 @@ public class NetworkManager {
   }
 
   public void unregister(Class<?> commandClass, ResponseListener listener) {
-    listeners.get(commandClass).remove(listener);
+    List<ResponseListener> list = listeners.get(commandClass);
+    if (list != null) list.remove(listener);
   }
 
   public void start() {
@@ -63,39 +60,43 @@ public class NetworkManager {
         try {
           connection = ServerConnection.getInstance();
         } catch (IOException e) {
-          try {
-            log.error("Không tìm thấy kết nối server");
-            sleep(2000);
-            continue;
-          } catch (InterruptedException ex) {
-            throw new RuntimeException(ex);
-          }
+          log.error("Không tìm thấy kết nối server: {}", e.getMessage());
+          try { sleep(2000); } catch (InterruptedException ex) { Thread.currentThread().interrupt(); return; }
+          continue;
         }
 
         Response rp = null;
         try {
           rp = connection.receiveResponse();
         } catch (IOException | ClassNotFoundException e) {
-          log.error("Lỗi khi đọc response");
+          // In ra lỗi thật để debug
+          log.error("Lỗi khi đọc response: {} - {}", e.getClass().getSimpleName(), e.getMessage(), e);
           continue;
         }
+
+        if (rp == null) {
+          log.warn("Response nhận được là null, bỏ qua");
+          continue;
+        }
+
         try {
           Class<?> commandType = rp.getCommand().getClass();
-          if (listeners != null) {
-            for (ResponseListener listener : listeners.get(commandType)) {
+          List<ResponseListener> list = listeners.get(commandType);
+          if (list != null) {
+            for (ResponseListener listener : list) {
               if (listener != null) {
                 listener.onResponse(rp);
               }
             }
+          } else {
+            log.warn("Không có listener nào cho command: {}", commandType.getSimpleName());
           }
         } catch (NullPointerException e) {
-          log.error("Giá trị trả về là null");
+          log.error("NullPointerException khi dispatch response: {}", e.getMessage(), e);
         }
       }
-
     });
     thread.setDaemon(true);
     thread.start();
   }
-
 }

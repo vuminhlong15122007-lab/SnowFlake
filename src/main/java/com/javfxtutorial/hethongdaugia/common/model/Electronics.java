@@ -1,13 +1,21 @@
 package com.javfxtutorial.hethongdaugia.common.model;
 
+import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
+
 public class Electronics extends Item{
     private String brand;       // hãng sản xuất
     private String model;       // Tên dòng máy
 
-    public Electronics(int sellerId, String name, String description, String image, String sellerName, String brand, String model) {
-        super(sellerId, name, description, image, sellerName);
+    public Electronics(String sellerName, int sellerId, int itemId, String name, String description, String image, String brand, String model) {
+        super(sellerName, sellerId, itemId, name, description, image, ItemCategory.Electronics);
         this.brand = brand;
         this.model = model;
+    }
+    // Thêm vào class Electronics
+    private void readObject(java.io.ObjectInputStream in)
+            throws java.io.IOException, ClassNotFoundException {
+        in.defaultReadObject();
+        this.setCategory(ItemCategory.Electronics);
     }
 
     public Electronics() { super(); }

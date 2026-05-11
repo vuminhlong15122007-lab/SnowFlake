@@ -1,4 +1,6 @@
 package com.javfxtutorial.hethongdaugia.common.model;
+import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
+
 import java.io.Serializable;
 
 public class Item implements Serializable {
@@ -8,8 +10,7 @@ public class Item implements Serializable {
     private String description;
     private String image; // ảnh đã được mã hóa
     private String sellerName;
-
-    private String category;
+    private ItemCategory category;
 
 
     public Item(int sellerId, String name, String description, String image, String sellerName) {
@@ -37,6 +38,16 @@ public class Item implements Serializable {
         this.image = image;
     }
 
+    public Item(String sellerName, int sellerId, int itemId, String name, String description, String image, ItemCategory category) {
+        this.sellerName = sellerName;
+        this.sellerId = sellerId;
+        this.itemId = itemId;
+        this.name = name;
+        this.description = description;
+        this.image = image;
+        this.category = category;
+    }
+
     public Item() {}
 
     public void setItemId(int itemId) {this.itemId = itemId;}
@@ -52,8 +63,8 @@ public class Item implements Serializable {
     public String getSellerName() {return sellerName;}
     public void setSellerName(String sellerName) {this.sellerName = sellerName;}
 
-    public String getCategory() { return category; }
-    public void setCategory(String category) { this.category = category; }
+    public ItemCategory getCategory() { return category; }
+    public void setCategory(ItemCategory category) { this.category = category; }
 }
 
 

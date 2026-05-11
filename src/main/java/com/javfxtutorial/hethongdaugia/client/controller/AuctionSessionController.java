@@ -34,10 +34,11 @@ public class AuctionSessionController {
         this.auction = auction;
 
         // Thông tin chung
-        safeSet(lbProductName, auction.getItem().getName());
-        safeSet(lbSellerName, auction.getItem().getSellerName());
-        safeSet(lbCategory, auction.getItem().getCategory());
+        lbProductName.setText(auction.getItem().getName());
+        lbSellerName.setText(auction.getItem().getSellerName());
+        lbCategory.setText(String.valueOf(auction.getItem().getCategory()));
 
+        lbWinner.setText(auction.getWinnerId() != 0 ? String.valueOf(auction.getWinnerId()) : "Không có người đấu giá");
         // Load ảnh
         if (!(productImage == null || auction.getItem().getImage() == null || auction.getItem().getImage().isBlank()))
         {ImageHelper.loadBase64ToImageView(productImage, auction.getItem().getImage());} ;
@@ -48,12 +49,11 @@ public class AuctionSessionController {
             case RUNNING:
                 statusBadge.setText("ĐANG DIỄN RA");
                 if (statusBadge != null) statusBadge.setStyle("-fx-background-color: green; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 2 8; -fx-background-radius: 8;");
-                safeSet(lbPrice, String.format("%,.0f VND", auction.getCurrentPrice()));
+                lbPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
                 if (actionButton != null) {
                     actionButton.setDisable(false);
                     actionButton.setText("THAM GIA");
                     actionButton.setStyle("-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-cursor: hand;");
-                    actionButton.setOnAction(this::clickToLiveAuction);
 
                 }
                 if (nguoidandau != null) nguoidandau.setText("Người dẫn đầu : ");
@@ -62,11 +62,10 @@ public class AuctionSessionController {
                 break;
 
             case NOT_START:
-                safeSet(statusBadge, "SẮP DIỄN RA");
+                statusBadge.setText("SẮP DIỄN RA");
                 if (statusBadge != null) statusBadge.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 2 8; -fx-background-radius: 8;");
-                safeSet(lbPrice, String.format("%,.0f VND", auction.getInitPrice()));
+                lbPrice.setText(String.format("%,.0f VND", auction.getInitPrice()));
                 if (actionButton != null) {
-                    actionButton.setDisable(true);
                     actionButton.setText("CHƯA BẮT ĐẦU");
                     actionButton.setStyle("-fx-background-color: linear-gradient(to right, red, #f39c12); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20;");
                 }
@@ -76,8 +75,8 @@ public class AuctionSessionController {
                 break;
 
             case CLOSED:
-                safeSet(lbPrice, String.format("%,.0f VND", auction.getWinningPrice()));
-                safeSet(lbCategory, "Loại: " + (auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
+                lbPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
+                lbCategory.setText("Loại: " + (auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
                 if (lbWinner != null) lbWinner.setText(""+auction.getWinnerId());
                 break;
         }
@@ -93,25 +92,13 @@ public class AuctionSessionController {
         }
     }
 
-    private void safeSet(Label label, String text) {
-        if (label != null) label.setText(text);
-    }
 
-
-
-    @FXML
-    public void clickToLiveAuction(ActionEvent event) {
-        if (auction == null) return;
-        ClientModel.getInstance().setCurrentAuction(auction);
-        ClientModel.getInstance().setCurrentItem(auction.getItem());
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thi_sp.fxml");
-    }
 
     @FXML
     public void BtAuction(ActionEvent event) {
         if (auction == null) return;
         ClientModel.getInstance().setCurrentAuction(auction);
         ClientModel.getInstance().setCurrentItem(auction.getItem());
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/dau_gia_truc_tiep.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thi_sp.fxml");
     }
 }

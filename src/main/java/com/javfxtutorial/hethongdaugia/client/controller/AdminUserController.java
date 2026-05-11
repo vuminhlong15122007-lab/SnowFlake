@@ -25,8 +25,7 @@ import java.net.URL;
 import java.util.List;
 import java.util.ResourceBundle;
 
-import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
-import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.*;
 
 public class AdminUserController implements Initializable, ResponseListener {
     @FXML private TableView<User> userTable;
@@ -36,11 +35,9 @@ public class AdminUserController implements Initializable, ResponseListener {
     @FXML private TableColumn<User, String> colPhone;
     @FXML private TableColumn<User, String> colRole;
     @FXML private TableColumn<User, String> colStatus;
-    @FXML private Button deleteButton;
-    @FXML private Button reload;
     @FXML private TextField searchField;
-    @FXML private Button btnSearch;
-    @FXML private Button dltSearch;
+    private User selectUser;
+
     private ObservableList<User> danhSach;
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -65,38 +62,13 @@ public class AdminUserController implements Initializable, ResponseListener {
     private Button btnEditUser;
     @FXML
     public void getUpdateAdmin(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/update_admin.fxml"));
-            Parent root = loader.load();
-            Stage popupStage = new Stage();
-            popupStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
-            popupStage.setTitle("sửa thông tin admin");
-            Scene scene = new Scene(root);
-            popupStage.setScene(scene);
-            popupStage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public void clickButtonExit(ActionEvent event) {
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
+        changePopup(event,"/com/javfxtutorial/hethongdaugia/view/fxml/update_admin.fxml","sửa thông tin admin");
+
     }
     public void clickToAddUser(ActionEvent event) {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/Popupmanhinhsuathongtinadmin.fxml"));
-            Parent root = loader.load();
-            Stage popupStage = new Stage();
-            popupStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
-            popupStage.setTitle("Thêm User mới");
-            Scene scene = new Scene(root);
-            popupStage.setScene(scene);
-            popupStage.show();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        changePopup(event,"/com/javfxtutorial/hethongdaugia/view/fxml/Popupmanhinhsuathongtinadmin.fxml","Thêm User mới");
     }
-    User selectUser;
-    @FXML private Button btnDeleteUser;
+
     @FXML
     public void clickToDeleteUser() throws IOException {
         ServerConnection connection =NetworkManager.getConnection();
