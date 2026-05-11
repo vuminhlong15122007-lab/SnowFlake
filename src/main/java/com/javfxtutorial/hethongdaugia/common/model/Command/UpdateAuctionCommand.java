@@ -22,7 +22,7 @@ public class UpdateAuctionCommand extends Command {
         if (status == AuctionStatus.NOT_START) {
             Item item = auction.getItem();
             ItemDAOFactory factory = ItemDAOFactory.getFactory(item.getCategory());
-            DAOInterface<Item> itemDao = factory.createItemDAO();
+            DAOInterface itemDao = factory.createItemDAO();
             int result2 = itemDao.update(item);
             int result1 = AuctionDAO.getInstance().update(auction);
             if (result1 > 0 && result2 > 0) {
