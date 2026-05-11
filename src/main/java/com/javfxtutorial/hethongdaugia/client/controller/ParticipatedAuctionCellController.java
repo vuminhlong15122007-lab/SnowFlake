@@ -33,9 +33,7 @@ public class ParticipatedAuctionCellController {
             ImageHelper.loadBase64ToImageView(productImage, auction.getItem().getImage());
         }
         ;
-
-
-        // Xử lý theo trạng thái command ( CHƯA CÓ !!!!!!!!!!!!!!!!!!!)
+        /// CHUS YS CAI NAY CHUA XONG .... KHONG PHAI GOI AUCTION.GETSTATUS()???
         switch (auction.getStatus()) {
             case RUNNING:
                 lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
