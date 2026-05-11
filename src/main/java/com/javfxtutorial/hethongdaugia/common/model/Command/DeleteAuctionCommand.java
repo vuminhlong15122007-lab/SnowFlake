@@ -26,7 +26,7 @@ public class DeleteAuctionCommand extends Command {
         if (status == AuctionStatus.NOT_START) {
             int result1 = AuctionDAO.getInstance().delete(auction);
             ItemDAOFactory factory = ItemDAOFactory.getFactory(auction.getItem().getCategory());
-            DAOInterface<Item> itemDao = factory.createItemDAO();
+            DAOInterface itemDao = factory.createItemDAO();
             int result2 = itemDao.delete(auction.getItem());
             if (result1 > 0 && result2 > 0) { //nghĩa là xóa thành công
                 return new Response(true, "Xóa thành công", null, this);

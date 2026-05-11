@@ -34,11 +34,11 @@ public class AuctionSessionController {
         this.auction = auction;
 
         // Thông tin chung
-        safeSet(lbProductName, auction.getItem().getName());
-        safeSet(lbSellerName, auction.getItem().getSellerName());
-        safeSet(lbCategory, String.valueOf(auction.getItem().getCategory()));
+        lbProductName.setText(auction.getItem().getName());
+        lbSellerName.setText(auction.getItem().getSellerName());
+        lbCategory.setText(String.valueOf(auction.getItem().getCategory()));
 
-        safeSet(lbWinner, auction.getWinnerId() != 0 ? String.valueOf(auction.getWinnerId()) : "Không có người đấu giá");
+        lbWinner.setText(auction.getWinnerId() != 0 ? String.valueOf(auction.getWinnerId()) : "Không có người đấu giá");
         // Load ảnh
         if (!(productImage == null || auction.getItem().getImage() == null || auction.getItem().getImage().isBlank()))
         {ImageHelper.loadBase64ToImageView(productImage, auction.getItem().getImage());} ;
@@ -49,7 +49,7 @@ public class AuctionSessionController {
             case RUNNING:
                 statusBadge.setText("ĐANG DIỄN RA");
                 if (statusBadge != null) statusBadge.setStyle("-fx-background-color: green; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 2 8; -fx-background-radius: 8;");
-                safeSet(lbPrice, String.format("%,.0f VND", auction.getCurrentPrice()));
+                lbPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
                 if (actionButton != null) {
                     actionButton.setDisable(false);
                     actionButton.setText("THAM GIA");
@@ -62,9 +62,9 @@ public class AuctionSessionController {
                 break;
 
             case NOT_START:
-                safeSet(statusBadge, "SẮP DIỄN RA");
+                statusBadge.setText("SẮP DIỄN RA");
                 if (statusBadge != null) statusBadge.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 2 8; -fx-background-radius: 8;");
-                safeSet(lbPrice, String.format("%,.0f VND", auction.getInitPrice()));
+                lbPrice.setText(String.format("%,.0f VND", auction.getInitPrice()));
                 if (actionButton != null) {
                     actionButton.setText("CHƯA BẮT ĐẦU");
                     actionButton.setStyle("-fx-background-color: linear-gradient(to right, red, #f39c12); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20;");
@@ -75,8 +75,8 @@ public class AuctionSessionController {
                 break;
 
             case CLOSED:
-                safeSet(lbPrice, String.format("%,.0f VND", auction.getWinningPrice()));
-                safeSet(lbCategory, "Loại: " + (auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
+                lbPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
+                lbCategory.setText("Loại: " + (auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
                 if (lbWinner != null) lbWinner.setText(""+auction.getWinnerId());
                 break;
         }
@@ -92,9 +92,7 @@ public class AuctionSessionController {
         }
     }
 
-    private void safeSet(Label label, String text) {
-        if (label != null) label.setText(text);
-    }
+
 
     @FXML
     public void BtAuction(ActionEvent event) {

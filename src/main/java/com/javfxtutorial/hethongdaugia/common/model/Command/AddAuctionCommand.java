@@ -15,7 +15,7 @@ public class AddAuctionCommand extends Command{ //Dùng để thêm sản phẩm
         Auction auction = (Auction) this.getData("Auction");
         Item item = auction.getItem();
         ItemDAOFactory factory = ItemDAOFactory.getFactory(item.getCategory());
-        DAOInterface<Item> itemDao = factory.createItemDAO();
+        DAOInterface itemDao = factory.createItemDAO();
         int result2 = itemDao.insert(item);
         if (result2 <= 0) {
             return new Response(false, "Lỗi! Không thể thêm Item vào DB", null, this);
