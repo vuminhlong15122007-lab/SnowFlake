@@ -27,6 +27,7 @@ import javafx.scene.image.ImageView;
 
 import java.io.IOException;
 
+import java.math.BigDecimal;
 import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -81,11 +82,11 @@ public class LiveAuctionController implements Initializable, ResponseListener {
         try {
             // 1. Lấy text và loại bỏ các dấu phẩy, khoảng trắng (nếu người dùng có nhập)
             String rawInput = priceInput_tf.getText().replace(",", "").replace(".", "").trim();
-            double inputAmount = Double.parseDouble(rawInput);
+            BigDecimal inputAmount = BigDecimal.valueOf(Double.parseDouble(rawInput)) ;
 
             // 2. Validate sớm ngay tại Client (Giảm tải cho Server)
-            double minRequired = currentAuction.getCurrentPrice() + currentAuction.getStepPrice();
-            if (inputAmount < minRequired) {
+            BigDecimal minRequired = currentAuction.getStepPrice().add(currentAuction.getCurrentPrice() );
+            if (inputAmount.compareTo(minRequired) < 0 ) {
                 UIUtils.showAlert("Lỗi đặt giá", String.format("Bạn phải đặt tối thiểu %,.0f VND (Giá hiện tại + Bước giá)", minRequired));
                 return;
             }
@@ -174,7 +175,7 @@ public class LiveAuctionController implements Initializable, ResponseListener {
         if (autoBidToggle.isSelected()) {
             try {
                 // Lấy giá tối đa từ giao diện
-                double maxPrice = Double.parseDouble(autoMaxPrice_tf.getText());
+                BigDecimal maxPrice = new BigDecimal(autoMaxPrice_tf.getText());
                 User nowUser = ClientModel.getInstance().getCurrentUser();
                 // Tạo cấu hình Bot cho người dùng hiện tại
                 AutoBidConfig config = new AutoBidConfig(nowUser.getId(), nowUser.getName(), currentAuction.getAuctionId(), maxPrice, true);
@@ -227,14 +228,14 @@ public class LiveAuctionController implements Initializable, ResponseListener {
 
             // nếu đặt giá thành công thì set up lại view
             if (rp.isSuccess()) {
-                double newPrice = bid.getAmount();
+                BigDecimal newPrice = bid.getAmount();
                 String bidderName = bid.getBidderName();
                 int bidderId = bid.getBidderId();
 
                 Platform.runLater(() -> {
                     // 1. Xử lý lịch sử (ListView):
                     int insertIndex = 0;
-                    while (insertIndex < observable.size() && observable.get(insertIndex).getAmount() > bid.getAmount()) {
+                    while (insertIndex < observable.size() && observable.get(insertIndex).getAmount().compareTo(bid.getAmount()) > 0) {
                         insertIndex++;
                     }
                     observable.add(insertIndex, bid);
@@ -247,7 +248,7 @@ public class LiveAuctionController implements Initializable, ResponseListener {
 
                     // 2. CHỐNG ẢO GIÁC ĐI LÙI (Bảo vệ giao diện chính)
                     // Chỉ cho phép cập nhật thông tin chung khi giá nhận được LỚN HƠN giá đang hiển thị
-                    if (newPrice > currentAuction.getCurrentPrice()) {
+                    if (newPrice.compareTo(currentAuction.getCurrentPrice()) > 0) {
 
                         // Cập nhật lại Model đang lưu trong RAM
                         currentAuction.setCurrentPrice(newPrice);
@@ -298,7 +299,7 @@ public class LiveAuctionController implements Initializable, ResponseListener {
                         // Sắp xếp danh sách lịch sử theo Giá.
                         // - Dùng b2 so sánh b1: Giá cao nhất (mới nhất) nằm TRÊN CÙNG.
                         // - Nếu bạn muốn Giá cao nhất nằm DƯỚI CÙNG, đổi thành: Double.compare(b1.getAmount(), b2.getAmount())
-                        bidList.sort((b1, b2) -> Double.compare(b2.getAmount(), b1.getAmount()));
+                        bidList.sort((b1, b2) -> b2.getAmount().compareTo(b1.getAmount()));
 
                         observable.setAll(bidList);
 

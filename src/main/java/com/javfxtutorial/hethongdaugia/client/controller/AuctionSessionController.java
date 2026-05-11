@@ -95,7 +95,7 @@ public class AuctionSessionController {
 
 
     @FXML
-    public void BtAuction(ActionEvent event) {
+    public void clickToGoToLiveAuction(ActionEvent event) {
         if (auction == null) return;
         ClientModel.getInstance().setCurrentAuction(auction);
         ClientModel.getInstance().setCurrentItem(auction.getItem());

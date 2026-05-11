@@ -7,6 +7,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.concurrent.CountDownLatch;
 
@@ -19,6 +20,9 @@ public class AuctionManagerTest {
     @BeforeEach
     void setup() {
         auctionManager = AuctionManager.getInstance() ;
+        auction = new Auction();
+        auction.setCurrentPrice(new BigDecimal(100.0));
+        auction.setStepPrice(new BigDecimal(10));
     }
     @Nested
     @DisplayName("Đặt giá")
@@ -26,51 +30,36 @@ public class AuctionManagerTest {
     @Test
     @DisplayName("giá hợp lệ")
     void testCheckValidBid_ShouldReturnTrue_WhenAmountIsCorrect(){
-        Auction auction = new Auction();
-        auction.setCurrentPrice(100.0);
-        auction.setStepPrice(10.0);
-
         // giá bằng đúng giá hiện tại + step => hợp lệ
-        assertTrue(auctionManager.checkValidBid(auction, 110.0));
+        assertTrue(auctionManager.checkValidBid(auction, new BigDecimal(110.0)));
         // giá mới lớn hơn giá hiện tại + step => hợp lệ
-        assertTrue(auctionManager.checkValidBid(auction, 150.0));
+        assertTrue(auctionManager.checkValidBid(auction, new BigDecimal(150)));
     }
 
     @Test
     @DisplayName("giá nhỏ hơn giá trị hiện tại + step")
     void testCheckValidBid_ShouldReturnFalse_WhenAmountIsFalse(){
-        Auction auction = new Auction();
-        auction.setCurrentPrice(100.0);
-        auction.setStepPrice(10.0);
         // giá nằm ở giữa giá hiện tại và giá hiện tại + step => false
-        assertFalse(auctionManager.checkValidBid(auction , 105));
+        assertFalse(auctionManager.checkValidBid(auction , new BigDecimal(105)));
         // giá nằm ở dưới giá hiện tại
-        assertFalse(auctionManager.checkValidBid(auction , 95));
+        assertFalse(auctionManager.checkValidBid(auction , new BigDecimal(95)));
     }
     @Test
     @DisplayName("thất bại nếu là giá trị âm ")
     void invalid_negativeAmount() {
-        Auction auction = new Auction();
-        auction.setCurrentPrice(100.0);
-        auction.setStepPrice(10.0);
-        assertFalse(auctionManager.checkValidBid(auction, -1.0));
+
+        assertFalse(auctionManager.checkValidBid(auction, new BigDecimal(-1.0)));
     }
 
     @Test
-    @DisplayName("thất bại nếu giá là giá trị âm")
+    @DisplayName("thất bại nếu giá là giá trị new")
     void invalid_zeroAmount() {
-        Auction auction = new Auction();
-        auction.setCurrentPrice(100.0);
-        auction.setStepPrice(10.0);
-        assertFalse(auctionManager.checkValidBid(auction, 0.0));
+        assertFalse(auctionManager.checkValidBid(auction, new BigDecimal(0.0)));
     }
     @Test
     @DisplayName("Thành công giá quá lớn")
     void invalid_floatingPoint(){
-        Auction auction = new Auction();
-        auction.setCurrentPrice(1000);
-        auction.setStepPrice(10);
-        assertTrue(auctionManager.checkValidBid(auction, 100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.0));
+        assertTrue(auctionManager.checkValidBid(auction, new BigDecimal(100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.0)));
     }
 
 
@@ -78,10 +67,10 @@ public class AuctionManagerTest {
     @DisplayName("hợp lệ: giá số thực (floating point) chính xác")
     void valid_floatingPoint() {
         Auction auction = new Auction();
-        auction.setCurrentPrice(99.5);
-        auction.setStepPrice(0.5);
-        assertTrue(auctionManager.checkValidBid(auction, 100.0));
-        assertFalse(auctionManager.checkValidBid(auction, 99.9));
+        auction.setCurrentPrice(new BigDecimal(99.5));
+        auction.setStepPrice(new BigDecimal(0.5));
+        assertTrue(auctionManager.checkValidBid(auction, new BigDecimal(100.0)));
+        assertFalse(auctionManager.checkValidBid(auction, new BigDecimal(99.9)));
     }}
     @Nested
     @DisplayName("refreshAuctionStatus")

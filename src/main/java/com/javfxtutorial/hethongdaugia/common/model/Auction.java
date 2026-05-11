@@ -3,6 +3,7 @@ package com.javfxtutorial.hethongdaugia.common.model;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class Auction implements Serializable {
@@ -16,10 +17,10 @@ public class Auction implements Serializable {
     private int sellerId;
 
     // Các thông tin về giá
-    private double initPrice;
-    private double currentPrice;
-    private double stepPrice;
-    private double winningPrice; // Giá chốt cuối cùng (nếu có)
+    private BigDecimal initPrice;
+    private BigDecimal currentPrice;
+    private BigDecimal stepPrice;
+    private BigDecimal winningPrice; // Giá chốt cuối cùng (nếu có)
 
     // Thông tin về thời gian
     private LocalDateTime startingTime;
@@ -32,7 +33,7 @@ public class Auction implements Serializable {
     private int winnerId;
     public Auction(){}
 
-    public Auction(Item item, int sellerId, double initPrice, double stepPrice, LocalDateTime startingTime, LocalDateTime endingTime) {
+    public Auction(Item item, int sellerId, BigDecimal initPrice, BigDecimal stepPrice, LocalDateTime startingTime, LocalDateTime endingTime) {
         this.item = item;
         this.sellerId = sellerId;
         this.initPrice = initPrice;
@@ -43,7 +44,7 @@ public class Auction implements Serializable {
     }
 
 
-    public Auction(int auctionId, Item item, int sellerId, int winnerId, double initPrice, double currentPrice, double stepPrice, double winningPrice, LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
+    public Auction(int auctionId, Item item, int sellerId, int winnerId, BigDecimal initPrice, BigDecimal currentPrice, BigDecimal stepPrice, BigDecimal winningPrice, LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
         this.auctionId = auctionId;
         this.item = item;
         this.sellerId = sellerId;
@@ -57,7 +58,7 @@ public class Auction implements Serializable {
         this.winnerId = winnerId;
     }
 
-    public Auction(Item item, int sellerId, double initPrice, double stepPrice, LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
+    public Auction(Item item, int sellerId, BigDecimal initPrice, BigDecimal stepPrice, LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
         this.item = item;
         this.sellerId = sellerId;
         this.initPrice = initPrice;
@@ -85,28 +86,28 @@ public class Auction implements Serializable {
     public void setSellerId(int sellerId) {
         this.sellerId = sellerId;
     }
-    public double getInitPrice() {
+    public BigDecimal getInitPrice() {
         return initPrice;
     }
-    public void setInitPrice(double initPrice) {
+    public void setInitPrice(BigDecimal initPrice) {
         this.initPrice = initPrice;
     }
-    public double getCurrentPrice() {
+    public BigDecimal getCurrentPrice() {
         return currentPrice;
     }
-    public void setCurrentPrice(double currentPrice) {
+    public void setCurrentPrice(BigDecimal currentPrice) {
         this.currentPrice = currentPrice;
     }
-    public double getStepPrice() {
+    public BigDecimal getStepPrice() {
         return stepPrice;
     }
-    public void setStepPrice(double stepPrice) {
+    public void setStepPrice(BigDecimal stepPrice) {
         this.stepPrice = stepPrice;
     }
-    public double getWinningPrice() {
+    public BigDecimal getWinningPrice() {
         return winningPrice;
     }
-    public void setWinningPrice(double winningPrice) {
+    public void setWinningPrice(BigDecimal winningPrice) {
         this.winningPrice = winningPrice;
     }
     public LocalDateTime getStartingTime() {

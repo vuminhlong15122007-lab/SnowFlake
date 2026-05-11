@@ -9,6 +9,7 @@ import com.javfxtutorial.hethongdaugia.server.dao.BidDAO;
 import com.javfxtutorial.hethongdaugia.server.network.BidListener;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 
+import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -140,8 +141,8 @@ public class AuctionManager {
     // ─────────────────────────────────────────────────
     // CHECK VALID BID
     // ─────────────────────────────────────────────────
-    public boolean checkValidBid(Auction auction, double amount) {
-        return amount >= auction.getCurrentPrice() + auction.getStepPrice();
+    public boolean checkValidBid(Auction auction, BigDecimal amount) {
+        return amount.compareTo(auction.getCurrentPrice().add(auction.getStepPrice())) >= 0;
     }
 
     // ─────────────────────────────────────────────────
@@ -201,33 +202,33 @@ public class AuctionManager {
                 .get(auction.getAuctionId());
         if (configs == null || configs.isEmpty()) return;
 
-        double step = auction.getStepPrice();
-        double minRequired = auction.getCurrentPrice() + step;
+        BigDecimal step = auction.getStepPrice();
+        BigDecimal minRequired = auction.getCurrentPrice().add(step);
 
         List<AutoBidConfig> eligibleBots = new ArrayList<>();
         for (AutoBidConfig c : configs) {
-            if (c.isActive() && c.getMaxPrice() >= minRequired) {
+            if (c.isActive() && c.getMaxPrice().compareTo(minRequired) >= 0) {
                 eligibleBots.add(c);
             }
         }
         if (eligibleBots.isEmpty()) return;
 
         eligibleBots.sort((b1, b2) ->
-                Double.compare(b2.getMaxPrice(), b1.getMaxPrice()));
+                b2.getMaxPrice().compareTo(b1.getMaxPrice()));
 
         AutoBidConfig winnerBot = eligibleBots.get(0);
         if (winnerBot.getUserId() == auction.getWinnerId()) return;
 
-        double finalAmount;
+        BigDecimal finalAmount;
         if (eligibleBots.size() == 1) {
             finalAmount = minRequired;
         } else {
-            double secondMax = eligibleBots.get(1).getMaxPrice();
-            finalAmount = secondMax + step;
-            if (finalAmount > winnerBot.getMaxPrice()) {
+            BigDecimal secondMax = eligibleBots.get(1).getMaxPrice();
+            finalAmount = secondMax.add(step);
+            if (finalAmount.compareTo(winnerBot.getMaxPrice()) == 0) {
                 finalAmount = winnerBot.getMaxPrice();
             }
-            if (finalAmount < minRequired) {
+            if (finalAmount.compareTo(minRequired) < 0) {
                 finalAmount = minRequired;
             }
         }
