@@ -28,4 +28,4 @@ jobs:
         run: mvn install -DskipTests --no-transfer-progress
 
       - name: Run tests
-        run: mvn test -Djava.awt.headless=true -Dtestfx.headless=true -Dglass.platform=Monocle --no-transfer-progress
+        run: mvn test '-Djava.awt.headless=true' '-Dtestfx.headless=true' '-Dglass.platform=Monocle' --no-transfer-progress
