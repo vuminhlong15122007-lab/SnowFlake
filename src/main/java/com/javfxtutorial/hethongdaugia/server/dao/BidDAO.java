@@ -8,11 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BidDAO  {
-    private static BidDAO instance;
+    private static volatile BidDAO instance;
     private BidDAO(){}
     public static BidDAO getInstance(){
         if (instance == null){
-            instance = new BidDAO();
+            synchronized(BidDAO.class){
+                if (instance == null){
+                    instance = new BidDAO();
+                }
+            }
         }
         return instance;
     }

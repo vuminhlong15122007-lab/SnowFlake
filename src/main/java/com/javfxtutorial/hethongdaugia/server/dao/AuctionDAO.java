@@ -13,19 +13,22 @@ import java.util.List;
 
 public class AuctionDAO implements DAOInterface<Auction> {
   private static final Logger log = LoggerFactory.getLogger(AuctionDAO.class);
-  private static AuctionDAO instance;
+  private static volatile AuctionDAO instance;
   private String BASE_QUERY =
       "SELECT a.*, i.name, i.description, i.imagepath, i.idseller AS seller_id_item, i.sellerName " +
           "FROM auction a " +
           "JOIN item i ON a.item_id = i.itemid ";
 
 
-  private AuctionDAO() {
-  }
+  private AuctionDAO() {}
 
-  public synchronized static AuctionDAO getInstance() {
+  public static AuctionDAO getInstance() {
     if (instance == null) {
-      instance = new AuctionDAO();
+      synchronized (AuctionDAO.class) {
+        if (instance == null) {
+          instance = new AuctionDAO();
+        }
+      }
     }
     return instance;
   }

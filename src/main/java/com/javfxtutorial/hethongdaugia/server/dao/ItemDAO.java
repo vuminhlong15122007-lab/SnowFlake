@@ -13,7 +13,7 @@ import java.util.List;
 
 public class ItemDAO implements DAOInterface<Item> {
     private ItemDAO(){};
-    private static ItemDAO instance;
+    private static volatile ItemDAO instance;
     public static ItemDAO getInstance(){
         if (instance == null){
             synchronized (ItemDAO.class){
