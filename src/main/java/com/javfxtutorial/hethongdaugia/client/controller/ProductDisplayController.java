@@ -27,6 +27,7 @@ public class ProductDisplayController {
     @FXML private Label UI01;
     @FXML private VBox UI02;
     @FXML private Button ThamGiaDauGiaBtn;
+    @FXML private Label lbLoaisp;
     private TimeLeft timer;
 
 
@@ -40,6 +41,8 @@ public class ProductDisplayController {
         lbTenngban.setText(item.getSellerName());
         ItemNameLabel.setText(item.getName());
         ItemPriceLabel.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
+        lbTenngban.setText(auction.getItem().getSellerName());
+        lbLoaisp.setText(String.valueOf(auction.getItem().getCategory()));
 
         String base64Data = auction.getItem().getImage();
         ImageHelper.loadBase64ToImageView(itemImageView,base64Data);

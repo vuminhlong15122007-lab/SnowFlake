@@ -33,7 +33,7 @@
 
          <Button fx:id="clickToBackToSceneMain" mnemonicParsing="false" onAction="#clickToBackToSceneMain" prefHeight="45.0" prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Trang chủ" />
 
-         <Button prefHeight="45.0" prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Lịch sử đấu giá" />
+         <Button onAction="#goParticipatedAuction" prefHeight="45.0" prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Lịch sử đấu giá" />
 
          <Button onAction="#clickToSellerMangement" prefHeight="45.0" prefWidth="150" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Sản phẩm của tôi" />
 

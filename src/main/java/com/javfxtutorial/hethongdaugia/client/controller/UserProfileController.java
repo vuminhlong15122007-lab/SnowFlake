@@ -65,6 +65,11 @@ public class UserProfileController implements ResponseListener {
     }
 
     @FXML
+    public void goParticipatedAuction(ActionEvent event ){
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/ParticipatedAuction.fxml");
+    }
+
+    @FXML
     public void loadUserInfo() {
         User currentUser = ClientModel.getInstance().getCurrentUser();
         if (currentUser == null) {
