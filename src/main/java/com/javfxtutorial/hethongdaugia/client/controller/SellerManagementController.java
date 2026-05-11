@@ -31,6 +31,7 @@ import javafx.stage.Stage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -78,10 +79,10 @@ public class SellerManagementController implements ResponseListener {
         String rawPrice = priceField.getText().replace(",", "").replace(".", "");
         // Nhưng cần giữ dấu chấm thập phân nếu có — cách an toàn hơn:
         String rawPrice2 = priceField.getText().replaceAll("[^0-9.]", "");
-        double initPrice = Double.parseDouble(rawPrice2);
+        BigDecimal initPrice = new BigDecimal(rawPrice2);
 
         String rawStep = tfstepPrice.getText().replaceAll("[^0-9.]", "");
-        double stepPrice = Double.parseDouble(rawStep);
+        BigDecimal stepPrice = new BigDecimal(rawStep);
 
         // Xu ly thoi gian
         LocalDate ngayBD = startDatePicker.getValue();
@@ -271,7 +272,7 @@ public class SellerManagementController implements ResponseListener {
     public void hienThiChiTietSanPham(Auction auction){
         nameField.setText(auction.getItem().getName());          // Thu thap du lieu ma nguoi dung da nhap
         descriptionField.setText(auction.getItem().getDescription());
-        priceField.setText(String.valueOf((long) auction.getCurrentPrice())); // VD: "1500000"
+        priceField.setText(String.valueOf(auction.getCurrentPrice())); // VD: "1500000"
         tfstepPrice.setText(String.valueOf(auction.getStepPrice()));
         LocalDateTime start = auction.getStartingTime();
         if (start != null) {

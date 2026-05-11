@@ -44,7 +44,7 @@
 
         <!-- ==================== NÚT HÀNH ĐỘNG ==================== -->
         <VBox alignment="CENTER" prefWidth="140.0" spacing="10.0">
-            <Button fx:id="actionButton" alignment="CENTER" prefHeight="40.0" prefWidth="140.0" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-background-radius: 25;" text="ĐÃ KẾT THÚC" />
+            <Button fx:id="actionButton" alignment="CENTER" onAction="#clickToGoToLiveAuction" prefHeight="40.0" prefWidth="140.0" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-background-radius: 25;" text="ĐÃ KẾT THÚC" />
         </VBox>
 
     </HBox>

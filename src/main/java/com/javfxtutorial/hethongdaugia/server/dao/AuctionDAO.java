@@ -40,10 +40,10 @@ public class AuctionDAO implements DAOInterface<Auction> {
 
       pst.setInt(1, auction.getItem().getItemId());
       pst.setInt(2, auction.getSellerId());
-      pst.setDouble(3, auction.getInitPrice());
-      pst.setDouble(4, auction.getStepPrice());
-      pst.setDouble(5, auction.getCurrentPrice());
-      pst.setDouble(6, auction.getWinningPrice());
+      pst.setBigDecimal(3, auction.getInitPrice());
+      pst.setBigDecimal(4, auction.getStepPrice());
+      pst.setBigDecimal(5, auction.getCurrentPrice());
+      pst.setBigDecimal(6, auction.getWinningPrice());
       pst.setTimestamp(7, Timestamp.valueOf(auction.getStartingTime()));
       pst.setTimestamp(8, Timestamp.valueOf(auction.getEndingTime()));
       pst.setString(9, String.valueOf(auction.getStatus()));
@@ -77,10 +77,10 @@ public class AuctionDAO implements DAOInterface<Auction> {
     try (Connection connection = JDBCUtil.getConnection();
          PreparedStatement pst = connection.prepareStatement(sql)) {
       pst.setInt(1, auction.getWinnerId());
-      pst.setDouble(2, auction.getInitPrice());
-      pst.setDouble(3, auction.getStepPrice());
-      pst.setDouble(4, auction.getCurrentPrice());
-      pst.setDouble(5, auction.getWinningPrice());
+      pst.setBigDecimal(2, auction.getInitPrice());
+      pst.setBigDecimal(3, auction.getStepPrice());
+      pst.setBigDecimal(4, auction.getCurrentPrice());
+      pst.setBigDecimal(5, auction.getWinningPrice());
       pst.setTimestamp(6, Timestamp.valueOf(auction.getStartingTime()));
       pst.setTimestamp(7, Timestamp.valueOf(auction.getEndingTime()));
       pst.setString(8, String.valueOf(auction.getStatus()));
@@ -153,10 +153,10 @@ public class AuctionDAO implements DAOInterface<Auction> {
         item,
         rs.getInt("seller_id"),
         rs.getInt("winner_id"),
-        rs.getDouble("init_price"),
-        rs.getDouble("current_price"),
-        rs.getDouble("step_price"),
-        rs.getDouble("winning_price"),
+        rs.getBigDecimal("init_price"),
+        rs.getBigDecimal("current_price"),
+        rs.getBigDecimal("step_price"),
+        rs.getBigDecimal("winning_price"),
         startingTime,
         endingTime,
         status
