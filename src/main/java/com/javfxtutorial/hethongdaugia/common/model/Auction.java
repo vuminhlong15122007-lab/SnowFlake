@@ -30,6 +30,7 @@ public class Auction implements Serializable {
 
     // ID của người chiến thắng (sau khi phiên kết thúc)
     private int winnerId;
+    public Auction(){}
 
     public Auction(Item item, int sellerId, double initPrice, double stepPrice, LocalDateTime startingTime, LocalDateTime endingTime) {
         this.item = item;

@@ -53,7 +53,6 @@ public class AuctionSessionController {
                     actionButton.setDisable(false);
                     actionButton.setText("THAM GIA");
                     actionButton.setStyle("-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-cursor: hand;");
-                    actionButton.setOnAction(this::clickToLiveAuction);
 
                 }
                 if (nguoidandau != null) nguoidandau.setText("Người dẫn đầu : ");
@@ -66,7 +65,6 @@ public class AuctionSessionController {
                 if (statusBadge != null) statusBadge.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 2 8; -fx-background-radius: 8;");
                 safeSet(lbPrice, String.format("%,.0f VND", auction.getInitPrice()));
                 if (actionButton != null) {
-                    actionButton.setDisable(true);
                     actionButton.setText("CHƯA BẮT ĐẦU");
                     actionButton.setStyle("-fx-background-color: linear-gradient(to right, red, #f39c12); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20;");
                 }
@@ -97,21 +95,11 @@ public class AuctionSessionController {
         if (label != null) label.setText(text);
     }
 
-
-
-    @FXML
-    public void clickToLiveAuction(ActionEvent event) {
-        if (auction == null) return;
-        ClientModel.getInstance().setCurrentAuction(auction);
-        ClientModel.getInstance().setCurrentItem(auction.getItem());
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thi_sp.fxml");
-    }
-
     @FXML
     public void BtAuction(ActionEvent event) {
         if (auction == null) return;
         ClientModel.getInstance().setCurrentAuction(auction);
         ClientModel.getInstance().setCurrentItem(auction.getItem());
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/dau_gia_truc_tiep.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thi_sp.fxml");
     }
 }
