@@ -23,7 +23,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
   private AuctionDAO() {
   }
 
-  public static AuctionDAO getInstance() {
+  public synchronized static AuctionDAO getInstance() {
     if (instance == null) {
       instance = new AuctionDAO();
     }
