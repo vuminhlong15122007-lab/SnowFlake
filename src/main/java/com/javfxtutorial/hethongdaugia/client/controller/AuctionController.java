@@ -47,7 +47,7 @@ public class AuctionController implements ResponseListener {
         searchField.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
 
         // ========== THÊM: ComboBox loại sản phẩm ==========
-        categoryFilter.getItems().addAll("Tất cả loại", "Art", "Vehicle", "Electronics", "Khác");
+        categoryFilter.getItems().addAll("Tất cả loại", "ART", "VEHICLE", "ELECTRONICS", "Khác");
         categoryFilter.setValue("Tất cả loại");
         categoryFilter.valueProperty().addListener((obs, oldVal, newVal) -> applyFilters());
 
@@ -116,9 +116,9 @@ public class AuctionController implements ResponseListener {
     private String getCategoryName(Auction auction) {
         String className = auction.getItem().getClass().getSimpleName();
         switch (className) {
-            case "Art": return "Art";
-            case "Vehicle": return "Vehicle";
-            case "Electronics": return "Electronics";
+            case "ART": return "ART";
+            case "VEHICLE": return "VEHICLE";
+            case "ELECTRONICS": return "ELECTRONICS";
             default: return "Khác";
         }
     }

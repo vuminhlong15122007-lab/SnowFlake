@@ -7,7 +7,7 @@ public class Electronics extends Item{
     private String model;       // Tên dòng máy
 
     public Electronics(String sellerName, int sellerId, int itemId, String name, String description, String image, String brand, String model) {
-        super(sellerName, sellerId, itemId, name, description, image, ItemCategory.Electronics);
+        super(sellerName, sellerId, itemId, name, description, image, ItemCategory.ELECTRONICS);
         this.brand = brand;
         this.model = model;
     }

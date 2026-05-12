@@ -85,9 +85,9 @@ public class AuctionSessionController {
     private String getCategoryName(Item item) {
         String className = item.getClass().getSimpleName();
         switch (className) {
-            case "Art": return "Art";
-            case "Vehicle": return "Vehicle";
-            case "Electronics": return "Electronics";
+            case "ART": return "ART";
+            case "VEHICLE": return "VEHICLE";
+            case "ELECTRONICS": return "ELECTRONICS";
             default: return "Khác";
         }
     }

@@ -2,31 +2,24 @@ package com.javfxtutorial.hethongdaugia.common.model.factory;
 
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.Vehicle;
+import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
+
+import java.util.Map;
 
 public class VehicleFactory extends ItemFactory{
-
-    private int sellerId;
-    private String name, description, image, sellerName;
-    private String brand, color;
-    private int year;
-    private String licensePlate;
-
-    public VehicleFactory(int sellerId, String name, String description, String image, String sellerName, String brand, String color, int year, String licensePlate) {
-        this.sellerId = sellerId;
-        this.name = name;
-        this.description = description;
-        this.image = image;
-        this.sellerName = sellerName;
-        this.brand = brand;
-        this.color = color;
-        this.year = year;
-        this.licensePlate = licensePlate;
-    }
-
-    public VehicleFactory() {}
-
     @Override
-    public Item createItem() {
-        return new Vehicle();
+    public Item createItem(Map<String, String> data) {
+        Vehicle v = new Vehicle();
+        v.setSellerId(Integer.parseInt(data.get("sellerId")));
+        v.setSellerName(data.get("sellerName"));
+        v.setName(data.get("name"));
+        v.setDescription(data.get("description"));
+        v.setImage(data.get("image"));
+        v.setCategory(ItemCategory.VEHICLE);
+        v.setBrand(data.get("brand"));
+        v.setLicensePlate(data.get("licensePlate"));
+        v.setYear(Integer.parseInt(data.get("year")));
+        v.setColor(data.get("color"));
+        return v;
     }
 }

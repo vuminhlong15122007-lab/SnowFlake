@@ -9,6 +9,10 @@ import com.javfxtutorial.hethongdaugia.common.model.*;
 import com.javfxtutorial.hethongdaugia.common.model.Command.*;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
+import com.javfxtutorial.hethongdaugia.common.model.factory.ArtFactory;
+import com.javfxtutorial.hethongdaugia.common.model.factory.ElectronicsFactory;
+import com.javfxtutorial.hethongdaugia.common.model.factory.ItemFactory;
+import com.javfxtutorial.hethongdaugia.common.model.factory.VehicleFactory;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.application.Platform;
@@ -38,6 +42,8 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
@@ -108,33 +114,59 @@ public class SellerManagementController implements ResponseListener {
         }
 
         // Trong method getInfo()
-        String cat = categoryComboBox.getValue();
-        if (cat == null) {
+        String category = categoryComboBox.getValue();
+        if (category == null) {
             showAlert("Lỗi", "Vui lòng chọn danh mục sản phẩm!", "Wait.gif");
             return null; // hoặc throw exception
         }
 
         Item item;
-        if (cat.equals("Art")) {
-            item = new Art(sellerName, sellerId, itemId, name, description, image,
-                    artistField.getText(), parseInt(yearCreatedField.getText()), artTitleField.getText());
-        } else if (cat.equals("Vehicle")) {
-            item = new Vehicle(sellerName, sellerId, itemId, name, description, image,
-                    licensePlateField.getText(), parseInt(vehicleYearField.getText()),
-                    brandVehicleField.getText(), colorField.getText());
-        } else if (cat.equals("Electronics")) {
-            item = new Electronics(sellerName, sellerId, itemId, name, description, image,
-                    brandElecField.getText(), modelField.getText());
-        } else {
-            item = new Item(sellerName, sellerId, itemId, name, description, image,
-                    ItemCategory.Khác);
+        ItemFactory factory = null;
+        if (category.equals("ART")) {
+            factory =  new ArtFactory();
+        } else if (category.equals("VEHICLE")) {
+            factory = new VehicleFactory();
+        } else if (category.equals("ELECTRONICS")) {
+            factory = new ElectronicsFactory();
+        }
+        if (factory == null){ return null;}
+
+        item = factory.createItem(collectFormData());
+      return new Auction(item, sellerId, initPrice, stepPrice, tGianBD, tGianKT, AuctionStatus.NOT_START);
+
+    }
+
+    private Map<String, String> collectFormData() {
+        Map<String, String> data = new HashMap<>();
+
+        // ── Data chung cho mọi loại Item ──────────────────────────────────────────
+        int sellerId = ClientModel.getInstance().getCurrentUser().getId();
+        String sellerName = ClientModel.getInstance().getCurrentUser().getName();
+
+        data.put("sellerId",    String.valueOf(sellerId));
+        data.put("sellerName",  sellerName);
+        data.put("name",        nameField.getText().trim());
+        data.put("description", descriptionField.getText().trim());
+        data.put("image",       this.image); // base64 ảnh đã chọn
+
+        // ── Data riêng theo loại — chỉ form đang visible mới có data ─────────────
+        if (artFields.isVisible()) {
+            data.put("title",       artTitleField.getText().trim());
+            data.put("artist",      artistField.getText().trim());
+            data.put("yearCreated", yearCreatedField.getText().trim());
+
+        } else if (electronicsFields.isVisible()) {
+            data.put("brand", brandElecField.getText().trim());
+            data.put("model", modelField.getText().trim());
+
+        } else if (vehicleFields.isVisible()) {
+            data.put("brand",        brandVehicleField.getText().trim());
+            data.put("licensePlate", licensePlateField.getText().trim());
+            data.put("year",         vehicleYearField.getText().trim());
+            data.put("color",        colorField.getText().trim());
         }
 
-
-        Auction auction = new Auction(item, sellerId, initPrice, stepPrice, tGianBD, tGianKT, AuctionStatus.NOT_START);
-
-        return auction;
-
+        return data;
     }
 
 
@@ -172,7 +204,7 @@ public class SellerManagementController implements ResponseListener {
         productList.setCellFactory((ListView<Auction> listView) -> new ProductCell2()); // trả về một instance của ProductCell2 –class tự load giao diện cell tùy chỉnh
 
         //phan loai sp
-        categoryComboBox.getItems().addAll("Art", "Vehicle", "Electronics", "Khác");
+        categoryComboBox.getItems().addAll("ART", "VEHICLE", "ELECTRONICS", "Oth");
         categoryComboBox.valueProperty().addListener((obs, oldVal, newVal) -> showCategoryFields(newVal));
 
 
@@ -203,9 +235,9 @@ public class SellerManagementController implements ResponseListener {
         hideVbox(artFields);
         hideVbox(vehicleFields);
         hideVbox(electronicsFields);
-        if (category.equals("Art")) {showVbox(artFields);}
-        else if (category.equals("Vehicle")) {showVbox(vehicleFields);}
-        else if (category.equals("Electronics")) {showVbox(electronicsFields);}
+        if (category.equals("ART")) {showVbox(artFields);}
+        else if (category.equals("VEHICLE")) {showVbox(vehicleFields);}
+        else if (category.equals("ELECTRONICS")) {showVbox(electronicsFields);}
 
     }
 

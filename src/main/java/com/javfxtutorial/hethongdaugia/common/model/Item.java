@@ -30,14 +30,6 @@ public class Item implements Serializable {
         this.sellerName = sellerName;
     }
 
-    public Item(int sellerId, int itemId, String name, String description, String image) {
-        this.sellerId = sellerId;
-        this.itemId = itemId;
-        this.name = name;
-        this.description = description;
-        this.image = image;
-    }
-
     public Item(String sellerName, int sellerId, int itemId, String name, String description, String image, ItemCategory category) {
         this.sellerName = sellerName;
         this.sellerId = sellerId;
