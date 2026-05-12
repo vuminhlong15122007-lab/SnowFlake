@@ -60,7 +60,7 @@
 
                     <!-- ==================== ART FIELDS ==================== -->
                     <VBox fx:id="artFields" managed="false" spacing="6" visible="false">
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #e74c3c; -fx-font-weight: bold;" text="🎨 Thông tin Tranh nghệ thuật" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #e74c3c; -fx-font-weight: bold;" text="🎨 Thông tin Art" />
                         <TextField fx:id="artTitleField" promptText="Tiêu đề tác phẩm (title) - VD: Mùa thu vàng" style="-fx-border-color: #e74c3c; -fx-border-radius: 4; -fx-background-radius: 4; -fx-font-size: 12px; -fx-background-color: white;" />
                         <TextField fx:id="artistField" promptText="Nghệ sĩ (artist) - VD: Nguyễn Văn A" style="-fx-border-color: #e74c3c; -fx-border-radius: 4; -fx-background-radius: 4; -fx-font-size: 12px; -fx-background-color: white;" />
                         <TextField fx:id="yearCreatedField" promptText="Năm sáng tác (yearCreated) - VD: 2023" style="-fx-border-color: #e74c3c; -fx-border-radius: 4; -fx-background-radius: 4; -fx-font-size: 12px; -fx-background-color: white;" />
@@ -68,7 +68,7 @@
 
                     <!-- ==================== VEHICLE FIELDS ==================== -->
                     <VBox fx:id="vehicleFields" managed="false" spacing="6" visible="false">
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #f39c12; -fx-font-weight: bold;" text="🚗 Thông tin Xe cộ" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #f39c12; -fx-font-weight: bold;" text="🚗 Thông tin Vehicle" />
                         <TextField fx:id="licensePlateField" promptText="Biển số (licensePlate) - VD: 51A-123.45" style="-fx-border-color: #f39c12; -fx-border-radius: 4; -fx-background-radius: 4; -fx-font-size: 12px; -fx-background-color: white;" />
                         <TextField fx:id="vehicleYearField" promptText="Năm sản xuất (year) - VD: 2022" style="-fx-border-color: #f39c12; -fx-border-radius: 4; -fx-background-radius: 4; -fx-font-size: 12px; -fx-background-color: white;" />
                         <TextField fx:id="brandVehicleField" promptText="Hãng xe (brand) - VD: Toyota" style="-fx-border-color: #f39c12; -fx-border-radius: 4; -fx-background-radius: 4; -fx-font-size: 12px; -fx-background-color: white;" />
@@ -77,7 +77,7 @@
 
                     <!-- ==================== ELECTRONICS FIELDS ==================== -->
                     <VBox fx:id="electronicsFields" managed="false" spacing="6" visible="false">
-                        <Label style="-fx-font-size: 12px; -fx-text-fill: #2f80ed; -fx-font-weight: bold;" text="💻 Thông tin Điện tử" />
+                        <Label style="-fx-font-size: 12px; -fx-text-fill: #2f80ed; -fx-font-weight: bold;" text="💻 Thông tin Electronics" />
                         <TextField fx:id="brandElecField" promptText="Hãng sản xuất (brand) - VD: Apple" style="-fx-border-color: #2f80ed; -fx-border-radius: 4; -fx-background-radius: 4; -fx-font-size: 12px; -fx-background-color: white;" />
                         <TextField fx:id="modelField" promptText="Dòng máy (model) - VD: MacBook Pro M3" style="-fx-border-color: #2f80ed; -fx-border-radius: 4; -fx-background-radius: 4; -fx-font-size: 12px; -fx-background-color: white;" />
                     </VBox>

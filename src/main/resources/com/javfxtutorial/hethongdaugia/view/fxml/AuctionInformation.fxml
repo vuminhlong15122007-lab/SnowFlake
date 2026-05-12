@@ -1,161 +1,131 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.SplitPane?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.StackPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
 <BorderPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #f0f8ff;" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.ProductDisplayController">
+
+    <!-- ==================== HEADER ==================== -->
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: linear-gradient(to right, #89CFF0,lavender); -fx-padding: 0 20;">
-            <children>
-                <ImageView fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
-                    <image>
-                        <Image url="@../../assets/Logo.png" />
-                    </image>
-                </ImageView>
-                <Label style="-fx-text-fill: linear-gradient(to right, #6A11CB, #2575FC); -fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 0 0 0 10;" text="SnowFox - Phiên đấu giá" />
-                <Region HBox.hgrow="ALWAYS" />
-                <Button fx:id="btnMenu" mnemonicParsing="false" onAction="#QuaylaiMenu" prefHeight="36.0" prefWidth="155.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 15;" text="Quay lại phiên đấu giá" />
-            </children>
+            <ImageView fitHeight="45.0" fitWidth="45.0" pickOnBounds="true" preserveRatio="true">
+                <image><Image url="@../../assets/Logo.png" /></image>
+            </ImageView>
+            <Label style="-fx-text-fill: linear-gradient(to right, #6A11CB, #2575FC); -fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 0 0 0 10;" text="SnowFox - Chi tiết sản phẩm" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnMenu" mnemonicParsing="false" onAction="#QuaylaiMenu" prefHeight="36.0" prefWidth="155.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 15;" text="Quay lại" />
         </HBox>
     </top>
 
+    <!-- ==================== NỘI DUNG CHÍNH ==================== -->
     <center>
-        <SplitPane dividerPositions="0.36076345431789736" style="-fx-background-color: transparent;">
-            <items>
-                <VBox spacing="10.0" style="-fx-background-color: white; -fx-padding: 15;">
-                    <children>
-                        <Label style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #2f80ed;" text="🔍 CHI TIẾT PHIÊN ĐẤU GIÁ" />
-                        <StackPane prefHeight="180.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #ddd; -fx-border-radius: 10;">
-                            <children>
-                                <ImageView fx:id="itemImageView" fitHeight="323.0" fitWidth="351.0" pickOnBounds="true" preserveRatio="true" />
-                            </children>
-                        </StackPane>
-                        <Label fx:id="ItemNameLabel" style="-fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, blue , purple); -fx-font-size: 18px;" text="Mô hình Cáo Tuyết" textAlignment="CENTER" />
-                  <HBox prefHeight="25.0" prefWidth="441.0">
-                     <children>
-                        <Label prefHeight="31.0" prefWidth="63.0" style="-fx-font-weight: bold;" text="Giá tiền : ">
-                           <font>
-                              <Font size="14.0" />
-                           </font>
-                        </Label>
-                        <Label fx:id="ItemPriceLabel" style="-fx-alignment: CENTER;" text="XXXXXXXX " textFill="#cd451f">
-                           <font>
-                              <Font size="22.0" />
-                           </font>
-                        </Label>
-                     </children>
-                  </HBox>
-                        <VBox fx:id="UI02" alignment="CENTER" prefHeight="60.0" style="-fx-background-color: white; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: green; -fx-alignment: CENTER;">
-                            <children>
-                                <Label fx:id="UI01" prefHeight="18.0" prefWidth="539.0" style="-fx-alignment: CENTER; -fx-text-fill: green;" text="THỜI GIAN CÒN LẠI" textAlignment="CENTER" textFill="#c0392b" />
-                                <Label fx:id="lbtimeLeft" alignment="CENTER" contentDisplay="CENTER" prefHeight="38.0" prefWidth="593.0" style="-fx-font-weight: bold; -fx-font-size: 24px; -fx-text-fill: green; -fx-alignment: CENTER;" text="00:25:40" textAlignment="CENTER" textFill="#e74c3c">
-                           <font>
-                              <Font size="18.0" />
-                           </font></Label>
-                            </children>
-                        </VBox>
-                    </children>
-                </VBox>
+        <ScrollPane fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER" style="-fx-background-color: transparent;">
+            <HBox spacing="20" style="-fx-padding: 20;">
 
-                <VBox spacing="10.0" style="-fx-background-color: #f4f7f6; -fx-padding: 15;">
-                    <children>
-                        <Label style="-fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, blue , purple); -fx-font-size: 16px;" text="📦 THÔNG TIN SẢN PHẨM ">
-                     <font>
-                        <Font name="Times New Roman Bold Italic" size="12.0" />
-                     </font></Label>
-                        <VBox prefHeight="210.0" prefWidth="461.0" spacing="5.0" style="-fx-background-color: white; -fx-padding: 10; -fx-background-radius: 10;">
-                            <children>
-                        <HBox prefHeight="25.0" prefWidth="441.0">
-                           <children>
-                                      <Label prefHeight="24.0" prefWidth="94.0" text="Người đăng: ">
-                                 <font>
-                                    <Font name="Times New Roman Bold" size="14.0" />
-                                 </font></Label>
-                              <Label fx:id="lbTenngban" prefHeight="25.0" prefWidth="311.0" text="tên người">
-                                 <font>
-                                    <Font size="14.0" />
-                                 </font></Label>
-                           </children>
-                        </HBox>
-                        <HBox prefHeight="25.0" prefWidth="441.0">
-                           <children>
-                              <Label prefHeight="25.0" prefWidth="120.0" text="Thời gian bắt đầu: ">
-                                  <font>
-                                      <Font name="Times New Roman Bold" size="14.0" />
-                                  </font></Label>
-                              <Label fx:id="StartTimeLabel" prefHeight="25.0" prefWidth="203.0" text="xx/xx/xxxx" textFill="#000000fe">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font></Label>
-                           </children>
-                        </HBox>
-                        <HBox layoutX="20.0" layoutY="43.0" prefHeight="25.0" prefWidth="441.0">
-                           <children>
-                              <Label prefHeight="25.0" prefWidth="121.0" text="Thời gian kết thúc: ">
-                                  <font>
-                                      <Font name="Times New Roman Bold" size="14.0" />
-                                  </font></Label>
-                              <Label fx:id="EndingtimeLabel" prefHeight="25.0" prefWidth="286.0" text="xx/xx/xxxx" textFill="#000000fe">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font></Label>
-                           </children>
-                        </HBox>
-                        <HBox prefHeight="25.0" prefWidth="441.0">
-                           <children>
-                              <Label prefHeight="27.0" prefWidth="97.0" text="Loại sản phẩm: ">
-                                 <font>
-                                    <Font name="Times New Roman Bold" size="14.0" />
-                                 </font></Label>
-                              <Label fx:id="lbLoaisp" prefHeight="25.0" prefWidth="317.0" text="Electric">
-                                  <font>
-                                      <Font size="14.0" />
-                                  </font></Label>
-                           </children>
-                        </HBox>
-                        <HBox prefHeight="72.0" prefWidth="650.0">
-                           <children>
-                              <Label prefHeight="78.0" prefWidth="89.0" text="Mô tả:" textAlignment="JUSTIFY" textOverrun="LEADING_WORD_ELLIPSIS">
-                                 <font>
-                                    <Font name="Times New Roman Bold" size="14.0" />
-                                 </font>
-                              </Label>
-                              <Label fx:id="LbMotasp" prefHeight="100.0" prefWidth="598.0" text=" Hàng chính hãng, full box, bảo hành 12 tháng tại hệ thống SnowFox toàn quốc." wrapText="true">
-                                 <font>
-                                  <Font name="Times New Roman" size="14.0" />
-                              </font>
-                              </Label>
-                           </children>
-                        </HBox>
-                            </children>
-                        </VBox>
+                <!-- ========== BÊN TRÁI: ẢNH + GIÁ + ĐỒNG HỒ ========== -->
+                <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 15; -fx-border-color: #ddd; -fx-border-radius: 15;" prefWidth="450">
+                    <StackPane prefHeight="300" style="-fx-background-color: #f8f9fa; -fx-background-radius: 10;">
+                        <ImageView fx:id="itemImageView" fitHeight="280" fitWidth="400" pickOnBounds="true" preserveRatio="true" />
+                    </StackPane>
 
-                        <Region VBox.vgrow="ALWAYS" /> <VBox alignment="CENTER" spacing="10.0">
-                        <children>
-                            <Button fx:id="ThamGiaDauGiaBtn" mnemonicParsing="false" onAction="#goToManHinhDauGiaTrucTiep" prefHeight="50.0" prefWidth="300.0" style="-fx-background-color: linear-gradient(to right, #6A11CB, #2575FC); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25; -fx-cursor: hand;" text="THAM GIA ĐẤU GIÁ NGAY" />
-                            <Label textFill="#27ae60" />
-                        </children>
+                    <Label fx:id="ItemNameLabel" style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, blue, purple);" text="Tên sản phẩm" textAlignment="CENTER" wrapText="true" />
+
+                    <HBox alignment="CENTER" spacing="10">
+                        <Label text="Giá hiện tại:" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
+                        <Label fx:id="ItemPriceLabel" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;" text="0 VND" />
+                    </HBox>
+
+                    <VBox fx:id="UI02" alignment="CENTER" prefHeight="70" style="-fx-background-color: #f8f9fa; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: green;">
+                        <Label fx:id="UI01" text="THỜI GIAN CÒN LẠI" style="-fx-text-fill: green; -fx-font-weight: bold;" />
+                        <Label fx:id="lbtimeLeft" text="00:00:00" style="-fx-font-size: 28px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;" />
                     </VBox>
-                    </children>
                 </VBox>
-            </items>
-        </SplitPane>
+
+                <!-- ========== BÊN PHẢI: THÔNG TIN CHI TIẾT ========== -->
+                <VBox spacing="8" style="-fx-background-color: white; -fx-padding: 20; -fx-background-radius: 15; -fx-border-color: #ddd; -fx-border-radius: 15;" HBox.hgrow="ALWAYS">
+
+                    <Label text="📋 THÔNG TIN CHI TIẾT" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, blue, purple);" />
+                    <Separator />
+
+                    <!-- Thông tin cơ bản -->
+                    <GridPane hgap="10" vgap="8">
+                        <Label text="Người đăng:" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                        <Label fx:id="lbTenngban" text="..." GridPane.rowIndex="0" GridPane.columnIndex="1" />
+
+                        <Label text="Thời gian bắt đầu:" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                        <Label fx:id="StartTimeLabel" text="..." GridPane.rowIndex="1" GridPane.columnIndex="1" />
+
+                        <Label text="Thời gian kết thúc:" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                        <Label fx:id="EndingtimeLabel" text="..." GridPane.rowIndex="2" GridPane.columnIndex="1" />
+
+                        <Label text="Loại sản phẩm:" style="-fx-font-weight: bold;" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+                        <Label fx:id="lbLoaisp" text="..." GridPane.rowIndex="3" GridPane.columnIndex="1" />
+
+                        <Label text="Giá khởi điểm:" style="-fx-font-weight: bold;" GridPane.rowIndex="4" GridPane.columnIndex="0" />
+                        <Label fx:id="initPriceLabel" text="..." GridPane.rowIndex="4" GridPane.columnIndex="1" />
+
+                        <Label text="Bước giá:" style="-fx-font-weight: bold;" GridPane.rowIndex="5" GridPane.columnIndex="0" />
+                        <Label fx:id="stepPriceLabel" text="..." GridPane.rowIndex="5" GridPane.columnIndex="1" />
+                    </GridPane>
+
+                    <Label text="Mô tả:" style="-fx-font-weight: bold;" />
+                    <Label fx:id="LbMotasp" text="..." wrapText="true" style="-fx-padding: 0 0 0 10;" />
+
+                    <Separator />
+
+                    <!-- ========== THÔNG TIN ĐẶC THÙ ========== -->
+                    <Label fx:id="detailTitle" text="🔍 THÔNG TIN CHI TIẾT" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #4b0082;" />
+
+                    <!-- Art -->
+                    <VBox fx:id="artInfoBox" spacing="5" visible="false" managed="false" style="-fx-background-color: #fff5f5; -fx-padding: 10; -fx-background-radius: 8; -fx-border-color: #e74c3c; -fx-border-radius: 8;">
+                        <GridPane hgap="10" vgap="5">
+                            <Label text="Tiêu đề:" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                            <Label fx:id="artTitleValue" text="..." GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                            <Label text="Nghệ sĩ:" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                            <Label fx:id="artistValue" text="..." GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                            <Label text="Năm sáng tác:" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                            <Label fx:id="yearCreatedValue" text="..." GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Vehicle -->
+                    <VBox fx:id="vehicleInfoBox" spacing="5" visible="false" managed="false" style="-fx-background-color: #fff8f0; -fx-padding: 10; -fx-background-radius: 8; -fx-border-color: #f39c12; -fx-border-radius: 8;">
+                        <GridPane hgap="10" vgap="5">
+                            <Label text="Biển số:" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                            <Label fx:id="licensePlateValue" text="..." GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                            <Label text="Năm SX:" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                            <Label fx:id="vehicleYearValue" text="..." GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                            <Label text="Hãng xe:" style="-fx-font-weight: bold;" GridPane.rowIndex="2" GridPane.columnIndex="0" />
+                            <Label fx:id="brandValue" text="..." GridPane.rowIndex="2" GridPane.columnIndex="1" />
+                            <Label text="Màu sắc:" style="-fx-font-weight: bold;" GridPane.rowIndex="3" GridPane.columnIndex="0" />
+                            <Label fx:id="colorValue" text="..." GridPane.rowIndex="3" GridPane.columnIndex="1" />
+                        </GridPane>
+                    </VBox>
+
+                    <!-- Electronics -->
+                    <VBox fx:id="electronicsInfoBox" spacing="5" visible="false" managed="false" style="-fx-background-color: #f0f8ff; -fx-padding: 10; -fx-background-radius: 8; -fx-border-color: #2f80ed; -fx-border-radius: 8;">
+                        <GridPane hgap="10" vgap="5">
+                            <Label text="Hãng SX:" style="-fx-font-weight: bold;" GridPane.rowIndex="0" GridPane.columnIndex="0" />
+                            <Label fx:id="elecBrandValue" text="..." GridPane.rowIndex="0" GridPane.columnIndex="1" />
+                            <Label text="Dòng máy:" style="-fx-font-weight: bold;" GridPane.rowIndex="1" GridPane.columnIndex="0" />
+                            <Label fx:id="modelValue" text="..." GridPane.rowIndex="1" GridPane.columnIndex="1" />
+                        </GridPane>
+                    </VBox>
+
+                    <Region VBox.vgrow="ALWAYS" />
+
+                    <Button fx:id="ThamGiaDauGiaBtn" onAction="#goToManHinhDauGiaTrucTiep" prefHeight="50" prefWidth="350" style="-fx-background-color: linear-gradient(to right, #6A11CB, #2575FC); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25; -fx-cursor: hand;" text="THAM GIA ĐẤU GIÁ NGAY" />
+                </VBox>
+
+            </HBox>
+        </ScrollPane>
     </center>
 
     <bottom>
-        <HBox alignment="CENTER" prefHeight="30.0" style="-fx-background-color: linear-gradient(to right, #FFF0F5, #B3E5FC);">
-            <children>
-                <Label style="-fx-font-size: 11px;" text="© 2026 SnowFox - Studio SnowFlake" />
-            </children>
+        <HBox alignment="CENTER" prefHeight="30" style="-fx-background-color: linear-gradient(to right, #FFF0F5, #B3E5FC);">
+            <Label style="-fx-font-size: 11px;" text="© 2026 SnowFox - Studio SnowFlake" />
         </HBox>
     </bottom>
 </BorderPane>

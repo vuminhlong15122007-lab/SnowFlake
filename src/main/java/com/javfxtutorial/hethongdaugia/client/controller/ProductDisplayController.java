@@ -2,14 +2,14 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.*;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
+import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import com.javfxtutorial.hethongdaugia.common.model.Item;
 import javafx.scene.layout.VBox;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
@@ -28,9 +28,15 @@ public class ProductDisplayController {
     @FXML private VBox UI02;
     @FXML private Button ThamGiaDauGiaBtn;
     @FXML private Label lbLoaisp;
+    @FXML private VBox artInfoBox, vehicleInfoBox, electronicsInfoBox;
+    @FXML private Label artTitleValue, artistValue, yearCreatedValue;
+    @FXML private Label licensePlateValue, vehicleYearValue, brandValue, colorValue;
+    @FXML private Label elecBrandValue, modelValue;
+    @FXML private Label initPriceLabel, stepPriceLabel;
+    @FXML private Label detailTitle;
+
+
     private TimeLeft timer;
-
-
     private Item item = ClientModel.getInstance().getCurrentItem();
     private Auction auction = ClientModel.getInstance().getCurrentAuction();
 
@@ -42,8 +48,18 @@ public class ProductDisplayController {
         ItemNameLabel.setText(item.getName());
         ItemPriceLabel.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
         lbTenngban.setText(auction.getItem().getSellerName());
-        lbLoaisp.setText(String.valueOf(auction.getItem().getCategory()));
+        stepPriceLabel.setText(String.format("%,.0f VND", auction.getStepPrice()));
+        initPriceLabel.setText(String.format("%,.0f VND", auction.getInitPrice()));
 
+        // Loại sản phẩm
+        ItemCategory category = item.getCategory();
+        if (category != null) {
+            lbLoaisp.setText(category.name());
+        } else {
+            lbLoaisp.setText("Không xác định");
+        }
+
+        // Ảnh
         String base64Data = auction.getItem().getImage();
         ImageHelper.loadBase64ToImageView(itemImageView,base64Data);
     }
@@ -51,25 +67,28 @@ public class ProductDisplayController {
     @FXML
     public void initialize() {
         setData();
-        if (auction.getStatus().toString().equals("RUNNING")) {
+        showCategoryInfo();
+        if (auction == null) return;
+        if (auction.getStatus() == AuctionStatus.RUNNING) {
             timer = new TimeLeft(lbtimeLeft, auction.getEndingTime());
             timer.start();
-        }else if ( auction.getStatus().toString().equals("NOT_START")) {
+        } else if (auction.getStatus() == AuctionStatus.NOT_START) {
             lbtimeLeft.setText("CHƯA BẮT ĐẦU");
             UI01.setStyle("-fx-text-fill: orange; -fx-alignment: CENTER;");
             UI02.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: orange; -fx-alignment: CENTER;");
             lbtimeLeft.setStyle("-fx-text-fill: orange;");
             ThamGiaDauGiaBtn.setText("Chưa thể tham gia");
-            ThamGiaDauGiaBtn.setStyle("-fx-background-color: linear-gradient(to right, red, orange); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25; -fx-cursor: hand;");
+            ThamGiaDauGiaBtn.setStyle("-fx-background-color: linear-gradient(to right, red, orange); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
         } else {
             lbtimeLeft.setText("ĐÃ KẾT THÚC");
             UI01.setStyle("-fx-text-fill: red; -fx-alignment: CENTER;");
             UI02.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: red; -fx-alignment: CENTER;");
             lbtimeLeft.setStyle("-fx-text-fill: red;");
             ThamGiaDauGiaBtn.setText("Phiên đấu giá đã đóng");
-            ThamGiaDauGiaBtn.setStyle("-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25; -fx-cursor: hand;");
+            ThamGiaDauGiaBtn.setStyle("-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
         }
     }
+
 
     @FXML
     public void QuaylaiMenu(ActionEvent event) {
@@ -89,6 +108,48 @@ public class ProductDisplayController {
             else if (auction.getStatus() == AuctionStatus.NOT_START){
                 showAlert("Không thể vào phiên đấu giá", "Chưa bắt đầu phiên đấu giá");}
         }
+    }
+
+    private void showCategoryInfo() {
+        hideBox(artInfoBox);
+        hideBox(vehicleInfoBox);
+        hideBox(electronicsInfoBox);
+
+
+        if (item == null) return;
+
+        if (item instanceof Art ) {
+            showBox(artInfoBox);
+            Art art = (Art) item;
+            if (detailTitle != null) detailTitle.setText("🎨 THÔNG TIN ART");
+            if (artTitleValue != null) artTitleValue.setText(art.getTitle() != null ? art.getTitle() : "...");
+            if (artistValue != null) artistValue.setText(art.getArtist() != null ? art.getArtist() : "...");
+            if (yearCreatedValue != null) yearCreatedValue.setText(String.valueOf(art.getYearCreated()));
+
+        } else if (item instanceof Vehicle ) {
+            showBox(vehicleInfoBox);
+            Vehicle vehicle = (Vehicle) item;
+            if (detailTitle != null) detailTitle.setText("🚗 THÔNG TIN VEHICLE");
+            if (licensePlateValue != null) licensePlateValue.setText(vehicle.getLicensePlate() != null ? vehicle.getLicensePlate() : "...");
+            if (vehicleYearValue != null) vehicleYearValue.setText(vehicle.getYear() > 0 ? String.valueOf(vehicle.getYear()) : "...");
+            if (brandValue != null) brandValue.setText(vehicle.getBrand() != null ? vehicle.getBrand() : "...");
+            if (colorValue != null) colorValue.setText(vehicle.getColor() != null ? vehicle.getColor() : "...");
+
+        } else if (item instanceof Electronics ) {
+            showBox(electronicsInfoBox);
+            Electronics elec = (Electronics) item;
+            if (detailTitle != null) detailTitle.setText("💻 THÔNG TIN ELECTRONICS");
+            if (elecBrandValue != null) elecBrandValue.setText(elec.getBrand() != null ? elec.getBrand() : "...");
+            if (modelValue != null) modelValue.setText(elec.getModel() != null ? elec.getModel() : "...");
+        }
+    }
+
+    private void hideBox(VBox box) {
+        if (box != null) { box.setVisible(false); box.setManaged(false); }
+    }
+
+    private void showBox(VBox box) {
+        if (box != null) { box.setVisible(true); box.setManaged(true); }
     }
 }
 
