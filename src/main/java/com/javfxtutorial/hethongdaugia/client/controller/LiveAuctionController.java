@@ -18,7 +18,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -28,10 +27,8 @@ import javafx.scene.image.ImageView;
 import java.io.IOException;
 
 import java.math.BigDecimal;
-import java.net.URL;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
@@ -65,14 +62,14 @@ public class LiveAuctionController implements  ResponseListener {
     public void goMenu(ActionEvent event) throws IOException{
         timer.stop();
         running = false; //đóng while khi chuyển sang màn khác
-        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.unregister(PlaceBidCommand.class, this);
     }
     @FXML
     public void clickToGoProductDisplayInfo(ActionEvent event) throws IOException{
         timer.stop();
-        changeScene(event , "/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thi_sp.fxml");
+        changeScene(event , "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionInformation.fxml");
     }
 
     @FXML

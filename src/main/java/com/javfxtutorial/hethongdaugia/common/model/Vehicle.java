@@ -9,7 +9,7 @@ public class Vehicle extends Item {
     private String color;
 
     public Vehicle(String sellerName, int sellerId, int itemId, String name, String description, String image, String licensePlate, int year, String brand, String color) {
-        super(sellerName, sellerId, itemId, name, description, image, ItemCategory.Vehicle);
+        super(sellerName, sellerId, itemId, name, description, image, ItemCategory.VEHICLE);
         this.licensePlate = licensePlate;
         this.year = year;
         this.brand = brand;

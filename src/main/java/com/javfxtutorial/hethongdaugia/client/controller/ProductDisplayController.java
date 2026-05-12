@@ -81,7 +81,7 @@ public class ProductDisplayController {
     public void goToManHinhDauGiaTrucTiep(ActionEvent event) {
         if (auction.getStatus() == AuctionStatus.RUNNING) {
             System.out.println("Phiên đấu giá hiện tại: " + ClientModel.getInstance().getCurrentAuction());
-            changeScene(event ,"/com/javfxtutorial/hethongdaugia/view/fxml/dau_gia_truc_tiep.fxml");
+            changeScene(event , "/com/javfxtutorial/hethongdaugia/view/fxml/LiveAuction.fxml");
 
         } else {
             if (auction.getStatus() == AuctionStatus.CLOSED){

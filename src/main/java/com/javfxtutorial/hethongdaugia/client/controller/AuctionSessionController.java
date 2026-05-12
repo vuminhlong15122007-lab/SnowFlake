@@ -85,9 +85,9 @@ public class AuctionSessionController {
     private String getCategoryName(Item item) {
         String className = item.getClass().getSimpleName();
         switch (className) {
-            case "Art": return "Art";
-            case "Vehicle": return "Vehicle";
-            case "Electronics": return "Electronics";
+            case "ART": return "ART";
+            case "VEHICLE": return "VEHICLE";
+            case "ELECTRONICS": return "ELECTRONICS";
             default: return "Khác";
         }
     }
@@ -99,6 +99,6 @@ public class AuctionSessionController {
         if (auction == null) return;
         ClientModel.getInstance().setCurrentAuction(auction);
         ClientModel.getInstance().setCurrentItem(auction.getItem());
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thi_sp.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionInformation.fxml");
     }
 }
