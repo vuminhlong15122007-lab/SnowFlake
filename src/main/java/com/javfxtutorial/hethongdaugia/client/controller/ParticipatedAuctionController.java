@@ -1,10 +1,12 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.GetParticipatedAuctionsByBidderCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
@@ -61,20 +63,20 @@ public class ParticipatedAuctionController implements  ResponseListener {
       applyFilters();
     });
     btnDTToan.setOnAction(e -> {
-      currentStatus = AuctionStatus.NOT_START;
+      currentStatus = AuctionStatus.PAID;
       sectionTitle.setText("📋  " + "PHIÊN ĐẤU GIÁ ĐÃ THANH TOÁN");
       setActiveButton(btnDTToan);
       applyFilters();
     });
     btnCTToan.setOnAction(e -> {
-      currentStatus = AuctionStatus.RUNNING;
+      currentStatus = AuctionStatus.CLOSED;
       sectionTitle.setText("📋  " + "PHIÊN ĐẤU GIÁ CHƯA THANH TOÁN");
       setActiveButton(btnCTToan);
       applyFilters();
     });
     btnDTGia.setOnAction(e -> {
-      currentStatus = AuctionStatus.CLOSED;
-      sectionTitle.setText("📋  " + "PHIÊN ĐẤU GIÁ ĐÃ THAM GIA ");
+      currentStatus = AuctionStatus.RUNNING;
+      sectionTitle.setText("📋  " + "PHIÊN ĐẤU GIÁ ĐANG THAM GIA ");
       setActiveButton(btnDTGia);
       applyFilters();
     });
@@ -97,8 +99,18 @@ public class ParticipatedAuctionController implements  ResponseListener {
       }
 
       // 2. Lọc theo trạng thái
+      if (currentStatus == AuctionStatus.CLOSED){ //những phiên đấu giá thanh toán không thành công cũng hiện ở phần chowf thanh toán
+        if(auction.getStatus() == AuctionStatus.CANCELLED){
+          return true;
+        }
+      }
       if (currentStatus != null && auction.getStatus() != currentStatus) {
         return false;
+      }
+      if (currentStatus == AuctionStatus.CLOSED || currentStatus == AuctionStatus.PAID){
+        if (auction.getWinnerId() != ClientModel.getInstance().getCurrentUser().getId()){
+          return false;
+        }
       }
 
       return true;
@@ -121,12 +133,13 @@ public class ParticipatedAuctionController implements  ResponseListener {
 
   // NHỚ THÊM COMMAND LẤY RA TRẠNG THÁI ĐÃ THANH TOÁN....
   public void loadData() {
-    Command cmd = new GetAllAuctionsCommand();
+    Command cmd = new GetParticipatedAuctionsByBidderCommand();
+    cmd.addData("currentUserId", ClientModel.getInstance().getCurrentUser().getId());
     ServerConnection connection = NetworkManager.getConnection();
     new Thread(() -> {
       connection.sendCommand(cmd);
       NetworkManager networkManager = NetworkManager.getInstance();
-      networkManager.register(GetAllAuctionsCommand.class, this);
+      networkManager.register(GetParticipatedAuctionsByBidderCommand.class, this);
     }).start();
   }
 
@@ -136,7 +149,7 @@ public class ParticipatedAuctionController implements  ResponseListener {
 
   @Override
   public void onResponse(Response rp) {
-    if (rp.getCommand().getClass() == GetAllAuctionsCommand.class) {
+    if (rp.getCommand().getClass() == GetParticipatedAuctionsByBidderCommand.class) {
       Platform.runLater(() -> {
         if (rp == null) {
           showAlert("Loi tai du lieu", "Server khong tra ve du lieu phien dau gia.", "Loading.gif");
@@ -147,12 +160,12 @@ public class ParticipatedAuctionController implements  ResponseListener {
           showAlert("Loi tai du lieu", rp.getMessage(), "Loading.gif");
           return;
         }
-
+        if (rp.getPayLoad() == null){return;}
         ArrayList<Auction> auctions = (ArrayList<Auction>) rp.getPayLoad();
         participatedAuctionList.setAll(auctions);
       });
       NetworkManager networkManager = NetworkManager.getInstance();
-      networkManager.unregister(GetAllAuctionsCommand.class, this);
+      networkManager.unregister(GetParticipatedAuctionsByBidderCommand.class, this);
     }
   }
 

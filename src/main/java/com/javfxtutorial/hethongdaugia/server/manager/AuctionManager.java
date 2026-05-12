@@ -1,11 +1,14 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
+import com.javfxtutorial.hethongdaugia.client.controller.ParticipatedAuctionController;
+import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.BidDAO;
+import com.javfxtutorial.hethongdaugia.server.dao.ParticipatedAuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.network.BidListener;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 
@@ -115,6 +118,7 @@ public class AuctionManager {
         // 5. Lưu DB
         AuctionDAO.getInstance().update(auction);
         BidDAO.getInstance().insertBid(bid);
+        ParticipatedAuctionDAO.getInstance().insert(bid);
         System.out.println("Đã lưu vào database");
 
         // 6. Thông báo cho tất cả subscriber của auction này
@@ -242,6 +246,21 @@ public class AuctionManager {
 
         // Gọi lại placeBid — dùng sender = null vì là bot
         this.placeBid(autoBid, null);
+    }
+    public List<Auction> getParticipatedAuctionsByBidder(int userId){
+        ArrayList<Auction> auctionList = new ArrayList<>();
+        auctionList = (ArrayList<Auction>) ParticipatedAuctionDAO.getInstance().getParticipatedAuctionsByBidder(userId);
+        return auctionList;
+    }
+
+    public AuctionStatus checkPaymentStatus(Auction auction){
+        if (LocalDateTime.now().isAfter(auction.getEndingTime().plusHours(24))){
+            if (auction.getStatus() != AuctionStatus.PAID){
+                auction.setStatus(AuctionStatus.CANCELLED);
+                AuctionDAO.getInstance().update(auction);
+            }
+        }
+        return auction.getStatus();
     }
 
 
