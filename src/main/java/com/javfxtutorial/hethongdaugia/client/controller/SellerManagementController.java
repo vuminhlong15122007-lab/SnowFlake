@@ -8,7 +8,6 @@ import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.*;
 import com.javfxtutorial.hethongdaugia.common.model.Command.*;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
-import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import com.javfxtutorial.hethongdaugia.common.model.factory.ArtFactory;
 import com.javfxtutorial.hethongdaugia.common.model.factory.ElectronicsFactory;
 import com.javfxtutorial.hethongdaugia.common.model.factory.ItemFactory;
@@ -20,10 +19,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -41,7 +37,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -76,7 +71,7 @@ public class SellerManagementController implements ResponseListener {
     private ObservableList<Auction> observable = FXCollections.observableArrayList();
 
     public void goMenu(ActionEvent event) {
-        changeScene(event , "/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");}
+        changeScene(event , "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");}
 
     public Auction getInfo(){
         String name = nameField.getText();          // Thu thap du lieu ma nguoi dung da nhap

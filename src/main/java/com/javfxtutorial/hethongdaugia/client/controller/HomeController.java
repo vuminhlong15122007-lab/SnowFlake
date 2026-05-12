@@ -1,16 +1,8 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
-import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.stage.Stage;
-
-import java.io.IOException;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 
@@ -18,7 +10,7 @@ public class HomeController {
     @FXML
     private Button profileButton;
     public void goToProfile(ActionEvent event){
-        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thong_tin_User.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/UserInformation.fxml");
     }
 
     @FXML
@@ -34,6 +26,6 @@ public class HomeController {
 
     @FXML
     public void manageProducts(ActionEvent event){
-        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/quan_ly_san_pham_seller.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Seller_ProductManagement.fxml");
     }
 }

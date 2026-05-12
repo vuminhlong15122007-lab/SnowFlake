@@ -14,7 +14,6 @@ import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
@@ -41,7 +40,7 @@ public class ParticipatedAuctionController implements  ResponseListener {
   private FilteredList<Auction> filterData;
   private AuctionStatus currentStatus = null;
 
-  @FXML void goMenu(ActionEvent event) { changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");}
+  @FXML void goMenu(ActionEvent event) { changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");}
 
   @FXML
   public void initialize() {

@@ -13,7 +13,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
@@ -65,7 +64,7 @@ public class AdminItemController implements  Initializable, ResponseListener {
         changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
     }
     public void clickToGoUserAdmin(ActionEvent event){
-        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/Quan_Ly_User_Admin.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UserManagement.fxml");
     }
     @FXML
     public void clickToDeleteItem() throws IOException, ClassNotFoundException {

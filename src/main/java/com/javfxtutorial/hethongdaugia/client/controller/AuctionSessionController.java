@@ -99,6 +99,6 @@ public class AuctionSessionController {
         if (auction == null) return;
         ClientModel.getInstance().setCurrentAuction(auction);
         ClientModel.getInstance().setCurrentItem(auction.getItem());
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thi_sp.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionInformation.fxml");
     }
 }

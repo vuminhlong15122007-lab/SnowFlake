@@ -162,13 +162,13 @@ public class AuctionController implements ResponseListener {
     }
 
     public void manageProducts(ActionEvent event) {
-            changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/quan_ly_san_pham_seller.fxml");
+            changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Seller_ProductManagement.fxml");
     }
 
     @FXML
     public void btnHome(ActionEvent event) {
         try {
-            changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
+            changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -176,7 +176,7 @@ public class AuctionController implements ResponseListener {
 
     @FXML
     public void goToProfile(ActionEvent event) {
-            changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thong_tin_User.fxml");
+            changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/UserInformation.fxml");
     }
 
     @Override

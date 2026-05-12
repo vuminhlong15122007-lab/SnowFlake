@@ -4,7 +4,6 @@ import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteUserCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllUsersCommand;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
@@ -62,11 +61,11 @@ public class AdminUserController implements Initializable, ResponseListener {
     private Button btnEditUser;
     @FXML
     public void getUpdateAdmin(ActionEvent event) {
-        changePopup(event,"/com/javfxtutorial/hethongdaugia/view/fxml/update_admin.fxml","sửa thông tin admin");
+        changePopup(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UpdateAdminInfo.fxml","sửa thông tin admin");
 
     }
     public void clickToAddUser(ActionEvent event) {
-        changePopup(event,"/com/javfxtutorial/hethongdaugia/view/fxml/Popupmanhinhsuathongtinadmin.fxml","Thêm User mới");
+        changePopup(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UpdateUserInfo.fxml","Thêm User mới");
     }
 
     @FXML
@@ -159,7 +158,7 @@ public class AdminUserController implements Initializable, ResponseListener {
 
     @FXML
     public void clickToGoItemAdmin(ActionEvent event) {
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Quan_Ly_Product_Admin.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_ProductManagement.fxml");
     }
 
     @Override

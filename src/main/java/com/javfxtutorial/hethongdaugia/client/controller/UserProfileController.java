@@ -1,12 +1,10 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
-import com.javfxtutorial.hethongdaugia.client.Util.UIUtils.*;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
-import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
@@ -20,16 +18,12 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.IOException;
 import java.nio.file.Files;
-import java.util.Base64;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
@@ -51,7 +45,7 @@ public class UserProfileController implements ResponseListener {
 
     @FXML
     public void clickToBackToSceneMain(ActionEvent event) {
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
         }
 
     @FXML
@@ -61,12 +55,12 @@ public class UserProfileController implements ResponseListener {
 
     @FXML
     public void clickToSellerMangement(ActionEvent event) {
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/quan_ly_san_pham_seller.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Seller_ProductManagement.fxml");
     }
 
     @FXML
     public void goParticipatedAuction(ActionEvent event ){
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/ParticipatedAuction.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/UserParticipatedAuction.fxml");
     }
 
     @FXML
