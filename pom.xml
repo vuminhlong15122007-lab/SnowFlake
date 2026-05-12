@@ -52,12 +52,7 @@
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>21.0.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
-            <version>21.0.6</version>
+            <version>25.0.3</version>
         </dependency>
 
         <dependency>
@@ -76,6 +71,74 @@
 
     <build>
         <plugins>
+            <!-- Plugin đánh giá độ bao phủ code (JaCoCo) -->
+            <plugin>
+                <groupId>org.jacoco</groupId>
+                <artifactId>jacoco-maven-plugin</artifactId>
+                <version>0.8.14</version>
+                <executions>
+                    <!-- Cấu hình khởi tạo agent để thu thập dữ liệu khi chạy test -->
+                    <execution>
+                        <id>prepare-agent</id>
+                        <goals>
+                            <goal>prepare-agent</goal>
+                        </goals>
+                    </execution>
+                    <!-- Cấu hình tạo báo cáo HTML/XML sau khi chạy test xong -->
+                    <execution>
+                        <id>report</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>report</goal>
+                        </goals>
+                        <configuration>
+                            <formats>
+                                <format> HTML </format>
+                            </formats>
+                        </configuration>
+                    </execution>
+                    <!-- Cấu hình kiểm tra điều kiện coverage > 80% -->
+                    <execution>
+                        <id>check-coverage</id>
+                        <phase>test</phase>
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                        <configuration>
+                            <!-- 1. Loại trừ tất cả các class giao diện, kết nối mạng và data model khỏi bộ đếm -->
+                            <excludes>
+                                <!-- Loại trừ toàn bộ phần client (giao diện JavaFX) -->
+                                <exclude>com/javfxtutorial/hethongdaugia/client/**</exclude>
+
+                                <!-- Loại trừ các phần bổ trợ, kết nối và tầng dữ liệu -->
+                                <exclude>com/javfxtutorial/hethongdaugia/common/**</exclude>
+                                <exclude>com/javfxtutorial/hethongdaugia/server/dao/**</exclude>
+                                <exclude>com/javfxtutorial/hethongdaugia/server/network/**</exclude>
+                            </excludes>
+
+                            <rules>
+                                <rule>
+                                    <!-- 2. Kiểm tra độc lập theo từng Class (Lớp) hoặc Package thay vì tính gộp toàn dự án -->
+                                    <element>PACKAGE</element>
+                                    <includes>
+                                        <!-- Chỉ chấm điểm logic bên trong thư mục server/manager -->
+                                        <include>com/javfxtutorial/hethongdaugia/server/manager</include>
+                                    </includes>
+                                    <limits>
+                                        <limit>
+                                            <counter>LINE</counter>
+                                            <value>COVEREDRATIO</value>
+                                            <minimum>0.60</minimum> <!-- Bắt buộc các class logic tại đây phải > 60% -->
+                                        </limit>
+                                    </limits>
+                                </rule>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -107,6 +170,13 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>3.5.2</version>
+            </plugin>
+
         </plugins>
     </build>
 </project>
