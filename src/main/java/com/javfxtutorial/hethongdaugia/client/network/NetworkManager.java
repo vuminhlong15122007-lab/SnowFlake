@@ -40,11 +40,20 @@ public class NetworkManager {
     return connection;
   }
 
+//  public void register(Class<?> commandClass, ResponseListener listener) {
+//    if (listeners.containsKey(commandClass)) {
+//      listeners.get(commandClass).add(listener);
+//    } else {
+//      listeners.put(commandClass, new CopyOnWriteArrayList<>(List.of(listener)));
+//    }
+//  }
+
   public void register(Class<?> commandClass, ResponseListener listener) {
-    if (listeners.containsKey(commandClass)) {
-      listeners.get(commandClass).add(listener);
-    } else {
-      listeners.put(commandClass, new CopyOnWriteArrayList<>(List.of(listener)));
+    listeners.computeIfAbsent(commandClass, k -> new CopyOnWriteArrayList<>());
+
+    List<ResponseListener> list = listeners.get(commandClass);
+    if (!list.contains(listener)) {
+      list.add(listener);
     }
   }
 

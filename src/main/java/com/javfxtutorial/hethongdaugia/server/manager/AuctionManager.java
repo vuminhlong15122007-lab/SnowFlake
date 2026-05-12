@@ -55,13 +55,27 @@ public class AuctionManager {
     // ─────────────────────────────────────────────────
     // SUBSCRIBE / UNSUBSCRIBE
     // ─────────────────────────────────────────────────
+//    public void registerToAuction(BidListener listener, int auctionId) {
+//        if (auctionSubscribers.containsKey(auctionId)) {
+//            auctionSubscribers.get(auctionId).add(listener);
+//        } else {
+//            auctionSubscribers.put(auctionId, new CopyOnWriteArrayList<>(List.of(listener)));
+//        }
+//        System.out.println("Đã thêm " + listener + "vào phòng auction có id: " +  auctionId);
+//    }
+
     public void registerToAuction(BidListener listener, int auctionId) {
-        if (auctionSubscribers.containsKey(auctionId)) {
-            auctionSubscribers.get(auctionId).add(listener);
-        } else {
-            auctionSubscribers.put(auctionId, new CopyOnWriteArrayList<>(List.of(listener)));
+        auctionSubscribers.computeIfAbsent(
+                auctionId,
+                k -> new CopyOnWriteArrayList<>()
+        );
+
+        List<BidListener> list = auctionSubscribers.get(auctionId);
+        if (!list.contains(listener)) {
+            list.add(listener);
         }
-        System.out.println("Đã thêm " + listener + "vào phòng auction có id: " +  auctionId);
+
+        System.out.println("Đã thêm " + listener + " vào phòng auction id: " + auctionId);
     }
 
     public void unregisterFromAuction(BidListener listener, int auctionId) {
@@ -221,7 +235,7 @@ public class AuctionManager {
             return b1.getRegisteredAt().compareTo(b2.getRegisteredAt());
         });
 
-        AutoBidConfig winnerBot = eligibleBots.get(0);
+        AutoBidConfig winnerBot = eligibleBots.getFirst();
         if (winnerBot.getUserId() == auction.getWinnerId()) return;
 
         // logic của autobid đây hehe
