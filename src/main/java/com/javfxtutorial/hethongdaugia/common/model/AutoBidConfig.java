@@ -2,6 +2,7 @@ package com.javfxtutorial.hethongdaugia.common.model;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public class AutoBidConfig implements Serializable {
     private int userId;
@@ -9,6 +10,7 @@ public class AutoBidConfig implements Serializable {
     private int auctionId;
     private BigDecimal maxPrice;
     private boolean isActive;
+    private LocalDateTime registeredAt;
 
     public AutoBidConfig(int userId,String userName, int auctionId, BigDecimal maxPrice, boolean isActive) {
         this.userId = userId;
@@ -16,6 +18,14 @@ public class AutoBidConfig implements Serializable {
         this.auctionId = auctionId;
         this.maxPrice = maxPrice;
         this.isActive = isActive;
+        this.registeredAt = LocalDateTime.now();
+    }
+
+    public LocalDateTime getRegisteredAt() {
+        return registeredAt;
+    }
+    public void setRegisteredAt(LocalDateTime registeredAt) {
+        this.registeredAt = registeredAt;
     }
 
     public String getUserName() {return userName;}

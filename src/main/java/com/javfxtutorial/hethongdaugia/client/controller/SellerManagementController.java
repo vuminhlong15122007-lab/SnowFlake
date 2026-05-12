@@ -34,6 +34,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -177,16 +178,11 @@ public class SellerManagementController implements ResponseListener {
         priceField.clear();
         tfstepPrice.clear();
 
-        startDatePicker.setValue(null);
-        startHourSpinner.getValueFactory().setValue(null);
-        startHourSpinner.getEditor().clear();
-        startMinuteSpinner.getValueFactory().setValue(null);
-        startMinuteSpinner.getEditor().clear();
-        endHourSpinner.getValueFactory().setValue(null);
-        endHourSpinner.getEditor().clear();
-        endMinuteSpinner.getValueFactory().setValue(null);
-        endMinuteSpinner.getEditor().clear();
-        endDatePicker.setValue(null);
+        startHourSpinner.getValueFactory().setValue(0);
+        startMinuteSpinner.getValueFactory().setValue(0);
+        endHourSpinner.getValueFactory().setValue(0);
+        endMinuteSpinner.getValueFactory().setValue(0);
+
     }
 
     @FXML public void onSaveButton (ActionEvent event) throws IOException {       // btn Lưu
@@ -349,7 +345,38 @@ public class SellerManagementController implements ResponseListener {
             endMinuteSpinner.getValueFactory().setValue(end.getMinute());
         }
 
-        // ẢNH - CHƯA XỬ LÝ LẤY RA
+
+
+        Item item = auction.getItem();
+        // Ảnh
+        String base64 = item.getImage();
+        if (base64 != null && !base64.isEmpty()) {
+            byte[] imgBytes = Base64.getDecoder().decode(base64);
+            Image.setImage(new javafx.scene.image.Image(new ByteArrayInputStream(imgBytes)));
+        }
+
+        //LOẠI SP
+
+        if (item.getCategory() != null) {
+            categoryComboBox.setValue(item.getCategory().name());
+            showCategoryFields(item.getCategory().name()); // ẩn/hiện đúng VBox
+        }
+
+        if (item instanceof Electronics e) {
+            brandElecField.setText(e.getBrand());
+            modelField.setText(e.getModel());
+
+        } else if (item instanceof Art a) {
+            artTitleField.setText(a.getTitle());
+            artistField.setText(a.getArtist());
+            yearCreatedField.setText(String.valueOf(a.getYearCreated()));
+
+        } else if (item instanceof Vehicle v) {
+            licensePlateField.setText(v.getLicensePlate());
+            vehicleYearField.setText(String.valueOf(v.getYear()));
+            brandVehicleField.setText(v.getBrand());
+            colorField.setText(v.getColor());
+        }
     }
 
 

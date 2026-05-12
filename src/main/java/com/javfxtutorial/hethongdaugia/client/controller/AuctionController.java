@@ -151,9 +151,10 @@ public class AuctionController implements ResponseListener {
         Command cmd = new GetAllAuctionsCommand();
         ServerConnection connection = NetworkManager.getConnection();
         new Thread(() -> {
-            connection.sendCommand(cmd);
             NetworkManager networkManager = NetworkManager.getInstance();
             networkManager.register(GetAllAuctionsCommand.class, this);
+            connection.sendCommand(cmd);
+
         }).start();
     }
 

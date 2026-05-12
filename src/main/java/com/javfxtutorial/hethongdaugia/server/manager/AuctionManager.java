@@ -58,13 +58,27 @@ public class AuctionManager {
     // ─────────────────────────────────────────────────
     // SUBSCRIBE / UNSUBSCRIBE
     // ─────────────────────────────────────────────────
+//    public void registerToAuction(BidListener listener, int auctionId) {
+//        if (auctionSubscribers.containsKey(auctionId)) {
+//            auctionSubscribers.get(auctionId).add(listener);
+//        } else {
+//            auctionSubscribers.put(auctionId, new CopyOnWriteArrayList<>(List.of(listener)));
+//        }
+//        System.out.println("Đã thêm " + listener + "vào phòng auction có id: " +  auctionId);
+//    }
+
     public void registerToAuction(BidListener listener, int auctionId) {
-        if (auctionSubscribers.containsKey(auctionId)) {
-            auctionSubscribers.get(auctionId).add(listener);
-        } else {
-            auctionSubscribers.put(auctionId, new CopyOnWriteArrayList<>(List.of(listener)));
+        auctionSubscribers.computeIfAbsent(
+                auctionId,
+                k -> new CopyOnWriteArrayList<>()
+        );
+
+        List<BidListener> list = auctionSubscribers.get(auctionId);
+        if (!list.contains(listener)) {
+            list.add(listener);
         }
-        System.out.println("Đã thêm " + listener + "vào phòng auction có id: " +  auctionId);
+
+        System.out.println("Đã thêm " + listener + " vào phòng auction id: " + auctionId);
     }
 
     public void unregisterFromAuction(BidListener listener, int auctionId) {
@@ -173,6 +187,7 @@ public class AuctionManager {
     // AUTO BID — giữ nguyên logic của người khác viết
     // ─────────────────────────────────────────────────
     public synchronized boolean registerAutoBid(AutoBidConfig config) {
+        config.setRegisteredAt(LocalDateTime.now());
         List<AutoBidConfig> configs = autoBidRegistry.computeIfAbsent(
                 config.getAuctionId(),
                 k -> Collections.synchronizedList(new ArrayList<>())
@@ -206,7 +221,7 @@ public class AuctionManager {
                 .get(auction.getAuctionId());
         if (configs == null || configs.isEmpty()) return;
 
-        BigDecimal step = auction.getStepPrice();
+        BigDecimal step = auction.getStepPrice(); // lấy giá step
         BigDecimal minRequired = auction.getCurrentPrice().add(step);
 
         List<AutoBidConfig> eligibleBots = new ArrayList<>();
@@ -217,23 +232,47 @@ public class AuctionManager {
         }
         if (eligibleBots.isEmpty()) return;
 
-        eligibleBots.sort((b1, b2) ->
-                b2.getMaxPrice().compareTo(b1.getMaxPrice()));
+        eligibleBots.sort((b1, b2) -> {
+            int cmp = b2.getMaxPrice().compareTo(b1.getMaxPrice());
+            if (cmp != 0) return cmp;
 
-        AutoBidConfig winnerBot = eligibleBots.get(0);
+            return b1.getRegisteredAt().compareTo(b2.getRegisteredAt());
+        });
+
+        AutoBidConfig winnerBot = eligibleBots.getFirst();
         if (winnerBot.getUserId() == auction.getWinnerId()) return;
 
+        // logic của autobid đây hehe
+//        Nếu max cao nhất > max cao thứ hai:
+//        giá thắng = min(max cao thứ hai + step, max cao nhất)
+//
+//        Nếu max cao nhất == max cao thứ hai:
+//        người đăng ký trước thắng
+//        giá thắng = maxBid đó
+
         BigDecimal finalAmount;
+
         if (eligibleBots.size() == 1) {
             finalAmount = minRequired;
         } else {
-            BigDecimal secondMax = eligibleBots.get(1).getMaxPrice();
-            finalAmount = secondMax.add(step);
-            if (finalAmount.compareTo(winnerBot.getMaxPrice()) == 0) {
+            AutoBidConfig secondBot = eligibleBots.get(1);
+            BigDecimal secondMax = secondBot.getMaxPrice();
+
+            if (winnerBot.getMaxPrice().compareTo(secondMax) == 0) {
+                // Hai bot cùng maxBid: người đăng ký trước thắng ở đúng maxBid
                 finalAmount = winnerBot.getMaxPrice();
+            } else {
+                // Bot thắng chỉ cần hơn bot thứ hai một bước giá,
+                // nhưng không được vượt maxBid của chính nó
+                finalAmount = secondMax.add(step);
+
+                if (finalAmount.compareTo(winnerBot.getMaxPrice()) > 0) {
+                    finalAmount = winnerBot.getMaxPrice();
+                }
             }
+
             if (finalAmount.compareTo(minRequired) < 0) {
-                finalAmount = minRequired;
+                return;
             }
         }
 
