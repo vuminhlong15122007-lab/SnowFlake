@@ -131,7 +131,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
     return result;
   }
 
-  private Auction mapResultSet(ResultSet rs) throws SQLException {
+  public Auction mapResultSet(ResultSet rs) throws SQLException {
     // Map Item
     Item item = new Item(
         rs.getInt("item_id"),
@@ -252,6 +252,31 @@ public class AuctionDAO implements DAOInterface<Auction> {
     } catch (SQLException e) {
       e.printStackTrace();
       throw new RuntimeException("Lỗi thao tác DB khi lấy Auction theo Seller ID", e);
+    } catch (NullPointerException e) {
+      System.out.println("dữ liệu k tồn tại");
+    }
+    return list;
+  }
+
+  public ArrayList<Auction> selectByWinnerId(int winnerId) {      // lấy auction dựa trên sellerID
+    ArrayList<Auction> list = new ArrayList<>();
+    String sql = BASE_QUERY + "WHERE a.winner_id = ?";
+
+    try (Connection conn = JDBCUtil.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+      ps.setInt(1, winnerId);
+
+      try (ResultSet rs = ps.executeQuery()) {
+        log.info("Đang lấy Auction thắng bởi userID: {}", winnerId);
+        while (rs.next()) {
+          list.add(mapResultSet(rs));
+        }
+      }
+
+    } catch (SQLException e) {
+      e.printStackTrace();
+      throw new RuntimeException("Lỗi thao tác DB khi lấy Auction theo Winner ID", e);
     } catch (NullPointerException e) {
       System.out.println("dữ liệu k tồn tại");
     }
