@@ -1,8 +1,8 @@
 package com.javfxtutorial.hethongdaugia.server.dao;
 
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.Item;
+import com.javfxtutorial.hethongdaugia.common.model.*;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
+import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,13 +11,16 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory.ELECTRONICS;
+
 public class AuctionDAO implements DAOInterface<Auction> {
   private static final Logger log = LoggerFactory.getLogger(AuctionDAO.class);
   private static volatile AuctionDAO instance;
   private String BASE_QUERY =
-      "SELECT a.*, i.name, i.description, i.imagepath, i.idseller AS seller_id_item, i.sellerName " +
-          "FROM auction a " +
-          "JOIN item i ON a.item_id = i.itemid ";
+          "SELECT a.*, i.name, i.description, i.imagepath, " +
+                  "i.idseller AS seller_id, i.sellerName, i.category " +
+                  "FROM auction a " +
+                  "JOIN item i ON a.item_id = i.itemid ";
 
 
   private AuctionDAO() {}
@@ -133,14 +136,23 @@ public class AuctionDAO implements DAOInterface<Auction> {
 
   private Auction mapResultSet(ResultSet rs) throws SQLException {
     // Map Item
-    Item item = new Item(
-        rs.getInt("item_id"),
-        rs.getInt("seller_id"),
-        rs.getString("name"),
-        rs.getString("description"),
-        rs.getString("imagepath"),
-        rs.getString("sellerName")
+    String cat = rs.getString("category");
+    ItemCategory category;
+    if (cat != null){
+      category = ItemCategory.valueOf(cat.toUpperCase());
+    }else category = null;
+    Item baseItem = new Item(
+            rs.getString("sellerName"),
+            rs.getInt("seller_id"),
+            rs.getInt("item_id"),
+            rs.getString("name"),
+            rs.getString("description"),
+            rs.getString("imagepath"),
+            category
     );
+
+    int itemId = rs.getInt("item_id");
+    Item item = loadItemDetail(itemId, category, baseItem);
 
     // Map LocalDateTime
     LocalDateTime startingTime = rs.getTimestamp("starting_time") != null
@@ -148,8 +160,11 @@ public class AuctionDAO implements DAOInterface<Auction> {
     LocalDateTime endingTime = rs.getTimestamp("ending_time") != null
         ? rs.getTimestamp("ending_time").toLocalDateTime() : null;
 
+
     // Map AuctionStatus
     AuctionStatus status = AuctionStatus.valueOf(rs.getString("auctionStatus"));
+
+
 
     return new Auction(
         rs.getInt("auction_id"),
@@ -256,6 +271,73 @@ public class AuctionDAO implements DAOInterface<Auction> {
       System.out.println("dữ liệu k tồn tại");
     }
     return list;
+  }
+
+
+  public Item loadItemDetail(int itemId, ItemCategory category, Item baseItem) {
+    if (category == null) return baseItem;
+
+    if (category == ItemCategory.ELECTRONICS) {
+      String sql = "SELECT brand, model FROM electronic WHERE item_id = ?";
+      try (Connection conn = JDBCUtil.getConnection();
+           PreparedStatement pst = conn.prepareStatement(sql)) {
+        pst.setInt(1, itemId);
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) {
+          return new Electronics(
+                  baseItem.getSellerName(), baseItem.getSellerId(),
+                  baseItem.getItemId(), baseItem.getName(),
+                  baseItem.getDescription(), baseItem.getImage(),
+                  rs.getString("brand"), rs.getString("model")
+          );
+        }
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+
+    } else if (category == ItemCategory.ART) {
+      String sql = "SELECT artist, year_created, title FROM art WHERE item_id = ?";
+      try (Connection conn = JDBCUtil.getConnection();
+           PreparedStatement pst = conn.prepareStatement(sql)) {
+        pst.setInt(1, itemId);
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) {
+          return new Art(
+                  baseItem.getSellerName(), baseItem.getSellerId(),
+                  baseItem.getItemId(), baseItem.getName(),
+                  baseItem.getDescription(), baseItem.getImage(),
+                  rs.getString("artist"),
+                  rs.getInt("year_created"),
+                  rs.getString("title")
+          );
+        }
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+
+    } else if (category == ItemCategory.VEHICLE) {
+      String sql = "SELECT license_plate, year, brand, color FROM vehicle WHERE item_id = ?";
+      try (Connection conn = JDBCUtil.getConnection();
+           PreparedStatement pst = conn.prepareStatement(sql)) {
+        pst.setInt(1, itemId);
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) {
+          return new Vehicle(
+                  baseItem.getSellerName(), baseItem.getSellerId(),
+                  baseItem.getItemId(), baseItem.getName(),
+                  baseItem.getDescription(), baseItem.getImage(),
+                  rs.getString("license_plate"),
+                  rs.getInt("year"),
+                  rs.getString("brand"),
+                  rs.getString("color")
+          );
+        }
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
+
+    return baseItem;
   }
 }
 
