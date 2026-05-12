@@ -30,15 +30,21 @@ public class ClientHandler extends Thread implements BidListener {
 
             while (true) {
                 Command cmd = (Command) in.readObject();
-                Response rp = cmd.handle();
+                Response rp;
+                try {
+                    rp = cmd.handle();
+                } catch (Exception e) {
+                    // Bất kỳ RuntimeException nào cũng không làm chết server
+                    System.err.println("[SERVER ERROR] Command " + cmd.getClass().getSimpleName() + " crash: " + e.getMessage());
+                    e.printStackTrace();
+                    rp = new Response(false, "Lỗi server: " + e.getMessage(), null, cmd);
+                }
                 if (rp != null) {
                     synchronized (out) {
                         out.writeObject(rp);
                         out.flush();
                         out.reset();
                     }
-                } else {
-                    System.err.println("Canh bao: Command " + cmd.getClass().getSimpleName() + " tra ve null!");
                 }
             }
         } catch (IOException | ClassNotFoundException e) {

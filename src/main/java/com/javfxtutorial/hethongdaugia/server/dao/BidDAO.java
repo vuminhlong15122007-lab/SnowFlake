@@ -8,11 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BidDAO  {
-    private static BidDAO instance;
+    private static volatile BidDAO instance;
     private BidDAO(){}
     public static BidDAO getInstance(){
         if (instance == null){
-            instance = new BidDAO();
+            synchronized(BidDAO.class){
+                if (instance == null){
+                    instance = new BidDAO();
+                }
+            }
         }
         return instance;
     }
@@ -26,7 +30,7 @@ public class BidDAO  {
             pstmt.setInt(1, bid.getBidderId());
             pstmt.setString(2, bid.getBidderName());
             pstmt.setInt(3, bid.getAuctionId());
-            pstmt.setDouble(4, bid.getAmount());
+            pstmt.setBigDecimal(4, bid.getAmount());
             // Convert LocalDate sang java.sql.Date
 //            pstmt.setDate(4, Date.valueOf(bid.getTimestamp()));
             pstmt.setTimestamp(5, Timestamp.valueOf(bid.getTimestamp()));
@@ -55,7 +59,7 @@ public class BidDAO  {
                     bid.setBidderId(rs.getInt("bidder_id"));
                     bid.setBidderName(rs.getString("bidder_name"));
                     bid.setAuctionId(rs.getInt("auction_id"));
-                    bid.setAmount(rs.getDouble("amount"));
+                    bid.setAmount(rs.getBigDecimal("amount"));
                     // Convert java.sql.Date về LocalDateTime
                     bid.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
                     bids.add(bid);
@@ -82,7 +86,7 @@ public class BidDAO  {
                     bid.setBidderId(rs.getInt("bidder_id"));
                     bid.setBidderName(rs.getString("bidder_name"));
                     bid.setAuctionId(rs.getInt("auction_id"));
-                    bid.setAmount(rs.getDouble("amount"));
+                    bid.setAmount(rs.getBigDecimal("amount"));
                     bid.setTimestamp(rs.getTimestamp("timestamp").toLocalDateTime());
                     return bid;
                 }

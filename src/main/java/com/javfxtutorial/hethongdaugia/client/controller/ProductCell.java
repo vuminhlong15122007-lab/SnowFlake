@@ -1,7 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ListCell;
@@ -20,7 +19,7 @@ public class ProductCell extends ListCell<Auction> {
 
         try {
             String fxmlFile;
-            fxmlFile = "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionCellEnd.fxml";
+            fxmlFile = "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionCell.fxml";
             FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
             Parent root = loader.load();
             AuctionSessionController controller = loader.getController();

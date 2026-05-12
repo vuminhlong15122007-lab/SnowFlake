@@ -1,5 +1,5 @@
 package com.javfxtutorial.hethongdaugia.common.model.enums;
 
 public enum AuctionStatus {
-    NOT_START, RUNNING, CLOSED;
+    NOT_START, RUNNING, CLOSED, CANCELLED, PAID;
 }

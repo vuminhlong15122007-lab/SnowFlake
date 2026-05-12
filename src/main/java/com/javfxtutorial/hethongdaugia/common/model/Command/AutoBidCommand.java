@@ -3,7 +3,7 @@ package com.javfxtutorial.hethongdaugia.common.model.Command;
 import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
-import com.javfxtutorial.hethongdaugia.server.manager.AuctionManger;
+import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
 
 public class AutoBidCommand extends Command {
     @Override
@@ -13,7 +13,7 @@ public class AutoBidCommand extends Command {
             return new Response(false, "Cấu hình không hợp lệ", null, this);
         }
 
-        boolean success = AuctionManger.getInstance().registerAutoBid(config);
+        boolean success = AuctionManager.getInstance().registerAutoBid(config);
         String message;
         if (!success) {
             message = "Lỗi kích hoạt Bot";

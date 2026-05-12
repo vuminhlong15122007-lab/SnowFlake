@@ -8,7 +8,7 @@ public class Art extends Item {
     private String title;
 
     public Art(String sellerName, int sellerId, int itemId, String name, String description, String image, String artist, int yearCreated, String title) {
-        super(sellerName, sellerId, itemId, name, description, image, ItemCategory.Art);
+        super(sellerName, sellerId, itemId, name, description, image, ItemCategory.ART);
         this.artist = artist;
         this.yearCreated = yearCreated;
         this.title = title;

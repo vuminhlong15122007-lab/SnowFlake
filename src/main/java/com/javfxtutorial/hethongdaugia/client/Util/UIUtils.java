@@ -84,4 +84,18 @@ public class UIUtils {
         Stage stage = (Stage) node.getScene().getWindow();
         stage.close();
     }
+    public static void changePopup(ActionEvent event , String fxmlPath , String typePopUp){
+        try {
+            FXMLLoader loader = new FXMLLoader(UIUtils.class.getResource(fxmlPath));
+            Parent root = loader.load();
+            Stage popupStage = new Stage();
+            popupStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+            popupStage.setTitle(typePopUp);
+            Scene scene = new Scene(root);
+            popupStage.setScene(scene);
+            popupStage.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

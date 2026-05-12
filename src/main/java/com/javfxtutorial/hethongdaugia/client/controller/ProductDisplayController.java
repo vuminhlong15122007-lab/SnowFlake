@@ -27,6 +27,7 @@ public class ProductDisplayController {
     @FXML private Label UI01;
     @FXML private VBox UI02;
     @FXML private Button ThamGiaDauGiaBtn;
+    @FXML private Label lbLoaisp;
     private TimeLeft timer;
 
 
@@ -40,6 +41,8 @@ public class ProductDisplayController {
         lbTenngban.setText(item.getSellerName());
         ItemNameLabel.setText(item.getName());
         ItemPriceLabel.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
+        lbTenngban.setText(auction.getItem().getSellerName());
+        lbLoaisp.setText(String.valueOf(auction.getItem().getCategory()));
 
         String base64Data = auction.getItem().getImage();
         ImageHelper.loadBase64ToImageView(itemImageView,base64Data);
@@ -78,7 +81,7 @@ public class ProductDisplayController {
     public void goToManHinhDauGiaTrucTiep(ActionEvent event) {
         if (auction.getStatus() == AuctionStatus.RUNNING) {
             System.out.println("Phiên đấu giá hiện tại: " + ClientModel.getInstance().getCurrentAuction());
-            changeScene(event ,"/com/javfxtutorial/hethongdaugia/view/fxml/dau_gia_truc_tiep.fxml");
+            changeScene(event , "/com/javfxtutorial/hethongdaugia/view/fxml/LiveAuction.fxml");
 
         } else {
             if (auction.getStatus() == AuctionStatus.CLOSED){

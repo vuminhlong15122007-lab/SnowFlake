@@ -4,7 +4,7 @@ import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
-import com.javfxtutorial.hethongdaugia.server.manager.AuctionManger;
+import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
 
 public class GetAuctionStatusCommand extends Command {
 
@@ -16,7 +16,7 @@ public class GetAuctionStatusCommand extends Command {
 
     @Override
     public Response handle() {
-        AuctionStatus nowStatus = AuctionManger.getInstance().refreshAuctionStatus(auction);
+        AuctionStatus nowStatus = AuctionManager.getInstance().refreshAuctionStatus(auction);
         return new Response(true, "Lấy trạng thái hiện tại thành công", nowStatus, this);
 
 

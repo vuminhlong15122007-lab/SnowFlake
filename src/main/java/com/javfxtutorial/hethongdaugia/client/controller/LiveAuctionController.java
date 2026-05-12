@@ -13,14 +13,11 @@ import com.javfxtutorial.hethongdaugia.common.model.Command.*;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
-import com.javfxtutorial.hethongdaugia.server.manager.AuctionManger;
-import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -29,17 +26,15 @@ import javafx.scene.image.ImageView;
 
 import java.io.IOException;
 
-import java.net.URL;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 
-public class LiveAuctionController implements Initializable, ResponseListener {
+public class LiveAuctionController implements  ResponseListener {
     private volatile boolean running = true;
     Auction currentAuction;
     ServerConnection connection = NetworkManager.getConnection();
@@ -67,14 +62,14 @@ public class LiveAuctionController implements Initializable, ResponseListener {
     public void goMenu(ActionEvent event) throws IOException{
         timer.stop();
         running = false; //đóng while khi chuyển sang màn khác
-        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.unregister(PlaceBidCommand.class, this);
     }
     @FXML
     public void clickToGoProductDisplayInfo(ActionEvent event) throws IOException{
         timer.stop();
-        changeScene(event , "/com/javfxtutorial/hethongdaugia/view/fxml/man_hinh_hien_thi_sp.fxml");
+        changeScene(event , "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionInformation.fxml");
     }
 
     @FXML
@@ -84,11 +79,11 @@ public class LiveAuctionController implements Initializable, ResponseListener {
         try {
             // 1. Lấy text và loại bỏ các dấu phẩy, khoảng trắng (nếu người dùng có nhập)
             String rawInput = priceInput_tf.getText().replace(",", "").replace(".", "").trim();
-            double inputAmount = Double.parseDouble(rawInput);
+            BigDecimal inputAmount = BigDecimal.valueOf(Double.parseDouble(rawInput)) ;
 
             // 2. Validate sớm ngay tại Client (Giảm tải cho Server)
-            double minRequired = currentAuction.getCurrentPrice() + currentAuction.getStepPrice();
-            if (inputAmount < minRequired) {
+            BigDecimal minRequired = currentAuction.getStepPrice().add(currentAuction.getCurrentPrice() );
+            if (inputAmount.compareTo(minRequired) < 0 ) {
                 UIUtils.showAlert("Lỗi đặt giá", String.format("Bạn phải đặt tối thiểu %,.0f VND (Giá hiện tại + Bước giá)", minRequired));
                 return;
             }
@@ -138,8 +133,8 @@ public class LiveAuctionController implements Initializable, ResponseListener {
 
 
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
+    @FXML
+    public void initialize() {
         // register để nhận command của người khác nữa
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.register(PlaceBidCommand.class, this);
@@ -177,7 +172,7 @@ public class LiveAuctionController implements Initializable, ResponseListener {
         if (autoBidToggle.isSelected()) {
             try {
                 // Lấy giá tối đa từ giao diện
-                double maxPrice = Double.parseDouble(autoMaxPrice_tf.getText());
+                BigDecimal maxPrice = new BigDecimal(autoMaxPrice_tf.getText());
                 User nowUser = ClientModel.getInstance().getCurrentUser();
                 // Tạo cấu hình Bot cho người dùng hiện tại
                 AutoBidConfig config = new AutoBidConfig(nowUser.getId(), nowUser.getName(), currentAuction.getAuctionId(), maxPrice, true);
@@ -230,14 +225,14 @@ public class LiveAuctionController implements Initializable, ResponseListener {
 
             // nếu đặt giá thành công thì set up lại view
             if (rp.isSuccess()) {
-                double newPrice = bid.getAmount();
+                BigDecimal newPrice = bid.getAmount();
                 String bidderName = bid.getBidderName();
                 int bidderId = bid.getBidderId();
 
                 Platform.runLater(() -> {
                     // 1. Xử lý lịch sử (ListView):
                     int insertIndex = 0;
-                    while (insertIndex < observable.size() && observable.get(insertIndex).getAmount() > bid.getAmount()) {
+                    while (insertIndex < observable.size() && observable.get(insertIndex).getAmount().compareTo(bid.getAmount()) > 0) {
                         insertIndex++;
                     }
                     observable.add(insertIndex, bid);
@@ -250,7 +245,7 @@ public class LiveAuctionController implements Initializable, ResponseListener {
 
                     // 2. CHỐNG ẢO GIÁC ĐI LÙI (Bảo vệ giao diện chính)
                     // Chỉ cho phép cập nhật thông tin chung khi giá nhận được LỚN HƠN giá đang hiển thị
-                    if (newPrice > currentAuction.getCurrentPrice()) {
+                    if (newPrice.compareTo(currentAuction.getCurrentPrice()) > 0) {
 
                         // Cập nhật lại Model đang lưu trong RAM
                         currentAuction.setCurrentPrice(newPrice);
@@ -301,7 +296,7 @@ public class LiveAuctionController implements Initializable, ResponseListener {
                         // Sắp xếp danh sách lịch sử theo Giá.
                         // - Dùng b2 so sánh b1: Giá cao nhất (mới nhất) nằm TRÊN CÙNG.
                         // - Nếu bạn muốn Giá cao nhất nằm DƯỚI CÙNG, đổi thành: Double.compare(b1.getAmount(), b2.getAmount())
-                        bidList.sort((b1, b2) -> Double.compare(b2.getAmount(), b1.getAmount()));
+                        bidList.sort((b1, b2) -> b2.getAmount().compareTo(b1.getAmount()));
 
                         observable.setAll(bidList);
 

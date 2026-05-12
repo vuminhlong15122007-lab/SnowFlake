@@ -17,7 +17,7 @@ public class ProductCell2 extends ListCell<Auction> {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/product_qlspSeller.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/Seller_ProductCell.fxml"));
             Parent root = loader.load();
 
             SellerProductController cellController = loader.getController();

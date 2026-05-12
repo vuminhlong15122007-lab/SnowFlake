@@ -8,10 +8,9 @@ module com.javfxtutorial.hethongdaugia {
     requires org.json;
     requires java.desktop;
     requires jdk.compiler;
-  requires org.slf4j;
+    requires org.slf4j;
 
-
-  opens com.javfxtutorial.hethongdaugia.client to javafx.fxml;
+    opens com.javfxtutorial.hethongdaugia.client to javafx.fxml;
     opens com.javfxtutorial.hethongdaugia.client.controller to javafx.fxml;
     opens com.javfxtutorial.hethongdaugia.view.fxml to javafx.fxml;
 

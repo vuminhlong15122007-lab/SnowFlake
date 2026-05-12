@@ -1,11 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #f0f8ff;" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.ProductDisplayController">
+<BorderPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #f0f8ff;" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.ProductDisplayController">
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="60.0" style="-fx-background-color: linear-gradient(to right, #89CFF0,lavender); -fx-padding: 0 20;">
             <children>
@@ -69,7 +76,7 @@
                             <children>
                         <HBox prefHeight="25.0" prefWidth="441.0">
                            <children>
-                                      <Label prefHeight="25.0" prefWidth="78.0" text="Người đăng: ">
+                                      <Label prefHeight="24.0" prefWidth="94.0" text="Người đăng: ">
                                  <font>
                                     <Font name="Times New Roman Bold" size="14.0" />
                                  </font></Label>
@@ -81,7 +88,7 @@
                         </HBox>
                         <HBox prefHeight="25.0" prefWidth="441.0">
                            <children>
-                              <Label prefHeight="26.0" prefWidth="115.0" text="Thời gian bắt đầu: ">
+                              <Label prefHeight="25.0" prefWidth="120.0" text="Thời gian bắt đầu: ">
                                   <font>
                                       <Font name="Times New Roman Bold" size="14.0" />
                                   </font></Label>
@@ -93,7 +100,7 @@
                         </HBox>
                         <HBox layoutX="20.0" layoutY="43.0" prefHeight="25.0" prefWidth="441.0">
                            <children>
-                              <Label prefHeight="25.0" prefWidth="118.0" text="Thời gian kết thúc: ">
+                              <Label prefHeight="25.0" prefWidth="121.0" text="Thời gian kết thúc: ">
                                   <font>
                                       <Font name="Times New Roman Bold" size="14.0" />
                                   </font></Label>
@@ -117,12 +124,12 @@
                         </HBox>
                         <HBox prefHeight="72.0" prefWidth="650.0">
                            <children>
-                              <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="72.0" prefWidth="71.0" text="Mô tả:">
+                              <Label prefHeight="78.0" prefWidth="89.0" text="Mô tả:" textAlignment="JUSTIFY" textOverrun="LEADING_WORD_ELLIPSIS">
                                  <font>
                                     <Font name="Times New Roman Bold" size="14.0" />
                                  </font>
                               </Label>
-                              <Label fx:id="LbMotasp" prefHeight="74.0" prefWidth="598.0" text=" Hàng chính hãng, full box, bảo hành 12 tháng tại hệ thống SnowFox toàn quốc." wrapText="true">
+                              <Label fx:id="LbMotasp" prefHeight="100.0" prefWidth="598.0" text=" Hàng chính hãng, full box, bảo hành 12 tháng tại hệ thống SnowFox toàn quốc." wrapText="true">
                                  <font>
                                   <Font name="Times New Roman" size="14.0" />
                               </font>

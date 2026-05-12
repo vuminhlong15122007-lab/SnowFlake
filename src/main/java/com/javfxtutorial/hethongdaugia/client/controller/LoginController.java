@@ -12,16 +12,10 @@ import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,10 +69,10 @@ public class LoginController implements ResponseListener, Initializable {
             Platform.runLater(() -> {
                 if (user.getAccountType() == AccountType.USER) {
                     log.info(rp.getMessage());
-                    changeScene(loginEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/SceneMain.fxml");
+                    changeScene(loginEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
                 } else if (user.getAccountType() == AccountType.ADMIN) {
                     log.info(rp.getMessage());
-                    changeScene(loginEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/Quan_Ly_User_Admin.fxml");
+                    changeScene(loginEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UserManagement.fxml");
                 }
             });
         }else {

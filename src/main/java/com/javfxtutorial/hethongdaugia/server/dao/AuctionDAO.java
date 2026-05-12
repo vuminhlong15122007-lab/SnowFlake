@@ -1,8 +1,8 @@
 package com.javfxtutorial.hethongdaugia.server.dao;
 
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.Item;
+import com.javfxtutorial.hethongdaugia.common.model.*;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
+import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -11,21 +11,27 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory.ELECTRONICS;
+
 public class AuctionDAO implements DAOInterface<Auction> {
   private static final Logger log = LoggerFactory.getLogger(AuctionDAO.class);
-  private static AuctionDAO instance;
+  private static volatile AuctionDAO instance;
   private String BASE_QUERY =
-      "SELECT a.*, i.name, i.description, i.imagepath, i.idseller AS seller_id_item, i.sellerName " +
-          "FROM auction a " +
-          "JOIN item i ON a.item_id = i.itemid ";
+          "SELECT a.*, i.name, i.description, i.imagepath, " +
+                  "i.idseller AS seller_id, i.sellerName, i.category " +
+                  "FROM auction a " +
+                  "JOIN item i ON a.item_id = i.itemid ";
 
 
-  private AuctionDAO() {
-  }
+  private AuctionDAO() {}
 
   public static AuctionDAO getInstance() {
     if (instance == null) {
-      instance = new AuctionDAO();
+      synchronized (AuctionDAO.class) {
+        if (instance == null) {
+          instance = new AuctionDAO();
+        }
+      }
     }
     return instance;
   }
@@ -40,10 +46,10 @@ public class AuctionDAO implements DAOInterface<Auction> {
 
       pst.setInt(1, auction.getItem().getItemId());
       pst.setInt(2, auction.getSellerId());
-      pst.setDouble(3, auction.getInitPrice());
-      pst.setDouble(4, auction.getStepPrice());
-      pst.setDouble(5, auction.getCurrentPrice());
-      pst.setDouble(6, auction.getWinningPrice());
+      pst.setBigDecimal(3, auction.getInitPrice());
+      pst.setBigDecimal(4, auction.getStepPrice());
+      pst.setBigDecimal(5, auction.getCurrentPrice());
+      pst.setBigDecimal(6, auction.getWinningPrice());
       pst.setTimestamp(7, Timestamp.valueOf(auction.getStartingTime()));
       pst.setTimestamp(8, Timestamp.valueOf(auction.getEndingTime()));
       pst.setString(9, String.valueOf(auction.getStatus()));
@@ -61,9 +67,10 @@ public class AuctionDAO implements DAOInterface<Auction> {
       } else {
         System.out.println("Tạo Auction thất bại");
       }
-    } catch (SQLException e) {
+    }  catch (SQLException e) {
       e.printStackTrace();
-      throw new RuntimeException("Lỗi thao tác DB khi thêm Auction", e);
+      return 0; // ← thay thế
+
     }
     return result;
   }
@@ -76,10 +83,10 @@ public class AuctionDAO implements DAOInterface<Auction> {
     try (Connection connection = JDBCUtil.getConnection();
          PreparedStatement pst = connection.prepareStatement(sql)) {
       pst.setInt(1, auction.getWinnerId());
-      pst.setDouble(2, auction.getInitPrice());
-      pst.setDouble(3, auction.getStepPrice());
-      pst.setDouble(4, auction.getCurrentPrice());
-      pst.setDouble(5, auction.getWinningPrice());
+      pst.setBigDecimal(2, auction.getInitPrice());
+      pst.setBigDecimal(3, auction.getStepPrice());
+      pst.setBigDecimal(4, auction.getCurrentPrice());
+      pst.setBigDecimal(5, auction.getWinningPrice());
       pst.setTimestamp(6, Timestamp.valueOf(auction.getStartingTime()));
       pst.setTimestamp(7, Timestamp.valueOf(auction.getEndingTime()));
       pst.setString(8, String.valueOf(auction.getStatus()));
@@ -127,16 +134,25 @@ public class AuctionDAO implements DAOInterface<Auction> {
     return result;
   }
 
-  private Auction mapResultSet(ResultSet rs) throws SQLException {
+  public Auction mapResultSet(ResultSet rs) throws SQLException {
     // Map Item
-    Item item = new Item(
-        rs.getInt("item_id"),
-        rs.getInt("seller_id"),
-        rs.getString("name"),
-        rs.getString("description"),
-        rs.getString("imagepath"),
-        rs.getString("sellerName")
+    String cat = rs.getString("category");
+    ItemCategory category;
+    if (cat != null){
+      category = ItemCategory.valueOf(cat.toUpperCase());
+    }else category = null;
+    Item baseItem = new Item(
+            rs.getString("sellerName"),
+            rs.getInt("seller_id"),
+            rs.getInt("item_id"),
+            rs.getString("name"),
+            rs.getString("description"),
+            rs.getString("imagepath"),
+            category
     );
+
+    int itemId = rs.getInt("item_id");
+    Item item = loadItemDetail(itemId, category, baseItem);
 
     // Map LocalDateTime
     LocalDateTime startingTime = rs.getTimestamp("starting_time") != null
@@ -144,18 +160,21 @@ public class AuctionDAO implements DAOInterface<Auction> {
     LocalDateTime endingTime = rs.getTimestamp("ending_time") != null
         ? rs.getTimestamp("ending_time").toLocalDateTime() : null;
 
+
     // Map AuctionStatus
     AuctionStatus status = AuctionStatus.valueOf(rs.getString("auctionStatus"));
+
+
 
     return new Auction(
         rs.getInt("auction_id"),
         item,
         rs.getInt("seller_id"),
         rs.getInt("winner_id"),
-        rs.getDouble("init_price"),
-        rs.getDouble("current_price"),
-        rs.getDouble("step_price"),
-        rs.getDouble("winning_price"),
+        rs.getBigDecimal("init_price"),
+        rs.getBigDecimal("current_price"),
+        rs.getBigDecimal("step_price"),
+        rs.getBigDecimal("winning_price"),
         startingTime,
         endingTime,
         status
@@ -248,6 +267,98 @@ public class AuctionDAO implements DAOInterface<Auction> {
     } catch (SQLException e) {
       e.printStackTrace();
       throw new RuntimeException("Lỗi thao tác DB khi lấy Auction theo Seller ID", e);
+    } catch (NullPointerException e) {
+      System.out.println("dữ liệu k tồn tại");
+    }
+    return list;
+  }
+
+
+  public Item loadItemDetail(int itemId, ItemCategory category, Item baseItem) {
+    if (category == null) return baseItem;
+
+    if (category == ItemCategory.ELECTRONICS) {
+      String sql = "SELECT brand, model FROM electronic WHERE item_id = ?";
+      try (Connection conn = JDBCUtil.getConnection();
+           PreparedStatement pst = conn.prepareStatement(sql)) {
+        pst.setInt(1, itemId);
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) {
+          return new Electronics(
+                  baseItem.getSellerName(), baseItem.getSellerId(),
+                  baseItem.getItemId(), baseItem.getName(),
+                  baseItem.getDescription(), baseItem.getImage(),
+                  rs.getString("brand"), rs.getString("model")
+          );
+        }
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+
+    } else if (category == ItemCategory.ART) {
+      String sql = "SELECT artist, year_created, title FROM art WHERE item_id = ?";
+      try (Connection conn = JDBCUtil.getConnection();
+           PreparedStatement pst = conn.prepareStatement(sql)) {
+        pst.setInt(1, itemId);
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) {
+          return new Art(
+                  baseItem.getSellerName(), baseItem.getSellerId(),
+                  baseItem.getItemId(), baseItem.getName(),
+                  baseItem.getDescription(), baseItem.getImage(),
+                  rs.getString("artist"),
+                  rs.getInt("year_created"),
+                  rs.getString("title")
+          );
+        }
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+
+    } else if (category == ItemCategory.VEHICLE) {
+      String sql = "SELECT license_plate, year, brand, color FROM vehicle WHERE item_id = ?";
+      try (Connection conn = JDBCUtil.getConnection();
+           PreparedStatement pst = conn.prepareStatement(sql)) {
+        pst.setInt(1, itemId);
+        ResultSet rs = pst.executeQuery();
+        if (rs.next()) {
+          return new Vehicle(
+                  baseItem.getSellerName(), baseItem.getSellerId(),
+                  baseItem.getItemId(), baseItem.getName(),
+                  baseItem.getDescription(), baseItem.getImage(),
+                  rs.getString("license_plate"),
+                  rs.getInt("year"),
+                  rs.getString("brand"),
+                  rs.getString("color")
+          );
+        }
+      } catch (SQLException e) {
+        e.printStackTrace();
+      }
+    }
+
+    return baseItem;
+  }
+
+  public ArrayList<Auction> selectByWinnerId(int winnerId) {      // lấy auction dựa trên sellerID
+    ArrayList<Auction> list = new ArrayList<>();
+    String sql = BASE_QUERY + "WHERE a.winner_id = ?";
+
+    try (Connection conn = JDBCUtil.getConnection();
+         PreparedStatement ps = conn.prepareStatement(sql)) {
+
+      ps.setInt(1, winnerId);
+
+      try (ResultSet rs = ps.executeQuery()) {
+        log.info("Đang lấy Auction thắng bởi userID: {}", winnerId);
+        while (rs.next()) {
+          list.add(mapResultSet(rs));
+        }
+      }
+
+    } catch (SQLException e) {
+      e.printStackTrace();
+      throw new RuntimeException("Lỗi thao tác DB khi lấy Auction theo Winner ID", e);
     } catch (NullPointerException e) {
       System.out.println("dữ liệu k tồn tại");
     }

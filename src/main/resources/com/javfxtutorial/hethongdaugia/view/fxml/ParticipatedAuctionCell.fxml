@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<AnchorPane prefHeight="180.0" prefWidth="780.0" style="-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 12; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AuctionSessionController">
+<AnchorPane prefHeight="180.0" prefWidth="780.0" style="-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 12; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.ParticipatedAuctionCellController">
 
     <HBox alignment="CENTER_LEFT" spacing="20.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
 
@@ -21,15 +26,15 @@
             <Label fx:id="lbProductName" prefHeight="39.0" prefWidth="205.0" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Tranh sơn dầu Hà Nội" />
          <HBox prefHeight="29.0" prefWidth="347.0">
             <children>
-               <Label style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;" text="Người bán:   " />
-               <Label fx:id="lbSellerName" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;" text="TechStore_HN" />
+               <Label style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;" text="Người dẫn đầu: " />
+               <Label fx:id="lbWinnerName" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;" text="TechStore_HN" />
             </children>
          </HBox>
 
             <!-- Giá khởi điểm -->
             <HBox prefHeight="39.0" prefWidth="346.0" spacing="5.0">
-                <Label prefHeight="46.0" prefWidth="89.0" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;" text="Giá khởi điểm:" />
-                <Label fx:id="lbPrice" prefHeight="37.0" prefWidth="127.0" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;" text="5,000,000 VND" />
+                <Label prefHeight="46.0" prefWidth="89.0" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;" text="Giá hiện tại" />
+                <Label fx:id="lbCurrentPrice" prefHeight="37.0" prefWidth="127.0" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;" text="5,000,000 VND" />
             </HBox>
         </VBox>
 
@@ -38,10 +43,8 @@
 
         <!-- ==================== NÚT HÀNH ĐỘNG ==================== -->
         <VBox alignment="CENTER" prefWidth="140.0" spacing="10.0">
-            <Button fx:id="actionButton" disable="true" prefHeight="40.0" prefWidth="140.0" style="-fx-background-color: #bdc3c7; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-background-radius: 25;" text="CHỜ MỞ" />
+            <Button fx:id="actionButton" disable="true" prefHeight="40.0" prefWidth="140.0" style="-fx-background-color: #bdc3c7; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 13px; -fx-background-radius: 25;" text="TRẠNG THÁI" />
         </VBox>
 
     </HBox>
-      <!-- Tag trạng thái SẮP DIỄN RA (màu cam) -->
-      <Label fx:id="statusBadge" layoutY="3.0" style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 4 10; -fx-background-radius: 8;" text="SẮP DIỄN RA" />
 </AnchorPane>

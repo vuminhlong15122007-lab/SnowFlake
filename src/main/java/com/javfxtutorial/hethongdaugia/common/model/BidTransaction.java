@@ -1,6 +1,7 @@
 package com.javfxtutorial.hethongdaugia.common.model;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class BidTransaction implements Serializable {
@@ -8,11 +9,11 @@ public class BidTransaction implements Serializable {
     private int bidderId;
     private String bidderName;
     private int auctionId;
-    private double amount;
+    private BigDecimal amount;
     private LocalDateTime timestamp;
     private LocalDateTime newEndingTime;
 
-    public BidTransaction(String bidderName, int auctionId, double amount, LocalDateTime timestamp) {
+    public BidTransaction(String bidderName, int auctionId, BigDecimal amount, LocalDateTime timestamp) {
         this.bidderName = bidderName;
         this.auctionId = auctionId;
         this.amount = amount;
@@ -58,11 +59,11 @@ public class BidTransaction implements Serializable {
         this.auctionId = auctionId;
     }
 
-    public double getAmount() {
+    public BigDecimal getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
+    public void setAmount(BigDecimal amount) {
         this.amount = amount;
     }
 
