@@ -8,9 +8,11 @@ import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.*;
 import com.javfxtutorial.hethongdaugia.common.model.Command.*;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
+import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import com.javfxtutorial.hethongdaugia.common.model.factory.*;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -143,17 +145,17 @@ public class SellerManagementController implements ResponseListener {
         data.put("description", descriptionField.getText().trim());
         data.put("image",       this.image); // base64 ảnh đã chọn
 
-        // ── Data riêng theo loại — chỉ form đang visible mới có data ─────────────
-        if (artFields.isVisible()) {
+        String category = categoryComboBox.getValue();
+        if ("ART".equals(category)) {
             data.put("title",       artTitleField.getText().trim());
             data.put("artist",      artistField.getText().trim());
             data.put("yearCreated", yearCreatedField.getText().trim());
 
-        } else if (electronicsFields.isVisible()) {
+        } else if ("ELECTRONICS".equals(category)) {
             data.put("brand", brandElecField.getText().trim());
             data.put("model", modelField.getText().trim());
 
-        } else if (vehicleFields.isVisible()) {
+        } else if ("VEHICLE".equals(category)) {
             data.put("brand",        brandVehicleField.getText().trim());
             data.put("licensePlate", licensePlateField.getText().trim());
             data.put("year",         vehicleYearField.getText().trim());
@@ -177,11 +179,23 @@ public class SellerManagementController implements ResponseListener {
         descriptionField.clear();
         priceField.clear();
         tfstepPrice.clear();
+        Platform.runLater(() -> {
+            startDatePicker.setValue(null);
+            endDatePicker.setValue(null);
+        });
+
+
 
         startHourSpinner.getValueFactory().setValue(0);
         startMinuteSpinner.getValueFactory().setValue(0);
         endHourSpinner.getValueFactory().setValue(0);
         endMinuteSpinner.getValueFactory().setValue(0);
+
+        categoryComboBox.setValue(null);
+        hideVbox(artFields);
+        hideVbox(vehicleFields);
+        hideVbox(electronicsFields);
+        productList.getSelectionModel().clearSelection();
 
     }
 
@@ -220,7 +234,9 @@ public class SellerManagementController implements ResponseListener {
 
         //phan loai sp
         categoryComboBox.getItems().addAll("ART", "VEHICLE", "ELECTRONICS", "OTHER");
-        categoryComboBox.valueProperty().addListener((obs, oldVal, newVal) -> showCategoryFields(newVal));
+        categoryComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) showCategoryFields(newVal);
+        });
 
 
         // Lắng nghe sự kiện khi người dùng chọn sp
@@ -228,7 +244,6 @@ public class SellerManagementController implements ResponseListener {
             if (newVal != null) {
                 hienThiChiTietSanPham(newVal);      // LUÔN hiển thị thông tin
                 saveButton.setStyle("-fx-background-color: #E67E22; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 5 0; -fx-font-size: 12px;");
-                saveButton.setText("Sửa");
                 saveButton.setOnAction( event -> {
                   try {
                     suaSp(event);
@@ -262,6 +277,7 @@ public class SellerManagementController implements ResponseListener {
         if (category.equals("ART")) {showVbox(artFields);}
         else if (category.equals("VEHICLE")) {showVbox(vehicleFields);}
         else if (category.equals("ELECTRONICS")) {showVbox(electronicsFields);}
+
 
     }
 
@@ -357,25 +373,40 @@ public class SellerManagementController implements ResponseListener {
 
         //LOẠI SP
 
-        if (item.getCategory() != null) {
-            categoryComboBox.setValue(item.getCategory().name());
-            showCategoryFields(item.getCategory().name()); // ẩn/hiện đúng VBox
-        }
+        ItemCategory cate = item.getCategory();
+        categoryComboBox.getSelectionModel().select(String.valueOf(cate));
+        showCategoryFields(String.valueOf(cate));
 
-        if (item instanceof Electronics e) {
-            brandElecField.setText(e.getBrand());
-            modelField.setText(e.getModel());
-
-        } else if (item instanceof Art a) {
-            artTitleField.setText(a.getTitle());
-            artistField.setText(a.getArtist());
-            yearCreatedField.setText(String.valueOf(a.getYearCreated()));
-
-        } else if (item instanceof Vehicle v) {
-            licensePlateField.setText(v.getLicensePlate());
-            vehicleYearField.setText(String.valueOf(v.getYear()));
-            brandVehicleField.setText(v.getBrand());
-            colorField.setText(v.getColor());
+        if (cate == ItemCategory.ELECTRONICS) {
+            if (item instanceof Electronics e) {
+                brandElecField.setText(e.getBrand());
+                modelField.setText(e.getModel());
+            } else {
+                brandElecField.setText("");
+                modelField.setText("");
+            }
+        } else if (cate == ItemCategory.ART) {
+            if (item instanceof Art a) {
+                artTitleField.setText(a.getTitle());
+                artistField.setText(a.getArtist());
+                yearCreatedField.setText(String.valueOf(a.getYearCreated()));
+            } else {
+                artTitleField.setText("");
+                artistField.setText("");
+                yearCreatedField.setText("");
+            }
+        } else if (cate == ItemCategory.VEHICLE) {
+            if (item instanceof Vehicle v) {
+                licensePlateField.setText(v.getLicensePlate());
+                vehicleYearField.setText(String.valueOf(v.getYear()));
+                brandVehicleField.setText(v.getBrand());
+                colorField.setText(v.getColor());
+            } else {
+                licensePlateField.setText("");
+                vehicleYearField.setText("");
+                brandVehicleField.setText("");
+                colorField.setText("");
+            }
         }
     }
 

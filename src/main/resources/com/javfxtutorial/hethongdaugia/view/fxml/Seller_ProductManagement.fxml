@@ -104,7 +104,7 @@
 
                     <!-- Nút Lưu -->
                     <HBox alignment="CENTER">
-                        <Button fx:id="saveButton" onAction="#onSaveButton" prefWidth="100" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 5 0; -fx-font-size: 12px;" text="Lưu" />
+                        <Button fx:id="saveButton" onAction="#onSaveButton" prefWidth="100" style="-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 5 0; -fx-font-size: 12px;" text="Sửa" />
                     </HBox>
                 </VBox>
 

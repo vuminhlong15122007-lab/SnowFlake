@@ -55,7 +55,7 @@ public class Item implements Serializable {
     public String getSellerName() {return sellerName;}
     public void setSellerName(String sellerName) {this.sellerName = sellerName;}
 
-    public ItemCategory getCategory() { return category; }
+    public ItemCategory  getCategory() { return category; }
     public void setCategory(ItemCategory category) { this.category = category; }
 }
 

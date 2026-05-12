@@ -43,36 +43,36 @@ public class AuctionController implements ResponseListener {
         // Tạo FilteredList
         filterData = new FilteredList<>(observable, auction -> true);
         featuredProductList.setItems(filterData);
-        // ========== THÊM: Tìm kiếm ==========
+        // tim kiem
         searchField.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
 
-        // ========== THÊM: ComboBox loại sản phẩm ==========
-        categoryFilter.getItems().addAll("Tất cả loại", "ART", "VEHICLE", "ELECTRONICS", "Khác");
-        categoryFilter.setValue("Tất cả loại");
+        // combox loai sp
+        categoryFilter.getItems().addAll("All Products Type", "Art", "Vehicle", "Electronics", "Orther");
+        categoryFilter.setValue("All Products Type");
         categoryFilter.valueProperty().addListener((obs, oldVal, newVal) -> applyFilters());
 
-        // ========== THÊM: Nút lọc trạng thái ==========
+        //loc trang thai
         btnAll.setOnAction(e -> {
             currentStatus = null;
-            updateSectionTitle("TẤT CẢ PHIÊN ĐẤU GIÁ");
+            sectionTitle.setText("📋  " + "TẤT CẢ PHIÊN ĐẤU GIÁ");
             setActiveButton(btnAll);
             applyFilters();
         });
         btnUpcoming.setOnAction(e -> {
             currentStatus = AuctionStatus.NOT_START;
-            updateSectionTitle("PHIÊN SẮP DIỄN RA");
+            sectionTitle.setText("📋  " + "PHIÊN SẮP DIỄN RA");
             setActiveButton(btnUpcoming);
             applyFilters();
         });
         btnRunning.setOnAction(e -> {
             currentStatus = AuctionStatus.RUNNING;
-            updateSectionTitle("PHIÊN ĐANG DIỄN RA");
+            sectionTitle.setText("📋  " + "PHIÊN ĐANG DIỄN RA");
             setActiveButton(btnRunning);
             applyFilters();
         });
         btnEnded.setOnAction(e -> {
             currentStatus = AuctionStatus.CLOSED;
-            updateSectionTitle("PHIÊN ĐÃ KẾT THÚC");
+            sectionTitle.setText("📋  " + "PHIÊN ĐÃ KẾT THÚC");
             setActiveButton(btnEnded);
             applyFilters();
         });
@@ -80,7 +80,7 @@ public class AuctionController implements ResponseListener {
         loadData();
     }
 
-    // ========== THÊM: Hàm áp dụng tất cả bộ lọc ==========
+    //  Hàm áp dụng tất cả bộ lọc
     private void applyFilters() {
         filterData.setPredicate(auction -> {
             if (auction == null || auction.getItem() == null) return false;
@@ -101,36 +101,49 @@ public class AuctionController implements ResponseListener {
 
             // 3. Lọc theo loại sản phẩm
             String selectedCategory = categoryFilter.getValue();
-            if (selectedCategory != null && !selectedCategory.equals("Tất cả loại")) {
+            if (selectedCategory != null && !selectedCategory.equals("All Products Type")) {
+                String auctionCategory = getCategoryName(auction);
+                if (!selectedCategory.equals(auctionCategory)) {
+                    return false;
+                }
+            } else if (selectedCategory.equals("Electronics")) {
+                String auctionCategory = getCategoryName(auction);
+                if (!selectedCategory.equals(auctionCategory)) {
+                    return false;
+                }
+            }else if (selectedCategory.equals("Art")) {
+                String auctionCategory = getCategoryName(auction);
+                if (!selectedCategory.equals(auctionCategory)) {
+                    return false;
+                }
+            }else if (selectedCategory.equals("Vehicle")) {
+                String auctionCategory = getCategoryName(auction);
+                if (!selectedCategory.equals(auctionCategory)) {
+                    return false;
+                }
+            }else if (selectedCategory.equals("Orther")) {
                 String auctionCategory = getCategoryName(auction);
                 if (!selectedCategory.equals(auctionCategory)) {
                     return false;
                 }
             }
-
             return true;
         });
     }
 
-    // ========== THÊM: Lấy tên loại từ class của Item ==========
+    //   Lấy tên loại từ class của Item
     private String getCategoryName(Auction auction) {
-        String className = auction.getItem().getClass().getSimpleName();
-        switch (className) {
-            case "ART": return "ART";
-            case "VEHICLE": return "VEHICLE";
-            case "ELECTRONICS": return "ELECTRONICS";
-            default: return "Khác";
+        if (auction.getItem() == null || auction.getItem().getCategory() == null)
+            return "Orther";
+        switch (auction.getItem().getCategory()) {
+            case ART:         return "Art";
+            case VEHICLE:     return "Vehicle";
+            case ELECTRONICS: return "Electronics";
+            default:          return "Orther";
         }
     }
 
-    // ========== THÊM: Cập nhật tiêu đề ==========
-    private void updateSectionTitle(String title) {
-        if (sectionTitle != null) {
-            sectionTitle.setText("📋  " + title);
-        }
-    }
-
-    // ========== THÊM: Đổi màu nút đang active ==========
+    // Method dổi màu nút đang active
     private void setActiveButton(Button active) {
         Button[] buttons = {btnAll, btnUpcoming, btnRunning, btnEnded};
         String activeStyle = "-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15;";

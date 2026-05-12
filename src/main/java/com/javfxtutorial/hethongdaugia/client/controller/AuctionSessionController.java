@@ -56,7 +56,7 @@ public class AuctionSessionController {
                     actionButton.setStyle("-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-cursor: hand;");
 
                 }
-                if (nguoidandau != null) nguoidandau.setText("Người dẫn đầu : ");
+                if (nguoidandau != null) nguoidandau.setText("ID dẫn đầu : ");
                 if (lbWinner != null) lbWinner.setText(""+auction.getWinnerId());
                 gia.setText("Giá hiện tại : ");
                 break;
@@ -70,7 +70,7 @@ public class AuctionSessionController {
                     actionButton.setStyle("-fx-background-color: linear-gradient(to right, red, #f39c12); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20;");
                 }
                 gia.setText("Giá khởi điểm : ");
-                if (nguoidandau != null) nguoidandau.setText("Người dẫn đầu : ");
+                if (nguoidandau != null) nguoidandau.setText("ID dẫn đầu : ");
                 lbWinner.setText(null);
                 break;
 
@@ -79,16 +79,6 @@ public class AuctionSessionController {
                 lbCategory.setText("Loại: " + (auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
                 if (lbWinner != null) lbWinner.setText(""+auction.getWinnerId());
                 break;
-        }
-    }
-
-    private String getCategoryName(Item item) {
-        String className = item.getClass().getSimpleName();
-        switch (className) {
-            case "ART": return "ART";
-            case "VEHICLE": return "VEHICLE";
-            case "ELECTRONICS": return "ELECTRONICS";
-            default: return "Khác";
         }
     }
 
