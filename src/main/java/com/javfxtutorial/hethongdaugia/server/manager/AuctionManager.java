@@ -30,7 +30,8 @@ public class AuctionManager {
     // ── Singleton thread-safe ─────────────────────────
     private static volatile AuctionManager instance;
 
-    private AuctionManager() {}
+    private AuctionManager() {
+    }
 
     public static AuctionManager getInstance() {
         if (instance == null) {
@@ -58,14 +59,6 @@ public class AuctionManager {
     // ─────────────────────────────────────────────────
     // SUBSCRIBE / UNSUBSCRIBE
     // ─────────────────────────────────────────────────
-//    public void registerToAuction(BidListener listener, int auctionId) {
-//        if (auctionSubscribers.containsKey(auctionId)) {
-//            auctionSubscribers.get(auctionId).add(listener);
-//        } else {
-//            auctionSubscribers.put(auctionId, new CopyOnWriteArrayList<>(List.of(listener)));
-//        }
-//        System.out.println("Đã thêm " + listener + "vào phòng auction có id: " +  auctionId);
-//    }
 
     public void registerToAuction(BidListener listener, int auctionId) {
         auctionSubscribers.computeIfAbsent(
@@ -91,7 +84,7 @@ public class AuctionManager {
     // PLACE BID — logic chính
     // ─────────────────────────────────────────────────
     public synchronized boolean placeBid(BidTransaction bid,
-                                      ClientHandler senderThread) {
+                                         ClientHandler senderThread) {
         // 1. Lấy auction từ RAM
         Auction auction = activeAuctions.get(bid.getAuctionId());
 
@@ -122,12 +115,14 @@ public class AuctionManager {
         LocalDateTime endingTime = auction.getEndingTime();
         long secondsLeft = Duration.between(now, endingTime).toSeconds();
         LocalDateTime endTimeNew;
-        if( secondsLeft <= ANTI_SNIPE_X_SECONDS && secondsLeft > 0){
+        if (secondsLeft <= ANTI_SNIPE_X_SECONDS && secondsLeft > 0) {
             endTimeNew = endingTime.plusSeconds(ANTI_SNIPE_Y_SECONDS);
             auction.setEndingTime(endTimeNew);
             System.out.println("GIA HAN PHIEN DAU GIA THANH CONG");
             AuctionDAO.getInstance().update(auction);
-        }else{ endTimeNew = endingTime;}
+        } else {
+            endTimeNew = endingTime;
+        }
 
         // 5. Lưu DB
         AuctionDAO.getInstance().update(auction);
@@ -286,22 +281,20 @@ public class AuctionManager {
         // Gọi lại placeBid — dùng sender = null vì là bot
         this.placeBid(autoBid, null);
     }
-    public List<Auction> getParticipatedAuctionsByBidder(int userId){
+
+    public List<Auction> getParticipatedAuctionsByBidder(int userId) {
         ArrayList<Auction> auctionList = new ArrayList<>();
         auctionList = (ArrayList<Auction>) ParticipatedAuctionDAO.getInstance().getParticipatedAuctionsByBidder(userId);
         return auctionList;
     }
 
-    public AuctionStatus checkPaymentStatus(Auction auction){
-        if (LocalDateTime.now().isAfter(auction.getEndingTime().plusHours(24))){
-            if (auction.getStatus() != AuctionStatus.PAID){
+    public AuctionStatus checkPaymentStatus(Auction auction) {
+        if (LocalDateTime.now().isAfter(auction.getEndingTime().plusHours(24))) {
+            if (auction.getStatus() != AuctionStatus.PAID) {
                 auction.setStatus(AuctionStatus.CANCELLED);
                 AuctionDAO.getInstance().update(auction);
             }
         }
         return auction.getStatus();
     }
-
-
-
 }

@@ -2,13 +2,11 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 
 public class HomeController {
     @FXML
-    private Button profileButton;
     public void goToProfile(ActionEvent event){
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/UserInformation.fxml");
     }
