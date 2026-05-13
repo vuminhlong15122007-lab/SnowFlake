@@ -26,4 +26,10 @@ public class HomeController {
     public void manageProducts(ActionEvent event){
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Seller_ProductManagement.fxml");
     }
+
+    @FXML
+    public void goParticipatedAuction(ActionEvent event){
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/UserParticipatedAuction.fxml");
+    }
+
 }
