@@ -140,6 +140,7 @@ public class ParticipatedAuctionCellController {
 
         if (status == AuctionStatus.CLOSED) {
             openPaymentPopup();
+            auction.setStatus(AuctionStatus.PAID);
         } else if (status == AuctionStatus.RUNNING) {
             changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/LiveAuction.fxml");
         } else if (status == AuctionStatus.PAID) {
