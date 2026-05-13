@@ -5,7 +5,19 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ListCell;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class ParticipatedAuctionCell extends ListCell<Auction> {
+
+  // Cache controller theo auctionId → tránh tạo lại + reset countdown mỗi lần re-render
+  private static final Map<Integer, CachedCell> cellCache = new HashMap<>();
+
+  private static class CachedCell {
+    Parent root;
+    ParticipatedAuctionCellController controller;
+  }
+
   @Override
   protected void updateItem(Auction auction, boolean empty) {
     super.updateItem(auction, empty);
@@ -16,13 +28,27 @@ public class ParticipatedAuctionCell extends ListCell<Auction> {
       return;
     }
 
+    int id = auction.getAuctionId();
+
+    // Nếu đã có trong cache → dùng lại, không tạo mới (countdown không bị reset)
+    if (cellCache.containsKey(id)) {
+      setGraphic(cellCache.get(id).root);
+      setText(null);
+      return;
+    }
+
     try {
-      String fxmlFile;
-      fxmlFile = "/com/javfxtutorial/hethongdaugia/view/fxml/ParticipatedAuctionCell.fxml";
-      FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
+      FXMLLoader loader = new FXMLLoader(getClass().getResource(
+              "/com/javfxtutorial/hethongdaugia/view/fxml/ParticipatedAuctionCell.fxml"));
       Parent root = loader.load();
       ParticipatedAuctionCellController controller = loader.getController();
       controller.setData(auction);
+
+      CachedCell cached = new CachedCell();
+      cached.root = root;
+      cached.controller = controller;
+      cellCache.put(id, cached);
+
       setText(null);
       setGraphic(root);
     } catch (Exception e) {
@@ -32,5 +58,9 @@ public class ParticipatedAuctionCell extends ListCell<Auction> {
       setText(auction.getItem() != null ? auction.getItem().getName() : "Lỗi");
     }
   }
-}
 
+  // Gọi khi chuyển màn hình để tránh memory leak
+  public static void clearCache() {
+    cellCache.clear();
+  }
+}

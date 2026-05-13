@@ -52,11 +52,11 @@ public class ParticipatedAuctionController implements  ResponseListener {
     // Tạo FilteredList
     filterData = new FilteredList<>(participatedAuctionList, auction -> true);
     productList.setItems(filterData);
-    // ========== THÊM: Tìm kiếm ==========
+    // Tìm kiếm
     searchField.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
 
 
-    // ========== THÊM: Nút lọc trạng thái ==========
+    // Nút lọc trạng thái
     btnAll.setOnAction(e -> {
       currentStatus = null;
       setActiveButton(btnAll);
@@ -84,7 +84,7 @@ public class ParticipatedAuctionController implements  ResponseListener {
     loadData();
   }
 
-  // ========== THÊM: Hàm áp dụng tất cả bộ lọc ==========
+  //Hàm áp dụng tất cả bộ lọc
   private void applyFilters() {
     filterData.setPredicate(auction -> {
       if (auction == null || auction.getItem() == null) return false;
@@ -119,9 +119,7 @@ public class ParticipatedAuctionController implements  ResponseListener {
 
 
 
-
-
-  // ========== THÊM: Đổi màu nút đang active ==========
+  // Đổi màu nút đang active
   private void setActiveButton(Button active) {
     Button[] buttons = {btnAll, btnCTToan, btnDTGia, btnDTToan};
     String activeStyle = "-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15;";
@@ -131,7 +129,6 @@ public class ParticipatedAuctionController implements  ResponseListener {
     }
   }
 
-  // NHỚ THÊM COMMAND LẤY RA TRẠNG THÁI ĐÃ THANH TOÁN....
   public void loadData() {
     Command cmd = new GetParticipatedAuctionsByBidderCommand();
     cmd.addData("currentUserId", ClientModel.getInstance().getCurrentUser().getId());
@@ -143,9 +140,6 @@ public class ParticipatedAuctionController implements  ResponseListener {
     }).start();
   }
 
-  private void getParticipatedAuctionList(){
-
-  }
 
   @Override
   public void onResponse(Response rp) {

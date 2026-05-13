@@ -195,6 +195,16 @@ public class SellerManagementController implements ResponseListener {
         hideVbox(artFields);
         hideVbox(vehicleFields);
         hideVbox(electronicsFields);
+        artTitleField.clear();
+        artistField.clear();
+        yearCreatedField .clear();
+        licensePlateField.clear();
+        vehicleYearField.clear();
+        brandVehicleField.clear();
+        colorField.clear();
+        brandElecField.clear();
+        modelField.clear();
+
         productList.getSelectionModel().clearSelection();
 
     }
@@ -221,7 +231,7 @@ public class SellerManagementController implements ResponseListener {
         }
     }
 
-
+    @FXML
     public void initialize() throws IOException, ClassNotFoundException {
         //  Cấu hình Spinner cho giờ phút
         startHourSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0));
@@ -347,6 +357,7 @@ public class SellerManagementController implements ResponseListener {
         priceField.setText(String.valueOf(auction.getCurrentPrice())); // VD: "1500000"
         tfstepPrice.setText(String.valueOf(auction.getStepPrice()));
         LocalDateTime start = auction.getStartingTime();
+        saveButton.setText("Sửa");
         if (start != null) {
             startDatePicker.setValue(start.toLocalDate());
             startHourSpinner.getValueFactory().setValue(start.getHour());
