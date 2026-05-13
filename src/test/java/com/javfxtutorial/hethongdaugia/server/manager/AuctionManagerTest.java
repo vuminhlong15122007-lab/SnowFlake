@@ -2,30 +2,47 @@ package com.javfxtutorial.hethongdaugia.server.manager;
 
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
+import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
+import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
+import com.javfxtutorial.hethongdaugia.server.dao.BidDAO;
+import com.javfxtutorial.hethongdaugia.server.dao.ParticipatedAuctionDAO;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class AuctionManagerTest {
     private AuctionManager auctionManager ;
     private Auction auction ;
 
     @BeforeEach
-    void setup() {
+    void setup() throws Exception {
         auctionManager = AuctionManager.getInstance() ;
+        TestStateSupport.resetAuctionManager(auctionManager);
         auction = new Auction();
-        auction.setCurrentPrice(new BigDecimal(100.0));
-        auction.setStepPrice(new BigDecimal(10));
+        auction.setCurrentPrice(new BigDecimal("100.0"));
+        auction.setStepPrice(new BigDecimal("10"));
+    }
+
+    @AfterEach
+    void tearDown() throws Exception {
+        TestStateSupport.resetAuctionManager(auctionManager);
     }
     // ─────────────────────────────────────────────────
     // Singleton
@@ -80,63 +97,101 @@ public class AuctionManagerTest {
         @Test
         @DisplayName("phiên còn 30 giây vẫn là RUNNING (chưa qua endingTime)")
         void stillRunning_within30Seconds() {
+            AuctionDAO auctionDAO = mock(AuctionDAO.class);
+            when(auctionDAO.update(any(Auction.class))).thenReturn(1);
             Auction auction = new Auction();
             auction.setAuctionId(998);
             auction.setStartingTime(LocalDateTime.now().minusHours(1));
             auction.setEndingTime(LocalDateTime.now().plusSeconds(30));
             auction.setStatus(AuctionStatus.NOT_START);
 
-            AuctionStatus status = auctionManager.refreshAuctionStatus(auction);
-            assertEquals(AuctionStatus.RUNNING, status);
+            try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO)) {
+                AuctionStatus status = auctionManager.refreshAuctionStatus(auction);
+
+                assertEquals(AuctionStatus.RUNNING, status);
+                verify(auctionDAO).update(auction);
+            }
         }
 
         @Test
         @DisplayName("phiên còn 0 giây (đúng thời điểm kết thúc) là CLOSED")
         void closed_atEndingTime() {
+            AuctionDAO auctionDAO = mock(AuctionDAO.class);
+            when(auctionDAO.update(any(Auction.class))).thenReturn(1);
             Auction auction = new Auction();
             auction.setAuctionId(997);
             auction.setStartingTime(LocalDateTime.now().minusHours(1));
             auction.setEndingTime(LocalDateTime.now().minusSeconds(1));
             auction.setStatus(AuctionStatus.RUNNING);
 
-            AuctionStatus status = auctionManager.refreshAuctionStatus(auction);
-            assertEquals(AuctionStatus.CLOSED, status);
+            try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO)) {
+                AuctionStatus status = auctionManager.refreshAuctionStatus(auction);
+
+                assertEquals(AuctionStatus.CLOSED, status);
+                verify(auctionDAO).update(auction);
+            }
         }
         @Test
-        void sameMaxBid_shouldChooseEarlierUser_andPriceEqualsMaxBid() {
-            BigDecimal step = new BigDecimal("10");
-            BigDecimal minRequired = new BigDecimal("60");
+        void sameMaxBid_shouldChooseEarlierUser_andPriceEqualsMaxBid() throws Exception {
+            Auction auction = new Auction();
+            auction.setAuctionId(100);
+            auction.setCurrentPrice(new BigDecimal("50"));
+            auction.setStepPrice(new BigDecimal("10"));
+            auction.setWinningPrice(new BigDecimal("50"));
+            auction.setWinnerId(9);
+            auction.setStartingTime(LocalDateTime.now().minusMinutes(5));
+            auction.setEndingTime(LocalDateTime.now().plusMinutes(5));
+            TestStateSupport.activeAuctions(auctionManager).put(100, auction);
 
-            AutoBidConfig a = new AutoBidConfig(1, "A", 100, new BigDecimal("100"), true);
-            AutoBidConfig b = new AutoBidConfig(2, "B", 100, new BigDecimal("100"), true);
+            AutoBidConfig early = new AutoBidConfig(1, "A", 100, new BigDecimal("100"), true);
+            AutoBidConfig late = new AutoBidConfig(2, "B", 100, new BigDecimal("100"), true);
+            early.setRegisteredAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+            late.setRegisteredAt(LocalDateTime.of(2026, 1, 1, 10, 1));
+            TestStateSupport.autoBidRegistry(auctionManager).put(100, new java.util.ArrayList<>(List.of(late, early)));
 
-            a.setRegisteredAt(LocalDateTime.of(2026, 1, 1, 10, 0));
-            b.setRegisteredAt(LocalDateTime.of(2026, 1, 1, 10, 1));
+            AuctionDAO auctionDAO = mock(AuctionDAO.class);
+            BidDAO bidDAO = mock(BidDAO.class);
+            ParticipatedAuctionDAO participatedAuctionDAO = mock(ParticipatedAuctionDAO.class);
+            ArgumentCaptor<BidTransaction> bidCaptor = ArgumentCaptor.forClass(BidTransaction.class);
+            when(auctionDAO.update(any(Auction.class))).thenReturn(1);
+            when(bidDAO.insertBid(bidCaptor.capture())).thenReturn(true);
+            when(participatedAuctionDAO.insert(any(BidTransaction.class))).thenReturn(1);
 
-            List<AutoBidConfig> bots = new ArrayList<>(List.of(a, b));
+            try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
+                 MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+                 MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                         mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+                TestStateSupport.executeAutoBidCheck(auctionManager, auction);
 
-            bots.sort((b1, b2) -> {
-                int cmp = b2.getMaxPrice().compareTo(b1.getMaxPrice());
-                if (cmp != 0) return cmp;
-                return b1.getRegisteredAt().compareTo(b2.getRegisteredAt());
-            });
-
-            AutoBidConfig winner = bots.get(0);
-            AutoBidConfig second = bots.get(1);
-
-            BigDecimal finalAmount;
-            if (winner.getMaxPrice().compareTo(second.getMaxPrice()) == 0) {
-                finalAmount = winner.getMaxPrice();
-            } else {
-                finalAmount = second.getMaxPrice().add(step);
-                if (finalAmount.compareTo(winner.getMaxPrice()) > 0) {
-                    finalAmount = winner.getMaxPrice();
-                }
+                assertEquals(1, auction.getWinnerId());
+                assertEquals(new BigDecimal("100"), auction.getCurrentPrice());
+                assertEquals(1, bidCaptor.getValue().getBidderId());
+                assertEquals(new BigDecimal("100"), bidCaptor.getValue().getAmount());
+                verify(auctionDAO).update(auction);
             }
-
-            assertEquals(1, winner.getUserId());
-            assertEquals(new BigDecimal("100"), finalAmount);
         }
+    }
+
+    private MockedStatic<AuctionDAO> mockAuctionDAO(AuctionDAO auctionDAO) {
+        MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class);
+        mockedAuctionDAO.when(AuctionDAO::getInstance).thenReturn(auctionDAO);
+        return mockedAuctionDAO;
+    }
+
+    private MockedStatic<BidDAO> mockBidDAO(BidDAO bidDAO) {
+        MockedStatic<BidDAO> mockedBidDAO = mockStatic(BidDAO.class);
+        mockedBidDAO.when(BidDAO::getInstance).thenReturn(bidDAO);
+        return mockedBidDAO;
+    }
+
+    private MockedStatic<ParticipatedAuctionDAO> mockParticipatedAuctionDAO(
+            ParticipatedAuctionDAO participatedAuctionDAO
+    ) {
+        MockedStatic<ParticipatedAuctionDAO> mockedParticipatedAuctionDAO =
+                mockStatic(ParticipatedAuctionDAO.class);
+        mockedParticipatedAuctionDAO.when(ParticipatedAuctionDAO::getInstance)
+                .thenReturn(participatedAuctionDAO);
+        return mockedParticipatedAuctionDAO;
     }
 
 }
