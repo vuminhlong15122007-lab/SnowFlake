@@ -1,9 +1,15 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
+import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
+import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 
+import com.javfxtutorial.hethongdaugia.common.network.Command;
+import com.javfxtutorial.hethongdaugia.common.network.Response;
+import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -21,7 +27,7 @@ import java.time.LocalDateTime;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
-public class ParticipatedAuctionCellController {
+public class ParticipatedAuctionCellController implements ResponseListener {
     @FXML private Button actionButton;
     @FXML private Label lbCategory;
     @FXML private Label lbCurrentPrice;
@@ -141,6 +147,10 @@ public class ParticipatedAuctionCellController {
         if (status == AuctionStatus.CLOSED) {
             openPaymentPopup();
             auction.setStatus(AuctionStatus.PAID);
+            Platform.runLater(() -> {
+                Command cmd = new UpdateAuctionCommand(auction);
+                NetworkManager.getConnection().sendCommand(cmd);
+            });
         } else if (status == AuctionStatus.RUNNING) {
             changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/LiveAuction.fxml");
         } else if (status == AuctionStatus.PAID) {
@@ -167,6 +177,16 @@ public class ParticipatedAuctionCellController {
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Lỗi", "Không thể mở cửa sổ thanh toán: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public void onResponse(Response rp) {
+        if (!rp.isSuccess()){
+            Platform.runLater(() -> {
+                auction.setStatus(AuctionStatus.CLOSED);
+                showAlert("Thanh toán không thành công", "vui lòng thử lại");
+            });
         }
     }
 }
