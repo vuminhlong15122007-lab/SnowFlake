@@ -121,7 +121,7 @@ public class ProductDisplayController {
         if (item instanceof Art ) {
             showBox(artInfoBox);
             Art art = (Art) item;
-            if (detailTitle != null) detailTitle.setText("🎨 THÔNG TIN ART");
+            if (detailTitle != null) detailTitle.setText("THÔNG TIN ART");
             if (artTitleValue != null) artTitleValue.setText(art.getTitle() != null ? art.getTitle() : "...");
             if (artistValue != null) artistValue.setText(art.getArtist() != null ? art.getArtist() : "...");
             if (yearCreatedValue != null) yearCreatedValue.setText(String.valueOf(art.getYearCreated()));
@@ -129,7 +129,7 @@ public class ProductDisplayController {
         } else if (item instanceof Vehicle ) {
             showBox(vehicleInfoBox);
             Vehicle vehicle = (Vehicle) item;
-            if (detailTitle != null) detailTitle.setText("🚗 THÔNG TIN VEHICLE");
+            if (detailTitle != null) detailTitle.setText("THÔNG TIN VEHICLE");
             if (licensePlateValue != null) licensePlateValue.setText(vehicle.getLicensePlate() != null ? vehicle.getLicensePlate() : "...");
             if (vehicleYearValue != null) vehicleYearValue.setText(vehicle.getYear() > 0 ? String.valueOf(vehicle.getYear()) : "...");
             if (brandValue != null) brandValue.setText(vehicle.getBrand() != null ? vehicle.getBrand() : "...");
@@ -138,7 +138,7 @@ public class ProductDisplayController {
         } else if (item instanceof Electronics ) {
             showBox(electronicsInfoBox);
             Electronics elec = (Electronics) item;
-            if (detailTitle != null) detailTitle.setText("💻 THÔNG TIN ELECTRONICS");
+            if (detailTitle != null) detailTitle.setText("THÔNG TIN ELECTRONICS");
             if (elecBrandValue != null) elecBrandValue.setText(elec.getBrand() != null ? elec.getBrand() : "...");
             if (modelValue != null) modelValue.setText(elec.getModel() != null ? elec.getModel() : "...");
         }

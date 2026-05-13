@@ -59,6 +59,7 @@ public class ParticipatedAuctionController implements  ResponseListener {
     // Nút lọc trạng thái
     btnAll.setOnAction(e -> {
       currentStatus = null;
+      sectionTitle.setText("📋  " + "TẤT CẢ PHIÊN ĐẤU GIÁ ĐÃ THAM GIA");
       setActiveButton(btnAll);
       applyFilters();
     });

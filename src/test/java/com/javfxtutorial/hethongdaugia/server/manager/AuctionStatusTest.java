@@ -2,14 +2,22 @@ package com.javfxtutorial.hethongdaugia.server.manager;
 
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
+import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class AuctionStatusTest {
     private AuctionManager auctionManager;
@@ -25,47 +33,73 @@ public class AuctionStatusTest {
         @Test
         @DisplayName("trả về NOT_START khi startingTime ở tương lai")
         void status_notStarted() {
+            AuctionDAO auctionDAO = mock(AuctionDAO.class);
             Auction auction = buildAuction(
                     LocalDateTime.now().plusHours(1),
                     LocalDateTime.now().plusHours(2)
             );
-            AuctionStatus status = auctionManager.refreshAuctionStatus(auction);
-            assertEquals(AuctionStatus.NOT_START, status);
-            assertEquals(AuctionStatus.NOT_START, auction.getStatus());
+
+            try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO)) {
+                AuctionStatus status = auctionManager.refreshAuctionStatus(auction);
+
+                assertEquals(AuctionStatus.NOT_START, status);
+                assertEquals(AuctionStatus.NOT_START, auction.getStatus());
+                verify(auctionDAO, never()).update(any(Auction.class));
+            }
         }
 
         @Test
         @DisplayName("trả về RUNNING khi đang trong thời gian đấu giá")
         void status_running() {
+            AuctionDAO auctionDAO = mock(AuctionDAO.class);
+            when(auctionDAO.update(any(Auction.class))).thenReturn(1);
             Auction auction = buildAuction(
                     LocalDateTime.now().minusMinutes(30),
                     LocalDateTime.now().plusMinutes(30)
             );
-            AuctionStatus status = auctionManager.refreshAuctionStatus(auction);
-            assertEquals(AuctionStatus.RUNNING, status);
+
+            try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO)) {
+                AuctionStatus status = auctionManager.refreshAuctionStatus(auction);
+
+                assertEquals(AuctionStatus.RUNNING, status);
+                verify(auctionDAO).update(auction);
+            }
         }
 
         @Test
         @DisplayName("trả về CLOSED khi endingTime đã qua")
         void status_closed() {
+            AuctionDAO auctionDAO = mock(AuctionDAO.class);
+            when(auctionDAO.update(any(Auction.class))).thenReturn(1);
             Auction auction = buildAuction(
                     LocalDateTime.now().minusHours(2),
                     LocalDateTime.now().minusMinutes(1)
             );
-            AuctionStatus status = auctionManager.refreshAuctionStatus(auction);
-            assertEquals(AuctionStatus.CLOSED, status);
+
+            try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO)) {
+                AuctionStatus status = auctionManager.refreshAuctionStatus(auction);
+
+                assertEquals(AuctionStatus.CLOSED, status);
+                verify(auctionDAO).update(auction);
+            }
         }
 
         @Test
         @DisplayName("trạng thái auction được cập nhật trực tiếp trên object")
         void status_updatesAuctionObject() {
+            AuctionDAO auctionDAO = mock(AuctionDAO.class);
+            when(auctionDAO.update(any(Auction.class))).thenReturn(1);
             Auction auction = buildAuction(
                     LocalDateTime.now().minusHours(1),
                     LocalDateTime.now().plusHours(1)
             );
             auction.setStatus(AuctionStatus.NOT_START); // sai ban đầu
-            auctionManager.refreshAuctionStatus(auction);
-            assertEquals(AuctionStatus.RUNNING, auction.getStatus());
+            try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO)) {
+                auctionManager.refreshAuctionStatus(auction);
+
+                assertEquals(AuctionStatus.RUNNING, auction.getStatus());
+                verify(auctionDAO).update(auction);
+            }
         }
 
         // method nội bộ để build sẵn một Auction
@@ -76,6 +110,12 @@ public class AuctionStatusTest {
             a.setEndingTime(end);
             a.setStatus(AuctionStatus.NOT_START);
             return a;
+        }
+
+        private MockedStatic<AuctionDAO> mockAuctionDAO(AuctionDAO auctionDAO) {
+            MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class);
+            mockedAuctionDAO.when(AuctionDAO::getInstance).thenReturn(auctionDAO);
+            return mockedAuctionDAO;
         }
     }
 }
