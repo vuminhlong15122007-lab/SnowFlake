@@ -195,6 +195,16 @@ public class SellerManagementController implements ResponseListener {
         hideVbox(artFields);
         hideVbox(vehicleFields);
         hideVbox(electronicsFields);
+        artTitleField.clear();
+        artistField.clear();
+        yearCreatedField .clear();
+        licensePlateField.clear();
+        vehicleYearField.clear();
+        brandVehicleField.clear();
+        colorField.clear();
+        brandElecField.clear();
+        modelField.clear();
+
         productList.getSelectionModel().clearSelection();
 
     }
