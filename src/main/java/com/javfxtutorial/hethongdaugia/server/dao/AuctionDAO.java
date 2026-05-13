@@ -215,7 +215,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
 
   @Override
   public Auction selectById(int auctionId) {
-    String sql = BASE_QUERY + "WHERE a.auction_id = ?";
+    String sql = BASE_QUERY + " WHERE a.auction_id = ?";
 
     try (Connection conn = JDBCUtil.getConnection();
          PreparedStatement ps = conn.prepareStatement(sql)) {
