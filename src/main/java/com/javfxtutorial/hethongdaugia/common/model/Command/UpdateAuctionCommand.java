@@ -23,7 +23,7 @@ public class UpdateAuctionCommand extends Command {
             Item item = auction.getItem();
             int result2 = ItemDAO.getInstance().update(item);
             int result1 = AuctionDAO.getInstance().update(auction);
-            if (result1 > 0 && result2 > 0) {
+            if (result1 > 0 || result2 > 0) {
                 return new Response(true, "Sửa sản phẩm  thành công", auction, this);
             }
             return new Response(false, "Lỗi!!! Sửa thất bại", null, this);
