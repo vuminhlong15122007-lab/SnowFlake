@@ -131,6 +131,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
                     actionButton.setText("ĐÃ THANH TOÁN");
                     actionButton.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white;" + "-fx-font-weight: bold; -fx-background-radius: 25;");
                 }
+                lbTime = null;
                 break;
 
             default:
