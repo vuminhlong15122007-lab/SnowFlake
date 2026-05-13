@@ -48,7 +48,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
           "-- Dùng LEFT JOIN để nếu item không thuộc loại này, nó vẫn ra kết quả (các cột kia sẽ null)\n" +
           "LEFT JOIN electronics e ON i.itemid = e.item_id\n" +
           "LEFT JOIN art art ON i.itemid = art.item_id\n" +
-          "LEFT JOIN vehicle v ON i.itemid = v.item_id;";
+          "LEFT JOIN vehicle v ON i.itemid = v.item_id";
 
 
   private AuctionDAO() {
@@ -263,7 +263,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
 
   public ArrayList<Auction> selectBySellerId(int id) {      // lấy auction dựa trên sellerID
     ArrayList<Auction> list = new ArrayList<>();
-    String sql = BASE_QUERY + "WHERE i.seller_id = ?";
+    String sql = BASE_QUERY + " WHERE i.idseller = ?";
 
     try (Connection conn = JDBCUtil.getConnection();
          PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -304,7 +304,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
           baseItem.getSellerName(), baseItem.getSellerId(),
           baseItem.getItemId(), baseItem.getName(),
           baseItem.getDescription(), baseItem.getImage(),
-          rs.getString("brand"), rs.getString("model")
+          rs.getString("e_brand"), rs.getString("model")
       );
     } else if (category == ItemCategory.ART) {
       return new Art(
@@ -321,8 +321,8 @@ public class AuctionDAO implements DAOInterface<Auction> {
           baseItem.getItemId(), baseItem.getName(),
           baseItem.getDescription(), baseItem.getImage(),
           rs.getString("license_plate"),
-          rs.getInt("year"),
-          rs.getString("brand"),
+          rs.getInt("vehicle_year"),
+          rs.getString("vehicle_brand"),
           rs.getString("color")
       );
     }
