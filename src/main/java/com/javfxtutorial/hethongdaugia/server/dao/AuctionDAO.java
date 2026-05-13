@@ -17,13 +17,42 @@ public class AuctionDAO implements DAOInterface<Auction> {
   private static final Logger log = LoggerFactory.getLogger(AuctionDAO.class);
   private static volatile AuctionDAO instance;
   private String BASE_QUERY =
-          "SELECT a.*, i.name, i.description, i.imagepath, " +
-                  "i.idseller AS seller_id, i.sellerName, i.category " +
-                  "FROM auction a " +
-                  "JOIN item i ON a.item_id = i.itemid ";
+      "\n" +
+          "SELECT \n" +
+          "    a.*, \n" +
+          "    i.name, \n" +
+          "    i.description, \n" +
+          "    i.imagepath, \n" +
+          "    i.idseller AS seller_id, \n" +
+          "    i.sellerName, \n" +
+          "    i.category,\n" +
+          "    \n" +
+          "    -- Dữ liệu từ bảng 1 (brand, model - ví dụ: đồ điện tử/đồng hồ)\n" +
+          "    e.brand AS e_brand, \n" +
+          "    e.model,\n" +
+          "    \n" +
+          "    -- Dữ liệu từ bảng 2 (artist, year_created, title - ví dụ: các tác phẩm nghệ thuật)\n" +
+          "    art.artist, \n" +
+          "    art.year_created, \n" +
+          "    art.title,\n" +
+          "    \n" +
+          "    -- Dữ liệu từ bảng 3 (license_plate, year, brand, color - ví dụ: xe cộ)\n" +
+          "    v.license_plate, \n" +
+          "    v.year AS vehicle_year, \n" +
+          "    v.brand AS vehicle_brand, \n" +
+          "    v.color\n" +
+          "\n" +
+          "FROM auction a\n" +
+          "JOIN item i ON a.item_id = i.itemid\n" +
+          "\n" +
+          "-- Dùng LEFT JOIN để nếu item không thuộc loại này, nó vẫn ra kết quả (các cột kia sẽ null)\n" +
+          "LEFT JOIN electronics e ON i.itemid = e.item_id\n" +
+          "LEFT JOIN art art ON i.itemid = art.item_id\n" +
+          "LEFT JOIN vehicle v ON i.itemid = v.item_id;";
 
 
-  private AuctionDAO() {}
+  private AuctionDAO() {
+  }
 
   public static AuctionDAO getInstance() {
     if (instance == null) {
@@ -67,7 +96,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
       } else {
         System.out.println("Tạo Auction thất bại");
       }
-    }  catch (SQLException e) {
+    } catch (SQLException e) {
       e.printStackTrace();
       return 0; // ← thay thế
 
@@ -136,23 +165,8 @@ public class AuctionDAO implements DAOInterface<Auction> {
 
   public Auction mapResultSet(ResultSet rs) throws SQLException {
     // Map Item
-    String cat = rs.getString("category");
-    ItemCategory category;
-    if (cat != null){
-      category = ItemCategory.valueOf(cat.toUpperCase());
-    }else category = null;
-    Item baseItem = new Item(
-            rs.getString("sellerName"),
-            rs.getInt("seller_id"),
-            rs.getInt("item_id"),
-            rs.getString("name"),
-            rs.getString("description"),
-            rs.getString("imagepath"),
-            category
-    );
 
-    int itemId = rs.getInt("item_id");
-    Item item = loadItemDetail(itemId, category, baseItem);
+    Item item = loadItemDetail(rs);
 
     // Map LocalDateTime
     LocalDateTime startingTime = rs.getTimestamp("starting_time") != null
@@ -163,7 +177,6 @@ public class AuctionDAO implements DAOInterface<Auction> {
 
     // Map AuctionStatus
     AuctionStatus status = AuctionStatus.valueOf(rs.getString("auctionStatus"));
-
 
 
     return new Auction(
@@ -250,7 +263,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
 
   public ArrayList<Auction> selectBySellerId(int id) {      // lấy auction dựa trên sellerID
     ArrayList<Auction> list = new ArrayList<>();
-    String sql = BASE_QUERY + "WHERE i.idseller = ?";
+    String sql = BASE_QUERY + "WHERE i.seller_id = ?";
 
     try (Connection conn = JDBCUtil.getConnection();
          PreparedStatement ps = conn.prepareStatement(sql)) {
@@ -274,69 +287,45 @@ public class AuctionDAO implements DAOInterface<Auction> {
   }
 
 
-  public Item loadItemDetail(int itemId, ItemCategory category, Item baseItem) {
-    if (category == null) return baseItem;
+  public Item loadItemDetail(ResultSet rs) throws SQLException {
+    ItemCategory category = ItemCategory.valueOf(rs.getString("category"));
+    Item baseItem = new Item(
+        rs.getString("sellerName"),
+        rs.getInt("seller_id"),
+        rs.getInt("item_id"),
+        rs.getString("name"),
+        rs.getString("description"),
+        rs.getString("imagepath"),
+        category
+    );
 
     if (category == ItemCategory.ELECTRONICS) {
-      String sql = "SELECT brand, model FROM electronic WHERE item_id = ?";
-      try (Connection conn = JDBCUtil.getConnection();
-           PreparedStatement pst = conn.prepareStatement(sql)) {
-        pst.setInt(1, itemId);
-        ResultSet rs = pst.executeQuery();
-        if (rs.next()) {
-          return new Electronics(
-                  baseItem.getSellerName(), baseItem.getSellerId(),
-                  baseItem.getItemId(), baseItem.getName(),
-                  baseItem.getDescription(), baseItem.getImage(),
-                  rs.getString("brand"), rs.getString("model")
-          );
-        }
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
-
+      return new Electronics(
+          baseItem.getSellerName(), baseItem.getSellerId(),
+          baseItem.getItemId(), baseItem.getName(),
+          baseItem.getDescription(), baseItem.getImage(),
+          rs.getString("brand"), rs.getString("model")
+      );
     } else if (category == ItemCategory.ART) {
-      String sql = "SELECT artist, year_created, title FROM art WHERE item_id = ?";
-      try (Connection conn = JDBCUtil.getConnection();
-           PreparedStatement pst = conn.prepareStatement(sql)) {
-        pst.setInt(1, itemId);
-        ResultSet rs = pst.executeQuery();
-        if (rs.next()) {
-          return new Art(
-                  baseItem.getSellerName(), baseItem.getSellerId(),
-                  baseItem.getItemId(), baseItem.getName(),
-                  baseItem.getDescription(), baseItem.getImage(),
-                  rs.getString("artist"),
-                  rs.getInt("year_created"),
-                  rs.getString("title")
-          );
-        }
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
-
+      return new Art(
+          baseItem.getSellerName(), baseItem.getSellerId(),
+          baseItem.getItemId(), baseItem.getName(),
+          baseItem.getDescription(), baseItem.getImage(),
+          rs.getString("artist"),
+          rs.getInt("year_created"),
+          rs.getString("title")
+      );
     } else if (category == ItemCategory.VEHICLE) {
-      String sql = "SELECT license_plate, year, brand, color FROM vehicle WHERE item_id = ?";
-      try (Connection conn = JDBCUtil.getConnection();
-           PreparedStatement pst = conn.prepareStatement(sql)) {
-        pst.setInt(1, itemId);
-        ResultSet rs = pst.executeQuery();
-        if (rs.next()) {
-          return new Vehicle(
-                  baseItem.getSellerName(), baseItem.getSellerId(),
-                  baseItem.getItemId(), baseItem.getName(),
-                  baseItem.getDescription(), baseItem.getImage(),
-                  rs.getString("license_plate"),
-                  rs.getInt("year"),
-                  rs.getString("brand"),
-                  rs.getString("color")
-          );
-        }
-      } catch (SQLException e) {
-        e.printStackTrace();
-      }
+      return new Vehicle(
+          baseItem.getSellerName(), baseItem.getSellerId(),
+          baseItem.getItemId(), baseItem.getName(),
+          baseItem.getDescription(), baseItem.getImage(),
+          rs.getString("license_plate"),
+          rs.getInt("year"),
+          rs.getString("brand"),
+          rs.getString("color")
+      );
     }
-
     return baseItem;
   }
 
