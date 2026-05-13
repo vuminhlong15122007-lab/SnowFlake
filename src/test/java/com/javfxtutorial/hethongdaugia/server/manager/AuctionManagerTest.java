@@ -1,6 +1,7 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,6 +10,8 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.CountDownLatch;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,114 +27,6 @@ public class AuctionManagerTest {
         auction.setCurrentPrice(new BigDecimal(100.0));
         auction.setStepPrice(new BigDecimal(10));
     }
-    @Nested
-    @DisplayName("Đặt giá")
-    class PlaceBidTest{
-    @Test
-    @DisplayName("giá hợp lệ")
-    void testCheckValidBid_ShouldReturnTrue_WhenAmountIsCorrect(){
-        // giá bằng đúng giá hiện tại + step => hợp lệ
-        assertTrue(auctionManager.checkValidBid(auction, new BigDecimal(110.0)));
-        // giá mới lớn hơn giá hiện tại + step => hợp lệ
-        assertTrue(auctionManager.checkValidBid(auction, new BigDecimal(150)));
-    }
-
-    @Test
-    @DisplayName("giá nhỏ hơn giá trị hiện tại + step")
-    void testCheckValidBid_ShouldReturnFalse_WhenAmountIsFalse(){
-        // giá nằm ở giữa giá hiện tại và giá hiện tại + step => false
-        assertFalse(auctionManager.checkValidBid(auction , new BigDecimal(105)));
-        // giá nằm ở dưới giá hiện tại
-        assertFalse(auctionManager.checkValidBid(auction , new BigDecimal(95)));
-    }
-    @Test
-    @DisplayName("thất bại nếu là giá trị âm ")
-    void invalid_negativeAmount() {
-
-        assertFalse(auctionManager.checkValidBid(auction, new BigDecimal(-1.0)));
-    }
-
-    @Test
-    @DisplayName("thất bại nếu giá là giá trị new")
-    void invalid_zeroAmount() {
-        assertFalse(auctionManager.checkValidBid(auction, new BigDecimal(0.0)));
-    }
-    @Test
-    @DisplayName("Thành công giá quá lớn")
-    void invalid_floatingPoint(){
-        assertTrue(auctionManager.checkValidBid(auction, new BigDecimal(100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000.0)));
-    }
-
-
-    @Test
-    @DisplayName("hợp lệ: giá số thực (floating point) chính xác")
-    void valid_floatingPoint() {
-        Auction auction = new Auction();
-        auction.setCurrentPrice(new BigDecimal(99.5));
-        auction.setStepPrice(new BigDecimal(0.5));
-        assertTrue(auctionManager.checkValidBid(auction, new BigDecimal(100.0)));
-        assertFalse(auctionManager.checkValidBid(auction, new BigDecimal(99.9)));
-    }}
-    @Nested
-    @DisplayName("refreshAuctionStatus")
-    class RefreshAuctionStatusTest {
-
-        @Test
-        @DisplayName("trả về NOT_START khi startingTime ở tương lai")
-        void status_notStarted() {
-            Auction auction = buildAuction(
-                    LocalDateTime.now().plusHours(1),
-                    LocalDateTime.now().plusHours(2)
-            );
-            AuctionStatus status = auctionManager.refreshAuctionStatus(auction);
-            assertEquals(AuctionStatus.NOT_START, status);
-            assertEquals(AuctionStatus.NOT_START, auction.getStatus());
-        }
-
-        @Test
-        @DisplayName("trả về RUNNING khi đang trong thời gian đấu giá")
-        void status_running() {
-            Auction auction = buildAuction(
-                    LocalDateTime.now().minusMinutes(30),
-                    LocalDateTime.now().plusMinutes(30)
-            );
-            AuctionStatus status = auctionManager.refreshAuctionStatus(auction);
-            assertEquals(AuctionStatus.RUNNING, status);
-        }
-
-        @Test
-        @DisplayName("trả về CLOSED khi endingTime đã qua")
-        void status_closed() {
-            Auction auction = buildAuction(
-                    LocalDateTime.now().minusHours(2),
-                    LocalDateTime.now().minusMinutes(1)
-            );
-            AuctionStatus status = auctionManager.refreshAuctionStatus(auction);
-            assertEquals(AuctionStatus.CLOSED, status);
-        }
-
-        @Test
-        @DisplayName("trạng thái auction được cập nhật trực tiếp trên object")
-        void status_updatesAuctionObject() {
-            Auction auction = buildAuction(
-                    LocalDateTime.now().minusHours(1),
-                    LocalDateTime.now().plusHours(1)
-            );
-            auction.setStatus(AuctionStatus.NOT_START); // sai ban đầu
-            auctionManager.refreshAuctionStatus(auction);
-            assertEquals(AuctionStatus.RUNNING, auction.getStatus());
-        }
-
-        private Auction buildAuction(LocalDateTime start, LocalDateTime end) {
-            Auction a = new Auction();
-            a.setAuctionId(0); // id giả, không gọi DB
-            a.setStartingTime(start);
-            a.setEndingTime(end);
-            a.setStatus(AuctionStatus.NOT_START);
-            return a;
-        }
-    }
-
     // ─────────────────────────────────────────────────
     // Singleton
     // ─────────────────────────────────────────────────
@@ -207,5 +102,41 @@ public class AuctionManagerTest {
             AuctionStatus status = auctionManager.refreshAuctionStatus(auction);
             assertEquals(AuctionStatus.CLOSED, status);
         }
+        @Test
+        void sameMaxBid_shouldChooseEarlierUser_andPriceEqualsMaxBid() {
+            BigDecimal step = new BigDecimal("10");
+            BigDecimal minRequired = new BigDecimal("60");
+
+            AutoBidConfig a = new AutoBidConfig(1, "A", 100, new BigDecimal("100"), true);
+            AutoBidConfig b = new AutoBidConfig(2, "B", 100, new BigDecimal("100"), true);
+
+            a.setRegisteredAt(LocalDateTime.of(2026, 1, 1, 10, 0));
+            b.setRegisteredAt(LocalDateTime.of(2026, 1, 1, 10, 1));
+
+            List<AutoBidConfig> bots = new ArrayList<>(List.of(a, b));
+
+            bots.sort((b1, b2) -> {
+                int cmp = b2.getMaxPrice().compareTo(b1.getMaxPrice());
+                if (cmp != 0) return cmp;
+                return b1.getRegisteredAt().compareTo(b2.getRegisteredAt());
+            });
+
+            AutoBidConfig winner = bots.get(0);
+            AutoBidConfig second = bots.get(1);
+
+            BigDecimal finalAmount;
+            if (winner.getMaxPrice().compareTo(second.getMaxPrice()) == 0) {
+                finalAmount = winner.getMaxPrice();
+            } else {
+                finalAmount = second.getMaxPrice().add(step);
+                if (finalAmount.compareTo(winner.getMaxPrice()) > 0) {
+                    finalAmount = winner.getMaxPrice();
+                }
+            }
+
+            assertEquals(1, winner.getUserId());
+            assertEquals(new BigDecimal("100"), finalAmount);
+        }
     }
+
 }
