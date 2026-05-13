@@ -166,8 +166,10 @@ public class AuctionManager {
 
         if (LocalDateTime.now().isBefore(auction.getStartingTime())) {
             auction.setStatus(AuctionStatus.NOT_START);
+        }else if (previousStatus == AuctionStatus.PAID){
+           return previousStatus;
         } else if (LocalDateTime.now().isAfter(auction.getEndingTime().plusHours(24))) {
-            return auction.getStatus();
+            return checkPaymentStatus(auction);
         } else if (LocalDateTime.now().isAfter(auction.getEndingTime())) {
             auction.setStatus(AuctionStatus.CLOSED);
         } else {
