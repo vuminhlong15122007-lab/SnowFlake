@@ -4,7 +4,8 @@ import com.javfxtutorial.hethongdaugia.client.MainApplication;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
-import com.javfxtutorial.hethongdaugia.common.model.Command.RegisterCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.application.Platform;
@@ -12,11 +13,9 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -32,16 +31,8 @@ public class RegisterController implements ResponseListener {
     @FXML private PasswordField Password;
     @FXML private PasswordField Confirm_Password;
     @FXML private Label message;
-    @FXML private StackPane termsOverlay;
     ActionEvent signUpEvent;
-    @FXML private TextField PasswordVisible;
-    @FXML private TextField ConfirmPasswordVisible;
-    @FXML private CheckBox agreeCheckBox;
-    // Trạng thái hiện/ẩn mật khẩu
-    private boolean passwordShown = false;
-    private boolean confirmPasswordShown = false;
-
-
+    private Command cmd;
 
     @FXML
     public void clickBackToLogin(ActionEvent event) {
@@ -85,70 +76,22 @@ public class RegisterController implements ResponseListener {
             message.setText(" Email phải có đuôi @gmail.com!");
             return;
         }
-        // check xem đọc đkhoan chx
-        if (!agreeCheckBox.isSelected()) {
-            message.setText("Vui lòng đọc và đồng ý với điều khoản sử dụng!");
-            return;
-        }
+
 
         if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
             if (password.equals(confirmPassword)){
                 ServerConnection connection = NetworkManager.getConnection();
-                Command cmd = new RegisterCommand();
+                Command cmd = new AddAccountCommand();
                 cmd.addData("username", name);
                 cmd.addData("password", password);
                 cmd.addData("email", email);
                 cmd.addData("sdt", sdt);
+                cmd.addData("accountType", "USER");
                 connection.sendCommand(cmd);
                 NetworkManager networkManager = NetworkManager.getInstance();
-                networkManager.register(RegisterCommand.class, this);
-
+                networkManager.register(AddAccountCommand.class, this);
             }
         }
-    }
-
-    // method lm hiện/ tắt mật khẩu
-    @FXML
-    public void togglePasswordVisibility(ActionEvent event) {
-        passwordShown = !passwordShown;
-        if (passwordShown) {
-            PasswordVisible.setText(Password.getText());
-            PasswordVisible.setVisible(true);
-            Password.setVisible(false);
-        } else {
-            Password.setText(PasswordVisible.getText());
-            Password.setVisible(true);
-            PasswordVisible.setVisible(false);
-        }
-    }
-
-    // method lm hiện/ tắt xác nhận mật khẩu
-    @FXML
-    public void toggleConfirmPasswordVisibility(ActionEvent event) {
-        confirmPasswordShown = !confirmPasswordShown;
-        if (confirmPasswordShown) {
-            ConfirmPasswordVisible.setText(Confirm_Password.getText());
-            ConfirmPasswordVisible.setVisible(true);
-            Confirm_Password.setVisible(false);
-        } else {
-            Confirm_Password.setText(ConfirmPasswordVisible.getText());
-            Confirm_Password.setVisible(true);
-            ConfirmPasswordVisible.setVisible(false);
-        }
-
-    }
-
-    // đọc điều khoản
-    @FXML
-    public void showTerms(ActionEvent event) {
-        termsOverlay.setVisible(true);
-        termsOverlay.toFront();
-    }
-
-    @FXML
-    public void closeTerms(ActionEvent event) {
-        termsOverlay.setVisible(false);
-        agreeCheckBox.setSelected(true);
     }
 
     @Override
@@ -174,7 +117,7 @@ public class RegisterController implements ResponseListener {
         }
         });
         NetworkManager networkManager = NetworkManager.getInstance();
-        networkManager.unregister(RegisterCommand.class, this);
+        networkManager.unregister(AddAccountCommand.class, this);
     }
 }
 

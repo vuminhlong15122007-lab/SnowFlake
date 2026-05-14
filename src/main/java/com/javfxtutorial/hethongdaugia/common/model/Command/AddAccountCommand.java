@@ -12,10 +12,6 @@ public class AddAccountCommand extends Command {
     @Override
     public Response handle() {
         String username1 = (String) this.getData("username");
-        boolean isUsernameExisted = UserManager.getInstance().checkExistedUsername(username1);
-        if (isUsernameExisted){
-            return new Response(false, "username đã tồn tại", null, this);
-        }
         String password = (String) this.getData("password");
         String email = (String) this.getData("email");
         String sdt = (String) this.getData("sdt");
@@ -26,7 +22,12 @@ public class AddAccountCommand extends Command {
         }catch (Exception e){
             e.printStackTrace();
         }
-        UserDAO.getInstance().insert(new User(username1, password, email, sdt, role));
+        int result = UserDAO.getInstance().insert(new User(username1, password, email, sdt, role));
+        if (result == -1){
+            return new Response(false, "Username đã tồn tại, vui lòng đặt username khác", null, this);
+        } else if (result == 0){
+            return new Response(false, "tạo tài khoản thất bại", null, this);
+        }
         return new Response(true, "tạo tài khoản thành công", null, this);
     }
 }
