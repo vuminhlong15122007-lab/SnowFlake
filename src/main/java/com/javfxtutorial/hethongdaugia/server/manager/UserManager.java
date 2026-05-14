@@ -77,4 +77,8 @@ public class UserManager {
         }
         return null;
     }
+
+    public boolean checkExistedUsername(String username1) {
+        return true;
+    }
 }

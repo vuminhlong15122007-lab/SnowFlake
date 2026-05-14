@@ -12,9 +12,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -30,7 +32,17 @@ public class RegisterController implements ResponseListener {
     @FXML private PasswordField Password;
     @FXML private PasswordField Confirm_Password;
     @FXML private Label message;
+    @FXML private StackPane termsOverlay;
     ActionEvent signUpEvent;
+    @FXML private TextField PasswordVisible;
+    @FXML private TextField ConfirmPasswordVisible;
+    @FXML private CheckBox agreeCheckBox;
+    // Trạng thái hiện/ẩn mật khẩu
+    private boolean passwordShown = false;
+    private boolean confirmPasswordShown = false;
+
+
+
     @FXML
     public void clickBackToLogin(ActionEvent event) {
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
@@ -73,7 +85,11 @@ public class RegisterController implements ResponseListener {
             message.setText(" Email phải có đuôi @gmail.com!");
             return;
         }
-
+        // check xem đọc đkhoan chx
+        if (!agreeCheckBox.isSelected()) {
+            message.setText("Vui lòng đọc và đồng ý với điều khoản sử dụng!");
+            return;
+        }
 
         if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
             if (password.equals(confirmPassword)){
@@ -89,6 +105,50 @@ public class RegisterController implements ResponseListener {
 
             }
         }
+    }
+
+    // method lm hiện/ tắt mật khẩu
+    @FXML
+    public void togglePasswordVisibility(ActionEvent event) {
+        passwordShown = !passwordShown;
+        if (passwordShown) {
+            PasswordVisible.setText(Password.getText());
+            PasswordVisible.setVisible(true);
+            Password.setVisible(false);
+        } else {
+            Password.setText(PasswordVisible.getText());
+            Password.setVisible(true);
+            PasswordVisible.setVisible(false);
+        }
+    }
+
+    // method lm hiện/ tắt xác nhận mật khẩu
+    @FXML
+    public void toggleConfirmPasswordVisibility(ActionEvent event) {
+        confirmPasswordShown = !confirmPasswordShown;
+        if (confirmPasswordShown) {
+            ConfirmPasswordVisible.setText(Confirm_Password.getText());
+            ConfirmPasswordVisible.setVisible(true);
+            Confirm_Password.setVisible(false);
+        } else {
+            Confirm_Password.setText(ConfirmPasswordVisible.getText());
+            Confirm_Password.setVisible(true);
+            ConfirmPasswordVisible.setVisible(false);
+        }
+
+    }
+
+    // đọc điều khoản
+    @FXML
+    public void showTerms(ActionEvent event) {
+        termsOverlay.setVisible(true);
+        termsOverlay.toFront();
+    }
+
+    @FXML
+    public void closeTerms(ActionEvent event) {
+        termsOverlay.setVisible(false);
+        agreeCheckBox.setSelected(true);
     }
 
     @Override
