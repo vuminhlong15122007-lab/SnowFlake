@@ -128,10 +128,7 @@ public class SellerManagementController implements ResponseListener {
 
         item = factory.createItem(collectFormData());
         item.setItemId(itemId);
-        if (tGianKT.isBefore(LocalDateTime.now())){return new Auction(item, sellerId, initPrice, stepPrice, tGianBD, tGianKT, AuctionStatus.CLOSED);}
-        else if( tGianBD.isAfter(LocalDateTime.now())){return new Auction(item, sellerId, initPrice, stepPrice, tGianBD, tGianKT, AuctionStatus.NOT_START);}
-        return new Auction(item, sellerId, initPrice, stepPrice, tGianBD, tGianKT, AuctionStatus.RUNNING);
-
+       return new Auction(item, sellerId, initPrice, stepPrice, tGianBD, tGianKT, AuctionStatus.NOT_START);
     }
 
     private Map<String, String> collectFormData() {

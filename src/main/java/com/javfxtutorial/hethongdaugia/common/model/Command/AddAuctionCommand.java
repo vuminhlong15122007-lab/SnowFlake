@@ -2,11 +2,13 @@ package com.javfxtutorial.hethongdaugia.common.model.Command;
 
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.DAOInterface;
 import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
+import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,6 +18,8 @@ public class AddAuctionCommand extends Command{
     @Override
     public Response handle() {
         Auction auction = (Auction) this.getData("Auction");
+        AuctionStatus status = AuctionManager.getInstance().refreshAuctionStatus(auction);
+        auction.setStatus(status);
         Item item = auction.getItem();
         int result1 = ItemDAO.getInstance().insert(item);
         if (result1 <= 0){
