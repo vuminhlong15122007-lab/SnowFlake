@@ -39,7 +39,7 @@
 
                     <!-- Ảnh + nút tải ảnh -->
                     <HBox alignment="CENTER_LEFT" prefHeight="100.0" spacing="10">
-                        <ImageView fx:id="Image" fitHeight="80.0" fitWidth="80.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fx:id="Image" fitHeight="131.0" fitWidth="117.0" pickOnBounds="true" preserveRatio="true">
                             <image><Image url="@../../assets/ClassicLogo.png" /></image>
                         </ImageView>
                         <Button fx:id="btupImg" onAction="#clickToChooseImage" style="-fx-background-color: linear-gradient(to right, purple, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-font-size: 11px; -fx-padding: 5 10;" text="Tải ảnh lên" />

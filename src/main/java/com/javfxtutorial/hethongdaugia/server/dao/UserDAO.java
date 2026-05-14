@@ -2,6 +2,7 @@ package com.javfxtutorial.hethongdaugia.server.dao;
 
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
+import com.javfxtutorial.hethongdaugia.server.security.PasswordHasher;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,7 +30,7 @@ public class UserDAO implements DAOInterface<User> {
         try (Connection connection = JDBCUtil.getConnection();
              PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pst.setString(1, user.getName());
-            pst.setString(2, user.getPassWord());
+            pst.setString(2, PasswordHasher.hash(user.getPassWord()));
             pst.setString(3, user.getEmail());
             pst.setString(4, user.getSdt());
             pst.setString(5, user.getAccountType() == null ? null : user.getAccountType().name());
@@ -61,7 +62,7 @@ public class UserDAO implements DAOInterface<User> {
         try (Connection connection = JDBCUtil.getConnection();
              PreparedStatement pst = connection.prepareStatement(sql)) {
             pst.setString(1, user.getName());
-            pst.setString(2, user.getPassWord());
+            pst.setString(2, PasswordHasher.hash(user.getPassWord()));
             pst.setString(3, user.getEmail());
             pst.setString(4, user.getSdt());
             pst.setString(5, user.getAccountType() == null ? null : user.getAccountType().name());

@@ -2,6 +2,7 @@ package com.javfxtutorial.hethongdaugia.server.manager;
 
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
+import com.javfxtutorial.hethongdaugia.server.security.PasswordHasher;
 
 public class UserManager {
     private static UserManager instance;
@@ -17,7 +18,11 @@ public class UserManager {
 
     public User authenticate(String username, String password) {
         User user = UserDAO.getInstance().selectByUsername(username);
-        if (user != null && user.getPassWord().equals(password)) {
+        if (user != null && PasswordHasher.matches(password, user.getPassWord())) {
+            if (!PasswordHasher.isHashed(user.getPassWord())) {
+                user.setPassWord(password);
+                UserDAO.getInstance().update(user);
+            }
             return user;
         }
         return null;

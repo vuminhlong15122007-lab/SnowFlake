@@ -3,6 +3,7 @@ package com.javfxtutorial.hethongdaugia.server.manager;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
+import com.javfxtutorial.hethongdaugia.server.security.PasswordHasher;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -207,6 +208,35 @@ class UserContractTest {
 
                 assertNull(UserManager.getInstance().authenticate("alice", null));
                 verify(userDAO).selectByUsername("alice");
+            }
+        }
+
+        @Test
+        void authenticate_acceptsStoredHash() {
+            User user = new User(1, "alice", PasswordHasher.hash("pass123"), "alice@example.com", "0901234567", AccountType.USER, null);
+            UserDAO userDAO = mock(UserDAO.class);
+            when(userDAO.selectByUsername("alice")).thenReturn(user);
+
+            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+                assertSame(user, UserManager.getInstance().authenticate("alice", "pass123"));
+                verify(userDAO, never()).update(any(User.class));
+            }
+        }
+
+        @Test
+        void authenticate_migratesLegacyPlainTextPasswordAfterSuccessfulLogin() {
+            User legacyUser = new User(1, "alice", "pass123", "alice@example.com", "0901234567", AccountType.USER, null);
+            UserDAO userDAO = mock(UserDAO.class);
+            when(userDAO.selectByUsername("alice")).thenReturn(legacyUser);
+            when(userDAO.update(any(User.class))).thenReturn(1);
+
+            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+                assertSame(legacyUser, UserManager.getInstance().authenticate("alice", "pass123"));
+                verify(userDAO).update(legacyUser);
             }
         }
     }

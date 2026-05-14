@@ -20,7 +20,6 @@ public class SellerProductController {
     @FXML private Label lbProductName;
     @FXML private Label lbPrice;
     @FXML private Label ItemID;
-    @FXML private HBox hbxProduct;
     @FXML private Label lbStatus;
 
 
