@@ -23,6 +23,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.util.StringConverter;
 
 import java.io.IOException;
 
@@ -165,6 +166,40 @@ public class LiveAuctionController implements  ResponseListener {
         // (Tùy chọn) Cấu hình để biểu đồ đẹp hơn
         priceChart.setAnimated(false); // Tắt hiệu ứng động để cập nhật mượt mà
         priceChart.setCreateSymbols(false); // Ẩn các chấm tròn tại mỗi điểm dữ liệu
+        xAxis.setAutoRanging(false);
+        xAxis.setLowerBound(1);
+        xAxis.setUpperBound(1);
+        xAxis.setTickUnit(1);
+        xAxis.setMinorTickVisible(false);
+        xAxis.setTickLabelFormatter(new StringConverter<>() {
+            @Override
+            public String toString(Number number) {
+                return String.format("%.0f", number.doubleValue());
+            }
+
+            @Override
+            public Number fromString(String string) {
+                return Integer.parseInt(string);
+            }
+        });
+        yAxis.setTickLabelFormatter(new StringConverter<>() {
+            @Override
+            public String toString(Number number) {
+                return String.format("%,.0f", number.doubleValue());
+            }
+
+            @Override
+            public Number fromString(String string) {
+                return new BigDecimal(string.replace(",", ""));
+            }
+        });
+    }
+
+    private void updatePriceChartXAxis() {
+        int pointCount = priceSeries.getData().size();
+        xAxis.setLowerBound(1);
+        xAxis.setUpperBound(Math.max(1, pointCount));
+        xAxis.setTickUnit(1);
     }
 
     @FXML
@@ -186,7 +221,7 @@ public class LiveAuctionController implements  ResponseListener {
 
                 // Tạm thời khóa ô nhập giá để tránh thay đổi khi bot đang chạy
                 autoMaxPrice_tf.setDisable(true);
-                autoBidToggle.setText("Bot đang chạy...");
+                autoBidToggle.setText("Autobid");
             } catch (NumberFormatException e) {
                 UIUtils.showAlert("Lỗi nhập liệu", "Vui lòng nhập một số tiền hợp lệ!");
                 autoBidToggle.setSelected(false);
@@ -260,6 +295,7 @@ public class LiveAuctionController implements  ResponseListener {
                         int bidSequenceNumber = priceSeries.getData().size() + 1;
                         XYChart.Data<Number, Number> newDataPoint = new XYChart.Data<>(bidSequenceNumber, newPrice);
                         priceSeries.getData().add(newDataPoint);
+                        updatePriceChartXAxis();
 
                         // Cập nhật lại đồng hồ đếm ngược nếu có gia hạn (Anti-snipe)
                         // Lưu ý: Dùng .equals() để so sánh thời gian thay vì !=
@@ -309,6 +345,7 @@ public class LiveAuctionController implements  ResponseListener {
                             priceSeries.getData().add(new XYChart.Data<>(soThuTuLuotBid, historicalBid.getAmount()));
                             soThuTuLuotBid++;
                         }
+                        updatePriceChartXAxis();
                     }
                 });
             }
