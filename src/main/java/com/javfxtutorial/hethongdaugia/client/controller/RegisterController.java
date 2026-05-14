@@ -5,6 +5,7 @@ import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.CheckSdtEmailCommand;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.scene.control.CheckBox;
@@ -84,6 +85,15 @@ public class RegisterController implements ResponseListener {
             message.setText(" Email phải có đuôi @gmail.com!");
             return;
         }
+
+        ServerConnection connect = NetworkManager.getConnection();
+        Command cm = new CheckSdtEmailCommand();
+        cm.addData("username", name);
+        cm.addData("password", password);
+        cm.addData("email", email);
+        cm.addData("sdt", sdt);
+        connect.sendCommand(cm);
+        NetworkManager.getInstance().register(CheckSdtEmailCommand.class, this);
 
 
         if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
@@ -176,11 +186,13 @@ public class RegisterController implements ResponseListener {
             changeScene(signUpEvent,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
 
         }else{
-            showAlert("Đăng ký không thành công", rp.getMessage() , "False.gif");
+            message.setText(rp.getMessage());
         }
         });
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.unregister(AddAccountCommand.class, this);
     }
+
+
 }
 
