@@ -86,7 +86,7 @@ public class RegisterController implements ResponseListener {
                 cmd.addData("password", password);
                 cmd.addData("email", email);
                 cmd.addData("sdt", sdt);
-                cmd.addData("accountType", AccountType.USER);
+                cmd.addData("accountType", "USER");
                 connection.sendCommand(cmd);
                 NetworkManager networkManager = NetworkManager.getInstance();
                 networkManager.register(AddAccountCommand.class, this);
