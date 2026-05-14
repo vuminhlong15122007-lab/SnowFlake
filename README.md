@@ -133,13 +133,13 @@ flowchart LR
 Entry point server:
 
 ```text
-com.javfxtutorial.hethongdaugia.server.SServerAp
+com.javfxtutorial.hethongdaugia.server.ServerAp
 ```
 
 Cách chạy khuyến nghị:
 
 ```text
-Mở project bằng IDE -> chạy class ServerServerApp 
+Mở project bằng IDE -> chạy class ServerApp 
 ```
 
 Server lắng nghe kết nối socket tại:
