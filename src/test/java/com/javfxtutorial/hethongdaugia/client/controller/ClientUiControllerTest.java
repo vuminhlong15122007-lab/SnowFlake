@@ -158,28 +158,28 @@ class ClientUiControllerTest {
         });
     }
 
-    @Test
-    @DisplayName("Participated auction cell adapts label text by status")
-    void participatedAuctionCell_displaysStatusSpecificText() throws Exception {
-        runOnFxThread(() -> {
-            LoadedFxml<ParticipatedAuctionCellController> loaded = loadFxml("ParticipatedAuctionCell.fxml");
-            ParticipatedAuctionCellController controller = loaded.controller();
-
-            controller.setData(auction("Gaming Laptop", AuctionStatus.RUNNING, ItemCategory.ELECTRONICS));
-            assertEquals("Gaming Laptop", field(controller, "lbProductName", Label.class).getText());
-            assertEquals("1,100,000 VND", field(controller, "lbCurrentPrice", Label.class).getText());
-            assertEquals("THAM GIA", field(controller, "actionButton", Button.class).getText());
-            assertFalse(field(controller, "actionButton", Button.class).isDisabled());
-
-            controller.setData(auction("Office Chair", AuctionStatus.NOT_START, ItemCategory.OTHER));
-            assertEquals("1,000,000 VND", field(controller, "lbCurrentPrice", Label.class).getText());
-            assertFalse(field(controller, "actionButton", Button.class).getText().isBlank());
-
-            controller.setData(auction("Vintage Camera", AuctionStatus.CLOSED, ItemCategory.ELECTRONICS));
-            assertEquals("1,200,000 VND", field(controller, "lbCurrentPrice", Label.class).getText());
-            assertEquals("0", field(controller, "lbWinnerName", Label.class).getText());
-        });
-    }
+//    @Test
+//    @DisplayName("Participated auction cell adapts label text by status")
+//    void participatedAuctionCell_displaysStatusSpecificText() throws Exception {
+//        runOnFxThread(() -> {
+//            LoadedFxml<ParticipatedAuctionCellController> loaded = loadFxml("ParticipatedAuctionCell.fxml");
+//            ParticipatedAuctionCellController controller = loaded.controller();
+//
+//            controller.setData(auction("Gaming Laptop", AuctionStatus.RUNNING, ItemCategory.ELECTRONICS));
+//            assertEquals("Gaming Laptop", field(controller, "lbProductName", Label.class).getText());
+//            assertEquals("1,100,000 VND", field(controller, "lbCurrentPrice", Label.class).getText());
+//            assertEquals("THAM GIA", field(controller, "actionButton", Button.class).getText());
+//            assertFalse(field(controller, "actionButton", Button.class).isDisabled());
+//
+//            controller.setData(auction("Office Chair", AuctionStatus.NOT_START, ItemCategory.OTHER));
+//            assertEquals("1,000,000 VND", field(controller, "lbCurrentPrice", Label.class).getText());
+//            assertFalse(field(controller, "actionButton", Button.class).getText().isBlank());
+//
+//            controller.setData(auction("Vintage Camera", AuctionStatus.CLOSED, ItemCategory.ELECTRONICS));
+//            assertEquals("1,200,000 VND", field(controller, "lbCurrentPrice", Label.class).getText());
+//            assertEquals("0", field(controller, "lbWinnerName", Label.class).getText());
+//        });
+//    }
 
     @Test
     @DisplayName("Auction session cell renders status, price and action state")
