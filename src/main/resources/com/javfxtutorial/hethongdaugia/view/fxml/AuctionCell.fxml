@@ -18,7 +18,7 @@
             <Label fx:id="lbCategory" text="Loại sản phẩm" />
 
             <!-- Tên sản phẩm -->
-            <Label fx:id="lbProductName" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #2c3e50;" text="Toyota Camry 2022" />
+            <Label fx:id="lbProductName" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, purple, #2f80ed);" text="Toyota Camry 2022" />
 
             <!-- Chi tiết sản phẩm -->
             <HBox alignment="CENTER_LEFT" spacing="5.0">
