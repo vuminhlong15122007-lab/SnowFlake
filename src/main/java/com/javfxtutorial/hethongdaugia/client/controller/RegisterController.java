@@ -4,7 +4,8 @@ import com.javfxtutorial.hethongdaugia.client.MainApplication;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
-import com.javfxtutorial.hethongdaugia.common.model.Command.RegisterCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.application.Platform;
@@ -31,6 +32,8 @@ public class RegisterController implements ResponseListener {
     @FXML private PasswordField Confirm_Password;
     @FXML private Label message;
     ActionEvent signUpEvent;
+    private Command cmd;
+
     @FXML
     public void clickBackToLogin(ActionEvent event) {
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
@@ -78,15 +81,15 @@ public class RegisterController implements ResponseListener {
         if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
             if (password.equals(confirmPassword)){
                 ServerConnection connection = NetworkManager.getConnection();
-                Command cmd = new RegisterCommand();
+                Command cmd = new AddAccountCommand();
                 cmd.addData("username", name);
                 cmd.addData("password", password);
                 cmd.addData("email", email);
                 cmd.addData("sdt", sdt);
+                cmd.addData("accountType", AccountType.USER);
                 connection.sendCommand(cmd);
                 NetworkManager networkManager = NetworkManager.getInstance();
-                networkManager.register(RegisterCommand.class, this);
-
+                networkManager.register(AddAccountCommand.class, this);
             }
         }
     }
@@ -114,7 +117,7 @@ public class RegisterController implements ResponseListener {
         }
         });
         NetworkManager networkManager = NetworkManager.getInstance();
-        networkManager.unregister(RegisterCommand.class, this);
+        networkManager.unregister(AddAccountCommand.class, this);
     }
 }
 
