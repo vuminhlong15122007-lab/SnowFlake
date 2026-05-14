@@ -37,11 +37,11 @@ public class UserProfileController implements ResponseListener {
     @FXML private TextField updatePhoneText;
     @FXML private ImageView myImageView;
     @FXML private Button resetPW;
-
     @FXML
     public void initialize() {
         loadUserInfo();
     }
+
 
     @FXML
     public void clickToBackToSceneMain(ActionEvent event) {

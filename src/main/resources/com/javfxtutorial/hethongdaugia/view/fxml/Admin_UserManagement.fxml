@@ -4,95 +4,80 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.text.*?>
 
-<BorderPane prefHeight="720.0" prefWidth="1280.0" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminUserController">
+<BorderPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminUserController">
 
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="20.0" style="-fx-background-color: linear-gradient(to right, skyblue, lavender);" BorderPane.alignment="CENTER">
+        <HBox alignment="CENTER_LEFT" prefHeight="57.0" prefWidth="1280.0" spacing="14.0" style="-fx-background-color: linear-gradient(to right, skyblue, lavender); -fx-border-width: 0 0 2 0; -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.16), 10, 0, 0, 2);" BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="15.0" left="20.0" right="20.0" top="15.0" />
+                <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
             </padding>
-         <ImageView fitHeight="90.0" fitWidth="90.0" pickOnBounds="true" preserveRatio="true">
-            <image>
-               <Image url="@../../assets/ClassicLogo.png" />
-            </image>
-         </ImageView>
-            <Label style="-fx-font-size: 15; -fx-font-weight: bold;" text="Bảng Điều Khiển Admin - Quản Lý User" textFill="WHITE">
-                <font>
-                    <Font name="System Bold" size="22.0" />
-                </font>
-            </Label>
+
+            <ImageView fitHeight="62.0" fitWidth="62.0" pickOnBounds="true" preserveRatio="true">
+                <image>
+                    <Image url="@../../assets/ClassicLogo.png" />
+                </image>
+            </ImageView>
+
+            <VBox spacing="2.0">
+                <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, purple, #2f80ed);" text="Bảng Điều Khiển Admin" />
+                <Label style="-fx-font-size: 13px; -fx-text-fill: #333366; -fx-font-weight: bold;" text="Quản lý tài khoản người dùng" />
+            </VBox>
+
             <Region HBox.hgrow="ALWAYS" />
-            <TextField fx:id="searchField" prefWidth="250.0" promptText="Tìm kiếm (Tên, Email, ID)..." style="-fx-background-radius: 15;" />
-            <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#clickToSearch" prefHeight="26.0" prefWidth="76.0" style="-fx-background-color: #3498db; -fx-text-fill: white; -fx-background-radius: 15;" text="Tìm kiếm" />
-         <Button fx:id="dltSearch" alignment="CENTER" mnemonicParsing="false" onAction="#clickToDeleteSearch" prefHeight="26.0" prefWidth="66.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-background-radius: 15;" text=" Xóa " textAlignment="CENTER" />
-         <Button fx:id="logOutAd" mnemonicParsing="false" onAction="#logOut" prefHeight="26.0" prefWidth="80.0" style="-fx-background-color: #3498db; -fx-text-fill: while; -fx-background-radius: 15;" text="Thoát" textFill="WHITE" />
+
+            <HBox alignment="CENTER_LEFT" prefHeight="62.0" prefWidth="413.0" spacing="8.0" style="-fx-background-color: rgba(255,255,255,0.72); -fx-border-color: #b3c6ff; -fx-border-radius: 20; -fx-background-radius: 20; -fx-padding: 5 6 5 10;">
+                <TextField fx:id="searchField" prefHeight="1.0" prefWidth="258.0" promptText="Tìm kiếm tên, email hoặc ID..." style="-fx-background-color: transparent; -fx-padding: 6 8 6 8;" />
+                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#clickToSearch" prefHeight="19.0" prefWidth="82.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 16;" text="Tìm kiếm" />
+                <Button fx:id="dltSearch" alignment="CENTER" mnemonicParsing="false" onAction="#clickToDeleteSearch" prefHeight="14.0" prefWidth="58.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 16;" text="Xóa" textAlignment="CENTER" />
+            </HBox>
         </HBox>
     </top>
 
     <center>
-        <VBox spacing="10.0" BorderPane.alignment="CENTER">
+        <VBox spacing="12.0" BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="15.0" left="15.0" right="15.0" top="15.0" />
+                <Insets bottom="18.0" left="18.0" right="18.0" top="18.0" />
             </padding>
 
-            <Label style="-fx-text-fill: linear-gradient(to right, blue, purple);" text="Danh sách tài khoản hệ thống">
-                <font>
-                    <Font name="System Bold" size="16.0" />
-                </font>
-            </Label>
-            <TableView fx:id="userTable" prefHeight="532.0" prefWidth="985.0" style="-fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" VBox.vgrow="ALWAYS">
+            <HBox alignment="CENTER_LEFT">
+                <Label style="-fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-size: 17px; -fx-font-weight: bold;" text="Danh sách tài khoản hệ thống" />
+                <Region HBox.hgrow="ALWAYS" />
+            </HBox>
+
+            <TableView fx:id="userTable" prefHeight="532.0" prefWidth="985.0" style="-fx-font-size: 12px; -fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #89CFF0; -fx-border-radius: 10; -fx-font-weight: bold; -fx-selection-bar: #2f80ed; -fx-selection-bar-non-focused: #56ccf2; -fx-control-inner-background: #ffffff; -fx-control-inner-background-alt: #f4fbff; -fx-table-cell-border-color: #c7e7f7;" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="colId" prefWidth="62.00000113248825" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="ID" />
-                    <TableColumn fx:id="colUsername" prefWidth="192.99998092651367" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="Tên đăng nhập" />
-                    <TableColumn fx:id="colEmail" prefWidth="353.3999938964844" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="Email" />
-                    <TableColumn fx:id="colPhone" prefWidth="199.20001220703125" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="Số điện thoại" />
-                    <TableColumn fx:id="colRole" prefWidth="78.0" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="Vai trò" />
-                    <TableColumn fx:id="colStatus" prefWidth="77.7999267578125" style="-fx-border-color:  #b3c6ff; -fx-font-size: 12px; -fx-background-color: white; -fx-font-weight: bold;" text="Trạng thái" />
+                    <TableColumn fx:id="colId" prefWidth="62.0" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="ID" />
+                    <TableColumn fx:id="colUsername" prefWidth="193.0" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Tên đăng nhập" />
+                    <TableColumn fx:id="colEmail" prefWidth="296.6" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Email" />
+                    <TableColumn fx:id="colPhone" prefWidth="180.8" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Số điện thoại" />
+                    <TableColumn fx:id="colRole" prefWidth="97.2" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Vai trò" />
+                    <TableColumn fx:id="colStatus" prefWidth="136.4" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Trạng thái" />
                 </columns>
             </TableView>
         </VBox>
     </center>
 
     <right>
-        <VBox prefWidth="280.0" spacing="15.0" style="-fx-background-color: #ecf0f1; -fx-border-color: #bdc3c7; -fx-border-width: 0 0 0 1;" BorderPane.alignment="CENTER">
+        <VBox prefWidth="280.0" spacing="13.0" style="-fx-background-color: #f0f8ff; -fx-border-color: #b3c6ff; -fx-border-width: 0 0 0 1;" BorderPane.alignment="CENTER">
             <padding>
                 <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
             </padding>
 
-            <Label text="Thao tác quản trị">
-                <font>
-                    <Font name="System Bold" size="16.0" />
-                </font>
-            <textFill>
-               <LinearGradient endX="1.0" endY="1.0">
-                  <stops>
-                     <Stop>
-                        <color>
-                           <Color green="0.06666667014360428" blue="1.0" />
-                        </color>
-                     </Stop>
-                     <Stop offset="1.0">
-                        <color>
-                           <Color red="0.9166666865348816" blue="1.0" />
-                        </color>
-                     </Stop>
-                  </stops>
-               </LinearGradient>
-            </textFill>
-            </Label>
+            <Label style="-fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-size: 16px; -fx-font-weight: bold;" text="Thao tác quản trị" />
 
-            <Button fx:id="btnAddUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToAddUser" style="-fx-background-color: #2ecc71; -fx-text-fill: white; -fx-font-weight: bold;" text="+ Thêm người dùng mới" />
-            <Button fx:id="btnEditUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#getUpdateAdmin" style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold;" text="Cập nhật thông tin" />
-            <Button fx:id="btnResetPassword" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToResetPW" style="-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-font-weight: bold;" text="Đặt lại mật khẩu" />
-            <Button fx:id="reload" maxWidth="Infinity" mnemonicParsing="false" onAction="#reLoad" style="-fx-background-color: skyblue; -fx-text-fill: white; -fx-font-weight: bold;" text="ReLoad" />
-            <Button fx:id="itemAdmin" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToGoItemAdmin" style="-fx-background-color: pink; -fx-text-fill: white; -fx-font-weight: bold;" text="Quản lý Item cho Admin" />
+            <Button fx:id="btnAddUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToAddUser" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 10;" text=" Thêm người dùng mới" />
+            <Button fx:id="btnEditUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#getUpdateAdmin" style="-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 10;" text="Cập nhật thông tin" />
+            <Button fx:id="btnResetPassword" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToResetPW" style="-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 10;" text="Đặt lại mật khẩu" />
+            <Button fx:id="reload" maxWidth="Infinity" mnemonicParsing="false" onAction="#reLoad" style="-fx-background-color: #89CFF0; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 10;" text="Tải lại dữ liệu" />
+            <Button fx:id="itemAdmin" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToGoItemAdmin" style="-fx-background-color: #b3c6ff; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 10;" text="Quản lý sản phẩm" />
+
+            <Button fx:id="logOutAd" mnemonicParsing="false" onAction="#logOut" prefHeight="32.0" prefWidth="252.0" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 10;" text="Thoát" />
+
             <Region VBox.vgrow="ALWAYS" />
             <Separator />
-            <Button fx:id="deleteButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToDeleteUser" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold;" text="XÓA TÀI KHOẢN" />
 
+            <Button fx:id="deleteButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToDeleteUser" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 10;" text="XÓA TÀI KHOẢN" />
         </VBox>
     </right>
 </BorderPane>

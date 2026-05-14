@@ -6,10 +6,11 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox prefWidth="420.0" spacing="20.0" style="-fx-background-color: linear-gradient(to right, #e0f7ff, #ffffff, #d6f0ff); -fx-border-color: linear-gradient(to right, #e0f7ff, #ffffff, #d6f0ff); -fx-border-width: 2;" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminUpdateController">
+<VBox prefWidth="420.0" spacing="20.0" style="-fx-background-color: linear-gradient(to right, #e0f7ff, #ffffff, #d6f0ff); -fx-border-color: #b3c6ff;" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminUpdateController">
    <padding>
       <Insets bottom="20.0" left="25.0" right="25.0" top="20.0" />
    </padding>
+
    <children>
       <HBox prefHeight="100.0" prefWidth="388.0">
          <children>
@@ -18,13 +19,14 @@
                   <Image url="@../../assets/Logo.png" />
                </image>
             </ImageView>
-            <Label alignment="CENTER" prefHeight="100.0" prefWidth="288.0" style="-fx-text-fill: linear-gradient(to right, blue, purple);" text="Thông Tin Admin" textFill="#2c3e50">
+            <Label alignment="CENTER" prefHeight="100.0" prefWidth="288.0" style="-fx-text-fill: linear-gradient(to right, purple, #2f80ed);" text="Thông Tin Admin">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
          </children>
       </HBox>
+
       <GridPane hgap="15.0" vgap="15.0">
          <columnConstraints>
             <ColumnConstraints hgrow="SOMETIMES" maxWidth="120.0" minWidth="10.0" prefWidth="100.0" />
@@ -37,13 +39,16 @@
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
          </rowConstraints>
          <children>
-            <Label style="-fx-font-weight: bold;" text="Tên đăng nhập:" GridPane.rowIndex="0" />
-            <TextField fx:id="txtName" style="-fx-background-radius: 5; -fx-border-color: #b3c6ff; -fx-border-radius: 5; -fx-background-color: #ffffff;" GridPane.columnIndex="1" />
-            <Label style="-fx-font-weight: bold;" text="Email: " GridPane.rowIndex="1" />
-            <TextField fx:id="txtEmail" style="-fx-background-radius: 5; -fx-border-color: #b3c6ff; -fx-border-radius: 5; -fx-background-color: #ffffff;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-            <Label style="-fx-font-weight: bold;" text="Số điện thoại: " GridPane.rowIndex="2" />
-            <TextField fx:id="txtPhone" style="-fx-background-radius: 5; -fx-border-color: #b3c6ff; -fx-border-radius: 5; -fx-background-color: #ffffff;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-            <Label style="-fx-font-weight: bold;" text="Vai trò:" GridPane.rowIndex="3" />
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #333366;" text="Tên đăng nhập:" GridPane.rowIndex="0" />
+            <TextField fx:id="txtName" style="-fx-background-radius: 8; -fx-border-color: #b3c6ff; -fx-border-radius: 8; -fx-background-color: #ffffff; -fx-padding: 7;" GridPane.columnIndex="1" />
+
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #333366;" text="Email:" GridPane.rowIndex="1" />
+            <TextField fx:id="txtEmail" style="-fx-background-radius: 8; -fx-border-color: #b3c6ff; -fx-border-radius: 8; -fx-background-color: #ffffff; -fx-padding: 7;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #333366;" text="Số điện thoại:" GridPane.rowIndex="2" />
+            <TextField fx:id="txtPhone" style="-fx-background-radius: 8; -fx-border-color: #b3c6ff; -fx-border-radius: 8; -fx-background-color: #ffffff; -fx-padding: 7;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
+            <Label style="-fx-font-weight: bold; -fx-text-fill: #333366;" text="Vai trò:" GridPane.rowIndex="3" />
             <Label text="ADMIN" textFill="#d93838" GridPane.columnIndex="1" GridPane.rowIndex="3">
                <font>
                   <Font name="System Bold" size="15.0" />
@@ -51,13 +56,14 @@
             </Label>
          </children>
       </GridPane>
+
       <HBox alignment="CENTER_RIGHT" spacing="15.0">
          <VBox.margin>
             <Insets top="10.0" />
          </VBox.margin>
          <children>
-            <Button fx:id="btnCancel" cancelButton="true" mnemonicParsing="false" prefWidth="90.0" style="-fx-background-color: #95a5a6; -fx-text-fill: white; -fx-font-weight: bold;" text="Hủy bỏ" />
-            <Button fx:id="btnSave" defaultButton="true" mnemonicParsing="false" onAction="#handleUpdateInfo" prefWidth="110.0" style="-fx-background-color: #27ae60; -fx-text-fill: white; -fx-font-weight: bold;" text="Lưu thay đổi" />
+            <Button fx:id="btnCancel" cancelButton="true" mnemonicParsing="false" prefWidth="90.0" style="-fx-background-color: #95a5a6; -fx-background-radius: 8; -fx-text-fill: white; -fx-font-weight: bold;" text="Hủy bỏ" />
+            <Button fx:id="btnSave" defaultButton="true" mnemonicParsing="false" onAction="#handleUpdateInfo" prefWidth="110.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-background-radius: 8; -fx-text-fill: white; -fx-font-weight: bold;" text="Lưu thay đổi" />
          </children>
       </HBox>
    </children>
