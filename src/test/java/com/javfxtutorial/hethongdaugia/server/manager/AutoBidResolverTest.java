@@ -106,6 +106,19 @@ class AutoBidResolverTest {
         }
 
         @Test
+        void sameMaxBidCurrentWinnerKeepsLeadAndPriceMovesToMaxBid() throws Exception {
+            Auction auction = auction("100", "10", 1);
+            AutoBidConfig currentWinner = bot(1, "alice", "300", true, EARLY);
+            AutoBidConfig challenger = bot(2, "bob", "300", true, LATE);
+
+            AutoBidResult result = runAutoBid(auction, List.of(challenger, currentWinner));
+
+            assertBid(result, 1, "300");
+            assertEquals(1, auction.getWinnerId());
+            assertEquals(new BigDecimal("300"), auction.getCurrentPrice());
+        }
+
+        @Test
         void finalAmountIsClampedToWinnerMaxBid() throws Exception {
             Auction auction = auction("100", "10", 9);
             AutoBidConfig winner = bot(1, "alice", "205", true, EARLY);

@@ -24,6 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -141,6 +142,7 @@ public class AuctionManagerTest {
             auction.setWinnerId(9);
             auction.setStartingTime(LocalDateTime.now().minusMinutes(5));
             auction.setEndingTime(LocalDateTime.now().plusMinutes(5));
+            auction.setStatus(AuctionStatus.RUNNING);
             TestStateSupport.activeAuctions(auctionManager).put(100, auction);
 
             AutoBidConfig early = new AutoBidConfig(1, "A", 100, new BigDecimal("100"), true);
@@ -168,6 +170,38 @@ public class AuctionManagerTest {
                 assertEquals(1, bidCaptor.getValue().getBidderId());
                 assertEquals(new BigDecimal("100"), bidCaptor.getValue().getAmount());
                 verify(auctionDAO).update(auction);
+            }
+        }
+
+        @Test
+        void placeBid_rejectsAuctionBeforeStartAndDoesNotPersistBid() throws Exception {
+            Auction auction = new Auction();
+            auction.setAuctionId(101);
+            auction.setCurrentPrice(new BigDecimal("100"));
+            auction.setStepPrice(new BigDecimal("10"));
+            auction.setWinningPrice(new BigDecimal("100"));
+            auction.setStartingTime(LocalDateTime.now().plusMinutes(5));
+            auction.setEndingTime(LocalDateTime.now().plusHours(1));
+            auction.setStatus(AuctionStatus.NOT_START);
+            TestStateSupport.activeAuctions(auctionManager).put(101, auction);
+
+            BidTransaction bid = new BidTransaction();
+            bid.setAuctionId(101);
+            bid.setBidderId(1);
+            bid.setAmount(new BigDecimal("200"));
+
+            AuctionDAO auctionDAO = mock(AuctionDAO.class);
+            BidDAO bidDAO = mock(BidDAO.class);
+            ParticipatedAuctionDAO participatedAuctionDAO = mock(ParticipatedAuctionDAO.class);
+
+            try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
+                 MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+                 MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                         mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+                assertFalse(auctionManager.placeBid(bid, null));
+
+                verify(bidDAO, never()).insertBid(any(BidTransaction.class));
+                verify(participatedAuctionDAO, never()).insert(any(BidTransaction.class));
             }
         }
     }

@@ -9,13 +9,17 @@ import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.RegisterToAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand;
+import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
@@ -26,8 +30,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 
 class CommandContractTest {
     private AuctionManager manager;
@@ -125,9 +132,14 @@ class CommandContractTest {
         }
 
         @Test
-        void placeBidCommand_missingBidThrowsNullPointerException() {
+        void placeBidCommand_missingBidReturnsFailureResponse() {
             PlaceBidCommand command = new PlaceBidCommand();
-            assertThrows(NullPointerException.class, command::handle);
+
+            Response response = command.handle();
+
+            assertFalse(response.isSuccess());
+            assertNull(response.getPayLoad());
+            assertSame(command, response.getCommand());
         }
     }
 
@@ -143,6 +155,31 @@ class CommandContractTest {
             assertFalse(response.isSuccess());
             assertNull(response.getPayLoad());
             assertSame(command, response.getCommand());
+        }
+
+        @Test
+        void updateProfileCommand_successResponseKeepsCommandForClientDispatch() {
+            UpdateProfileCommand command = new UpdateProfileCommand();
+            command.addData("userId", 1);
+            command.addData("username", "Alice Nguyen");
+            command.addData("email", "alice.new@example.com");
+            command.addData("phone", "0999999999");
+            command.addData("avt", "avatar.png");
+
+            UserDAO userDAO = mock(UserDAO.class);
+            when(userDAO.selectById(1)).thenReturn(
+                    new User(1, "Alice", "secret", "alice@example.com", "0900000000", AccountType.USER, "old.png")
+            );
+            when(userDAO.update(any(User.class))).thenReturn(1);
+
+            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+                Response response = command.handle();
+
+                assertTrue(response.isSuccess());
+                assertSame(command, response.getCommand());
+            }
         }
     }
 

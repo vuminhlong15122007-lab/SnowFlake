@@ -4,6 +4,7 @@ import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -55,6 +56,7 @@ public class ClientHandler extends Thread implements BidListener {
                 throw new RuntimeException(ex);
             }
         } finally {
+            AuctionManager.getInstance().unregisterListenerFromAll(this);
             ClientHandlerContextHolder.clear();
             if (clientSocket != null) {
                 try {

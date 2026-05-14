@@ -36,6 +36,7 @@ public class ServerConnection {
     try {
       out.writeObject(cmd);
       out.flush();
+      out.reset();
     } catch (Exception e) {
       System.out.println(e.getMessage());
       e.printStackTrace();
@@ -53,9 +54,6 @@ public class ServerConnection {
   }
 
   public boolean isConnected() {
-    if (instance.clientSocket == null) {
-      return false;
-    }
-    return true;
+    return clientSocket != null && clientSocket.isConnected() && !clientSocket.isClosed();
   }
 }

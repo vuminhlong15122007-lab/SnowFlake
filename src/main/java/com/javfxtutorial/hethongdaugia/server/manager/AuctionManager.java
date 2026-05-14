@@ -1,7 +1,5 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
-import com.javfxtutorial.hethongdaugia.client.controller.ParticipatedAuctionController;
-import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
@@ -83,8 +81,17 @@ public class AuctionManager {
     // ─────────────────────────────────────────────────
     // PLACE BID — logic chính
     // ─────────────────────────────────────────────────
+    public void unregisterListenerFromAll(BidListener listener) {
+        if (listener == null) return;
+        auctionSubscribers.values().forEach(list -> list.remove(listener));
+    }
+
     public synchronized boolean placeBid(BidTransaction bid,
                                          ClientHandler senderThread) {
+        if (bid == null || bid.getAmount() == null) {
+            return false;
+        }
+
         // 1. Lấy auction từ RAM
         Auction auction = activeAuctions.get(bid.getAuctionId());
 
@@ -97,6 +104,12 @@ public class AuctionManager {
         System.out.println("Đã lấy xong auction từ bidAuctionId");
 
         // 3. Kiểm tra hợp lệ
+        AuctionStatus status = refreshAuctionStatus(auction);
+        if (status != AuctionStatus.RUNNING) {
+            System.out.println("Phiên đấu giá đang trong trạng thái RUNNING");
+            return false;
+        }
+
         if (!checkValidBid(auction, bid.getAmount())) {
             System.out.println("Giá không hợp lệ");
             return false; // giá không hợp lệ
@@ -118,8 +131,7 @@ public class AuctionManager {
         if (secondsLeft <= ANTI_SNIPE_X_SECONDS && secondsLeft > 0) {
             endTimeNew = endingTime.plusSeconds(ANTI_SNIPE_Y_SECONDS);
             auction.setEndingTime(endTimeNew);
-            System.out.println("GIA HAN PHIEN DAU GIA THANH CONG");
-            AuctionDAO.getInstance().update(auction);
+            System.out.println("GIA HẠN PHIÊN ĐẤU GIÁ THÀNH CÔNG");
         } else {
             endTimeNew = endingTime;
         }
@@ -239,7 +251,6 @@ public class AuctionManager {
         });
 
         AutoBidConfig winnerBot = eligibleBots.getFirst();
-        if (winnerBot.getUserId() == auction.getWinnerId()) return;
 
         // logic của autobid đây hehe
 //        Nếu max cao nhất > max cao thứ hai:
@@ -252,6 +263,7 @@ public class AuctionManager {
         BigDecimal finalAmount;
 
         if (eligibleBots.size() == 1) {
+            if (winnerBot.getUserId() == auction.getWinnerId()) return;
             finalAmount = minRequired;
         } else {
             AutoBidConfig secondBot = eligibleBots.get(1);

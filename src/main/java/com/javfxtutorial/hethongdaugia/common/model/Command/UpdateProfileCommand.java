@@ -17,7 +17,7 @@ public class UpdateProfileCommand extends Command {
 
             User updateUser = UserManager.getInstance().updateUserProfile(userId, name, email, phone, avatar);
             if (updateUser != null) {
-                return new Response(true, "Cap nhat thanh cong", updateUser);
+                return new Response(true, "Cap nhat thanh cong", updateUser, this);
             }
             return new Response(false, "Cap nhat that bai", null, this);
         } catch (Exception e) {
