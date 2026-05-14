@@ -28,11 +28,6 @@ public class UserManager {
         return null;
     }
 
-    public boolean checkExistedUsername(String username) {
-        User user = UserDAO.getInstance().selectByUsername(username);
-        return user != null;
-    }
-
     public User updateUserProfile(int userId, String username, String email, String phone, String avt) {
         User oldUser = UserDAO.getInstance().selectById(userId);
         if (oldUser == null) {
