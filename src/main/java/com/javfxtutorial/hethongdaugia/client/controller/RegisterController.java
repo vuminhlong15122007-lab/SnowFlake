@@ -8,6 +8,7 @@ import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import javafx.scene.control.CheckBox;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,6 +17,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -31,7 +33,14 @@ public class RegisterController implements ResponseListener {
     @FXML private PasswordField Password;
     @FXML private PasswordField Confirm_Password;
     @FXML private Label message;
+    @FXML private TextField PasswordVisible;
+    @FXML private TextField ConfirmPasswordVisible;
+    @FXML private CheckBox agreeCheckBox;
+
+    private boolean passwordShown = false;
+    private boolean confirmPasswordShown = false;
     ActionEvent signUpEvent;
+
     private Command cmd;
 
     @FXML
@@ -91,6 +100,61 @@ public class RegisterController implements ResponseListener {
                 NetworkManager networkManager = NetworkManager.getInstance();
                 networkManager.register(AddAccountCommand.class, this);
             }
+        }
+    }
+
+    // ẩn hiện mkh
+    @FXML
+    public void togglePasswordVisibility(ActionEvent event) {
+        passwordShown = !passwordShown;
+        if (passwordShown) {
+            PasswordVisible.setText(Password.getText());
+            PasswordVisible.setVisible(true);
+            Password.setVisible(false);
+        } else {
+            Password.setText(PasswordVisible.getText());
+            Password.setVisible(true);
+            PasswordVisible.setVisible(false);
+        }
+    }
+    //ẩn hiện xác nhận mk
+    @FXML
+    public void toggleConfirmPasswordVisibility(ActionEvent event) {
+        confirmPasswordShown = !confirmPasswordShown;
+        if (confirmPasswordShown) {
+            ConfirmPasswordVisible.setText(Confirm_Password.getText());
+            ConfirmPasswordVisible.setVisible(true);
+            Confirm_Password.setVisible(false);
+        } else {
+            Confirm_Password.setText(ConfirmPasswordVisible.getText());
+            Confirm_Password.setVisible(true);
+            ConfirmPasswordVisible.setVisible(false);
+        }
+    }
+
+    // Mở popup đkhoan
+    @FXML
+    public void showTerms(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource(
+                    "/com/javfxtutorial/hethongdaugia/view/fxml/TermsPopup.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            TermsController termsController = loader.getController();
+
+            Stage termsStage = new Stage();
+            termsStage.setTitle("Điều khoản sử dụng SnowFox");
+            termsStage.initModality(Modality.APPLICATION_MODAL); //không thể bấm vào cửa sổ đăng ký phía sau cho đến khi đóng popup lại
+            termsStage.setScene(scene);
+
+            // nhận kq đý / Từ chối
+            termsController.setResultCallback(agreed -> {
+                agreeCheckBox.setSelected(agreed);
+            });
+
+            termsStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

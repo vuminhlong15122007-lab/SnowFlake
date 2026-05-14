@@ -9,23 +9,6 @@
     <children>
         <Pane style="-fx-background-color: linear-gradient(to right, #e0f7ff, #ffffff, #d6f0ff);" />
 
-        <!-- Popup điều khoản (ẩn mặc định) -->
-        <StackPane fx:id="termsOverlay" visible="false" style="-fx-background-color: rgba(0,0,0,0.45);">
-            <VBox alignment="CENTER" maxWidth="520.0" maxHeight="420.0" spacing="12.0"
-                  style="-fx-background-color: white; -fx-background-radius: 16; -fx-padding: 30; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.3), 20, 0, 0, 6);">
-                <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #2f80ed;" text="📋 Điều khoản sử dụng SnowFox" />
-                <Separator />
-                <ScrollPane prefHeight="260.0" fitToWidth="true" style="-fx-background: transparent; -fx-background-color: transparent;">
-                    <content>
-                        <Label wrapText="true" style="-fx-font-size: 13px; -fx-text-fill: #333;" text="1. Người dùng phải đủ 18 tuổi trở lên để đăng ký và tham gia đấu giá trên hệ thống SnowFox.&#10;&#10;2. Thông tin cá nhân cung cấp khi đăng ký phải chính xác, trung thực. Người dùng chịu hoàn toàn trách nhiệm với thông tin đã khai báo.&#10;&#10;3. Tài khoản chỉ được sử dụng bởi chính chủ sở hữu. Nghiêm cấm chia sẻ, cho thuê hoặc bán tài khoản cho người khác.&#10;&#10;4. Khi tham gia đấu giá, mỗi lần đặt giá được coi là một cam kết mua hàng. Người thắng cuộc có nghĩa vụ hoàn tất giao dịch.&#10;&#10;5. Nghiêm cấm các hành vi gian lận, thông đồng, hoặc cố tình thao túng kết quả đấu giá. Vi phạm sẽ bị khóa tài khoản vĩnh viễn.&#10;&#10;6. SnowFox bảo lưu quyền từ chối hoặc hủy bỏ bất kỳ phiên đấu giá nào nếu phát hiện dấu hiệu vi phạm.&#10;&#10;7. Thông tin thanh toán và giao dịch được bảo mật theo tiêu chuẩn bảo mật hiện hành.&#10;&#10;8. Bằng cách đăng ký, bạn đồng ý với toàn bộ các điều khoản và điều kiện nêu trên." />
-                    </content>
-                </ScrollPane>
-                <Button onAction="#closeTerms" prefWidth="150.0" prefHeight="36.0"
-                        style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 12; -fx-cursor: hand;"
-                        text="Đã hiểu, Đóng" />
-            </VBox>
-        </StackPane>
-
         <AnchorPane maxHeight="532.0" maxWidth="943.0" prefHeight="532.0" prefWidth="943.0">
             <children>
                 <VBox layoutX="50.0" layoutY="112.0" prefHeight="172.0" prefWidth="340.0" spacing="14.0">
@@ -72,7 +55,7 @@
 
                         <!-- Điều khoản -->
                         <HBox alignment="CENTER_LEFT" spacing="6.0">
-                            <CheckBox fx:id="agreeCheckBox" style="-fx-text-fill: #4e7ea8; -fx-font-weight: bold;" text="Tôi đồng ý với " />
+                            <CheckBox disable="true" fx:id="agreeCheckBox" style="-fx-text-fill: #4e7ea8; -fx-font-weight: bold;" text="Tôi đồng ý với " />
                             <Hyperlink onAction="#showTerms" style="-fx-text-fill: #2f80ed; -fx-font-weight: bold; -fx-padding: 0;" text="điều khoản sử dụng" />
                         </HBox>
 
