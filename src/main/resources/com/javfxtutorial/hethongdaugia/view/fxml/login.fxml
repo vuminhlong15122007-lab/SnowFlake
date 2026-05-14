@@ -11,33 +11,34 @@
 
         <AnchorPane maxHeight="556.0" maxWidth="985.0" prefHeight="556.0" prefWidth="985.0">
             <children>
-
-                <VBox alignment="CENTER" layoutX="50.0" layoutY="100.0" prefHeight="142.0" prefWidth="320.0" spacing="15">
+                <VBox alignment="CENTER" layoutX="50.0" layoutY="92.0" prefHeight="164.0" prefWidth="330.0" spacing="14.0">
                     <children>
                         <HBox alignment="CENTER">
                             <children>
-                                <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
+                                <ImageView fitHeight="108.0" fitWidth="108.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
                                         <Image url="@../../assets/Logo.png" />
                                     </image>
                                 </ImageView>
-                                <Label prefHeight="100.0" prefWidth="186.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: #56ccf2;" text="SnowFox" />
+                                <Label prefHeight="100.0" prefWidth="190.0" style="-fx-font-size: 36px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, purple, #2f80ed);" text="SnowFox" />
                             </children>
                         </HBox>
-                        <Label style="-fx-font-size: 18px; -fx-text-fill: #2f80ed; -fx-font-weight: bold;" text="Phát triển bởi SnowFlake Studio!" />
+                        <Label alignment="CENTER" maxWidth="320.0" style="-fx-font-size: 18px; -fx-text-fill: #2f80ed; -fx-font-weight: bold;" text="Phát triển bởi SnowFlake Studio!" wrapText="true" />
                     </children>
                 </VBox>
 
-                <VBox alignment="CENTER" layoutX="550.0" layoutY="33.0" prefHeight="496.0" prefWidth="358.0" spacing="15" style="-fx-background-color: rgba(255,255,255,0.6);                              -fx-background-radius: 25;                              -fx-padding: 30;                              -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 25, 0, 0, 10);">
+                <VBox alignment="CENTER" layoutX="550.0" layoutY="33.0" prefHeight="496.0" prefWidth="358.0" spacing="15.0" style="-fx-background-color: rgba(255,255,255,0.72); -fx-background-radius: 25; -fx-padding: 30; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 25, 0, 0, 10); -fx-border-color: #b3c6ff; -fx-border-radius: 25;">
                     <children>
-                        <Label style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #2b5876;" text="Login" />
-                        <TextField fx:id="Username" prefHeight="40" promptText="Username" style="-fx-background-radius: 10;" />
-                        <PasswordField fx:id="Password" prefHeight="40" promptText="Password" style="-fx-background-radius: 10;" />
+                        <Label style="-fx-font-size: 25px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, purple, #2f80ed);" text="Đăng nhập" />
 
-                        <Button fx:id="login" onAction="#clickLogin" prefHeight="40" prefWidth="220" style="-fx-background-radius: 20;                                        -fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed);                                        -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="LOGIN" />
+                        <TextField fx:id="Username" prefHeight="40.0" promptText="Tên đăng nhập" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-border-color: #b3c6ff; -fx-border-radius: 10; -fx-padding: 9;" />
+                        <PasswordField fx:id="Password" prefHeight="40.0" promptText="Mật khẩu" style="-fx-background-color: #ffffff; -fx-background-radius: 10; -fx-border-color: #b3c6ff; -fx-border-radius: 10; -fx-padding: 9;" />
 
-                        <Button id="sign_in" fx:id="sign_in" onAction="#clickCreateAccount" prefHeight="35" prefWidth="220" style="-fx-background-radius: 20; -fx-background-color: transparent;                                        -fx-border-color: #2f80ed; -fx-border-radius: 20;                                        -fx-text-fill: #2f80ed; -fx-cursor: hand;" text="CREATE ACCOUNT" />
-                  <Label fx:id="message" alignment="CENTER" prefHeight="18.0" prefWidth="272.0" textAlignment="CENTER" textFill="RED" />
+                        <Button fx:id="login" onAction="#clickLogin" prefHeight="40.0" prefWidth="220.0" style="-fx-background-radius: 20; -fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="ĐĂNG NHẬP" />
+
+                        <Button id="sign_in" fx:id="sign_in" onAction="#clickCreateAccount" prefHeight="35.0" prefWidth="220.0" style="-fx-background-radius: 20; -fx-background-color: transparent; -fx-border-color: #2f80ed; -fx-border-radius: 20; -fx-text-fill: #2f80ed; -fx-font-weight: bold; -fx-cursor: hand;" text="TẠO TÀI KHOẢN" />
+
+                        <Label fx:id="message" alignment="CENTER" prefHeight="18.0" prefWidth="272.0" textAlignment="CENTER" textFill="RED" />
                     </children>
                 </VBox>
             </children>
