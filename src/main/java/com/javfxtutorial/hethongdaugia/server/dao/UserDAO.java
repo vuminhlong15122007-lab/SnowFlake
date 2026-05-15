@@ -49,9 +49,14 @@ public class UserDAO implements DAOInterface<User> {
         } catch (SQLIntegrityConstraintViolationException e) {
             if (e.getErrorCode() == 1062) {
                 log.error("Lỗi: Dữ liệu bị trùng lặp!");
-                return -1;
+                if(e.getMessage().contains("user.unique_username")){
+                    return -1;
+                } else if(e.getMessage().contains("user.unique_sdt")){
+                    return -2;
+                } else if(e.getMessage().contains("user.unique_email")){
+                    return -3;
+                }
             }
-
         } catch (SQLException e) {
           log.error("Loi tao user: {}", e.getMessage());
         }
@@ -193,44 +198,6 @@ public class UserDAO implements DAOInterface<User> {
 
         return new User(id, name, passWord, email, sdt, accountType, avatar);
     }
-
-    public User selectBySdt(String sdt) {
-        String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE sdt = ?";
-
-        try (Connection connection = JDBCUtil.getConnection();
-             PreparedStatement pst = connection.prepareStatement(sql)) {
-            pst.setString(1, sdt);
-            try (ResultSet resultSet = pst.executeQuery()) {
-                if (resultSet.next()) {
-                    return mapUser(resultSet);
-                }
-            }
-        } catch (SQLException | IllegalArgumentException e) {
-            System.err.println("Lỗi lấy user theo sdt: " + e.getMessage());
-        }
-
-        return null;
-    }
-
-    public User selectByEmail (String email) {
-        String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE email = ?";
-
-        try (Connection connection = JDBCUtil.getConnection();
-             PreparedStatement pst = connection.prepareStatement(sql)) {
-            pst.setString(1, email);
-            try (ResultSet resultSet = pst.executeQuery()) {
-                if (resultSet.next()) {
-                    return mapUser(resultSet);
-                }
-            }
-        } catch (SQLException | IllegalArgumentException e) {
-            System.err.println("Lỗi lay user theo email: " + e.getMessage());
-        }
-
-        return null;
-    }
-
-
 
 
 }

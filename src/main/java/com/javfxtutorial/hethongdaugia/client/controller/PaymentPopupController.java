@@ -3,6 +3,7 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
@@ -17,6 +18,8 @@ public class PaymentPopupController {
     @FXML private Label lbWinningPrice;
     @FXML private Label lbAuctionId;
     @FXML private Label lbCountdown;
+    @FXML private Button onIdentify ;
+    private Runnable onConfirmed;
 
     private Auction auction;
 
@@ -54,5 +57,15 @@ public class PaymentPopupController {
     public void closePopup() {
         Stage stage = (Stage) lbProductName.getScene().getWindow();
         stage.close();
+    }
+
+    public void setOnConfirmed(Runnable callback) {
+        this.onConfirmed = callback;
+    }
+
+    @FXML
+    public void confirmPayment() {
+        if (onConfirmed != null) onConfirmed.run();
+        closePopup();
     }
 }

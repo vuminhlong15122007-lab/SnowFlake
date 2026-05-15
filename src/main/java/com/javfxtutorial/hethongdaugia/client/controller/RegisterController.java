@@ -5,7 +5,6 @@ import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Command.CheckSdtEmailCommand;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.scene.control.CheckBox;
@@ -51,7 +50,13 @@ public class RegisterController implements ResponseListener {
     public void clickSignUp(ActionEvent event) throws IOException, ClassNotFoundException {
         signUpEvent = event;
         String name = Username.getText();
-        String password = Password.getText();
+        String password = null;
+        if (passwordShown){
+            password = PasswordVisible.getText();
+        } else {
+            password = Password.getText();
+        }
+         Password.getText();
         String email = Email.getText();
         String sdt = PhoneNumber.getText();
         String confirmPassword = Confirm_Password.getText();
@@ -87,15 +92,10 @@ public class RegisterController implements ResponseListener {
             return;
         }
 
-        ServerConnection connect = NetworkManager.getConnection();
-        Command cm = new CheckSdtEmailCommand();
-        cm.addData("username", name);
-        cm.addData("password", password);
-        cm.addData("email", email);
-        cm.addData("sdt", sdt);
-        connect.sendCommand(cm);
-        NetworkManager.getInstance().register(CheckSdtEmailCommand.class, this);
-
+        if (!agreeCheckBox.isSelected()){
+            message.setText("Vui lòng đồng ý với điều khoản");
+            return;
+        }
 
         if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
             if (password.equals(confirmPassword)){
