@@ -15,6 +15,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -98,13 +99,14 @@ public class Edit_User_Popup_Controller implements ResponseListener {
             Stage stage = new Stage();
             stage.setTitle("Tạo Tài Khoản Thành Công");
             FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/fxml/SignUpSuccessPopup.fxml"));
-            stage.initStyle(StageStyle.DECORATED);
+            stage.initStyle(StageStyle.TRANSPARENT);
             Scene scene = null;
             try {
                 scene = new Scene(fxmlLoader.load());
             } catch (IOException e) {
                 throw new RuntimeException(e);
             }
+            scene.setFill(Color.TRANSPARENT);
             stage.setScene(scene);
             stage.show();
         }else{
