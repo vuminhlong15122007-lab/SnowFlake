@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client;
 
+import com.javfxtutorial.hethongdaugia.client.handler.GlobalExceptionHandler;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -10,6 +11,8 @@ import java.io.IOException;
 public class MainApplication extends Application {
     @Override
     public void start(Stage stage) throws IOException {
+        GlobalExceptionHandler.register();
+        GlobalExceptionHandler.registerForJavaFX();
         FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml"));
         Scene scene = new Scene(fxmlLoader.load());
         stage.setTitle("SnowFox");
