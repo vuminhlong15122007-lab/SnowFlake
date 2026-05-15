@@ -2,19 +2,22 @@ package com.javfxtutorial.hethongdaugia.server.dao;
 
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.List;
-
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ParticipatedAuctionDAO {
 
-  private ParticipatedAuctionDAO() {}
+  private static final Logger log = LoggerFactory.getLogger(ParticipatedAuctionDAO.class);
+
+  private ParticipatedAuctionDAO() {
+  }
+
   private static volatile ParticipatedAuctionDAO instance;
+
   public static ParticipatedAuctionDAO getInstance() {
     if (instance == null) {
       synchronized (ParticipatedAuctionDAO.class) {
@@ -37,6 +40,10 @@ public class ParticipatedAuctionDAO {
       pst.setInt(2, bid.getAuctionId());
 
       result = pst.executeUpdate();
+    } catch (SQLIntegrityConstraintViolationException e) {
+      if (e.getErrorCode() == 1602){
+        log.info("Người dùng đã đc ghi nhâ tham gia phiên đấu giá");
+      }
     } catch (SQLException e) {
       e.printStackTrace();
     }
