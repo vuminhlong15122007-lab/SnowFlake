@@ -235,7 +235,7 @@ public class ItemDAO implements DAOInterface<Item> {
       }
       case ItemCategory.ELECTRONICS -> {
         Electronics item2 = (Electronics) item;
-        String sql2 = "INSERT INTO electronic (item_id, brand, model) VALUES (?, ?, ?)";
+        String sql2 = "INSERT INTO electronics (item_id, brand, model) VALUES (?, ?, ?)";
         int result2 = 0;
         try (PreparedStatement pst = conn.prepareStatement(sql2)) {
           pst.setInt(1, item2.getItemId());
