@@ -152,9 +152,12 @@ public class LiveAuctionController implements  ResponseListener {
 
         // thời gian còn lại
         timer = new TimeLeft(lbTimeLeft, currentAuction.getEndingTime());
-        timer.setOnFinished(() -> { //Khi het h thif khoa nut dat gia lai
-            placeBidButton.setDisable(true); //vo hieu hoa nut chuyen sang mau xam mo
-            placeBidButton.setText("Đã kết thúc");
+        timer.setOnFinished(() -> {
+            placeBidButton.setDisable(true);
+            placeBidButton.setText("End");
+            autoBidToggle.setDisable(true);
+            priceInput_tf.setDisable(true);
+            autoMaxPrice_tf.setDisable(true);
         });
         timer.start();
     }

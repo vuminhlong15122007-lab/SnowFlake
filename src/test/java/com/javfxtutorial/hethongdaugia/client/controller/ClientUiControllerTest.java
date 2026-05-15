@@ -9,6 +9,7 @@ import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AutoBidCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.CheckSdtEmailCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.ResetPassWordCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
@@ -270,8 +271,8 @@ class ClientUiControllerTest {
                 fillRegisterForm(controller, "johndoe", "john@gmail.com", "password1", "password1", "0123456789");
                 controller.clickSignUp(null);
 
-                assertCommandSent(network.connection(), AddAccountCommand.class);
-                verify(network.manager()).register(AddAccountCommand.class, controller);
+                assertCommandSent(network.connection(), CheckSdtEmailCommand.class);
+                verify(network.manager()).register(CheckSdtEmailCommand.class, controller);
             }
         });
     }
