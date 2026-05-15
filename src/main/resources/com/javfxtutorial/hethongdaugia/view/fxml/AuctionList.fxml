@@ -14,41 +14,46 @@
             </ImageView>
             <Label prefHeight="32.0" prefWidth="186.0" style="-fx-font-size: 22px; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox Auction" />
             <Region prefHeight="50.0" prefWidth="585.0" HBox.hgrow="ALWAYS" />
-            <TextField fx:id="searchField" prefWidth="250" promptText="🔍  Tìm kiếm phiên đấu giá..." style="-fx-background-color: #ffffff; -fx-background-radius: 20; -fx-border-radius: 20; -fx-border-color: #dcdde1; -fx-padding: 8;" />
-            <Button style="-fx-background-color: #2f80ed; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 8 20;" text="🔍 Search" />
+            <HBox alignment="CENTER_LEFT" prefHeight="42.0" prefWidth="392.0" spacing="8.0" style="-fx-background-color: rgba(255,255,255,0.92); -fx-background-radius: 24; -fx-border-color: rgba(47,128,237,0.20); -fx-border-radius: 24; -fx-padding: 0 8 0 16; -fx-effect: dropshadow(gaussian, rgba(137,207,240,0.25), 12, 0, 0, 2);">
+                <Label style="-fx-font-size: 15px; -fx-text-fill: #2f80ed;" text="🔍" />
+                <TextField fx:id="searchField" promptText="Tìm kiếm phiên đấu giá..." style="-fx-background-color: transparent; -fx-font-size: 13px; -fx-text-fill: #26364d; -fx-prompt-text-fill: #7d91b3;" HBox.hgrow="ALWAYS" />
+                <Button prefHeight="32.0" prefWidth="86.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 18; -fx-cursor: hand;" text="Search" />
+            </HBox>
         </HBox>
     </top>
 
     <!-- ==================== MENU TRÁI ==================== -->
     <left>
-        <VBox spacing="5" style="-fx-background-color: #f0f8ff; -fx-padding: 15; -fx-pref-width: 200;">
-            <Label style="-fx-font-size: 16px; -fx-text-fill: #333366; -fx-font-weight: bold; -fx-padding: 0 0 10 0;" text="Trạng thái" />
+        <VBox prefHeight="606.0" prefWidth="263.0" spacing="5" style="-fx-background-color: #f0f8ff; -fx-padding: 15; -fx-pref-width: 200;">
+            <VBox spacing="8.0" style="-fx-background-color: rgba(255,255,255,0.72); -fx-background-radius: 22; -fx-border-color: rgba(137,207,240,0.35); -fx-border-radius: 22; -fx-padding: 14; -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.10), 12, 0, 0, 3);">
+                <Label alignment="CENTER" prefHeight="16.0" prefWidth="138.0" style="-fx-font-size: 11px; -fx-text-fill: #7d91b3; -fx-font-weight: bold;" text="BỘ LỌC TRẠNG THÁI" />
+                <Button fx:id="btnAll" prefHeight="42.0" prefWidth="210.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 14; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 16; -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.25), 10, 0, 0, 2);" text="📋   Tất cả phiên" />
+                <Button fx:id="btnUpcoming" prefHeight="42.0" prefWidth="210.0" style="-fx-background-color: white; -fx-text-fill: #667085; -fx-font-weight: bold; -fx-background-radius: 14; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 16; -fx-border-color: #dbeafe; -fx-border-radius: 14;" text="🕐   Sắp diễn ra" />
+                <Button fx:id="btnRunning" prefHeight="42.0" prefWidth="210.0" style="-fx-background-color: white; -fx-text-fill: #667085; -fx-font-weight: bold; -fx-background-radius: 14; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 16; -fx-border-color: #dbeafe; -fx-border-radius: 14;" text="🔴   Đang diễn ra" />
+                <Button fx:id="btnEnded" prefHeight="42.0" prefWidth="210.0" style="-fx-background-color: white; -fx-text-fill: #667085; -fx-font-weight: bold; -fx-background-radius: 14; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 16; -fx-border-color: #dbeafe; -fx-border-radius: 14;" text="✅   Đã kết thúc" />
+            </VBox>
 
-            <Button fx:id="btnAll" prefHeight="40.0" prefWidth="170.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15;" text="📋  Tất cả" />
-            <Button fx:id="btnUpcoming" prefHeight="40.0" prefWidth="170.0" style="-fx-background-color: white; -fx-text-fill: #7f8c8d; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15; -fx-border-color: #dcdde1; -fx-border-radius: 8;" text="🕐  Sắp diễn ra" />
-            <Button fx:id="btnRunning" prefHeight="40.0" prefWidth="170.0" style="-fx-background-color: white; -fx-text-fill: #7f8c8d; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15; -fx-border-color: #dcdde1; -fx-border-radius: 8;" text="🔴  Đang diễn ra" />
-            <Button fx:id="btnEnded" prefHeight="40.0" prefWidth="170.0" style="-fx-background-color: white; -fx-text-fill: #7f8c8d; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15; -fx-border-color: #dcdde1; -fx-border-radius: 8;" text="✅  Đã kết thúc" />
+            <VBox spacing="8.0" style="-fx-background-color: rgba(255,255,255,0.72); -fx-background-radius: 22; -fx-border-color: rgba(137,207,240,0.35); -fx-border-radius: 22; -fx-padding: 14; -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.09), 12, 0, 0, 3);">
+                <Label alignment="CENTER" prefHeight="16.0" prefWidth="153.0" style="-fx-font-size: 11px; -fx-text-fill: #7d91b3; -fx-font-weight: bold;" text="LOẠI SẢN PHẨM" />
+                <ComboBox fx:id="categoryFilter" prefHeight="40.0" prefWidth="210.0" promptText="Tất cả loại" style="-fx-background-color: white; -fx-border-color: #dbeafe; -fx-border-radius: 14; -fx-background-radius: 14; -fx-padding: 2 8 2 8;" />
+            </VBox>
 
-            <Separator style="-fx-padding: 10 0;" />
+            <VBox prefHeight="234.0" prefWidth="184.0" spacing="8.0" style="-fx-background-color: rgba(255,255,255,0.72); -fx-background-radius: 22; -fx-border-color: rgba(137,207,240,0.35); -fx-border-radius: 22; -fx-padding: 14; -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.09), 12, 0, 0, 3);">
+                <Label alignment="CENTER" prefHeight="16.0" prefWidth="140.0" style="-fx-font-size: 11px; -fx-text-fill: #7d91b3; -fx-font-weight: bold;" text="ĐIỀU HƯỚNG" />
+                <Button fx:id="btnHome" alignment="CENTER" contentDisplay="TOP" nodeOrientation="LEFT_TO_RIGHT" onAction="#btnHome" prefHeight="40.0" prefWidth="140.0" style="-fx-background-color: white; -fx-text-fill: #475467; -fx-font-weight: bold; -fx-alignment: CENTER-LEFT; -fx-background-radius: 14; -fx-padding: 0 0 0 16; -fx-border-color: #dbeafe; -fx-border-radius: 14;" text="Trang chủ" />
+                <Button fx:id="btnmanageProducts" onAction="#manageProducts" prefHeight="39.0" prefWidth="210.0" style="-fx-background-color: white; -fx-text-fill: #475467; -fx-font-weight: bold; -fx-background-radius: 14; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 16; -fx-border-color: #dbeafe; -fx-border-radius: 14;" text="Quản lý sản phẩm" />
+                <Button fx:id="btnprofile" onAction="#goToProfile" prefHeight="39.0" prefWidth="210.0" style="-fx-background-color: white; -fx-text-fill: #475467; -fx-font-weight: bold; -fx-background-radius: 14; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 16; -fx-border-color: #dbeafe; -fx-border-radius: 14;" text="Thông tin User" />
+                <Button fx:id="logOut1" onAction="#logOut1" prefHeight="39.0" prefWidth="210.0" style="-fx-background-color: #fff5f5; -fx-text-fill: #e74c3c; -fx-font-weight: bold; -fx-background-radius: 14; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 16; -fx-border-color: #ffd8d8; -fx-border-radius: 14;" text="Đăng xuất" />
+            </VBox>
 
-            <Label style="-fx-font-size: 16px; -fx-text-fill: #333366; -fx-font-weight: bold; -fx-padding: 0 0 10 0;" text="Loại sản phẩm" />
-
-            <ComboBox fx:id="categoryFilter" prefWidth="170.0" promptText="Tất cả loại " style="-fx-background-color: white; -fx-border-color: #dcdde1; -fx-border-radius: 8; -fx-background-radius: 8;" />
-
-            <Separator style="-fx-padding: 10 0;" />
-
-            <!-- Menu điều hướng -->
-            <Button fx:id="btnHome" onAction="#btnHome" prefHeight="40.0" prefWidth="170.0" style="-fx-background-color: white; -fx-text-fill: #7f8c8d; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15; -fx-border-color: #dcdde1; -fx-border-radius: 8;" text="🏠  Trang chủ" />
-            <Button fx:id="btnmanageProducts" onAction="#manageProducts" prefHeight="40.0" prefWidth="170.0" style="-fx-background-color: white; -fx-text-fill: #7f8c8d; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15; -fx-border-color: #dcdde1; -fx-border-radius: 8;" text="📦  Quản lý sản phẩm" />
-            <Button fx:id="btnprofile" onAction="#goToProfile" prefHeight="40.0" prefWidth="170.0" style="-fx-background-color: white; -fx-text-fill: #7f8c8d; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15; -fx-border-color: #dcdde1; -fx-border-radius: 8;" text="👤  Thông tin người dùng" />
-            <Button fx:id="logOut1" onAction="#logOut1" prefHeight="40.0" prefWidth="170.0" style="-fx-background-color: white; -fx-text-fill: #e74c3c; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15; -fx-border-color: #dcdde1; -fx-border-radius: 8;" text="🚪  Đăng xuất" />
+            <Region VBox.vgrow="ALWAYS" />
         </VBox>
     </left>
 
     <!-- ==================== NỘI DUNG CHÍNH ==================== -->
     <center>
         <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-padding: 0;">
-            <VBox spacing="15" style="-fx-padding: 20;">
+            <VBox prefHeight="606.0" prefWidth="1051.0" spacing="15" style="-fx-padding: 18 22 14 22; -fx-background-color: white;">
 
                 <!-- Tiêu đề + Kết quả -->
                 <HBox alignment="CENTER_LEFT">
@@ -57,7 +62,9 @@
                 </HBox>
 
                 <!-- ==================== DANH SÁCH PHIÊN ĐẤU GIÁ ==================== -->
-                <ListView fx:id="featuredProductList" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS" />
+                <StackPane style="-fx-background-color: rgba(255,255,255,0.68); -fx-background-radius: 30; -fx-border-color: rgba(137,207,240,0.42); -fx-border-radius: 30; -fx-padding: 13; -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.10), 16, 0, 0, 4);" VBox.vgrow="ALWAYS">
+                    <ListView fx:id="featuredProductList" style="-fx-background-color: transparent; -fx-control-inner-background: transparent; -fx-background-insets: 0; -fx-padding: 0;" />
+                </StackPane>
 
             </VBox>
         </ScrollPane>
