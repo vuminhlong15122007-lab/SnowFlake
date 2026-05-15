@@ -18,6 +18,8 @@ public enum ErrorCode {
 
     BID_AMOUNT_EXCEEDS_LIMIT("BID-004", "Giá đấu vượt quá giới hạn", 400),
 
+    BID_CONFLICT("BID-005", "Xung đột đấu giá", 409),
+
     //loi phien dau gia
 
     AUC_NOT_FOUND("AUC-001", "Không tìm thấy phiên đấu giá", 404),
