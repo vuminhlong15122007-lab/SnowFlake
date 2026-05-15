@@ -146,10 +146,6 @@ public class ParticipatedAuctionCellController implements ResponseListener {
 
         if (status == AuctionStatus.CLOSED) {
             openPaymentPopup();
-            auction.setStatus(AuctionStatus.PAID);
-            NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
-            Command cmd = new UpdateAuctionStatusCommand(auction);
-            NetworkManager.getConnection().sendCommand(cmd);
 
         } else if (status == AuctionStatus.RUNNING) {
             changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/LiveAuction.fxml");
@@ -168,16 +164,34 @@ public class ParticipatedAuctionCellController implements ResponseListener {
             PaymentPopupController popupController = loader.getController();
             popupController.setAuction(auction);
 
+            popupController.setOnConfirmed(() -> {
+                auction.setStatus(AuctionStatus.PAID);
+
+                NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
+                NetworkManager.getConnection().sendCommand(new UpdateAuctionStatusCommand(auction));
+
+                // Update UI ngay lập tức — không cần đợi server
+                Platform.runLater(() -> updateUI(AuctionStatus.PAID));
+            });
+
             Stage popupStage = new Stage();
             popupStage.initModality(Modality.APPLICATION_MODAL);
-            popupStage.setTitle("Thanh toán đấu giá");
             popupStage.setScene(new Scene(root));
-            popupStage.setResizable(false);
             popupStage.show();
         } catch (Exception e) {
             e.printStackTrace();
             showAlert("Lỗi", "Không thể mở cửa sổ thanh toán: " + e.getMessage());
         }
+    }
+
+    private void updateUI(AuctionStatus auctionStatus) {
+        Platform.runLater(() -> {
+            hideCountdown();
+
+            actionButton.setDisable(true);
+            actionButton.setText("ĐÃ THANH TOÁN");
+            actionButton.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white;" + "-fx-font-weight: bold; -fx-background-radius: 25;");
+        });
     }
 
     @Override
