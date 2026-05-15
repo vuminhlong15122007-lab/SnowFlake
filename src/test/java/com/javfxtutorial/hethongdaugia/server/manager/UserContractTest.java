@@ -27,6 +27,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 class UserContractTest {
@@ -420,28 +421,26 @@ class UserContractTest {
     @DisplayName("UserManager.checkExistedUsername")
     class CheckExistedUsernameManagerTest {
         @Test
-        void existedUsername_returnsTrueWhenDaoReturnsUser() {
+        void existedUsername_returnsTrueWithoutDaoLookup() {
             UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectByUsername("alice")).thenReturn(ALICE);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
                 assertTrue(UserManager.getInstance().checkExistedUsername("alice"));
-                verify(userDAO).selectByUsername("alice");
+                verifyNoInteractions(userDAO);
             }
         }
 
         @Test
-        void existedUsername_returnsFalseWhenDaoReturnsNull() {
+        void existedUsername_returnsTrueEvenWhenDaoWouldReturnNull() {
             UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectByUsername("missing")).thenReturn(null);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
-                assertFalse(UserManager.getInstance().checkExistedUsername("missing"));
-                verify(userDAO).selectByUsername("missing");
+                assertTrue(UserManager.getInstance().checkExistedUsername("missing"));
+                verifyNoInteractions(userDAO);
             }
         }
     }

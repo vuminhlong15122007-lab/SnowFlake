@@ -9,6 +9,7 @@ import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AutoBidCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.CheckSdtEmailCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.ResetPassWordCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
@@ -52,6 +53,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
@@ -270,7 +272,8 @@ class ClientUiControllerTest {
                 fillRegisterForm(controller, "johndoe", "john@gmail.com", "password1", "password1", "0123456789");
                 controller.clickSignUp(null);
 
-                assertCommandSent(network.connection(), AddAccountCommand.class);
+                assertCommandsSent(network.connection(), CheckSdtEmailCommand.class, AddAccountCommand.class);
+                verify(network.manager()).register(CheckSdtEmailCommand.class, controller);
                 verify(network.manager()).register(AddAccountCommand.class, controller);
             }
         });
@@ -615,6 +618,20 @@ class ClientUiControllerTest {
 
         verify(connection).sendCommand(captor.capture());
         assertInstanceOf(expectedCommandType, captor.getValue());
+    }
+
+    @SafeVarargs
+    private static void assertCommandsSent(
+            ServerConnection connection,
+            Class<? extends com.javfxtutorial.hethongdaugia.common.network.Command>... expectedCommandTypes
+    ) throws Exception {
+        ArgumentCaptor<com.javfxtutorial.hethongdaugia.common.network.Command> captor =
+                ArgumentCaptor.forClass(com.javfxtutorial.hethongdaugia.common.network.Command.class);
+
+        verify(connection, times(expectedCommandTypes.length)).sendCommand(captor.capture());
+        for (int i = 0; i < expectedCommandTypes.length; i++) {
+            assertInstanceOf(expectedCommandTypes[i], captor.getAllValues().get(i));
+        }
     }
 
     private static Object controllerForSmokeTest(Class<?> type) {
