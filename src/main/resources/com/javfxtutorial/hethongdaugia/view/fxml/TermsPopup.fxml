@@ -7,7 +7,7 @@
 
     <!-- HEADER -->
     <HBox alignment="CENTER" prefHeight="70.0" style="-fx-background-color: linear-gradient(to right, #6a11cb, #2575fc); -fx-padding: 0 24;">
-        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;" text="📋  Điều khoản sử dụng SnowFox" />
+        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;" text=" Điều khoản sử dụng SnowFox" />
     </HBox>
 
     <!-- NỘI DUNG CUỘN -->
@@ -19,7 +19,7 @@
             <!-- Điều khoản 1: Độ tuổi -->
             <VBox spacing="4" style="-fx-background-color: #f0f7ff; -fx-background-radius: 10; -fx-padding: 14; -fx-border-color: #cce0ff; -fx-border-radius: 10;">
                 <HBox alignment="CENTER_LEFT" spacing="10">
-                    <Label style="-fx-font-size: 18px;"/>
+                    <Label style="-fx-font-size: 18px;" />
                     <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2575fc;" text="1.  Điều kiện độ tuổi" />
                 </HBox>
                 <Label style="-fx-font-size: 13px; -fx-text-fill: #333; -fx-padding: 4 0 0 28;" text="Người dùng phải đủ 18 tuổi trở lên để đăng ký và tham gia đấu giá trên hệ thống SnowFox. Trẻ vị thành niên không được phép tạo tài khoản." wrapText="true" />
@@ -41,7 +41,7 @@
             <!-- Điều khoản 3: Bảo mật tài khoản -->
             <VBox spacing="4" style="-fx-background-color: #f0fff4; -fx-background-radius: 10; -fx-padding: 14; -fx-border-color: #b2dfdb; -fx-border-radius: 10;">
                 <HBox alignment="CENTER_LEFT" spacing="10">
-                    <Label style="-fx-font-size: 18px;"/>
+                    <Label style="-fx-font-size: 18px;" />
                     <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #00796b;" text="3.  Bảo mật tài khoản" />
                 </HBox>
                 <Label style="-fx-font-size: 13px; -fx-text-fill: #333; -fx-padding: 4 0 0 28;" text="Tài khoản chỉ được sử dụng bởi chính chủ sở hữu. Nghiêm cấm chia sẻ, cho thuê hoặc bán tài khoản cho bất kỳ bên thứ ba nào. Người dùng có trách nhiệm bảo mật mật khẩu của mình." wrapText="true" />
@@ -85,7 +85,7 @@
             <!-- Điều khoản 7: Quyền của SnowFox -->
             <VBox spacing="4" style="-fx-background-color: #f5f0ff; -fx-background-radius: 10; -fx-padding: 14; -fx-border-color: #d4bbff; -fx-border-radius: 10;">
                 <HBox alignment="CENTER_LEFT" spacing="10">
-                    <Label style="-fx-font-size: 18px;"  />
+                    <Label style="-fx-font-size: 18px;" />
                     <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #6a11cb;" text="7.  Quyền của SnowFox" />
                 </HBox>
                 <Label style="-fx-font-size: 13px; -fx-text-fill: #333; -fx-padding: 4 0 0 28;" text="SnowFox bảo lưu quyền từ chối, tạm ngưng hoặc hủy bỏ bất kỳ phiên đấu giá nào nếu phát hiện dấu hiệu vi phạm điều khoản. Quyết định của SnowFox trong các trường hợp tranh chấp là quyết định cuối cùng." wrapText="true" />

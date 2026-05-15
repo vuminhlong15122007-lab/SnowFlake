@@ -31,7 +31,7 @@
             <StackPane prefHeight="92.0" prefWidth="92.0">
                 <Circle fill="linear-gradient(to bottom right, #66ccff, #b3c6ff)" radius="46.0" />
                 <Circle fill="white" opacity="0.28" radius="34.0" translateX="-8.0" translateY="-10.0" />
-                <ImageView fitHeight="54.0" fitWidth="54.0" pickOnBounds="true" preserveRatio="true">
+                <ImageView fitHeight="90.0" fitWidth="89.0" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@../../assets/ClassicLogo.png" />
                     </image>

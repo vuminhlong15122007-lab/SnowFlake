@@ -11,7 +11,7 @@
    <top>
       <HBox alignment="CENTER_LEFT" spacing="10" style="-fx-padding: 10; -fx-background-color: linear-gradient(to right, skyblue, #2f80ed);">
 
-         <ImageView fitHeight="35" fitWidth="35">
+         <ImageView fitHeight="50.0" fitWidth="50.0">
             <image>
                <Image url="@../../assets/ClassicLogo.png" />
             </image></ImageView>

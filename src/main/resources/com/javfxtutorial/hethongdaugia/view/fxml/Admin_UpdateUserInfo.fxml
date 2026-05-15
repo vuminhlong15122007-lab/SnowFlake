@@ -6,12 +6,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox prefHeight="470.0" prefWidth="433.0" spacing="20.0"
-      style="-fx-background-color: linear-gradient(to right, #e0f7ff, #ffffff, #d6f0ff); -fx-border-color: #b3c6ff; "
-      stylesheets="@../css/global.css"
-      xmlns="http://javafx.com/javafx/17.0.12"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.javfxtutorial.hethongdaugia.client.controller.Edit_User_Popup_Controller">
+<VBox prefHeight="470.0" prefWidth="433.0" spacing="20.0" style="-fx-background-color: linear-gradient(to right, #e0f7ff, #ffffff, #d6f0ff); -fx-border-color: #b3c6ff; " stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.Edit_User_Popup_Controller">
     <padding>
         <Insets bottom="20.0" left="25.0" right="25.0" top="20.0" />
     </padding>
@@ -20,12 +15,10 @@
         <children>
             <ImageView fitHeight="100.0" fitWidth="100.0" pickOnBounds="true" preserveRatio="true">
                 <image>
-                    <Image url="@../../assets/Logo.png" />
+                    <Image url="@../../assets/Beta01.png" />
                 </image>
             </ImageView>
-            <Label alignment="CENTER" prefHeight="100.0" prefWidth="288.0"
-                   style="-fx-text-fill: linear-gradient(to right, purple, #2f80ed);"
-                   text="Thông Tin Người Dùng">
+            <Label alignment="CENTER" prefHeight="100.0" prefWidth="288.0" style="-fx-text-fill: linear-gradient(to right, purple, #2f80ed);" text="Thông Tin Người Dùng">
                 <font>
                     <Font name="System Bold" size="18.0" />
                 </font>
@@ -46,24 +39,16 @@
         </rowConstraints>
 
         <Label style="-fx-font-weight: bold; -fx-text-fill: #333366;" text="Tên đăng nhập:" GridPane.rowIndex="0" />
-        <TextField fx:id="txtName" promptText="Nhập tên đăng nhập"
-                   style="-fx-background-radius: 8; -fx-border-color: #b3c6ff; -fx-border-radius: 8; -fx-background-color: #ffffff; -fx-padding: 7;"
-                   GridPane.columnIndex="1" />
+        <TextField fx:id="txtName" promptText="Nhập tên đăng nhập" style="-fx-background-radius: 8; -fx-border-color: #b3c6ff; -fx-border-radius: 8; -fx-background-color: #ffffff; -fx-padding: 7;" GridPane.columnIndex="1" />
 
         <Label style="-fx-font-weight: bold; -fx-text-fill: #333366;" text="Email:" GridPane.rowIndex="1" />
-        <TextField fx:id="txtEmail" promptText="example@gmail.com"
-                   style="-fx-background-radius: 8; -fx-border-color: #b3c6ff; -fx-border-radius: 8; -fx-background-color: #ffffff; -fx-padding: 7;"
-                   GridPane.columnIndex="1" GridPane.rowIndex="1" />
+        <TextField fx:id="txtEmail" promptText="example@gmail.com" style="-fx-background-radius: 8; -fx-border-color: #b3c6ff; -fx-border-radius: 8; -fx-background-color: #ffffff; -fx-padding: 7;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
         <Label style="-fx-font-weight: bold; -fx-text-fill: #333366;" text="Số điện thoại:" GridPane.rowIndex="2" />
-        <TextField fx:id="txtPhoneNumber" promptText="Nhập số điện thoại"
-                   style="-fx-background-radius: 8; -fx-border-color: #b3c6ff; -fx-border-radius: 8; -fx-background-color: #ffffff; -fx-padding: 7;"
-                   GridPane.columnIndex="1" GridPane.rowIndex="2" />
+        <TextField fx:id="txtPhoneNumber" promptText="Nhập số điện thoại" style="-fx-background-radius: 8; -fx-border-color: #b3c6ff; -fx-border-radius: 8; -fx-background-color: #ffffff; -fx-padding: 7;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
         <Label style="-fx-font-weight: bold; -fx-text-fill: #333366;" text="Vai trò:" GridPane.rowIndex="3" />
-        <ComboBox fx:id="cbRole" prefWidth="260.0" promptText="- Chọn vai trò -"
-                  style="-fx-background-radius: 8; -fx-border-color: #b3c6ff; -fx-border-radius: 8; -fx-background-color: #ffffff;"
-                  GridPane.columnIndex="1" GridPane.rowIndex="3" />
+        <ComboBox fx:id="cbRole" prefWidth="260.0" promptText="- Chọn vai trò -" style="-fx-background-radius: 8; -fx-border-color: #b3c6ff; -fx-border-radius: 8; -fx-background-color: #ffffff;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
     </GridPane>
 
     <Label fx:id="message" alignment="CENTER" prefHeight="18.0" prefWidth="375.0" textAlignment="CENTER" textFill="RED" />
@@ -72,11 +57,7 @@
         <VBox.margin>
             <Insets top="10.0" />
         </VBox.margin>
-        <Button fx:id="btnCancel" cancelButton="true" mnemonicParsing="false" prefWidth="90.0"
-                style="-fx-background-color: #95a5a6; -fx-background-radius: 8; -fx-text-fill: white; -fx-font-weight: bold;"
-                text="Hủy bỏ" />
-        <Button fx:id="btnSave" defaultButton="true" mnemonicParsing="false" onAction="#clickToSave" prefWidth="110.0"
-                style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-background-radius: 8; -fx-text-fill: white; -fx-font-weight: bold;"
-                text="Lưu thay đổi" />
+        <Button fx:id="btnCancel" cancelButton="true" mnemonicParsing="false" prefWidth="90.0" style="-fx-background-color: #95a5a6; -fx-background-radius: 8; -fx-text-fill: white; -fx-font-weight: bold;" text="Hủy bỏ" />
+        <Button fx:id="btnSave" defaultButton="true" mnemonicParsing="false" onAction="#clickToSave" prefWidth="110.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-background-radius: 8; -fx-text-fill: white; -fx-font-weight: bold;" text="Lưu thay đổi" />
     </HBox>
 </VBox>
