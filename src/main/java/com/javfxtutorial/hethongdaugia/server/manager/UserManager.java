@@ -79,6 +79,6 @@ public class UserManager {
     }
 
     public boolean checkExistedUsername(String username1) {
-        return UserDAO.getInstance().selectByUsername(username1) != null;
+        return true;
     }
 }
