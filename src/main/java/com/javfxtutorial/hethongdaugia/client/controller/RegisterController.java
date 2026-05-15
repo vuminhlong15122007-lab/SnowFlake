@@ -150,9 +150,12 @@ public class RegisterController implements ResponseListener {
                     "/com/javfxtutorial/hethongdaugia/view/fxml/TermsPopup.fxml"));
             Scene scene = new Scene(loader.load());
 
+
             TermsController termsController = loader.getController();
 
             Stage termsStage = new Stage();
+            termsStage.initStyle(StageStyle.TRANSPARENT);
+            scene.setFill(Color.TRANSPARENT);
             termsStage.setTitle("Điều khoản sử dụng SnowFox");
             termsStage.initModality(Modality.APPLICATION_MODAL); //không thể bấm vào cửa sổ đăng ký phía sau cho đến khi đóng popup lại
             termsStage.setScene(scene);
