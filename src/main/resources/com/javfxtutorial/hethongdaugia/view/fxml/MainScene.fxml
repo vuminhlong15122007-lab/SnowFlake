@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.Cursor?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.image.Image?>
@@ -9,30 +10,34 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
 <BorderPane prefHeight="720" prefWidth="1280" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.HomeController">
     <!-- Header -->
     <top>
-        <HBox alignment="CENTER_LEFT" prefHeight="41.0" prefWidth="900.0" spacing="20" style="-fx-background-color: linear-gradient(to right, #89CFF0,lavender); -fx-padding: 10;">
-         <ImageView fitHeight="70.0" fitWidth="70.0" pickOnBounds="true" preserveRatio="true">
+        <HBox alignment="CENTER_LEFT" prefHeight="37.0" prefWidth="1280.0" spacing="5" style="-fx-background-color: linear-gradient(to right, #89CFF0,lavender); -fx-padding: 10;">
+         <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
             <image>
                <Image url="@../../assets/Logo.png" />
             </image>
          </ImageView>
-            <Label style="-fx-font-size: 22px; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox" />
+            <Label prefHeight="32.0" prefWidth="97.0" style="-fx-font-size: 22px; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox" />
          <Pane prefHeight="71.0" prefWidth="927.0" />
+         <cursor>
+            <Cursor fx:constant="DEFAULT" />
+         </cursor>
         </HBox>
     </top>
 
     <!-- Sidebar menu -->
     <left>
-        <VBox spacing="15" style="-fx-padding: 15; -fx-pref-width: 180;">
+        <VBox spacing="15" style="-fx-padding: 15; -fx-background-color: #EAF2FF; -fx-pref-width: 180;">
             <Button fx:id="homeButton" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Trang chủ" />
             <Button fx:id="liveAuctionButton" onAction="#goAuction" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Phiên đấu giá " />
             <Button fx:id="manageProductsButton" onAction="#manageProducts" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Quản lý sản phẩm" />
             <Button fx:id="profileButton" onAction="#goToProfile" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Thông tin người dùng" />
          <Button onAction="#goParticipatedAuction" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Lịch sử đấu giá" />
-            <Button fx:id="logoutButton" onAction="#goLogin" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Đăng xuất" />
+            <Button fx:id="logoutButton" onAction="#goLogin" prefHeight="40.0" prefWidth="145.0" style="-fx-background-color: linear-gradient(to right, #ff6b6b, #ee5253); -fx-text-fill: white; -fx-font-weight: bold; fi-fx-border-radius: 6; -fx-background-radius: 6; -fx-text-ll: white;" text="Đăng xuất" />
         </VBox>
     </left>
 
@@ -40,30 +45,28 @@
     <center>
         <StackPane style="-fx-background-color: linear-gradient(to bottom right, #ffffff, #f0faff);">
             <children>
-                <VBox alignment="CENTER" prefHeight="375.0" prefWidth="418.0" spacing="5">
+                <VBox alignment="CENTER" prefHeight="375.0" prefWidth="418.0" spacing="5" style="-fx-background-color: radial-gradient(center 20% 20%, radius 40%, rgba(96,165,250,0.25), transparent),    radial-gradient(center 80% 80%, radius 45%, rgba(129,140,248,0.18), transparent),    #F8FBFF;">
                     <children>
-                  <Label prefHeight="85.0" prefWidth="231.0" style="-fx-font-size: 30; -fx-font-weight: bold; -fx-font-family: 'Lucida Handwriting', 'Mistral', 'Cursive'; -fx-text-fill: #34495e; -fx-effect: dropshadow(three-pass-box, rgba(47, 128, 237, 0.2), 15, 0, 0, 5); -fx-padding: 0 0 10 0;" text="WELCOME TO" textAlignment="CENTER" />
+                  <Label alignment="CENTER" prefHeight="85.0" prefWidth="231.0" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-font-family: Poppins; -fx-text-fill: #334155; -fx-effect: dropshadow(three-pass-box, rgba(47, 128, 237, 0.2), 15, 0, 0, 5); -fx-padding: 0 0 10 0;" text="--WELCOME TO--" textAlignment="CENTER">
+                     <font>
+                        <Font size="9.0" />
+                     </font></Label>
                   <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
+                        <ImageView fitHeight="212.0" fitWidth="249.0" pickOnBounds="true" preserveRatio="true">
                            <image>
-                              <Image url="@../../assets/Fox.gif" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../assets/Fox.gif" />
-                           </image>
-                        </ImageView>
-                        <ImageView fitHeight="150.0" fitWidth="200.0" pickOnBounds="true" preserveRatio="true">
-                           <image>
-                              <Image url="@../../assets/Fox.gif" />
+                              <Image url="@../../assets/Logo.png" />
                            </image>
                         </ImageView>
                      </children>
                   </HBox>
                         <Label style="-fx-font-size: 60px;                                       -fx-font-weight: bold;                                       -fx-font-family: 'Lucida Handwriting', 'Mistral', 'Cursive';                                       -fx-text-fill: linear-gradient(to right, #4b0082, #2f80ed);                                       -fx-effect: dropshadow(three-pass-box, rgba(47, 128, 237, 0.2), 15, 0, 0, 5);                                       -fx-padding: 0 0 10 0;" text="SnowFox" textAlignment="CENTER">
                         </Label>
+                  <Label alignment="CENTER" prefHeight="18.0" prefWidth="402.0" text="Đấu giá thông minh · Uy tín · Minh bạch" textAlignment="CENTER">
+                     <font>
+                        <Font size="16.0" />
+                     </font>
+                  </Label>
                     </children>
                 </VBox>
             </children>

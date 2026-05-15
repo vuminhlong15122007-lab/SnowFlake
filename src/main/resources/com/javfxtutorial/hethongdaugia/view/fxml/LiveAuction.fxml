@@ -8,8 +8,8 @@
 <BorderPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.LiveAuctionController">
 
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="15.0" style="-fx-padding: 10; -fx-background-color: linear-gradient(to right, #89CFF0, lavender); -fx-border-color: #b3c6ff; -fx-border-width: 0 0 1 0;">
-            <ImageView fitHeight="68.0" fitWidth="68.0" pickOnBounds="true" preserveRatio="true">
+        <HBox alignment="CENTER_LEFT" prefHeight="63.0" prefWidth="1280.0" spacing="5.0" style="-fx-padding: 10; -fx-background-color: linear-gradient(to right, #89CFF0, lavender); -fx-border-color: #b3c6ff; -fx-border-width: 0 0 1 0;">
+            <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                 <image>
                     <Image url="@../../assets/ClassicLogo.png" />
                 </image>

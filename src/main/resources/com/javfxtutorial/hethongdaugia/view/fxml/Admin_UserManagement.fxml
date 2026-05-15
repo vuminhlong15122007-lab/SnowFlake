@@ -8,14 +8,14 @@
 <BorderPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminUserController">
 
     <top>
-        <HBox alignment="CENTER_LEFT" prefHeight="57.0" prefWidth="1280.0" spacing="14.0" style="-fx-background-color: linear-gradient(to right, #f0f8ff, #ffffff, #e6f7ff); -fx-border-color: #b3c6ff; -fx-border-width: 0 0 1 0; -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.10), 8, 0, 0, 2);" BorderPane.alignment="CENTER">
+        <HBox alignment="CENTER_LEFT" prefHeight="58.0" prefWidth="1280.0" spacing="14.0" style="-fx-background-color: linear-gradient(to right, #f0f8ff, #ffffff, #e6f7ff); -fx-border-color: #b3c6ff; -fx-border-width: 0 0 1 0; -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.10), 8, 0, 0, 2);" BorderPane.alignment="CENTER">
             <padding>
                 <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
             </padding>
 
-            <ImageView fitHeight="62.0" fitWidth="62.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                 <image>
-                    <Image url="@../../assets/ClassicLogo.png" />
+                    <Image url="@../../assets/Beta01.png" />
                 </image>
             </ImageView>
 

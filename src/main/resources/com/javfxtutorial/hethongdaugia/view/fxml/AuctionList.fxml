@@ -8,12 +8,12 @@
 
     <!-- ==================== HEADER ==================== -->
     <top>
-        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-background-color: linear-gradient(to right, #89CFF0,lavender); -fx-padding: 15;">
+        <HBox alignment="CENTER_LEFT" spacing="5" style="-fx-background-color: linear-gradient(to right, #89CFF0,lavender); -fx-padding: 15;">
             <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                 <image><Image url="@../../assets/Logo.png" /></image>
             </ImageView>
-            <Label style="-fx-font-size: 22px; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox Auction" />
-            <Region HBox.hgrow="ALWAYS" />
+            <Label prefHeight="32.0" prefWidth="186.0" style="-fx-font-size: 22px; -fx-text-fill: linear-gradient(to right, purple, #2f80ed); -fx-font-weight: bold;" text="SnowFox Auction" />
+            <Region prefHeight="50.0" prefWidth="585.0" HBox.hgrow="ALWAYS" />
             <TextField fx:id="searchField" prefWidth="250" promptText="🔍  Tìm kiếm phiên đấu giá..." style="-fx-background-color: #ffffff; -fx-background-radius: 20; -fx-border-radius: 20; -fx-border-color: #dcdde1; -fx-padding: 8;" />
             <Button style="-fx-background-color: #2f80ed; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-padding: 8 20;" text="🔍 Search" />
         </HBox>
