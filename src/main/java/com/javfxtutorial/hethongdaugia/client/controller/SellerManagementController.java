@@ -128,10 +128,7 @@ public class SellerManagementController implements ResponseListener {
 
         item = factory.createItem(collectFormData());
         item.setItemId(itemId);
-        if (tGianKT.isBefore(LocalDateTime.now())){return new Auction(item, sellerId, initPrice, stepPrice, tGianBD, tGianKT, AuctionStatus.CLOSED);}
-        else if( tGianBD.isAfter(LocalDateTime.now())){return new Auction(item, sellerId, initPrice, stepPrice, tGianBD, tGianKT, AuctionStatus.NOT_START);}
-        return new Auction(item, sellerId, initPrice, stepPrice, tGianBD, tGianKT, AuctionStatus.RUNNING);
-
+       return new Auction(item, sellerId, initPrice, stepPrice, tGianBD, tGianKT, AuctionStatus.NOT_START);
     }
 
     private Map<String, String> collectFormData() {
@@ -194,6 +191,7 @@ public class SellerManagementController implements ResponseListener {
         endMinuteSpinner.getValueFactory().setValue(0);
 
         categoryComboBox.setValue(null);
+        Image.setImage(null);
         hideVbox(artFields);
         hideVbox(vehicleFields);
         hideVbox(electronicsFields);
@@ -356,7 +354,7 @@ public class SellerManagementController implements ResponseListener {
     public void hienThiChiTietSanPham(Auction auction){
         nameField.setText(auction.getItem().getName());          // Thu thap du lieu ma nguoi dung da nhap
         descriptionField.setText(auction.getItem().getDescription());
-        priceField.setText(String.valueOf(auction.getCurrentPrice())); // VD: "1500000"
+        priceField.setText(String.valueOf(auction.getCurrentPrice()));
         tfstepPrice.setText(String.valueOf(auction.getStepPrice()));
         LocalDateTime start = auction.getStartingTime();
         saveButton.setText("Sửa");

@@ -3,15 +3,14 @@ package com.javfxtutorial.hethongdaugia.server.dao;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.server.security.PasswordHasher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class UserDAO implements DAOInterface<User> {
+    private static final Logger log = LoggerFactory.getLogger(UserDAO.class);
     private static UserDAO instance;
     private UserDAO(){}
     public static UserDAO getInstance(){
@@ -38,17 +37,23 @@ public class UserDAO implements DAOInterface<User> {
             result = pst.executeUpdate();
 
             if (result > 0) {
-                System.out.println("Tao user thanh cong");
+                log.info("Tao user thanh cong");
                 try (ResultSet rs = pst.getGeneratedKeys()) {
                     if (rs.next()) {
                         user.setId(rs.getInt(1));
                     }
                 }
             } else {
-                System.out.println("Tao user that bai");
+                log.info("Tao user that bai");
             }
+        } catch (SQLIntegrityConstraintViolationException e) {
+            if (e.getErrorCode() == 1062) {
+                log.error("Lỗi: Dữ liệu bị trùng lặp!");
+                return -1;
+            }
+
         } catch (SQLException e) {
-            System.err.println("Loi tao user: " + e.getMessage());
+          log.error("Loi tao user: {}", e.getMessage());
         }
 
         return result;
@@ -140,22 +145,6 @@ public class UserDAO implements DAOInterface<User> {
         return null;
     }
 
-//    public ArrayList<User> selectByCondition(String condition) {
-//        ArrayList<User> result = new ArrayList<>();
-//        String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE " + condition;
-//        try (Connection connection = JDBCUtil.getConnection();
-//             Statement statement = connection.createStatement();
-//             ResultSet resultSet = statement.executeQuery(sql)) {
-//            while (resultSet.next()) {
-//                result.add(mapUser(resultSet));
-//            }
-//        } catch (SQLException | IllegalArgumentException e) {
-//            System.err.println("Loi lay user theo dieu kien: " + e.getMessage());
-//        }
-//
-//        return result;
-//    }
-
     public User selectByUsername(String username) {
         String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE name = ?";
 
@@ -168,7 +157,7 @@ public class UserDAO implements DAOInterface<User> {
                 }
             }
         } catch (SQLException | IllegalArgumentException e) {
-            System.err.println("Loi lay user theo username: " + e.getMessage());
+            System.err.println("Lỗi lấy user theo username: " + e.getMessage());
         }
 
         return null;
@@ -204,4 +193,44 @@ public class UserDAO implements DAOInterface<User> {
 
         return new User(id, name, passWord, email, sdt, accountType, avatar);
     }
+
+    public User selectBySdt(String sdt) {
+        String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE sdt = ?";
+
+        try (Connection connection = JDBCUtil.getConnection();
+             PreparedStatement pst = connection.prepareStatement(sql)) {
+            pst.setString(1, sdt);
+            try (ResultSet resultSet = pst.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapUser(resultSet);
+                }
+            }
+        } catch (SQLException | IllegalArgumentException e) {
+            System.err.println("Lỗi lấy user theo sdt: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+    public User selectByEmail (String email) {
+        String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE email = ?";
+
+        try (Connection connection = JDBCUtil.getConnection();
+             PreparedStatement pst = connection.prepareStatement(sql)) {
+            pst.setString(1, email);
+            try (ResultSet resultSet = pst.executeQuery()) {
+                if (resultSet.next()) {
+                    return mapUser(resultSet);
+                }
+            }
+        } catch (SQLException | IllegalArgumentException e) {
+            System.err.println("Lỗi lay user theo email: " + e.getMessage());
+        }
+
+        return null;
+    }
+
+
+
+
 }

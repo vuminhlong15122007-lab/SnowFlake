@@ -331,7 +331,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
 
   public ArrayList<Auction> selectByWinnerId(int winnerId) {      // lấy auction dựa trên sellerID
     ArrayList<Auction> list = new ArrayList<>();
-    String sql = BASE_QUERY + "WHERE a.winner_id = ?";
+    String sql = BASE_QUERY + " WHERE a.winner_id = ?";
 
     try (Connection conn = JDBCUtil.getConnection();
          PreparedStatement ps = conn.prepareStatement(sql)) {

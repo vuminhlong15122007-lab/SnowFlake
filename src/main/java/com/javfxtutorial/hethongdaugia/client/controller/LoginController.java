@@ -31,6 +31,8 @@ public class LoginController implements ResponseListener, Initializable {
     @FXML private PasswordField Password ;
     @FXML private Label message;
     ActionEvent loginEvent;
+    @FXML private TextField PasswordVisible;
+    private boolean passwordShown = false;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -80,6 +82,20 @@ public class LoginController implements ResponseListener, Initializable {
                 message.setText("Sai tên hoặc mật khẩu!");
                 log.info(rp.getMessage());
             });
+        }
+    }
+    // ẩn hiện mkh
+    @FXML
+    public void togglePasswordVisibility(ActionEvent event) {
+        passwordShown = !passwordShown;
+        if (passwordShown) {
+            PasswordVisible.setText(Password.getText());
+            PasswordVisible.setVisible(true);
+            Password.setVisible(false);
+        } else {
+            Password.setText(PasswordVisible.getText());
+            Password.setVisible(true);
+            PasswordVisible.setVisible(false);
         }
     }
 

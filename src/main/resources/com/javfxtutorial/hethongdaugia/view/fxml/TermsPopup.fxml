@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox prefHeight="580.0" prefWidth="560.0" spacing="0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.TermsController">
+
+    <!-- HEADER -->
+    <HBox alignment="CENTER" prefHeight="70.0" style="-fx-background-color: linear-gradient(to right, #6a11cb, #2575fc); -fx-padding: 0 24;">
+        <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: white;" text="📋  Điều khoản sử dụng SnowFox" />
+    </HBox>
+
+    <!-- NỘI DUNG CUỘN -->
+    <ScrollPane fx:id="scrollPane" fitToWidth="true" prefWidth="560.0" style="-fx-background: white; -fx-background-color: white; -fx-border-color: transparent;" VBox.vgrow="ALWAYS">
+        <VBox spacing="0" style="-fx-padding: 20 28 10 28; -fx-background-color: white;">
+
+            <Label style="-fx-font-size: 13px; -fx-text-fill: #666; -fx-font-style: italic; -fx-padding: 0 0 14 0;" text="Vui lòng đọc kỹ các điều khoản dưới đây trước khi đăng ký tài khoản." wrapText="true" />
+
+            <!-- Điều khoản 1: Độ tuổi -->
+            <VBox spacing="4" style="-fx-background-color: #f0f7ff; -fx-background-radius: 10; -fx-padding: 14; -fx-border-color: #cce0ff; -fx-border-radius: 10;">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label style="-fx-font-size: 18px;"/>
+                    <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2575fc;" text="1.  Điều kiện độ tuổi" />
+                </HBox>
+                <Label style="-fx-font-size: 13px; -fx-text-fill: #333; -fx-padding: 4 0 0 28;" text="Người dùng phải đủ 18 tuổi trở lên để đăng ký và tham gia đấu giá trên hệ thống SnowFox. Trẻ vị thành niên không được phép tạo tài khoản." wrapText="true" />
+            </VBox>
+
+            <Region prefHeight="10" />
+
+            <!-- Điều khoản 2: Thông tin cá nhân -->
+            <VBox spacing="4" style="-fx-background-color: #f5f0ff; -fx-background-radius: 10; -fx-padding: 14; -fx-border-color: #d4bbff; -fx-border-radius: 10;">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label style="-fx-font-size: 18px;" />
+                    <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #6a11cb;" text="2.  Thông tin cá nhân" />
+                </HBox>
+                <Label style="-fx-font-size: 13px; -fx-text-fill: #333; -fx-padding: 4 0 0 28;" text="Thông tin cá nhân cung cấp khi đăng ký phải chính xác và trung thực. Người dùng chịu hoàn toàn trách nhiệm pháp lý với thông tin đã khai báo. SnowFox có quyền xóa tài khoản nếu phát hiện thông tin giả mạo." wrapText="true" />
+            </VBox>
+
+            <Region prefHeight="10" />
+
+            <!-- Điều khoản 3: Bảo mật tài khoản -->
+            <VBox spacing="4" style="-fx-background-color: #f0fff4; -fx-background-radius: 10; -fx-padding: 14; -fx-border-color: #b2dfdb; -fx-border-radius: 10;">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label style="-fx-font-size: 18px;"/>
+                    <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #00796b;" text="3.  Bảo mật tài khoản" />
+                </HBox>
+                <Label style="-fx-font-size: 13px; -fx-text-fill: #333; -fx-padding: 4 0 0 28;" text="Tài khoản chỉ được sử dụng bởi chính chủ sở hữu. Nghiêm cấm chia sẻ, cho thuê hoặc bán tài khoản cho bất kỳ bên thứ ba nào. Người dùng có trách nhiệm bảo mật mật khẩu của mình." wrapText="true" />
+            </VBox>
+
+            <Region prefHeight="10" />
+
+            <!-- Điều khoản 4: Cam kết đấu giá -->
+            <VBox spacing="4" style="-fx-background-color: #fffbf0; -fx-background-radius: 10; -fx-padding: 14; -fx-border-color: #ffe082; -fx-border-radius: 10;">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label style="-fx-font-size: 18px;" />
+                    <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #f57c00;" text="4.  Cam kết đấu giá" />
+                </HBox>
+                <Label style="-fx-font-size: 13px; -fx-text-fill: #333; -fx-padding: 4 0 0 28;" text="Mỗi lần đặt giá được coi là một cam kết mua hàng ràng buộc pháp lý. Người thắng cuộc có nghĩa vụ hoàn tất giao dịch trong thời hạn quy định. Từ chối thanh toán sau khi thắng đấu giá sẽ bị xử lý theo quy định." wrapText="true" />
+            </VBox>
+
+            <Region prefHeight="10" />
+
+            <!-- Điều khoản 5: Nghiêm cấm gian lận -->
+            <VBox spacing="4" style="-fx-background-color: #fff0f0; -fx-background-radius: 10; -fx-padding: 14; -fx-border-color: #ffcdd2; -fx-border-radius: 10;">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label style="-fx-font-size: 18px;" />
+                    <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #c62828;" text="5.  Nghiêm cấm gian lận" />
+                </HBox>
+                <Label style="-fx-font-size: 13px; -fx-text-fill: #333; -fx-padding: 4 0 0 28;" text="Nghiêm cấm các hành vi gian lận, thông đồng, hoặc cố tình thao túng kết quả đấu giá dưới mọi hình thức. Vi phạm sẽ bị khóa tài khoản vĩnh viễn và có thể bị xử lý theo pháp luật hiện hành." wrapText="true" />
+            </VBox>
+
+            <Region prefHeight="10" />
+
+            <!-- Điều khoản 6: Bảo mật thanh toán -->
+            <VBox spacing="4" style="-fx-background-color: #f0f7ff; -fx-background-radius: 10; -fx-padding: 14; -fx-border-color: #cce0ff; -fx-border-radius: 10;">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label style="-fx-font-size: 18px;" />
+                    <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #2575fc;" text="6.  Bảo mật thanh toán" />
+                </HBox>
+                <Label style="-fx-font-size: 13px; -fx-text-fill: #333; -fx-padding: 4 0 0 28;" text="Thông tin thanh toán và giao dịch được bảo mật theo tiêu chuẩn mã hóa hiện hành. SnowFox cam kết không chia sẻ thông tin tài chính của người dùng cho bên thứ ba khi chưa được sự đồng ý." wrapText="true" />
+            </VBox>
+
+            <Region prefHeight="10" />
+
+            <!-- Điều khoản 7: Quyền của SnowFox -->
+            <VBox spacing="4" style="-fx-background-color: #f5f0ff; -fx-background-radius: 10; -fx-padding: 14; -fx-border-color: #d4bbff; -fx-border-radius: 10;">
+                <HBox alignment="CENTER_LEFT" spacing="10">
+                    <Label style="-fx-font-size: 18px;"  />
+                    <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #6a11cb;" text="7.  Quyền của SnowFox" />
+                </HBox>
+                <Label style="-fx-font-size: 13px; -fx-text-fill: #333; -fx-padding: 4 0 0 28;" text="SnowFox bảo lưu quyền từ chối, tạm ngưng hoặc hủy bỏ bất kỳ phiên đấu giá nào nếu phát hiện dấu hiệu vi phạm điều khoản. Quyết định của SnowFox trong các trường hợp tranh chấp là quyết định cuối cùng." wrapText="true" />
+            </VBox>
+
+            <Region prefHeight="16" />
+        </VBox>
+    </ScrollPane>
+
+    <!-- FOOTER -->
+    <VBox alignment="CENTER" spacing="10" style="-fx-padding: 14 24; -fx-background-color: #f8f9fa; -fx-border-color: #e0e0e0; -fx-border-width: 1 0 0 0;">
+        <Label style="-fx-font-size: 12px; -fx-text-fill: #888; -fx-font-style: italic;" text="Bằng cách bấm 'Đồng ý', bạn xác nhận đã đọc và chấp nhận toàn bộ điều khoản." wrapText="true" />
+        <HBox alignment="CENTER" spacing="12">
+            <Button onAction="#onDecline" prefHeight="38.0" prefWidth="140.0" style="-fx-background-color: white; -fx-border-color: #ccc; -fx-border-radius: 20; -fx-background-radius: 20; -fx-text-fill: #666; -fx-font-weight: bold; -fx-cursor: hand;" text="Từ chối" />
+            <Button onAction="#onAgree" prefHeight="38.0" prefWidth="140.0" style="-fx-background-color: linear-gradient(to right, #6a11cb, #2575fc); -fx-background-radius: 20; -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="✔  Đồng ý" />
+        </HBox>
+    </VBox>
+
+</VBox>

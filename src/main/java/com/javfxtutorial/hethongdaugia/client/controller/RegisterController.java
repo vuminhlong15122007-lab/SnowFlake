@@ -4,9 +4,11 @@ import com.javfxtutorial.hethongdaugia.client.MainApplication;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
-import com.javfxtutorial.hethongdaugia.common.model.Command.RegisterCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.CheckSdtEmailCommand;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import javafx.scene.control.CheckBox;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -16,6 +18,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -31,7 +34,16 @@ public class RegisterController implements ResponseListener {
     @FXML private PasswordField Password;
     @FXML private PasswordField Confirm_Password;
     @FXML private Label message;
+    @FXML private TextField PasswordVisible;
+    @FXML private TextField ConfirmPasswordVisible;
+    @FXML private CheckBox agreeCheckBox;
+
+    private boolean passwordShown = false;
+    private boolean confirmPasswordShown = false;
     ActionEvent signUpEvent;
+
+    private Command cmd;
+
     @FXML
     public void clickBackToLogin(ActionEvent event) {
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
@@ -75,20 +87,84 @@ public class RegisterController implements ResponseListener {
             return;
         }
 
+        ServerConnection connect = NetworkManager.getConnection();
+        Command cm = new CheckSdtEmailCommand();
+        cm.addData("username", name);
+        cm.addData("password", password);
+        cm.addData("email", email);
+        cm.addData("sdt", sdt);
+        connect.sendCommand(cm);
+        NetworkManager.getInstance().register(CheckSdtEmailCommand.class, this);
+
 
         if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
             if (password.equals(confirmPassword)){
                 ServerConnection connection = NetworkManager.getConnection();
-                Command cmd = new RegisterCommand();
+                Command cmd = new AddAccountCommand();
                 cmd.addData("username", name);
                 cmd.addData("password", password);
                 cmd.addData("email", email);
                 cmd.addData("sdt", sdt);
+                cmd.addData("accountType", "USER");
                 connection.sendCommand(cmd);
                 NetworkManager networkManager = NetworkManager.getInstance();
-                networkManager.register(RegisterCommand.class, this);
-
+                networkManager.register(AddAccountCommand.class, this);
             }
+        }
+    }
+
+    // ẩn hiện mkh
+    @FXML
+    public void togglePasswordVisibility(ActionEvent event) {
+        passwordShown = !passwordShown;
+        if (passwordShown) {
+            PasswordVisible.setText(Password.getText());
+            PasswordVisible.setVisible(true);
+            Password.setVisible(false);
+        } else {
+            Password.setText(PasswordVisible.getText());
+            Password.setVisible(true);
+            PasswordVisible.setVisible(false);
+        }
+    }
+    //ẩn hiện xác nhận mk
+    @FXML
+    public void toggleConfirmPasswordVisibility(ActionEvent event) {
+        confirmPasswordShown = !confirmPasswordShown;
+        if (confirmPasswordShown) {
+            ConfirmPasswordVisible.setText(Confirm_Password.getText());
+            ConfirmPasswordVisible.setVisible(true);
+            Confirm_Password.setVisible(false);
+        } else {
+            Confirm_Password.setText(ConfirmPasswordVisible.getText());
+            Confirm_Password.setVisible(true);
+            ConfirmPasswordVisible.setVisible(false);
+        }
+    }
+
+    // Mở popup đkhoan
+    @FXML
+    public void showTerms(ActionEvent event) {
+        try {
+            FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource(
+                    "/com/javfxtutorial/hethongdaugia/view/fxml/TermsPopup.fxml"));
+            Scene scene = new Scene(loader.load());
+
+            TermsController termsController = loader.getController();
+
+            Stage termsStage = new Stage();
+            termsStage.setTitle("Điều khoản sử dụng SnowFox");
+            termsStage.initModality(Modality.APPLICATION_MODAL); //không thể bấm vào cửa sổ đăng ký phía sau cho đến khi đóng popup lại
+            termsStage.setScene(scene);
+
+            // nhận kq đý / Từ chối
+            termsController.setResultCallback(agreed -> {
+                agreeCheckBox.setSelected(agreed);
+            });
+
+            termsStage.show();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -112,11 +188,13 @@ public class RegisterController implements ResponseListener {
             changeScene(signUpEvent,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
 
         }else{
-            showAlert("Đăng ký không thành công", rp.getMessage() , "False.gif");
+            message.setText(rp.getMessage());
         }
         });
         NetworkManager networkManager = NetworkManager.getInstance();
-        networkManager.unregister(RegisterCommand.class, this);
+        networkManager.unregister(AddAccountCommand.class, this);
     }
+
+
 }
 

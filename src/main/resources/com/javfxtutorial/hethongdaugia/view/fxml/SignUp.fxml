@@ -34,10 +34,30 @@
                         <TextField fx:id="Username" prefHeight="35.0" promptText="Tên người dùng" style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #b3c6ff; -fx-border-radius: 12; -fx-padding: 8;" />
                         <TextField fx:id="Email" prefHeight="35.0" promptText="Email" style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #b3c6ff; -fx-border-radius: 12; -fx-padding: 8;" />
                         <TextField fx:id="PhoneNumber" prefHeight="35.0" promptText="Số điện thoại" style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #b3c6ff; -fx-border-radius: 12; -fx-padding: 8;" />
-                        <PasswordField fx:id="Password" prefHeight="35.0" promptText="Mật khẩu" style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #b3c6ff; -fx-border-radius: 12; -fx-padding: 8;" />
-                        <PasswordField fx:id="Confirm_Password" prefHeight="35.0" promptText="Xác nhận mật khẩu" style="-fx-pref-width: 200; -fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #b3c6ff; -fx-border-radius: 12; -fx-padding: 8;" />
 
-                        <CheckBox style="-fx-text-fill: #4e7ea8; -fx-font-weight: bold;" text="Tôi đồng ý với điều khoản" />
+                        <!-- Ô mật khẩu + nút hiện/ẩn -->
+                        <StackPane prefHeight="35.0" maxWidth="355.0">
+                            <PasswordField fx:id="Password" prefHeight="35.0" prefWidth="355.0" promptText="Mật khẩu" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #b3c6ff; -fx-border-radius: 12; -fx-padding: 8;" />
+                            <TextField fx:id="PasswordVisible" prefHeight="35.0" prefWidth="355.0" promptText="Mật khẩu" visible="false" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #b3c6ff; -fx-border-radius: 12; -fx-padding: 8;" />
+                            <Button fx:id="togglePassword" onAction="#togglePasswordVisibility" prefWidth="30.0" prefHeight="24.0"
+                                    text="👁" StackPane.alignment="CENTER_RIGHT"
+                                    style="-fx-background-color: transparent; -fx-cursor: hand; -fx-font-size: 14px; -fx-padding: 0 8 0 0;" />
+                        </StackPane>
+
+                        <!-- Ô xác nhận mật khẩu + nút hiện/ẩn -->
+                        <StackPane prefHeight="35.0" maxWidth="355.0">
+                            <PasswordField fx:id="Confirm_Password" prefHeight="35.0" prefWidth="355.0" promptText="Xác nhận mật khẩu" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #b3c6ff; -fx-border-radius: 12; -fx-padding: 8;" />
+                            <TextField fx:id="ConfirmPasswordVisible" prefHeight="35.0" prefWidth="355.0" promptText="Xác nhận mật khẩu" visible="false" style="-fx-background-color: #ffffff; -fx-background-radius: 12; -fx-border-color: #b3c6ff; -fx-border-radius: 12; -fx-padding: 8;" />
+                            <Button fx:id="toggleConfirmPassword" onAction="#toggleConfirmPasswordVisibility" prefWidth="30.0" prefHeight="24.0"
+                                    text="👁" StackPane.alignment="CENTER_RIGHT"
+                                    style="-fx-background-color: transparent; -fx-cursor: hand; -fx-font-size: 14px; -fx-padding: 0 8 0 0;" />
+                        </StackPane>
+
+                        <!-- Điều khoản -->
+                        <HBox alignment="CENTER_LEFT" spacing="6.0">
+                            <CheckBox disable="true" fx:id="agreeCheckBox" style="-fx-text-fill: #4e7ea8; -fx-font-weight: bold;" text="Tôi đồng ý với " />
+                            <Hyperlink onAction="#showTerms" style="-fx-text-fill: #2f80ed; -fx-font-weight: bold; -fx-padding: 0;" text="điều khoản sử dụng" />
+                        </HBox>
 
                         <Button fx:id="Sign_up" onAction="#clickSignUp" prefHeight="38.0" prefWidth="200.0" style="-fx-background-radius: 20; -fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-cursor: hand;" text="ĐĂNG KÝ" />
 
