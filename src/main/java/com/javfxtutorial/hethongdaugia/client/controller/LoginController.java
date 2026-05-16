@@ -176,7 +176,7 @@ public class LoginController implements ResponseListener, Initializable {
                 ServerConnection serverConnection = NetworkManager.getConnection();
                 NetworkManager.getInstance().register(GetUnpaidAuctionCommand.class, this);
                 GetUnpaidAuctionCommand cmd =  new GetUnpaidAuctionCommand();
-                cmd.addData("user_id", usedId);
+                cmd.addData("userId", usedId);
                 serverConnection.sendCommand(cmd);
             } catch (Exception e) {
                 log.error("Lỗi check unpaid: {}", e.getMessage());

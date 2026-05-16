@@ -363,7 +363,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
 
   public ArrayList<Auction> selectUnpaidByWinnerId(int winnerId) throws DataException {
     ArrayList<Auction> list = new ArrayList<>();
-    String sql = BASE_QUERY + " WHERE a.winner_id = ? WHERE a.winner_id = ? AND a.auctionStatus = 'CLOSED'";
+    String sql = BASE_QUERY + " WHERE a.winner_id = ? AND a.auctionStatus = 'CLOSED'";
 
     try (Connection conn = JDBCUtil.getConnection();
          PreparedStatement ps = conn.prepareStatement(sql)) {
