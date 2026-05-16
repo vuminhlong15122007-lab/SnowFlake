@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.server.dao;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.data.*;
 import com.javfxtutorial.hethongdaugia.common.model.*;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
@@ -66,7 +67,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
   }
 
   @Override
-  public int insert(Auction auction) {
+  public int insert(Auction auction) throws DataException {
     int result = 0;
     String sql = "INSERT INTO Auction(item_id, seller_id, init_price, step_price, current_price, winning_price, starting_time, ending_time, auctionStatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
@@ -97,15 +98,14 @@ public class AuctionDAO implements DAOInterface<Auction> {
         System.out.println("Tạo Auction thất bại");
       }
     } catch (SQLException e) {
-      e.printStackTrace();
-      return 0; // ← thay thế
-
+      log.error("Lỗi SQL khi tạo Auction: {}", e.getMessage(), e);
+      throw new DataInsertException("Auction");
     }
     return result;
   }
 
   @Override
-  public int update(Auction auction) {
+  public int update(Auction auction)throws DataException {
     int result = 0;
     String sql = "UPDATE Auction SET winner_id = ?,init_price = ?, step_price = ?, current_price = ?, winning_price = ?, starting_time = ?, ending_time = ?, auctionStatus =? WHERE auction_id = ?";
 
@@ -129,17 +129,19 @@ public class AuctionDAO implements DAOInterface<Auction> {
         log.info("Cập nhật Auction thành công!");
       } else {
         log.info("Cập nhật thất bại: Không tìm thấy Auction với ID = {}", auction.getAuctionId());
+        throw new EntityNotFoundException("Auction", auction.getAuctionId());
+
       }
 
     } catch (SQLException e) {
-      e.printStackTrace();
-      throw new RuntimeException("Lỗi thao tác DB khi cập nhật Auction", e);
+      log.error("Lỗi SQL khi cập nhật Auction: {}", e.getMessage(), e);
+      throw new DataUpdateException(auction.getAuctionId(), "Auction", "update");
     }
     return result;
   }
 
   @Override
-  public int delete(Auction auction) {
+  public int delete(Auction auction) throws DataException {
     int result = 0;
     String sql = "DELETE FROM Auction WHERE auction_id = ?";
 
@@ -154,11 +156,13 @@ public class AuctionDAO implements DAOInterface<Auction> {
         log.info("Xóa Auction thành công");
       } else {
         log.info("Xóa thất bại");
+        throw new EntityNotFoundException("Auction", auction.getAuctionId());
+
       }
 
     } catch (SQLException e) {
-      e.printStackTrace();
-      throw new RuntimeException("Lỗi thao tác DB khi xóa Auction", e);
+      log.error("Lỗi SQL khi xóa Auction: {}", e.getMessage(), e);
+      throw new DataDeleteException(auction.getAuctionId(), "Auction", "delete");
     }
     return result;
   }
@@ -195,7 +199,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
   }
 
   @Override
-  public ArrayList<Auction> selectAll() {
+  public ArrayList<Auction> selectAll() throws DataException{
     ArrayList<Auction> list = new ArrayList<>();
     String sql = BASE_QUERY;
 
@@ -208,13 +212,14 @@ public class AuctionDAO implements DAOInterface<Auction> {
       }
       log.info("Đang lấy tất cả Auction từ database");
     } catch (SQLException e) {
-      e.printStackTrace();
+      log.error("Lỗi SQL khi lấy danh sách Auction: {}", e.getMessage(), e);
+      throw new QueryExecutionException(BASE_QUERY);
     }
     return list;
   }
 
   @Override
-  public Auction selectById(int auctionId) {
+  public Auction selectById(int auctionId) throws DataException {
     String sql = BASE_QUERY + " WHERE a.auction_id = ?";
 
     try (Connection conn = JDBCUtil.getConnection();
@@ -230,13 +235,14 @@ public class AuctionDAO implements DAOInterface<Auction> {
       }
 
     } catch (SQLException e) {
-      e.printStackTrace();
+      log.error("Lỗi SQL khi lấy Auction: {}", e.getMessage(), e);
+      throw new QueryExecutionException(sql);
     }
     return null;
   }
 
 
-  public Auction selectByItemId(int id) {      // lấy auction dựa trên itemId
+  public Auction selectByItemId(int id) throws DataException {      // lấy auction dựa trên itemId
     Auction result = null;
     String sql = "SELECT * FROM Auction WHERE item_id = ?";
 
@@ -253,15 +259,16 @@ public class AuctionDAO implements DAOInterface<Auction> {
       }
 
     } catch (SQLException e) {
-      e.printStackTrace();
-      throw new RuntimeException("Lỗi thao tác DB khi lấy Auction theo Item ID", e);
-    } catch (NullPointerException e) {
+      log.error("Lỗi SQL khi lấy Auction theo sellerId: {}", e.getMessage(), e);
+      throw new QueryExecutionException(sql);
+    }
+     catch (NullPointerException e) {
       System.out.println("dữ liệu k tồn tại");
     }
     return result;
   }
 
-  public ArrayList<Auction> selectBySellerId(int id) {      // lấy auction dựa trên sellerID
+  public ArrayList<Auction> selectBySellerId(int id) throws DataException {      // lấy auction dựa trên sellerID
     ArrayList<Auction> list = new ArrayList<>();
     String sql = BASE_QUERY + " WHERE i.idseller = ?";
 
@@ -278,8 +285,8 @@ public class AuctionDAO implements DAOInterface<Auction> {
       }
 
     } catch (SQLException e) {
-      e.printStackTrace();
-      throw new RuntimeException("Lỗi thao tác DB khi lấy Auction theo Seller ID", e);
+      log.error("Lỗi SQL khi lấy Auction theo sellerId: {}", e.getMessage(), e);
+      throw new QueryExecutionException(sql);
     } catch (NullPointerException e) {
       System.out.println("dữ liệu k tồn tại");
     }
@@ -329,7 +336,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
     return baseItem;
   }
 
-  public ArrayList<Auction> selectByWinnerId(int winnerId) {      // lấy auction dựa trên sellerID
+  public ArrayList<Auction> selectByWinnerId(int winnerId) throws DataException{      // lấy auction dựa trên sellerID
     ArrayList<Auction> list = new ArrayList<>();
     String sql = BASE_QUERY + " WHERE a.winner_id = ?";
 
@@ -345,9 +352,9 @@ public class AuctionDAO implements DAOInterface<Auction> {
         }
       }
 
-    } catch (SQLException e) {
-      e.printStackTrace();
-      throw new RuntimeException("Lỗi thao tác DB khi lấy Auction theo Winner ID", e);
+    }catch (SQLException e) {
+      log.error("Lỗi SQL khi lấy Auction theo winnerID: {}", e.getMessage(), e);
+      throw new QueryExecutionException(sql);
     } catch (NullPointerException e) {
       System.out.println("dữ liệu k tồn tại");
     }

@@ -4,6 +4,8 @@ import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetParticipatedAuctionsByBidderCommand;
@@ -22,6 +24,8 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
@@ -29,6 +33,7 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 public class ParticipatedAuctionController implements  ResponseListener {
+  private static final Logger log = LoggerFactory.getLogger(ParticipatedAuctionController.class);
   @FXML private Button btnAll;
   @FXML private Button btnCTToan;
   @FXML private Button btnDTGia;
@@ -45,7 +50,7 @@ public class ParticipatedAuctionController implements  ResponseListener {
   @FXML void goMenu(ActionEvent event) { changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");}
 
   @FXML
-  public void initialize() {
+  public void initialize() throws ConnectionFailedException {
     VBox.setVgrow(productList, Priority.ALWAYS);
     productList.setMaxWidth(Double.MAX_VALUE);
     productList.setCellFactory(lv -> new ParticipatedAuctionCell());
@@ -130,14 +135,21 @@ public class ParticipatedAuctionController implements  ResponseListener {
     }
   }
 
-  public void loadData() {
+  public void loadData() throws ConnectionFailedException {
     Command cmd = new GetParticipatedAuctionsByBidderCommand();
     cmd.addData("currentUserId", ClientModel.getInstance().getCurrentUser().getId());
     ServerConnection connection = NetworkManager.getConnection();
     new Thread(() -> {
-      connection.sendCommand(cmd);
-      NetworkManager networkManager = NetworkManager.getInstance();
-      networkManager.register(GetParticipatedAuctionsByBidderCommand.class, this);
+      try{
+        connection.sendCommand(cmd);
+        NetworkManager networkManager = NetworkManager.getInstance();
+        networkManager.register(GetParticipatedAuctionsByBidderCommand.class, this);} catch (SendFailedException e) {
+        log.error("Lỗi gửi: {}", e.getMessage());
+        Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "Loading.gif"));
+      } catch (Exception e) {
+        log.error("Lỗi load data: {}", e.getMessage(), e);
+        Platform.runLater(() -> showAlert("Lỗi", "Tải dữ liệu thất bại", "Loading.gif"));
+      }
     }).start();
   }
 

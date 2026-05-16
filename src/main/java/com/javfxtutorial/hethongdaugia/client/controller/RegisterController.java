@@ -4,6 +4,9 @@ import com.javfxtutorial.hethongdaugia.client.MainApplication;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DuplicateKeyException;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
@@ -20,6 +23,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -27,6 +32,8 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 public class RegisterController implements ResponseListener {
+    private static final Logger log = LoggerFactory.getLogger(RegisterController.class);
+
     @FXML public TextField PhoneNumber;
     @FXML private TextField Username;
     @FXML private TextField Email;
@@ -99,16 +106,29 @@ public class RegisterController implements ResponseListener {
 
         if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
             if (password.equals(confirmPassword)){
-                ServerConnection connection = NetworkManager.getConnection();
-                Command cmd = new AddAccountCommand();
-                cmd.addData("username", name);
-                cmd.addData("password", password);
-                cmd.addData("email", email);
-                cmd.addData("sdt", sdt);
-                cmd.addData("accountType", "USER");
-                connection.sendCommand(cmd);
-                NetworkManager networkManager = NetworkManager.getInstance();
-                networkManager.register(AddAccountCommand.class, this);
+                String finalPassword = password;
+                new Thread(() -> {
+                    try {
+                        ServerConnection connection = NetworkManager.getConnection();
+                        Command cmd = new AddAccountCommand();
+                        cmd.addData("username", name);
+                        cmd.addData("password", finalPassword);
+                        cmd.addData("email", email);
+                        cmd.addData("sdt", sdt);
+                        cmd.addData("accountType", "USER");
+                        connection.sendCommand(cmd);
+                        NetworkManager networkManager = NetworkManager.getInstance();
+                        networkManager.register(AddAccountCommand.class, this);} catch (ConnectionFailedException e) {
+                        log.error("Lỗi kết nối: {}", e.getMessage());
+                        Platform.runLater(() -> message.setText("Lỗi kết nối server"));
+                    } catch (SendFailedException e) {
+                        log.error("Lỗi gửi: {}", e.getMessage());
+                        Platform.runLater(() -> message.setText("Không thể gửi yêu cầu đăng ký"));
+                    } catch (Exception e) {
+                        log.error("Lỗi đăng ký: {}", e.getMessage(), e);
+                        Platform.runLater(() -> message.setText("Lỗi: " + e.getMessage()));
+                    }
+                }).start();
             }
         }
     }
@@ -167,7 +187,8 @@ public class RegisterController implements ResponseListener {
 
             termsStage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Lỗi mở popup terms: {}", e.getMessage(), e);
+            showAlert("Lỗi", "Không thể mở điều khoản");
         }
     }
 
@@ -177,18 +198,19 @@ public class RegisterController implements ResponseListener {
         if (rp.isSuccess()){
             Stage stage = new Stage();
             stage.setTitle("Tạo Tài Khoản Thành Công");
-            FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/fxml/SignUpSuccessPopup.fxml"));
-            stage.initStyle(StageStyle.TRANSPARENT);
-            Scene scene = null;
-            try {
+            try{
+                FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/fxml/SignUpSuccessPopup.fxml"));
+                stage.initStyle(StageStyle.TRANSPARENT);
+                Scene scene = null;
                 scene = new Scene(fxmlLoader.load());
-            } catch (IOException e) {
-                throw new RuntimeException(e);
+                scene.setFill(Color.TRANSPARENT);
+                stage.setScene(scene);
+                stage.show();
+                changeScene(signUpEvent,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");} catch (IOException e) {
+                log.error("Lỗi load popup thành công: {}", e.getMessage(), e);
+                showAlert("Thành công", "Đăng ký thành công! Vui lòng đăng nhập.");
+                changeScene(signUpEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
             }
-            scene.setFill(Color.TRANSPARENT);
-            stage.setScene(scene);
-            stage.show();
-            changeScene(signUpEvent,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
 
         }else{
             message.setText(rp.getMessage());

@@ -3,11 +3,15 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteUserCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllUsersCommand;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,6 +22,8 @@ import javafx.scene.*;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.net.URL;
@@ -27,6 +33,8 @@ import java.util.ResourceBundle;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.*;
 
 public class AdminUserController implements Initializable, ResponseListener {
+    private static final Logger log = LoggerFactory.getLogger(AdminUserController.class);
+
     @FXML private TableView<User> userTable;
     @FXML private TableColumn<User, Integer> colId;
     @FXML private TableColumn<User, String> colUsername;
@@ -50,11 +58,21 @@ public class AdminUserController implements Initializable, ResponseListener {
     @FXML
     private void loadUserData() {
         new Thread(() -> {
-            ServerConnection connection = NetworkManager.getConnection();
-            Command cmd = new GetAllUsersCommand();
-            connection.sendCommand(cmd);
-            NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.register(GetAllUsersCommand.class, this);
+            try{
+                ServerConnection connection = NetworkManager.getConnection();
+                Command cmd = new GetAllUsersCommand();
+                connection.sendCommand(cmd);
+                NetworkManager networkManager = NetworkManager.getInstance();
+                networkManager.register(GetAllUsersCommand.class, this);} catch (ConnectionFailedException e) {
+                log.error("Lỗi kết nối: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối đến server"));
+            } catch (SendFailedException e) {
+                log.error("Lỗi gửi: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu"));
+            } catch (Exception e) {
+                log.error("Lỗi tải user: {}", e.getMessage(), e);
+                Platform.runLater(() -> showAlert("Lỗi", "Tải dữ liệu thất bại"));
+            }
         }).start();
     }
     @FXML
@@ -69,7 +87,7 @@ public class AdminUserController implements Initializable, ResponseListener {
     }
 
     @FXML
-    public void clickToDeleteUser() throws IOException {
+    public void clickToDeleteUser() throws IOException, ConnectionFailedException, SendFailedException {
         ServerConnection connection =NetworkManager.getConnection();
         selectUser = userTable.getSelectionModel().getSelectedItem();
         if (selectUser == null){

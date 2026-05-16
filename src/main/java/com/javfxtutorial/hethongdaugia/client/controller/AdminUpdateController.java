@@ -4,6 +4,8 @@ import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand;
 import com.javfxtutorial.hethongdaugia.common.model.User;
@@ -51,7 +53,7 @@ public class AdminUpdateController implements ResponseListener {
     }
     //cap nhat thong tin
     @FXML
-    public void handleUpdateInfo() throws IOException, ClassNotFoundException {
+    public void handleUpdateInfo() throws IOException, ClassNotFoundException, ConnectionFailedException, SendFailedException {
         //lay du lieu tu o nhap
         String newName = txtName.getText();
         String newEmail = txtEmail.getText();

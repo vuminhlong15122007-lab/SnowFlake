@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.server.dao;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.data.*;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.server.security.PasswordHasher;
@@ -22,7 +23,7 @@ public class UserDAO implements DAOInterface<User> {
 
 
     @Override
-    public int insert(User user) {
+    public int insert(User user) throws DataException {
         int result = 0;
         String sql = "INSERT INTO User (name, passWord, email, sdt, accountType, avt) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -43,9 +44,8 @@ public class UserDAO implements DAOInterface<User> {
                         user.setId(rs.getInt(1));
                     }
                 }
-            } else {
-                log.info("Tao user that bai");
             }
+            throw new DataInsertException("User");
         } catch (SQLIntegrityConstraintViolationException e) {
             if (e.getErrorCode() == 1062) {
                 log.error("Lỗi: Dữ liệu bị trùng lặp!");
@@ -58,14 +58,17 @@ public class UserDAO implements DAOInterface<User> {
                 }
             }
         } catch (SQLException e) {
-          log.error("Loi tao user: {}", e.getMessage());
+            log.error("Lỗi tạo user: {}", e.getMessage(), e);
+            if (e.getSQLState().equals("23505")) {
+                throw new DuplicateKeyException("User", "user name",user.getName());
+            }
+            throw new DataInsertException("User");
         }
-
         return result;
     }
 
     @Override
-    public int update(User user) {
+    public int update(User user) throws DataException {
         int result = 0;
         String sql = "UPDATE User SET name = ?, passWord = ?, email = ?, sdt = ?, accountType = ?, avt = ? WHERE id = ?";
 
@@ -82,18 +85,17 @@ public class UserDAO implements DAOInterface<User> {
 
             if (result > 0) {
                 System.out.println("Cap nhat user thanh cong");
-            } else {
-                System.out.println("Cap nhat that bai (co the ID khong ton tai trong database).");
+                return result;
             }
+            throw new EntityNotFoundException("User", user.getId());
         } catch (SQLException e) {
-            System.err.println("Loi cap nhat user: " + e.getMessage());
-        }
+            log.error("Lỗi cập nhật user: {}", e.getMessage(), e);
+            throw new DataUpdateException(user.getId(), user.getName(), "info");        }
 
-        return result;
     }
 
     @Override
-    public int delete(User user) {
+    public int delete(User user) throws DataException{
         int result = 0;
         String sql = "DELETE FROM User WHERE id = ?";
 
@@ -103,18 +105,18 @@ public class UserDAO implements DAOInterface<User> {
             result = pst.executeUpdate();
             if (result > 0) {
                 System.out.println("Xoa user thanh cong");
-            } else {
-                System.out.println("Xoa that bai");
+                return result;
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+            throw new EntityNotFoundException("User", user.getId());
 
-        return result;
+        } catch (SQLException e) {
+            log.error("Lỗi xóa user: {}", e.getMessage(), e);
+            throw new DataDeleteException(user.getId(), "User", "User");
+        }
     }
 
     @Override
-    public ArrayList<User> selectAll() {
+    public ArrayList<User> selectAll() throws DataException {
         ArrayList<User> result = new ArrayList<>();
         String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user";
 
@@ -125,14 +127,15 @@ public class UserDAO implements DAOInterface<User> {
                 result.add(mapUser(resultSet));
             }
         } catch (SQLException | IllegalArgumentException e) {
-            System.err.println("Loi truy van danh sach user: " + e.getMessage());
+            log.error("Lỗi lấy danh sách user: {}", e.getMessage(), e);
+            throw new QueryExecutionException(sql);
         }
 
         return result;
     }
 
     @Override
-    public User selectById(int userId) {
+    public User selectById(int userId) throws DataException{
         String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE id = ?";
 
         try (Connection connection = JDBCUtil.getConnection();
@@ -143,14 +146,16 @@ public class UserDAO implements DAOInterface<User> {
                     return mapUser(resultSet);
                 }
             }
+            throw new EntityNotFoundException("User", userId);
+
         } catch (SQLException | IllegalArgumentException e) {
-            System.err.println("Loi lay user theo id: " + e.getMessage());
+            log.error("Lỗi lấy user theo id: {}", e.getMessage(), e);
+            throw new QueryExecutionException(sql);
         }
 
-        return null;
     }
 
-    public User selectByUsername(String username) {
+    public User selectByUsername(String username) throws DataException{
         String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE name = ?";
 
         try (Connection connection = JDBCUtil.getConnection();
@@ -161,14 +166,15 @@ public class UserDAO implements DAOInterface<User> {
                     return mapUser(resultSet);
                 }
             }
-        } catch (SQLException | IllegalArgumentException e) {
-            System.err.println("Lỗi lấy user theo username: " + e.getMessage());
-        }
+            throw new EntityNotFoundException("User", username);
 
-        return null;
+        } catch (SQLException | IllegalArgumentException e) {
+            log.error("Lỗi lấy user theo username: {}", e.getMessage(), e);
+            throw new QueryExecutionException(sql);
+        }
     }
 
-    public int getSize() {
+    public int getSize() throws DataException {
         String sql = "SELECT COUNT(*) FROM User";
 
         try (Connection connection = JDBCUtil.getConnection();
@@ -178,7 +184,8 @@ public class UserDAO implements DAOInterface<User> {
                 return rs.getInt(1);
             }
         } catch (SQLException e) {
-            System.err.println("Loi dem user: " + e.getMessage());
+            log.error("Lỗi khi đếm user: {}", e.getMessage(), e);
+            throw new QueryExecutionException(sql);
         }
 
         return 0;

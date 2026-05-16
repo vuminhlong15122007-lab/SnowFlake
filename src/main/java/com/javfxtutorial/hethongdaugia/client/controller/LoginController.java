@@ -36,8 +36,11 @@ public class LoginController implements ResponseListener, Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        try{
         ServerConnection connection = NetworkManager.getConnection();
-        NetworkManager.getInstance().start();
+        NetworkManager.getInstance().start();} catch (Exception e) {
+            log.error("Lỗi khởi tạo NetworkManager: {}", e.getMessage(), e);
+            message.setText("Không thể kết nối đến server");        }
     }
 
     @FXML
@@ -46,13 +49,17 @@ public class LoginController implements ResponseListener, Initializable {
         String username = Username.getText();
         String password = Password.getText();
         new Thread(() -> {
-            ServerConnection connection = NetworkManager.getConnection();
-            Command cmd = new LoginCommand();
-            cmd.addData("username", username);
-            cmd.addData("password", password);
-            NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.register(cmd.getClass(), this );
-            connection.sendCommand(cmd);
+            try{
+                ServerConnection connection = NetworkManager.getConnection();
+                Command cmd = new LoginCommand();
+                cmd.addData("username", username);
+                cmd.addData("password", password);
+                NetworkManager networkManager = NetworkManager.getInstance();
+                networkManager.register(cmd.getClass(), this );
+                connection.sendCommand(cmd);}catch (Exception e) {
+                log.error("Lỗi khi gửi login request: {}", e.getMessage(), e);
+                Platform.runLater(() -> message.setText("Lỗi kết nối: " + e.getMessage()));
+            }
         }).start();
     }
 

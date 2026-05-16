@@ -6,6 +6,8 @@ import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
@@ -13,6 +15,7 @@ import com.javfxtutorial.hethongdaugia.common.model.Command.*;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import com.javfxtutorial.hethongdaugia.server.network.ServerApp;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -24,6 +27,8 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.util.StringConverter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -36,6 +41,8 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 
 public class LiveAuctionController implements  ResponseListener {
+    private static final Logger log = LoggerFactory.getLogger(LiveAuctionController.class);
+
     private volatile boolean running = true;
     Auction currentAuction;
     ServerConnection connection = NetworkManager.getConnection();
@@ -57,6 +64,9 @@ public class LiveAuctionController implements  ResponseListener {
 
     private ObservableList<BidTransaction> observable = FXCollections.observableArrayList();
     private TimeLeft timer;
+
+    public LiveAuctionController() throws ConnectionFailedException {
+    }
 
 
     @FXML
@@ -103,14 +113,16 @@ public class LiveAuctionController implements  ResponseListener {
             System.out.println("Đã send bidcommand với giá: " + inputAmount);
 
         } catch (NumberFormatException e) {
-            // Báo lỗi cho người dùng thay vì Crash app
-            UIUtils.showAlert("Lỗi nhập liệu", "Vui lòng chỉ nhập số tiền hợp lệ (ví dụ: 1500000)!");
+            showAlert("Lỗi", "Vui lòng nhập số tiền hợp lệ");
+        } catch (SendFailedException e) {
+            showAlert("Lỗi gửi", "Không thể gửi yêu cầu đặt giá");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Lỗi đặt giá: {}", e.getMessage(), e);
+            showAlert("Lỗi", "Đặt giá thất bại: " + e.getMessage());
         }
     }
 
-    public void setBidHistorytoScene(){
+    public void setBidHistorytoScene() throws SendFailedException {
         Command cmd = new GetBidHistoryCommand();
         cmd.addData("auctionId", currentAuction.getAuctionId());
         connection.sendCommand(cmd);
@@ -135,7 +147,7 @@ public class LiveAuctionController implements  ResponseListener {
 
 
     @FXML
-    public void initialize() {
+    public void initialize() throws SendFailedException {
         // register để nhận command của người khác nữa
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.register(PlaceBidCommand.class, this);
@@ -206,7 +218,7 @@ public class LiveAuctionController implements  ResponseListener {
     }
 
     @FXML
-    public void onAutoBidToggle(ActionEvent event) {
+    public void onAutoBidToggle(ActionEvent event) throws SendFailedException {
         if (autoBidToggle.isSelected()) {
             try {
                 // Lấy giá tối đa từ giao diện
@@ -228,6 +240,8 @@ public class LiveAuctionController implements  ResponseListener {
             } catch (NumberFormatException e) {
                 UIUtils.showAlert("Lỗi nhập liệu", "Vui lòng nhập một số tiền hợp lệ!");
                 autoBidToggle.setSelected(false);
+            } catch (SendFailedException e) {
+                log.error(e.getMessage());
             }
         } else {
             // Xử lý khi người dùng tắt Bot
@@ -237,7 +251,7 @@ public class LiveAuctionController implements  ResponseListener {
             stopAutoBid();
         }
     }
-    private void stopAutoBid() {
+    private void stopAutoBid() throws SendFailedException {
         AutoBidConfig config = new AutoBidConfig();
         config.setUserId(ClientModel.getInstance().getCurrentUser().getId());
         config.setAuctionId(currentAuction.getAuctionId());

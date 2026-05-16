@@ -5,6 +5,8 @@ import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
@@ -21,6 +23,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -29,6 +33,7 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 public class UserProfileController implements ResponseListener {
+    private static final Logger log = LoggerFactory.getLogger(UserProfileController.class);
     @FXML private Label usernameLabel;
     @FXML private Label emailLabel;
     @FXML private Label phoneLabel;
@@ -93,19 +98,30 @@ public class UserProfileController implements ResponseListener {
             showAlert("Loi", "Vui long nhap day du ten, email va so dien thoai." , "Wait.gif");
             return;
         }
+        new Thread(() -> {
+            try {
+                ServerConnection connection = NetworkManager.getConnection();
 
-        ServerConnection connection = NetworkManager.getConnection();
+                UpdateProfileCommand cmd = new UpdateProfileCommand();
+                cmd.addData("userId", currentUser.getId());
+                cmd.addData("username", newName);
+                cmd.addData("email", newEmail);
+                cmd.addData("phone", newPhone);
+                cmd.addData("avt", currentUser.getImagePath());
 
-        UpdateProfileCommand cmd = new UpdateProfileCommand();
-        cmd.addData("userId", currentUser.getId());
-        cmd.addData("username", newName);
-        cmd.addData("email", newEmail);
-        cmd.addData("phone", newPhone);
-        cmd.addData("avt", currentUser.getImagePath());
-
-        NetworkManager networkManager = NetworkManager.getInstance();
-        networkManager.register(UpdateProfileCommand.class, this);
-        connection.sendCommand(cmd);
+                NetworkManager networkManager = NetworkManager.getInstance();
+                networkManager.register(UpdateProfileCommand.class, this);
+                connection.sendCommand(cmd); } catch (ConnectionFailedException e) {
+                log.error("Lỗi kết nối: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối đến server"));
+            } catch (SendFailedException e) {
+                log.error("Lỗi gửi: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu cập nhật"));
+            } catch (Exception e) {
+                log.error("Lỗi cập nhật: {}", e.getMessage(), e);
+                Platform.runLater(() -> showAlert("Lỗi", "Cập nhật thất bại: " + e.getMessage()));
+            }
+        }).start();
     }
 
     @FXML
@@ -117,7 +133,8 @@ public class UserProfileController implements ResponseListener {
             stage.setScene(new Scene(root));
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Lỗi mở popup reset password: {}", e.getMessage(), e);
+            showAlert("Lỗi", "Không thể mở cửa sổ đổi mật khẩu");
         }
     }
 
@@ -142,8 +159,9 @@ public class UserProfileController implements ResponseListener {
             if (user != null) {
                 user.setImagePath(base64Data);
             }
-        }catch(Exception e){
-
+        }catch (Exception e) {
+            log.error("Lỗi chọn ảnh: {}", e.getMessage(), e);
+            showAlert("Lỗi", "Không thể tải ảnh lên");
         }
     }
     private String safeTrim(String value) {

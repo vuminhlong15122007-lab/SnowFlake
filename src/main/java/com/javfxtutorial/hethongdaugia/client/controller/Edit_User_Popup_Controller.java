@@ -4,6 +4,8 @@ import com.javfxtutorial.hethongdaugia.client.MainApplication;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
@@ -18,12 +20,15 @@ import javafx.scene.control.*;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 public class Edit_User_Popup_Controller implements ResponseListener {
+    private static final Logger log = LoggerFactory.getLogger(Edit_User_Popup_Controller.class);
     @FXML private TextField txtName;
     @FXML private TextField txtEmail;
     @FXML private TextField txtPhoneNumber;
@@ -47,7 +52,7 @@ public class Edit_User_Popup_Controller implements ResponseListener {
     }
     ActionEvent saveEvent;
     @FXML
-    public void clickToSave(ActionEvent event) throws IOException, ClassNotFoundException {
+    public void clickToSave(ActionEvent event) throws IOException, ClassNotFoundException, SendFailedException, ConnectionFailedException {
         saveEvent = event;
         String name = txtName.getText();
         String email = txtEmail.getText();
@@ -104,7 +109,8 @@ public class Edit_User_Popup_Controller implements ResponseListener {
             try {
                 scene = new Scene(fxmlLoader.load());
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                log.error("Lỗi load popup thành công: {}", e.getMessage(), e);
+                showAlert("Thành công", "Tạo tài khoản thành công!");
             }
             scene.setFill(Color.TRANSPARENT);
             stage.setScene(scene);

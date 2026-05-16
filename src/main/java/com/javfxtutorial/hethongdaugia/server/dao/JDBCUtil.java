@@ -1,11 +1,18 @@
 package com.javfxtutorial.hethongdaugia.server.dao;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DatabaseConnectionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class JDBCUtil {
-    public static Connection getConnection() {
+    private static final Logger log = LoggerFactory.getLogger(JDBCUtil.class);
+
+    public static Connection getConnection() throws DatabaseConnectionException {
         Connection connection = null;
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
@@ -24,10 +31,11 @@ public class JDBCUtil {
             System.out.println("Kết nối thành công tới TiDB Cloud!");
 
         } catch (ClassNotFoundException e) {
-            System.err.println("Lỗi: Thiếu Driver MySQL!");
-            e.printStackTrace();
+            log.error("Không tìm thấy MySQL Driver", e);
+            throw new DatabaseConnectionException(e);
         } catch (SQLException e) {
-            System.err.println("Lỗi kết nối: " + e.getMessage());
+            log.error("Lỗi kết nối database: {}", e.getMessage(), e);
+            throw new DatabaseConnectionException(e);
             // Nếu lỗi "Access denied for IP", hãy kiểm tra lại IP Access List trên web TiDB
         }
         return connection;
@@ -39,7 +47,7 @@ public class JDBCUtil {
                 connection.close();
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            log.warn("Lỗi khi đóng kết nối: {}", e.getMessage());
         }
     }
 }

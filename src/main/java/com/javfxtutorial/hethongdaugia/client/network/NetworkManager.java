@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.network;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,12 +30,12 @@ public class NetworkManager {
     return instance;
   }
 
-  public static ServerConnection getConnection() {
+  public static ServerConnection getConnection() throws ConnectionFailedException{
     try {
       return ServerConnection.getInstance();
     } catch (IOException e) {
       log.error("Khong tim thay server: {}", e.getMessage());
-      return null;
+      throw new ConnectionFailedException("localhost", e);
     }
   }
 

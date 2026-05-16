@@ -3,11 +3,14 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -17,6 +20,8 @@ import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 
@@ -24,6 +29,8 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 public class AuctionController implements ResponseListener {
+    private static final Logger log = LoggerFactory.getLogger(AuctionController.class);
+
     @FXML private ListView<Auction> featuredProductList;
     @FXML private TextField searchField;
     @FXML private Label sectionTitle;
@@ -36,7 +43,7 @@ public class AuctionController implements ResponseListener {
     private AuctionStatus currentStatus = null;   // null = Tất cả
 
     @FXML
-    public void initialize() {
+    public void initialize() throws ConnectionFailedException {
         VBox.setVgrow(featuredProductList, Priority.ALWAYS);
         featuredProductList.setMaxWidth(Double.MAX_VALUE);
         featuredProductList.setCellFactory(lv -> new ProductCell());
@@ -160,13 +167,20 @@ public class AuctionController implements ResponseListener {
 
 
 
-    public void loadData() {
+    public void loadData() throws ConnectionFailedException {
         Command cmd = new GetAllAuctionsCommand();
         ServerConnection connection = NetworkManager.getConnection();
         new Thread(() -> {
-            NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.register(GetAllAuctionsCommand.class, this);
-            connection.sendCommand(cmd);
+            try{
+                NetworkManager networkManager = NetworkManager.getInstance();
+                networkManager.register(GetAllAuctionsCommand.class, this);
+                connection.sendCommand(cmd); } catch (SendFailedException e) {
+                log.error("Lỗi gửi: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "Loading.gif"));
+            } catch (Exception e) {
+                log.error("Lỗi load data: {}", e.getMessage(), e);
+                Platform.runLater(() -> showAlert("Lỗi", "Tải dữ liệu thất bại", "Loading.gif"));
+            }
 
         }).start();
     }

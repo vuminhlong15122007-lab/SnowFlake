@@ -1,7 +1,10 @@
 package com.javfxtutorial.hethongdaugia.client.network;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import java.io.IOException;
@@ -10,6 +13,8 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 
 public class ServerConnection {
+  private static final Logger log = LoggerFactory.getLogger(ServerConnection.class);
+
   public String IP = "localhost";
   public int PORT = 5000;
   private Socket clientSocket;
@@ -32,14 +37,14 @@ public class ServerConnection {
   }
 
   // Gửi command và chờ response (đồng bộ)
-  public synchronized void sendCommand(Command cmd) {
+  public synchronized void sendCommand(Command cmd) throws SendFailedException {
     try {
       out.writeObject(cmd);
       out.flush();
       out.reset();
-    } catch (Exception e) {
-      System.out.println(e.getMessage());
-      e.printStackTrace();
+    } catch (IOException e) {
+      log.error("Gửi command thất bại: {}", e.getMessage(), e);
+      throw new SendFailedException(cmd.getClass().getSimpleName());
     }
   }
 

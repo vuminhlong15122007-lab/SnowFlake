@@ -5,6 +5,10 @@ import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.Exception.bus.InvalidInputException;
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.*;
 import com.javfxtutorial.hethongdaugia.common.model.Command.*;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
@@ -25,6 +29,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 import java.io.ByteArrayInputStream;
@@ -45,6 +51,8 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 import static java.lang.Integer.parseInt;
 
 public class SellerManagementController implements ResponseListener {
+    private static final Logger log = LoggerFactory.getLogger(SellerManagementController.class);
+
     @FXML private TextField nameField;
     @FXML private TextArea descriptionField;
     @FXML private TextField priceField;
@@ -215,19 +223,30 @@ public class SellerManagementController implements ResponseListener {
             if (auction == null) return; // category null hoặc validation fail
 
             //thêm auction vào DAO và hiện ra list bên trái
-            ServerConnection connection =NetworkManager.getConnection();
-            NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.register(AddAuctionCommand.class, this);
-            AddAuctionCommand cm = new AddAuctionCommand();
-            cm.addData("Auction", auction);
-            connection.sendCommand(cm);
+            new Thread(() -> {
+                try {
+                    ServerConnection connection =NetworkManager.getConnection();
+                    NetworkManager networkManager = NetworkManager.getInstance();
+                    networkManager.register(AddAuctionCommand.class, this);
+                    AddAuctionCommand cm = new AddAuctionCommand();
+                    cm.addData("Auction", auction);
+                    connection.sendCommand(cm);} catch (ConnectionFailedException e) {
+                    log.error("Lỗi kết nối: {}", e.getMessage());
+                    Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối server"));
+                } catch (SendFailedException e) {
+                    log.error("Lỗi gửi: {}", e.getMessage());
+                    Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu"));
+                } catch (Exception e) {
+                    log.error("Lỗi: {}", e.getMessage(), e);
+                    Platform.runLater(() -> showAlert("Lỗi", "Thêm sản phẩm thất bại: " + e.getMessage()));
+                }
+            }).start();
 
         } catch (NumberFormatException e) {
-            e.printStackTrace();
-            showAlert("Lỗi nhập liệu", "Vui lòng nhập đúng định dạng số!");
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            showAlert("Lỗi", "Vui lòng điền đầy đủ thông tin!");
+            showAlert("Lỗi định dạng", "Vui lòng nhập số hợp lệ");
+        } catch (Exception e) {
+            log.error("Lỗi: {}", e.getMessage(), e);
+            showAlert("Lỗi", "Không thể xử lý: " + e.getMessage());
         }
     }
 
@@ -294,12 +313,24 @@ public class SellerManagementController implements ResponseListener {
     private void loadMyProducts() throws IOException, ClassNotFoundException {
         int sellerId = ClientModel.getInstance().getCurrentUser().getId();
 // Lấy ID của user đang đăng nhập => gửi lên server => server lọc sp của sellerId lưu vào cmd
-        NetworkManager networkManager = NetworkManager.getInstance();
-        networkManager.register(GetAuctionsBySellerIdCommand.class, this);
-        ServerConnection connection = NetworkManager.getConnection(); // mở đường dây liên lạc với server
-        Command cmd = new GetAuctionsBySellerIdCommand();
-        cmd.addData("sellerId", sellerId);
-        connection.sendCommand(cmd);
+        new Thread(() -> {
+            try {
+                NetworkManager networkManager = NetworkManager.getInstance();
+                networkManager.register(GetAuctionsBySellerIdCommand.class, this);
+                ServerConnection connection = NetworkManager.getConnection(); // mở đường dây liên lạc với server
+                Command cmd = new GetAuctionsBySellerIdCommand();
+                cmd.addData("sellerId", sellerId);
+                connection.sendCommand(cmd); } catch (ConnectionFailedException e) {
+                log.error("Lỗi kết nối khi load sản phẩm: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối đến server"));
+            } catch (SendFailedException e) {
+                log.error("Lỗi gửi command load sản phẩm: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu tải dữ liệu"));
+            } catch (Exception e) {
+                log.error("Lỗi không xác định khi load sản phẩm: {}", e.getMessage(), e);
+                Platform.runLater(() -> showAlert("Lỗi", "Tải sản phẩm thất bại: " + e.getMessage()));
+            }
+        }).start();
     }
 
     @FXML
@@ -309,15 +340,28 @@ public class SellerManagementController implements ResponseListener {
             showAlert("Lỗi", "Vui lòng chọn sản phẩm cần xóa!", "Wait.gif");
             return;
         }
+        new Thread(() -> {
+            try {
+                ServerConnection connection = NetworkManager.getConnection();
+                NetworkManager networkManager = NetworkManager.getInstance();
+                networkManager.register(DeleteAuctionCommand.class, this);
 
-        ServerConnection connection = NetworkManager.getConnection();
-        NetworkManager networkManager = NetworkManager.getInstance();
-        networkManager.register(DeleteAuctionCommand.class, this);
+                DeleteAuctionCommand cmd = new DeleteAuctionCommand(selectedAuction);  // tạo yêu cầu xóa sp cso ID ..
+                connection.sendCommand(cmd);
+            } catch (ConnectionFailedException e) {
+                log.error("Lỗi kết nối: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối server"));
+            } catch (SendFailedException e) {
+                log.error("Lỗi gửi: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu xóa"));
+            } catch (Exception e) {
+                log.error("Lỗi xóa auction: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi", "Không thể xóa"));
 
-        DeleteAuctionCommand cmd = new DeleteAuctionCommand(selectedAuction);  // tạo yêu cầu xóa sp cso ID ..
-        connection.sendCommand(cmd);
-
+            }
+        }).start();
     }
+
 
     @FXML
     public void clickToChooseImage(ActionEvent event) {
@@ -429,16 +473,28 @@ public class SellerManagementController implements ResponseListener {
             showAlert("Lỗi", "Vui lòng chọn sản phẩm cần sửa!", "Wait.gif");
             return;
         }
-        NetworkManager networkManager = NetworkManager.getInstance();
-        networkManager.register(UpdateAuctionCommand.class, this);
-        ServerConnection connection = NetworkManager.getConnection();
-        // 1. Lấy dữ liệu từ form NGAY BÂY GIỜ (trên UI Thread)
-        Auction auction = getInfo();
-        if (auction == null) return; // category null hoặc validation fail
-        auction.setAuctionId(selectedAuction.getAuctionId());
-        auction.getItem().setItemId(selectedAuction.getItem().getItemId());
-        UpdateAuctionCommand cmd = new UpdateAuctionCommand(auction);
-        connection.sendCommand(cmd);
+        new Thread(() -> {
+            try {
+                NetworkManager networkManager = NetworkManager.getInstance();
+                networkManager.register(UpdateAuctionCommand.class, this);
+                ServerConnection connection = NetworkManager.getConnection();
+                // 1. Lấy dữ liệu từ form NGAY BÂY GIỜ (trên UI Thread)
+                Auction auction = getInfo();
+                if (auction == null) return; // category null hoặc validation fail
+                auction.setAuctionId(selectedAuction.getAuctionId());
+                auction.getItem().setItemId(selectedAuction.getItem().getItemId());
+                UpdateAuctionCommand cmd = new UpdateAuctionCommand(auction);
+                connection.sendCommand(cmd);} catch (ConnectionFailedException e) {
+                log.error("Lỗi kết nối: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối server"));
+            } catch (SendFailedException e) {
+                log.error("Lỗi gửi: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu sửa"));
+            } catch (Exception e) {
+                log.error("Lỗi sửa auction: {}", e.getMessage(), e);
+                Platform.runLater(() -> showAlert("Lỗi", "Sửa thất bại: " + e.getMessage()));
+            }
+        }).start();
     }
 
     @Override

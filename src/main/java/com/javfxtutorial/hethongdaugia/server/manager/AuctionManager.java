@@ -1,5 +1,12 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionAlreadyEndedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotFoundException;
+import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotStartedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.bid.InsufficientIncrementException;
+import com.javfxtutorial.hethongdaugia.common.Exception.bid.LowerThanCurrentBidException;
+import com.javfxtutorial.hethongdaugia.common.Exception.bid.SelfBidException;
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
@@ -87,7 +94,9 @@ public class AuctionManager {
     }
 
     public synchronized boolean placeBid(BidTransaction bid,
-                                         ClientHandler senderThread) {
+                                         ClientHandler senderThread) throws AuctionNotFoundException, AuctionNotStartedException, AuctionAlreadyEndedException,
+            LowerThanCurrentBidException, SelfBidException, InsufficientIncrementException,
+            com.javfxtutorial.hethongdaugia.common.exception.bid.BidConflictException, DataException {
         if (bid == null || bid.getAmount() == null) {
             return false;
         }
@@ -98,21 +107,28 @@ public class AuctionManager {
         // 2. Nếu RAM trống → nạp từ DB
         if (auction == null) {
             auction = AuctionDAO.getInstance().selectById(bid.getAuctionId());
-            if (auction == null) return false; // auction không tồn tại
+            if (auction == null){ throw new AuctionNotFoundException(bid.getAuctionId());} // auction không tồn tại
             activeAuctions.put(auction.getAuctionId(), auction);
         }
         System.out.println("Đã lấy xong auction từ bidAuctionId");
 
         // 3. Kiểm tra hợp lệ
         AuctionStatus status = refreshAuctionStatus(auction);
-        if (status != AuctionStatus.RUNNING) {
-            System.out.println("Phiên đấu giá đang trong trạng thái RUNNING");
-            return false;
+        if (status == AuctionStatus.NOT_START) {
+            throw new AuctionNotStartedException(bid.getAuctionId());
         }
 
-        if (!checkValidBid(auction, bid.getAmount())) {
-            System.out.println("Giá không hợp lệ");
-            return false; // giá không hợp lệ
+        if (status != AuctionStatus.RUNNING) {
+            throw new AuctionAlreadyEndedException(bid.getAuctionId());
+        }
+
+        BigDecimal minRequired = auction.getCurrentPrice().add(auction.getStepPrice());
+        if (bid.getAmount().compareTo(auction.getCurrentPrice()) <= 0) {
+            throw new LowerThanCurrentBidException(auction.getCurrentPrice().doubleValue(), bid.getAmount().doubleValue());
+        }
+        if (bid.getAmount().compareTo(minRequired) < 0) {
+            throw new InsufficientIncrementException(auction.getStepPrice().doubleValue(),
+                    bid.getAmount().subtract(auction.getCurrentPrice()).doubleValue());
         }
         System.out.println("Bid hợp lệ");
 
@@ -173,7 +189,7 @@ public class AuctionManager {
     // ─────────────────────────────────────────────────
     // AUCTION STATUS
     // ─────────────────────────────────────────────────
-    public AuctionStatus refreshAuctionStatus(Auction auction) {
+    public AuctionStatus refreshAuctionStatus(Auction auction) throws DataException {
         AuctionStatus previousStatus = auction.getStatus();
 
         if (LocalDateTime.now().isBefore(auction.getStartingTime())) {
@@ -197,7 +213,7 @@ public class AuctionManager {
     // ─────────────────────────────────────────────────
     // AUTO BID — giữ nguyên logic của người khác viết
     // ─────────────────────────────────────────────────
-    public synchronized boolean registerAutoBid(AutoBidConfig config) {
+    public synchronized boolean registerAutoBid(AutoBidConfig config) throws DataException, LowerThanCurrentBidException, SelfBidException, InsufficientIncrementException, AuctionNotFoundException, AuctionNotStartedException, AuctionAlreadyEndedException, com.javfxtutorial.hethongdaugia.common.exception.bid.BidConflictException {
         config.setRegisteredAt(LocalDateTime.now());
         List<AutoBidConfig> configs = autoBidRegistry.computeIfAbsent(
                 config.getAuctionId(),
@@ -227,7 +243,7 @@ public class AuctionManager {
         return true;
     }
 
-    private void checkAndExecuteAutoBids(Auction auction) {
+    private void checkAndExecuteAutoBids(Auction auction) throws LowerThanCurrentBidException, DataException, SelfBidException, InsufficientIncrementException, AuctionNotFoundException, AuctionNotStartedException, AuctionAlreadyEndedException, com.javfxtutorial.hethongdaugia.common.exception.bid.BidConflictException {
         List<AutoBidConfig> configs = autoBidRegistry
                 .get(auction.getAuctionId());
         if (configs == null || configs.isEmpty()) return;
@@ -304,7 +320,7 @@ public class AuctionManager {
         return auctionList;
     }
 
-    public AuctionStatus checkPaymentStatus(Auction auction) {
+    public AuctionStatus checkPaymentStatus(Auction auction) throws DataException {
         if (LocalDateTime.now().isAfter(auction.getEndingTime().plusHours(24))) {
             if (auction.getStatus() != AuctionStatus.PAID) {
                 auction.setStatus(AuctionStatus.CANCELLED);

@@ -2,6 +2,8 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
@@ -46,12 +48,12 @@ public class AdminItemController implements  Initializable, ResponseListener {
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         try {
             loadItemData();
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException | SendFailedException | ConnectionFailedException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private void loadItemData() throws IOException, ClassNotFoundException {
+    private void loadItemData() throws IOException, ClassNotFoundException, SendFailedException, ConnectionFailedException {
         Command cmd = new GetAllAuctionsCommand();
         ServerConnection connection = NetworkManager.getConnection();
         connection.sendCommand(cmd);
@@ -67,7 +69,7 @@ public class AdminItemController implements  Initializable, ResponseListener {
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UserManagement.fxml");
     }
     @FXML
-    public void clickToDeleteItem() throws IOException, ClassNotFoundException {
+    public void clickToDeleteItem() throws IOException, ClassNotFoundException, SendFailedException, ConnectionFailedException {
         ServerConnection connection = NetworkManager.getConnection();
         Auction selectItem = itemTable.getSelectionModel().getSelectedItem();
         if (selectItem == null) {
@@ -105,7 +107,7 @@ public class AdminItemController implements  Initializable, ResponseListener {
                 showAlert("Xóa thành công", rp.getMessage(), "FunnyCat.gif");
                 try {
                     loadItemData();//load lai bang
-                } catch (IOException | ClassNotFoundException ex) {
+                } catch (IOException | ClassNotFoundException | SendFailedException | ConnectionFailedException ex) {
                     throw new RuntimeException(ex);
                 }
             } else {
