@@ -11,6 +11,10 @@ public class RegisterToAuctionCommand extends Command {
     public Response handle() {
         Auction currentAuction = (Auction) this.getData("currentAuction");
         AuctionManager.getInstance().registerToAuction(ClientHandlerContextHolder.get(), currentAuction.getAuctionId());
-        return null;
+        if (currentAuction == null)
+            return new Response(false, "Auction không hợp lệ", null, this);
+        AuctionManager.getInstance().registerToAuction(
+                ClientHandlerContextHolder.get(), currentAuction.getAuctionId());
+        return new Response(true, "Đăng ký tham gia thành công", null, this);
     }
 }

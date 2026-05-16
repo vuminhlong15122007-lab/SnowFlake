@@ -21,7 +21,7 @@ public class DeleteAuctionCommand extends Command {
             AuctionStatus status = AuctionManager.getInstance().refreshAuctionStatus(auction);
             if (status == AuctionStatus.NOT_START) {
                 int result1 = ItemDAO.getInstance().delete(auction.getItem()); // vì item là cha auction nne xóa item auction tự xóa r
-                if (result1 < 0) {
+                if (result1  <= 0) {
                     return new Response(false, "Không thể xóa phiên đấu giá", null, this);
                 }
                 return new Response(true, "xóa phiên đấu giá thành công", null, this);

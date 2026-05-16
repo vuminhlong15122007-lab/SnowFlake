@@ -16,7 +16,6 @@ import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import com.javfxtutorial.hethongdaugia.common.model.factory.*;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
-import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -48,7 +47,7 @@ import java.util.Map;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
-import static java.lang.Integer.parseInt;
+
 
 public class SellerManagementController implements ResponseListener {
     private static final Logger log = LoggerFactory.getLogger(SellerManagementController.class);
@@ -142,7 +141,7 @@ public class SellerManagementController implements ResponseListener {
     private Map<String, String> collectFormData() {
         Map<String, String> data = new HashMap<>();
 
-        // ── Data chung cho mọi loại Item ──────────────────────────────────────────
+        //Data chung cho mọi loại Item
         int sellerId = ClientModel.getInstance().getCurrentUser().getId();
         String sellerName = ClientModel.getInstance().getCurrentUser().getName();
 

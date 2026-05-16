@@ -8,6 +8,7 @@ import com.javfxtutorial.hethongdaugia.common.Exception.bid.InsufficientIncremen
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.LowerThanCurrentBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.SelfBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DuplicateKeyException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.QueryExecutionException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
@@ -136,7 +137,9 @@ public class AuctionManager {
                     bid.getAmount().subtract(auction.getCurrentPrice()).doubleValue());
         }
         System.out.println("Bid hợp lệ");
-        // ✅ KIỂM TRA NGƯỜI BÁN KHÔNG ĐƯỢC ĐẶT GIÁ
+
+
+        // KIỂM TRA NGƯỜI BÁN KHÔNG ĐƯỢC ĐẶT GIÁ
         if (bid.getBidderId() == auction.getSellerId()) {
             log.warn("Người bán {} cố gắng đặt giá sản phẩm của chính mình", bid.getBidderId());
             throw new SelfBidException();
@@ -165,7 +168,12 @@ public class AuctionManager {
         // 5. Lưu DB
         AuctionDAO.getInstance().update(auction);
         BidDAO.getInstance().insertBid(bid);
-        ParticipatedAuctionDAO.getInstance().insert(bid);
+        try {
+            ParticipatedAuctionDAO.getInstance().insert(bid);
+        } catch (DuplicateKeyException e) {
+            log.info("User {} đã tham gia auction {} rồi, bỏ qua", bid.getBidderId(), bid.getAuctionId());
+        }
+
         System.out.println("Đã lưu vào database");
 
         // 6. Thông báo cho tất cả subscriber của auction này
