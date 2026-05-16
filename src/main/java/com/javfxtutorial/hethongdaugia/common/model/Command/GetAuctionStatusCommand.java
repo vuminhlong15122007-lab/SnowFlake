@@ -16,8 +16,11 @@ public class GetAuctionStatusCommand extends Command {
 
     @Override
     public Response handle() {
-        AuctionStatus nowStatus = AuctionManager.getInstance().refreshAuctionStatus(auction);
-        return new Response(true, "Lấy trạng thái hiện tại thành công", nowStatus, this);
+        try{
+            AuctionStatus nowStatus = AuctionManager.getInstance().refreshAuctionStatus(auction);
+            return new Response(true, "Lấy trạng thái hiện tại thành công", nowStatus, this);} catch (Exception e) {
+            return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);
+        }
 
 
     }

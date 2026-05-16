@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
+import com.javfxtutorial.hethongdaugia.client.controller.RegisterController;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionAlreadyEndedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotFoundException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotStartedException;
@@ -16,6 +17,8 @@ import com.javfxtutorial.hethongdaugia.server.dao.BidDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.ParticipatedAuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.network.BidListener;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.time.Duration;
@@ -28,6 +31,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class AuctionManager {
+    private static final Logger log = LoggerFactory.getLogger(AuctionManager.class);
+
     //Néue có người đắtj giá X s cuối thì ra hạn thêm Y
     private static final long ANTI_SNIPE_X_SECONDS = 60;
     private static final long ANTI_SNIPE_Y_SECONDS = 60;
@@ -131,6 +136,11 @@ public class AuctionManager {
                     bid.getAmount().subtract(auction.getCurrentPrice()).doubleValue());
         }
         System.out.println("Bid hợp lệ");
+        // ✅ KIỂM TRA NGƯỜI BÁN KHÔNG ĐƯỢC ĐẶT GIÁ
+        if (bid.getBidderId() == auction.getSellerId()) {
+            log.warn("Người bán {} cố gắng đặt giá sản phẩm của chính mình", bid.getBidderId());
+            throw new SelfBidException();
+        }
 
         // 4. Cập nhật auction trong RAM
         auction.setCurrentPrice(bid.getAmount());

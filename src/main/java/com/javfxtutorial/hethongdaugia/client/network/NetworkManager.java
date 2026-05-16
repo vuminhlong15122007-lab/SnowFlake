@@ -18,6 +18,7 @@ public class NetworkManager {
   Map<Class<?>, List<ResponseListener>> listeners;
   private static NetworkManager instance;
   private volatile boolean started;
+  private volatile boolean running = true;
 
   private NetworkManager() {
     listeners = new ConcurrentHashMap<>();
@@ -58,9 +59,10 @@ public class NetworkManager {
       return;
     }
     started = true;
+    running = true;
 
     Thread thread = new Thread(() -> {
-      while (true) {
+      while (running) {
         ServerConnection connection;
         try {
           connection = ServerConnection.getInstance();
