@@ -31,9 +31,14 @@ public class NetworkManager {
   }
 
   public static ServerConnection getConnection() throws ConnectionFailedException{
+    ServerConnection connection = null;
     try {
-      return ServerConnection.getInstance();
+      connection = ServerConnection.getInstance();
+      return connection;
     } catch (IOException e) {
+      if (connection != null) {
+        connection.close();
+      }
       log.error("Khong tim thay server: {}", e.getMessage());
       throw new ConnectionFailedException("localhost", e);
     }
@@ -58,15 +63,17 @@ public class NetworkManager {
       return;
     }
     started = true;
-
     Thread thread = new Thread(() -> {
       while (true) {
-        ServerConnection connection;
+        ServerConnection connection = null;
         try {
           connection = ServerConnection.getInstance();
         } catch (IOException e) {
           log.error("Khong tim thay ket noi server: {}", e.getMessage());
-          try { sleep(2000); } catch (InterruptedException ex) { Thread.currentThread().interrupt(); started = false; return; }
+          if (connection != null) {
+            connection.close();
+          }
+          try { sleep(2000); } catch (InterruptedException ex) { Thread.currentThread().interrupt(); return; }
           continue;
         }
 
@@ -75,12 +82,8 @@ public class NetworkManager {
           rp = connection.receiveResponse();
         } catch (IOException | ClassNotFoundException e) {
           log.error("Loi khi doc response: {} - {}", e.getClass().getSimpleName(), e.getMessage(), e);
-          try {
-            connection.close();
-          } catch (IOException closeException) {
-            log.warn("Khong the dong ket noi loi: {}", closeException.getMessage());
-          }
-          try { sleep(500); } catch (InterruptedException ex) { Thread.currentThread().interrupt(); started = false; return; }
+          connection.close();
+          try { sleep(500); } catch (InterruptedException ex) { Thread.currentThread().interrupt(); return; }
           continue;
         }
 

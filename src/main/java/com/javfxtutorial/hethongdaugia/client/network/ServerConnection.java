@@ -52,13 +52,19 @@ public class ServerConnection {
     return (Response) in.readObject();
   }
 
-  public void close() throws IOException {
-    if (clientSocket != null) {
-      this.clientSocket.close();
+  public void close() {
+    try {
+      if (clientSocket != null) clientSocket.close();
+    } catch (IOException e) {
+      log.error("Lỗi khi đóng socket: {}", e.getMessage());
+    } finally {
+      instance = null;
     }
   }
 
   public boolean isConnected() {
-    return clientSocket != null && clientSocket.isConnected() && !clientSocket.isClosed();
-  }
+    return clientSocket != null &&
+        clientSocket.isConnected() &&
+        !clientSocket.isClosed() &&
+        !clientSocket.isInputShutdown();  }
 }
