@@ -3,8 +3,6 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
-import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
-import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
@@ -22,17 +20,13 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 public class ParticipatedAuctionCellController implements ResponseListener {
-    private static final Logger log = LoggerFactory.getLogger(ParticipatedAuctionCellController.class);
     @FXML private Button actionButton;
     @FXML private Label lbCategory;
     @FXML private Label lbCurrentPrice;
@@ -150,19 +144,15 @@ public class ParticipatedAuctionCellController implements ResponseListener {
         if (auction == null) return;
         AuctionStatus status = auction.getStatus();
 
-        try{
-            if (status == AuctionStatus.CLOSED) {
-                openPaymentPopup();
+        if (status == AuctionStatus.CLOSED) {
+            openPaymentPopup();
 
-            } else if (status == AuctionStatus.RUNNING) {
-                changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/LiveAuction.fxml");
-            } else if (status == AuctionStatus.PAID) {
-                showAlert("Đã thanh toán", "Sản phẩm này đã được thanh toán xong!", "Happy.gif");
-            } else {
-                showAlert("Không thể thực hiện", "Phiên đấu giá này đã bị hủy.", "Loading.gif");
-            }} catch (Exception e) {
-            log.error("Lỗi goPayment: {}", e.getMessage(), e);
-            showAlert("Lỗi", "Không thể thực hiện thao tác: " + e.getMessage());
+        } else if (status == AuctionStatus.RUNNING) {
+            changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/LiveAuction.fxml");
+        } else if (status == AuctionStatus.PAID) {
+            showAlert("Đã thanh toán", "Sản phẩm này đã được thanh toán xong!", "Happy.gif");
+        } else {
+            showAlert("Không thể thực hiện", "Phiên đấu giá này đã bị hủy.", "Loading.gif");
         }
     }
 
@@ -176,37 +166,21 @@ public class ParticipatedAuctionCellController implements ResponseListener {
 
             popupController.setOnConfirmed(() -> {
                 auction.setStatus(AuctionStatus.PAID);
+
+                NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
+                NetworkManager.getConnection().sendCommand(new UpdateAuctionStatusCommand(auction));
+
                 // Update UI ngay lập tức — không cần đợi server
                 Platform.runLater(() -> updateUI(AuctionStatus.PAID));
-
-                new Thread(() -> {
-                    try {
-                        NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
-                        NetworkManager.getConnection().sendCommand(new UpdateAuctionStatusCommand(auction)); } catch (
-                            ConnectionFailedException e) {
-                        log.error("Lỗi kết nối khi cập nhật thanh toán: {}", e.getMessage());
-                        Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối server để cập nhật thanh toán"));
-                    } catch (SendFailedException e) {
-                        log.error("Lỗi gửi cập nhật thanh toán: {}", e.getMessage());
-                        Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi xác nhận thanh toán"));
-                    } catch (Exception e) {
-                        log.error("Lỗi cập nhật thanh toán: {}", e.getMessage(), e);
-                        Platform.runLater(() -> showAlert("Lỗi", "Cập nhật thanh toán thất bại: " + e.getMessage()));
-                    }
-                }).start();
-
             });
 
             Stage popupStage = new Stage();
             popupStage.initModality(Modality.APPLICATION_MODAL);
             popupStage.setScene(new Scene(root));
             popupStage.show();
-        } catch (IOException e) {
-            log.error("Lỗi load PaymentPopup: {}", e.getMessage(), e);
-            showAlert("Lỗi", "Không thể mở cửa sổ thanh toán: " + e.getMessage());
         } catch (Exception e) {
-            log.error("Lỗi không xác định khi mở popup: {}", e.getMessage(), e);
-            showAlert("Lỗi", "Đã xảy ra lỗi: " + e.getMessage());
+            e.printStackTrace();
+            showAlert("Lỗi", "Không thể mở cửa sổ thanh toán: " + e.getMessage());
         }
     }
 

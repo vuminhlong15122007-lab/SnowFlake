@@ -1,6 +1,8 @@
 package com.javfxtutorial.hethongdaugia.common.model;
 
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -28,6 +30,7 @@ public class Auction implements Serializable {
 
     // Trạng thái của phiên đấu giá
     private AuctionStatus status;
+    private transient ObjectProperty<AuctionStatus> statusProperty; //dùng transient để bỏ qua khi serializable
 
     // ID của người chiến thắng (sau khi phiên kết thúc)
     private int winnerId;
@@ -70,9 +73,24 @@ public class Auction implements Serializable {
     }
 
 
-
-
-    public int getAuctionId() {
+    public AuctionStatus getStatus() {
+        return status;
+    }
+    public void setStatus(AuctionStatus status) {
+        this.status = status; // Cập nhật biến thường để serialize
+        if (this.statusProperty != null) {
+            this.statusProperty.set(status); // Cập nhật property để đổi UI
+        }
+    }
+    public ObjectProperty<AuctionStatus> statusProperty() {
+            if (statusProperty == null) {
+                // Nếu property bị null (do mới khởi tạo hoặc sau khi de-serialize)
+                // thì tạo mới và gán giá trị từ biến 'status' vào
+                statusProperty = new SimpleObjectProperty<>(status);
+            }
+            return statusProperty;
+        }
+      public int getAuctionId() {
         return auctionId;
     }
     public void setAuctionId(int auctionId) {
@@ -121,12 +139,6 @@ public class Auction implements Serializable {
     }
     public void setEndingTime(LocalDateTime endingTime) {
         this.endingTime = endingTime;
-    }
-    public AuctionStatus getStatus() {
-        return status;
-    }
-    public void setStatus(AuctionStatus status) {
-        this.status = status;
     }
     public int getWinnerId() {
         return winnerId;

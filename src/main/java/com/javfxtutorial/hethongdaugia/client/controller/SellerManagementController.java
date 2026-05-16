@@ -379,12 +379,8 @@ public class SellerManagementController implements ResponseListener {
 
         try {
             byte[] fileContent = Files.readAllBytes(selectedFile.toPath());
-            Item item = ClientModel.getInstance().getCurrentItem();
             String base64Data = ImageHelper.fileToBase64(fileContent);
             image = base64Data;
-            if (item != null) {
-                item.setImage(base64Data);
-            }
             if (Image != null) {
                 Image.setImage(new Image(new ByteArrayInputStream(fileContent)));
             }

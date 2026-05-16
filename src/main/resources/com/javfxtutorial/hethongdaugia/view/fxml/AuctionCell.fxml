@@ -4,7 +4,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="180.0" prefWidth="780.0" style="-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 12; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AuctionSessionController">
+<AnchorPane prefHeight="164.0" prefWidth="900.0" style="-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 12; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 8, 0, 0, 2);" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AuctionSessionController">
 
     <HBox alignment="CENTER_LEFT" spacing="20.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
 
@@ -15,7 +15,9 @@
 
         <!-- ==================== THÔNG TIN CHÍNH ==================== -->
         <VBox prefHeight="147.0" prefWidth="300.0" spacing="10.0" HBox.hgrow="ALWAYS">
-            <Label fx:id="lbCategory" text="Loại sản phẩm" />
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+                <Label fx:id="lbCategory" style="-fx-background-color: linear-gradient(to right, #e6f7ff, #ffffff); -fx-background-radius: 12; -fx-border-color: #b3e5fc; -fx-border-radius: 12; -fx-padding: 3 10; -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: #2f80ed;" text="Loại sản phẩm" />
+            </HBox>
 
             <!-- Tên sản phẩm -->
             <Label fx:id="lbProductName" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, purple, #2f80ed);" text="Toyota Camry 2022" />
@@ -23,7 +25,7 @@
             <!-- Chi tiết sản phẩm -->
             <HBox alignment="CENTER_LEFT" spacing="5.0">
                 <Label prefHeight="20.0" prefWidth="120.0" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;" text="Người bán:  " />
-                <Label fx:id="lbSellerName" prefHeight="20.0" prefWidth="230.0" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d;" text="Tên" />
+                <Label fx:id="lbSellerName" prefHeight="20.0" prefWidth="230.0" style="-fx-font-size: 14px; -fx-text-fill: #7f8c8d; -fx-font-weight: bold;" text="Tên" />
             </HBox>
 
             <!-- Giá cuối -->
@@ -49,5 +51,5 @@
 
     </HBox>
       <!-- Tag trạng thái ĐÃ KẾT THÚC (màu xám) -->
-      <Label fx:id="statusBadge" layoutY="3.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 4 10; -fx-background-radius: 8;" text="ĐÃ KẾT THÚC" />
+      <Label fx:id="statusBadge" layoutY="4.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 4 10; -fx-background-radius: 8;" text="ĐÃ KẾT THÚC" />
 </AnchorPane>
