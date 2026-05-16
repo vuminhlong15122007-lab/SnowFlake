@@ -215,6 +215,9 @@ public class AuctionManager {
             auction.setStatus(AuctionStatus.RUNNING);
         }
 
+        if (auction.getAuctionId() == 0){
+            return auction.getStatus();
+        }
         if (previousStatus != auction.getStatus()) {
             AuctionDAO.getInstance().update(auction);
         }
