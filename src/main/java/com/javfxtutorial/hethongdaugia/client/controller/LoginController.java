@@ -50,14 +50,7 @@ public class LoginController implements ResponseListener, Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        try{
-        ServerConnection connection = NetworkManager.getConnection();
-        NetworkManager.getInstance().start();}
-        catch (Exception e) {
-            log.error("Lỗi khởi tạo NetworkManager: {}", e.getMessage(), e);
-            message.setText("Không thể kết nối đến server");
-        }
-
+        NetworkManager.getInstance().start();
         Username.setOnAction(event -> Password.requestFocus());
         Password.setOnAction(this::clickLogin);
     }
