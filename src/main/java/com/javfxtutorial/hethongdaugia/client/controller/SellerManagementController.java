@@ -469,16 +469,16 @@ public class SellerManagementController implements ResponseListener {
             showAlert("Lỗi", "Vui lòng chọn sản phẩm cần sửa!", "Wait.gif");
             return;
         }
+        Auction auction = getInfo();
+        if (auction == null) return; // category null hoặc validation fail
+        auction.setAuctionId(selectedAuction.getAuctionId());
+        auction.getItem().setItemId(selectedAuction.getItem().getItemId());
         new Thread(() -> {
             try {
                 NetworkManager networkManager = NetworkManager.getInstance();
                 networkManager.register(UpdateAuctionCommand.class, this);
                 ServerConnection connection = NetworkManager.getConnection();
                 // 1. Lấy dữ liệu từ form NGAY BÂY GIỜ (trên UI Thread)
-                Auction auction = getInfo();
-                if (auction == null) return; // category null hoặc validation fail
-                auction.setAuctionId(selectedAuction.getAuctionId());
-                auction.getItem().setItemId(selectedAuction.getItem().getItemId());
                 UpdateAuctionCommand cmd = new UpdateAuctionCommand(auction);
                 connection.sendCommand(cmd);} catch (ConnectionFailedException e) {
                 log.error("Lỗi kết nối: {}", e.getMessage());
