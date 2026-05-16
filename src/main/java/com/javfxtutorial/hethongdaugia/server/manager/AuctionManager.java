@@ -207,13 +207,12 @@ public class AuctionManager {
         }else if (previousStatus == AuctionStatus.PAID){
            return previousStatus;
         } else if (LocalDateTime.now().isAfter(auction.getEndingTime().plusHours(24))) {
-            return checkPaymentStatus(auction);
+            auction.setStatus(checkPaymentStatus(auction));
         } else if (LocalDateTime.now().isAfter(auction.getEndingTime())) {
             auction.setStatus(AuctionStatus.CLOSED);
         } else {
             auction.setStatus(AuctionStatus.RUNNING);
         }
-
         if (auction.getAuctionId() == 0){
             return auction.getStatus();
         }
@@ -337,7 +336,6 @@ public class AuctionManager {
         if (LocalDateTime.now().isAfter(auction.getEndingTime().plusHours(24))) {
             if (auction.getStatus() != AuctionStatus.PAID) {
                 auction.setStatus(AuctionStatus.CANCELLED);
-                AuctionDAO.getInstance().update(auction);
             }
         }
         return auction.getStatus();
