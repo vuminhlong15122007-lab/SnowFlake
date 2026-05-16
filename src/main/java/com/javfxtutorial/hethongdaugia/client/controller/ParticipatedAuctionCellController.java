@@ -3,6 +3,8 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
@@ -20,6 +22,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 
@@ -27,6 +31,8 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 public class ParticipatedAuctionCellController implements ResponseListener {
+    private static final Logger log = LoggerFactory.getLogger(ParticipatedAuctionCellController.class);
+
     @FXML private Button actionButton;
     @FXML private Label lbCategory;
     @FXML private Label lbCurrentPrice;
@@ -166,12 +172,24 @@ public class ParticipatedAuctionCellController implements ResponseListener {
 
             popupController.setOnConfirmed(() -> {
                 auction.setStatus(AuctionStatus.PAID);
-
-                NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
-                NetworkManager.getConnection().sendCommand(new UpdateAuctionStatusCommand(auction));
-
                 // Update UI ngay lập tức — không cần đợi server
                 Platform.runLater(() -> updateUI(AuctionStatus.PAID));
+                new Thread(() -> {
+                    try {
+                        NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
+                        NetworkManager.getConnection().sendCommand(new UpdateAuctionStatusCommand(auction));} catch (
+                            ConnectionFailedException e) {
+                        log.error("Lỗi kết nối khi cập nhật thanh toán: {}", e.getMessage());
+                        Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối server để cập nhật thanh toán"));
+                    } catch (SendFailedException e) {
+                        log.error("Lỗi gửi cập nhật thanh toán: {}", e.getMessage());
+                        Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi xác nhận thanh toán"));
+                    } catch (Exception e) {
+                        log.error("Lỗi cập nhật thanh toán: {}", e.getMessage(), e);
+                        Platform.runLater(() -> showAlert("Lỗi", "Cập nhật thanh toán thất bại: " + e.getMessage()));
+                    }
+                }).start();
+
             });
 
             Stage popupStage = new Stage();
