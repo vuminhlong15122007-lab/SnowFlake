@@ -101,8 +101,7 @@ public class AuctionManager {
 
     public synchronized boolean placeBid(BidTransaction bid,
                                          ClientHandler senderThread) throws AuctionNotFoundException, AuctionNotStartedException, AuctionAlreadyEndedException,
-            LowerThanCurrentBidException, SelfBidException, InsufficientIncrementException,
-            com.javfxtutorial.hethongdaugia.common.exception.bid.BidConflictException, DataException {
+            LowerThanCurrentBidException, SelfBidException, InsufficientIncrementException, DataException {
         if (bid == null || bid.getAmount() == null) {
             return false;
         }
@@ -227,7 +226,7 @@ public class AuctionManager {
     // ─────────────────────────────────────────────────
     // AUTO BID — giữ nguyên logic của người khác viết
     // ─────────────────────────────────────────────────
-    public synchronized boolean registerAutoBid(AutoBidConfig config) throws DataException, LowerThanCurrentBidException, SelfBidException, InsufficientIncrementException, AuctionNotFoundException, AuctionNotStartedException, AuctionAlreadyEndedException, com.javfxtutorial.hethongdaugia.common.exception.bid.BidConflictException {
+    public synchronized boolean registerAutoBid(AutoBidConfig config) throws DataException, LowerThanCurrentBidException, SelfBidException, InsufficientIncrementException, AuctionNotFoundException, AuctionNotStartedException, AuctionAlreadyEndedException {
         config.setRegisteredAt(LocalDateTime.now());
         List<AutoBidConfig> configs = autoBidRegistry.computeIfAbsent(
                 config.getAuctionId(),
@@ -257,7 +256,7 @@ public class AuctionManager {
         return true;
     }
 
-    private void checkAndExecuteAutoBids(Auction auction) throws LowerThanCurrentBidException, DataException, SelfBidException, InsufficientIncrementException, AuctionNotFoundException, AuctionNotStartedException, AuctionAlreadyEndedException, com.javfxtutorial.hethongdaugia.common.exception.bid.BidConflictException {
+    private void checkAndExecuteAutoBids(Auction auction) throws LowerThanCurrentBidException, DataException, SelfBidException, InsufficientIncrementException, AuctionNotFoundException, AuctionNotStartedException, AuctionAlreadyEndedException {
         List<AutoBidConfig> configs = autoBidRegistry
                 .get(auction.getAuctionId());
         if (configs == null || configs.isEmpty()) return;

@@ -1,4 +1,4 @@
-package com.javfxtutorial.hethongdaugia.common.exception.bid;
+package com.javfxtutorial.hethongdaugia.common.Exception.bid;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.ErrorCode;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.BidException;

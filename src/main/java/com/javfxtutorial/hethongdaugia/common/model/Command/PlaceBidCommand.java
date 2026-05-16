@@ -44,9 +44,6 @@ public class PlaceBidCommand extends Command {
         } catch (InsufficientIncrementException e) {
             log.warn("Bước giá không đủ: {}", e.getMessage());
             return new Response(false, e.getMessage(), null, this);
-        } catch (com.javfxtutorial.hethongdaugia.common.exception.bid.BidConflictException e) {
-            log.warn("Xung đột đặt giá: {}", e.getMessage());
-            return new Response(false, e.getMessage(), null, this);
         } catch (DataException e) {
             log.error("Lỗi database khi đặt giá: {}", e.getMessage(), e);
             return new Response(false, "Lỗi hệ thống, vui lòng thử lại", null, this);

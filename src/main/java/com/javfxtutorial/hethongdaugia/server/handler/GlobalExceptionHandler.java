@@ -91,7 +91,7 @@ public class GlobalExceptionHandler implements Thread.UncaughtExceptionHandler {
         else if (t instanceof BidAmountExceedsLimitException) {
             log.warn("BID-004 - Giá đấu vượt quá giới hạn: {}", t.getMessage());
         }
-        else if (t instanceof com.javfxtutorial.hethongdaugia.common.exception.bid.BidConflictException) {
+        else if (t instanceof com.javfxtutorial.hethongdaugia.common.Exception.bid.BidConflictException) {
             log.warn("BID-005 - Xung đột đấu giá: {}", t.getMessage());
         }
 

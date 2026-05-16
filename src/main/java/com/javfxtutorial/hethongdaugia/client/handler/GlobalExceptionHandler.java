@@ -14,7 +14,7 @@ import com.javfxtutorial.hethongdaugia.common.Exception.bus.InvalidInputExceptio
 import com.javfxtutorial.hethongdaugia.common.Exception.data.*;
 import com.javfxtutorial.hethongdaugia.common.Exception.sys.ResourceExhaustedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.sys.UnknownSystemException;
-import com.javfxtutorial.hethongdaugia.common.exception.bid.BidConflictException;
+import com.javfxtutorial.hethongdaugia.common.Exception.bid.BidConflictException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.*;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
