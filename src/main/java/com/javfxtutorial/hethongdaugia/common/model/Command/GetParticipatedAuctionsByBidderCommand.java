@@ -18,14 +18,13 @@ public class GetParticipatedAuctionsByBidderCommand extends Command {
     int userId = (int) this.getData("currentUserId");
     try{
       ArrayList<Auction> auctions = new ArrayList<>();
-      auctions = (ArrayList<Auction>) AuctionManager.getInstance().getParticipatedAuctionsByBidder(userId);
+      auctions = (ArrayList<Auction>) ParticipatedAuctionDAO.getInstance().getParticipatedAuctionsByBidder(userId);
       auctions.forEach(auction -> {
-          try {
-              auction.setStatus(AuctionManager.getInstance().checkPaymentStatus(auction));
-          } catch (DataException e) {
-            log.warn("Lỗi khi kiểm tra trạng thái thanh toán cho auction {}: {}",
-                    auction.getAuctionId(), e.getMessage());
-          }
+        try {
+          AuctionManager.getInstance().refreshAuctionStatus(auction);
+        } catch (DataException e) {
+          log.error("Chị Lan thêm lỗi cho t với");
+        }
       });
       return new Response(true, "Lấy thành công auctions của userId: " + userId, auctions, this);} catch (Exception e) {
       log.error("Lỗi không xác định: {}", e.getMessage(), e);

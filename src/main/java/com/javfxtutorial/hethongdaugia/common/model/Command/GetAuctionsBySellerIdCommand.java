@@ -1,5 +1,8 @@
 package com.javfxtutorial.hethongdaugia.common.model.Command;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DataInsertException;
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DataUpdateException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.QueryExecutionException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
@@ -7,6 +10,7 @@ import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
+import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +24,13 @@ public class GetAuctionsBySellerIdCommand extends Command {
         // Gọi AuctionDAO để lấy danh sách Auction theo sellerId
         try{
             ArrayList<Auction> auctions = AuctionDAO.getInstance().selectBySellerId(sellerId);
+            auctions.forEach(auction -> {
+              try {
+                AuctionManager.getInstance().refreshAuctionStatus(auction);
+              } catch (DataException e) {
+                throw new RuntimeException(e);
+              }
+            });
             return new Response(true, "Thành công", auctions, this);} catch (QueryExecutionException e) {
             log.error("Lỗi truy vấn database: {}", e.getMessage(), e);
             return new Response(false, "Lỗi truy vấn dữ liệu", null, this);
