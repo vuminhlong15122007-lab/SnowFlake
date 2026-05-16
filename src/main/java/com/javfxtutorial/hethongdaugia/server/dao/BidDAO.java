@@ -1,5 +1,7 @@
 package com.javfxtutorial.hethongdaugia.server.dao;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DatabaseConnectionException;
+import com.javfxtutorial.hethongdaugia.common.Exception.data.QueryExecutionException;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 
@@ -22,7 +24,7 @@ public class BidDAO  {
     }
 
     // 1. CREATE: Lưu một lượt đặt giá mới vào database
-    public boolean insertBid(BidTransaction bid) {
+    public boolean insertBid(BidTransaction bid) throws QueryExecutionException {
         String sql = "INSERT INTO bid_transaction (bidder_id, bidder_name, auction_id, amount, timestamp) VALUES (?, ?, ?, ?, ?)";
 
         try (Connection connection = JDBCUtil.getConnection();
@@ -37,14 +39,13 @@ public class BidDAO  {
 
             int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;
-        } catch (SQLException e) {
-            e.printStackTrace();
-            return false;
+        } catch (SQLException | DatabaseConnectionException e) {
+            throw new QueryExecutionException(sql);
         }
     }
 
     // 2. READ: Lấy toàn bộ lịch sử đặt giá của một phiên đấu giá (Sắp xếp từ cao xuống thấp)
-    public ArrayList<BidTransaction> getBidsByAuctionId(int auctionId) {
+    public ArrayList<BidTransaction> getBidsByAuctionId(int auctionId) throws QueryExecutionException {
        ArrayList<BidTransaction> bids = new ArrayList<>();
         String sql = "SELECT * FROM bid_transaction WHERE auction_id = ? ORDER BY amount DESC";
 
@@ -65,14 +66,14 @@ public class BidDAO  {
                     bids.add(bid);
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException | DatabaseConnectionException e) {
+            throw new QueryExecutionException(sql);
         }
         return bids;
     }
 
     // 3. READ: Tìm lượt đặt giá cao nhất của một phiên đấu giá
-    public BidTransaction getHighestBid(int auctionId) {
+    public BidTransaction getHighestBid(int auctionId) throws QueryExecutionException {
         String sql = "SELECT * FROM bid_transaction WHERE auction_id = ? ORDER BY amount DESC LIMIT 1";
 
         try (Connection connection = JDBCUtil.getConnection();
@@ -91,8 +92,8 @@ public class BidDAO  {
                     return bid;
                 }
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException | DatabaseConnectionException e) {
+            throw new QueryExecutionException(sql);
         }
         return null;
     }

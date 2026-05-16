@@ -1,5 +1,8 @@
 package com.javfxtutorial.hethongdaugia.server.dao;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DatabaseConnectionException;
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DuplicateKeyException;
+import com.javfxtutorial.hethongdaugia.common.Exception.data.QueryExecutionException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
 import org.slf4j.Logger;
@@ -29,7 +32,7 @@ public class ParticipatedAuctionDAO {
     return instance;
   }
 
-  public int insert(BidTransaction bid) {
+  public int insert(BidTransaction bid) throws DuplicateKeyException, QueryExecutionException {
     int result = 0;
     String sql = "INSERT INTO AuctionParticipation (bidderId, auctionId) VALUES (?, ?)";
 
@@ -41,17 +44,20 @@ public class ParticipatedAuctionDAO {
 
       result = pst.executeUpdate();
     } catch (SQLIntegrityConstraintViolationException e) {
-      if (e.getErrorCode() == 1602){
-        log.info("Người dùng đã đc ghi nhâ tham gia phiên đấu giá");
-      }
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
+    // Lỗi duplicate key - người dùng đã tham gia rồi
+    log.info("Người dùng {} đã tham gia phiên đấu giá {} rồi",
+            bid.getBidderId(), bid.getAuctionId());
+    throw new DuplicateKeyException("AuctionParticipation",
+            "bidderId=" + bid.getBidderId() + ", auctionId=" + bid.getAuctionId(), bid.getBidderName());
+  } catch (SQLException | DatabaseConnectionException e) {
+    log.error("Lỗi SQL khi insert AuctionParticipation: {}", e.getMessage(), e);
+    throw new QueryExecutionException(sql);
+  }
     return result;
   }
 
 
-  public int delete(BidTransaction bid) {
+  public int delete(BidTransaction bid) throws QueryExecutionException {
     int result = 0;
     String sql = "DELETE FROM AuctionParticipation WHERE bidderId = ? AND auctionId = ?";
 
@@ -61,13 +67,14 @@ public class ParticipatedAuctionDAO {
       pst.setInt(1, bid.getBidderId());
       pst.setInt(2, bid.getAuctionId());
       result = pst.executeUpdate();
-    } catch (SQLException e) {
-      e.printStackTrace();
+    } catch (SQLException | DatabaseConnectionException e) {
+      log.error("Lỗi SQL khi delete AuctionParticipation: {}", e.getMessage(), e);
+      throw new QueryExecutionException(sql);
     }
     return result;
   }
 
-  public List<Auction> getParticipatedAuctionsByBidder(int bidderId) {
+  public List<Auction> getParticipatedAuctionsByBidder(int bidderId) throws QueryExecutionException {
     List<Auction> list = new ArrayList<>();
     // Câu query lấy thông tin đấu giá mà một người tham gia
     String sql =
@@ -117,8 +124,9 @@ public class ParticipatedAuctionDAO {
           list.add(auction);
         }
       }
-    } catch (SQLException e) {
-      e.printStackTrace();
+    } catch (SQLException | DatabaseConnectionException e) {
+      log.error("Lỗi SQL khi lấy danh sách auction đã tham gia: {}", e.getMessage(), e);
+      throw new QueryExecutionException(sql);
     }
     return list;
   }

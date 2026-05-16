@@ -8,6 +8,7 @@ import com.javfxtutorial.hethongdaugia.common.Exception.bid.InsufficientIncremen
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.LowerThanCurrentBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.SelfBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
+import com.javfxtutorial.hethongdaugia.common.Exception.data.QueryExecutionException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
@@ -324,7 +325,7 @@ public class AuctionManager {
         this.placeBid(autoBid, null);
     }
 
-    public List<Auction> getParticipatedAuctionsByBidder(int userId) {
+    public List<Auction> getParticipatedAuctionsByBidder(int userId) throws QueryExecutionException {
         ArrayList<Auction> auctionList = new ArrayList<>();
         auctionList = (ArrayList<Auction>) ParticipatedAuctionDAO.getInstance().getParticipatedAuctionsByBidder(userId);
         return auctionList;

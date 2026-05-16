@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.server.dao;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.data.*;
 import com.javfxtutorial.hethongdaugia.common.model.Art;
 import com.javfxtutorial.hethongdaugia.common.model.Electronics;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
@@ -31,7 +32,7 @@ public class ItemDAO implements DAOInterface<Item> {
     return instance;
   }
 
-  public int insert(Item item) {
+  public int insert(Item item) throws DataInsertException {
     String sql = "INSERT INTO Item (idseller, name, description, imagePath, sellerName, category) VALUES (?, ?, ?, ?, ?, ?)";
     int result = 0;
     try (Connection conn = JDBCUtil.getConnection();
@@ -52,19 +53,22 @@ public class ItemDAO implements DAOInterface<Item> {
           }
         }
         log.info("Tạo Item thành công, ID: {}", item.getItemId());
-
-        insertSubType(conn, item);
+        try{
+          insertSubType(conn, item);}catch (DataDeleteException e) {
+            log.error("Insert subtype thất bại, rollback item: {}", e.getMessage(), e);}
       } else {
-        log.info("Tạo Item thất bại");
+        log.warn("Tạo Item thất bại (no rows affected)");
+        throw new DataInsertException("Item");
       }
-    } catch (SQLException e) {
-      e.printStackTrace();
+    } catch (SQLException | DatabaseConnectionException e) {
+      log.error("Lỗi SQL khi insert Item: {}", e.getMessage(), e);
+      throw new DataInsertException("Item");
     }
     return result;
   }
 
   @Override
-  public int update(Item item) {
+  public int update(Item item) throws DataUpdateException {
     int result = 0;
 
     // Câu lệnh SQL: Cập nhật thông tin dựa trên khóa chính là itemId
@@ -98,15 +102,15 @@ public class ItemDAO implements DAOInterface<Item> {
         log.info("Cập nhật thất bại: Không tìm thấy Item với ID = {}", item.getItemId());
       }
 
-    } catch (SQLException e) {
-      e.printStackTrace();
-      throw new RuntimeException("Lỗi thao tác DB khi cập nhật Item", e);
+    } catch (SQLException | DatabaseConnectionException e) {
+      log.error("Lỗi SQL khi update Item: {}", e.getMessage(), e);
+      throw new DataUpdateException(item.getItemId(), "Item", "update");
     }
 
     return result;
   }
 
-  public int delete(Item item) {
+  public int delete(Item item) throws DataDeleteException {
     int result = 0;
     String deleteItemSQL = "DELETE FROM Item WHERE item_id = ?";
     try (Connection connection = JDBCUtil.getConnection();
@@ -114,106 +118,113 @@ public class ItemDAO implements DAOInterface<Item> {
       pst.setInt(1, item.getItemId());
       result = pst.executeUpdate();
       log.info("Đã xóa {} Auction liên quan.", result);
-    } catch (SQLException ex) {
-      ex.printStackTrace();
+    } catch (SQLException | DatabaseConnectionException e) {
+      log.error("Lỗi SQL khi delete Item: {}", e.getMessage(), e);
+      throw new DataDeleteException(item.getItemId(), "Item", "delete");
     }
     return result;
   }
 
 
-  public ArrayList<Item> selectAll() {
-    ArrayList<Item> result = new ArrayList<>();
-    try {
-      Connection connection = JDBCUtil.getConnection();
-      Statement st = connection.createStatement();
-      //lenh sql
-      String sql = "SELECT * FROM item";
-      System.out.println(sql);
-      ResultSet resultSet = st.executeQuery(sql);
-      //lấy dữ liệu
-      while (resultSet.next()) {
-        String sellerName = resultSet.getString("sellerName");
-        int idseller = resultSet.getInt("idseller");
-        int iditem = resultSet.getInt("itemid");
-        String name = resultSet.getString("name");
-        String description = resultSet.getString("description");
-        String imagePath = resultSet.getString("imagePath");
-        String categoryStr = resultSet.getString("category");
-        ItemCategory category = (categoryStr != null) ? ItemCategory.valueOf(categoryStr) : null;
-        Item item = new Item(sellerName, idseller, iditem, name, description, imagePath, category);
+  public ArrayList<Item> selectAll() throws DataException {
+      ArrayList<Item> result = new ArrayList<>();
+      String sql = null;
+      try {
+          Connection connection = JDBCUtil.getConnection();
+          Statement st = connection.createStatement();
+          //lenh sql
+          sql = "SELECT * FROM item";
+          System.out.println(sql);
+          ResultSet resultSet = st.executeQuery(sql);
+          //lấy dữ liệu
+          while (resultSet.next()) {
+              String sellerName = resultSet.getString("sellerName");
+              int idseller = resultSet.getInt("idseller");
+              int iditem = resultSet.getInt("itemid");
+              String name = resultSet.getString("name");
+              String description = resultSet.getString("description");
+              String imagePath = resultSet.getString("imagePath");
+              String categoryStr = resultSet.getString("category");
+              ItemCategory category = (categoryStr != null) ? ItemCategory.valueOf(categoryStr) : null;
+              Item item = new Item(sellerName, idseller, iditem, name, description, imagePath, category);
 
-        result.add(item);
+              result.add(item);
+          }
+          JDBCUtil.closeConnection(connection);
+      } catch (SQLException | DatabaseConnectionException e) {
+          log.error("Lỗi SQL khi selectAll Item: {}", e.getMessage(), e);
+          throw new QueryExecutionException(sql);
       }
-      JDBCUtil.closeConnection(connection);
-    } catch (SQLException e) {
-      e.printStackTrace();
-    }
-    return result;
+      return result;
   }
-  public Item selectById(int id) {
-    Item result = null;
-    try {
-      Connection connection = JDBCUtil.getConnection(); // Tao ket noi
-      Statement statement = connection.createStatement(); // tao ra obj statement
-      // Thuc thi cau lech sql
-      String sql = "SELECT * FROM Item where  itemid = '" + id + "'";
-      ResultSet resultSet = statement.executeQuery(sql);
+  public Item selectById(int id) throws QueryExecutionException {
+      Item result = null;
+      String sql = null;
+      try {
+          Connection connection = JDBCUtil.getConnection(); // Tao ket noi
+          Statement statement = connection.createStatement(); // tao ra obj statement
+          // Thuc thi cau lech sql
+          sql = "SELECT * FROM Item where  itemid = '" + id + "'";
+          ResultSet resultSet = statement.executeQuery(sql);
 
-      // tim kiem
-      while (resultSet.next()) {
-        int itemId = resultSet.getInt("itemid");
-        int idseller = resultSet.getInt("idseller");
-        String name = resultSet.getString("name");
-        String description = resultSet.getString("description");
-        String imagePath = resultSet.getString("imagePath");
-        String sellerName = resultSet.getString("sellerName");
-        String categoryStr = resultSet.getString("category");
-        ItemCategory category = (categoryStr != null) ? ItemCategory.valueOf(categoryStr) : null;
-        result = new Item(sellerName, idseller, itemId, name, description, imagePath, category);
+          // tim kiem
+          while (resultSet.next()) {
+              int itemId = resultSet.getInt("itemid");
+              int idseller = resultSet.getInt("idseller");
+              String name = resultSet.getString("name");
+              String description = resultSet.getString("description");
+              String imagePath = resultSet.getString("imagePath");
+              String sellerName = resultSet.getString("sellerName");
+              String categoryStr = resultSet.getString("category");
+              ItemCategory category = (categoryStr != null) ? ItemCategory.valueOf(categoryStr) : null;
+              result = new Item(sellerName, idseller, itemId, name, description, imagePath, category);
 
+          }
+          //dong ket noi
+          JDBCUtil.closeConnection(connection);
+      } catch (SQLException | DatabaseConnectionException e) {
+          log.error("Lỗi SQL khi selectById Item: {}", e.getMessage(), e);
+          throw new QueryExecutionException(sql);
       }
-      //dong ket noi
-      JDBCUtil.closeConnection(connection);
-    } catch (SQLException e) {
-      e.printStackTrace(); // in ra loi xong van chay tiep
-    }
-    return result;
+      return result;
   }
 
   ;
 
-  public ArrayList<Item> selectByCondition(String condition) {
-    ArrayList<Item> result = new ArrayList<>();
-    try {
-      Connection connection = JDBCUtil.getConnection(); // Tao ket noi
-      Statement statement = connection.createStatement(); // tao ra obj statement
-      // Thuc thi cau lech sql
-      String sql = "SELECT * FROM item where " + condition;
-      ResultSet resultSet = statement.executeQuery(sql);
+  public ArrayList<Item> selectByCondition(String condition) throws QueryExecutionException {
+      ArrayList<Item> result = new ArrayList<>();
+      String sql = null;
+      try {
+          Connection connection = JDBCUtil.getConnection(); // Tao ket noi
+          Statement statement = connection.createStatement(); // tao ra obj statement
+          // Thuc thi cau lech sql
+          sql = "SELECT * FROM item where " + condition;
+          ResultSet resultSet = statement.executeQuery(sql);
 
-      // tim kiem
-      while (resultSet.next()) {
-        int itemId = resultSet.getInt("itemid");
-        int idseller = resultSet.getInt("idseller");
-        String name = resultSet.getString("name");
-        String description = resultSet.getString("description");
-        String imagePath = resultSet.getString("imagePath");
-        String sellerName = resultSet.getString("sellerName");
-        String categoryStr = resultSet.getString("category");
-        ItemCategory category = (categoryStr != null) ? ItemCategory.valueOf(categoryStr) : null;
-        Item item = new Item(sellerName, idseller, itemId, name, description, imagePath, category);
-        result.add(item);
+          // tim kiem
+          while (resultSet.next()) {
+              int itemId = resultSet.getInt("itemid");
+              int idseller = resultSet.getInt("idseller");
+              String name = resultSet.getString("name");
+              String description = resultSet.getString("description");
+              String imagePath = resultSet.getString("imagePath");
+              String sellerName = resultSet.getString("sellerName");
+              String categoryStr = resultSet.getString("category");
+              ItemCategory category = (categoryStr != null) ? ItemCategory.valueOf(categoryStr) : null;
+              Item item = new Item(sellerName, idseller, itemId, name, description, imagePath, category);
+              result.add(item);
+          }
+          //dong ket noi
+          JDBCUtil.closeConnection(connection);
+      } catch (SQLException | DatabaseConnectionException e) {
+          log.error("Lỗi SQL khi selectByCondition: {}", e.getMessage(), e);
+          throw new QueryExecutionException(sql);
       }
-      //dong ket noi
-      JDBCUtil.closeConnection(connection);
-    } catch (SQLException e) {
-      e.printStackTrace(); // in ra loi xong van chay tiep
-    }
-    return result;
+      return result;
 
   }
 
-  public void insertSubType(Connection conn, Item item) throws SQLException {
+  public void insertSubType(Connection conn, Item item) throws SQLException, DataDeleteException {
     switch (item.getCategory()) {
       case ItemCategory.ART -> {
         Art item1 = (Art) item;
