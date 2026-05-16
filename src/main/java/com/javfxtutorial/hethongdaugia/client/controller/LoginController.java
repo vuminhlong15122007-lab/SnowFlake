@@ -41,10 +41,13 @@ public class LoginController implements ResponseListener, Initializable {
         NetworkManager.getInstance().start();} catch (Exception e) {
             log.error("Lỗi khởi tạo NetworkManager: {}", e.getMessage(), e);
             message.setText("Không thể kết nối đến server");        }
+
+        Username.setOnAction(event -> Password.requestFocus());
+        Password.setOnAction(this::clickLogin);
     }
 
     @FXML
-    public void clickLogin(ActionEvent event) throws IOException, ClassNotFoundException {
+    public void clickLogin(ActionEvent event) {
         loginEvent = event;
         String username = Username.getText();
         String password = Password.getText();
