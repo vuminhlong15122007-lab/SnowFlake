@@ -7,7 +7,9 @@ import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotStartedExc
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.InsufficientIncrementException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.LowerThanCurrentBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.SelfBidException;
-import com.javfxtutorial.hethongdaugia.common.Exception.data.*;
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DuplicateKeyException;
+import com.javfxtutorial.hethongdaugia.common.Exception.data.QueryExecutionException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
@@ -332,8 +334,13 @@ public class AuctionManager {
         this.placeBid(autoBid, null);
     }
 
+    public List<Auction> getParticipatedAuctionsByBidder(int userId) throws QueryExecutionException {
+        ArrayList<Auction> auctionList = new ArrayList<>();
+        auctionList = (ArrayList<Auction>) ParticipatedAuctionDAO.getInstance().getParticipatedAuctionsByBidder(userId);
+        return auctionList;
+    }
 
-    public AuctionStatus checkPaymentStatus(Auction auction)  {
+    public AuctionStatus checkPaymentStatus(Auction auction) throws DataException {
         if (LocalDateTime.now().isAfter(auction.getEndingTime().plusHours(24))) {
             if (auction.getStatus() != AuctionStatus.PAID) {
                 auction.setStatus(AuctionStatus.CANCELLED);

@@ -267,7 +267,15 @@ public class LiveAuctionController implements  ResponseListener {
     public void onResponse(Response rp) {
         if (rp.getCommand().getClass() == PlaceBidCommand.class) {
             BidTransaction bid = (BidTransaction) rp.getPayLoad();
+            if (!rp.isSuccess()) {
+                Platform.runLater(() -> {
+                    showAlert("Trạng thái đặt bid", rp.getMessage());
+                });
+                return;
+            }
 
+            // Từ đây bid chắc chắn không null (vì success)
+            if (bid == null) return;
             //nếu là người gửi thì hiện popup thông báo
             if (ClientModel.getInstance().getCurrentUser().getName().equals(bid.getBidderName())) {
                 Platform.runLater(() -> {
