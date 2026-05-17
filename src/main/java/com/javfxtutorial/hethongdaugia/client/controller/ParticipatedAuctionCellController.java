@@ -9,7 +9,6 @@ import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
-import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -76,7 +75,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
         if (auction == null || auction.getItem() == null) return;
         this.auction = auction;
         updateUI(auction.getStatus()); //khởi tạo UI ban đầu
-        auction.statusProperty().addListener(((observableValue, oldVal, newVal) -> {
+        auction.statusProperty().addListener(((_, _, newVal) -> {
             updateUI(newVal);
         })); //thay đổi UI nếu có status mơid
         lbProductName.setText(auction.getItem().getName());
@@ -123,9 +122,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
                 NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
               try {
                 NetworkManager.getConnection().sendCommand(new UpdateAuctionStatusCommand(auction));
-              } catch (SendFailedException e) {
-                throw new RuntimeException(e);
-              } catch (ConnectionFailedException e) {
+              } catch (SendFailedException | ConnectionFailedException e) {
                 throw new RuntimeException(e);
               }
             });

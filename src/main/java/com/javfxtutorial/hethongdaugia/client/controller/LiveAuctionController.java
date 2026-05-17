@@ -15,7 +15,6 @@ import com.javfxtutorial.hethongdaugia.common.model.Command.*;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
-import com.javfxtutorial.hethongdaugia.server.network.ServerApp;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -30,8 +29,6 @@ import javafx.util.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -43,7 +40,7 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 public class LiveAuctionController implements  ResponseListener {
     private static final Logger log = LoggerFactory.getLogger(LiveAuctionController.class);
 
-    private volatile boolean running = true;
+    volatile boolean running = true;
     Auction currentAuction;
     ServerConnection connection = NetworkManager.getConnection();
     @FXML private TextField priceInput_tf;
@@ -62,7 +59,7 @@ public class LiveAuctionController implements  ResponseListener {
     @FXML private TextField autoMaxPrice_tf; // Ô nhập giá trần
     @FXML private ToggleButton autoBidToggle; // Nút bật/tắt chế độ tự động
 
-    private ObservableList<BidTransaction> observable = FXCollections.observableArrayList();
+    private final ObservableList<BidTransaction> observable = FXCollections.observableArrayList();
     private TimeLeft timer;
 
     public LiveAuctionController() throws ConnectionFailedException {
@@ -70,21 +67,21 @@ public class LiveAuctionController implements  ResponseListener {
 
 
     @FXML
-    public void goMenu(ActionEvent event) throws IOException{
+    public void goMenu(ActionEvent event){
         timer.stop();
-        running = false; //đóng while khi chuyển sang màn khác
+        running = false; 
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.unregister(PlaceBidCommand.class, this);
     }
     @FXML
-    public void clickToGoProductDisplayInfo(ActionEvent event) throws IOException{
+    public void clickToGoProductDisplayInfo(ActionEvent event){
         timer.stop();
         changeScene(event , "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionInformation.fxml");
     }
 
     @FXML
-    public void placeBid(ActionEvent event) {
+    public void placeBid() {
         System.out.println("Bạn vừa ấn placeBid");
 
         try {
@@ -129,7 +126,7 @@ public class LiveAuctionController implements  ResponseListener {
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.register(GetBidHistoryCommand.class, this);
         bidHistory.setItems(observable);
-        bidHistory.setCellFactory((ListView<BidTransaction> listview) -> new BidTransactionCell());
+        bidHistory.setCellFactory((ListView<BidTransaction> _) -> new BidTransactionCell());
     }
 
     public void setCurrentAuctionInfoToScene(){
@@ -218,7 +215,7 @@ public class LiveAuctionController implements  ResponseListener {
     }
 
     @FXML
-    public void onAutoBidToggle(ActionEvent event) throws SendFailedException {
+    public void onAutoBidToggle() throws SendFailedException {
         if (autoBidToggle.isSelected()) {
             try {
                 // Lấy giá tối đa từ giao diện
@@ -268,9 +265,7 @@ public class LiveAuctionController implements  ResponseListener {
         if (rp.getCommand().getClass() == PlaceBidCommand.class) {
             BidTransaction bid = (BidTransaction) rp.getPayLoad();
             if (!rp.isSuccess()) {
-                Platform.runLater(() -> {
-                    showAlert("Trạng thái đặt bid", rp.getMessage());
-                });
+                Platform.runLater(() -> showAlert("Trạng thái đặt bid", rp.getMessage()));
                 return;
             }
 
@@ -278,10 +273,7 @@ public class LiveAuctionController implements  ResponseListener {
             if (bid == null) return;
             //nếu là người gửi thì hiện popup thông báo
             if (ClientModel.getInstance().getCurrentUser().getName().equals(bid.getBidderName())) {
-                Platform.runLater(() -> {
-                                showAlert("Trạng thái đặt bid", rp.getMessage());
-                });
-            }
+                Platform.runLater(() -> showAlert("Trạng thái đặt bid", rp.getMessage()));}
 
             // nếu đặt giá thành công thì set up lại view
             if (rp.isSuccess()) {
@@ -378,9 +370,8 @@ public class LiveAuctionController implements  ResponseListener {
         if (rp.getCommand().getClass() == AutoBidCommand.class) {
             NetworkManager networkManager = NetworkManager.getInstance();
             networkManager.unregister(AutoBidCommand.class, this);
-            Platform.runLater(() -> {
-                UIUtils.showAlert("Hệ thống AutoBid", rp.getMessage());
-            });
+            Platform.runLater(() ->
+                UIUtils.showAlert("Hệ thống AutoBid", rp.getMessage()));
         }
     }
 }

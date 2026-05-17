@@ -39,11 +39,11 @@ public class SignUpSuccessPopupController {
 
     private void playConfettiBurst() {
         Timeline burstTimeline = new Timeline(
-                new KeyFrame(Duration.ZERO, event -> createConfettiWave()),
-                new KeyFrame(Duration.millis(420), event -> createConfettiWave()),
-                new KeyFrame(Duration.millis(840), event -> createConfettiWave())
+                new KeyFrame(Duration.ZERO, _ -> createConfettiWave()),
+                new KeyFrame(Duration.millis(420), _ -> createConfettiWave()),
+                new KeyFrame(Duration.millis(840), _ -> createConfettiWave())
         );
-        burstTimeline.setOnFinished(event -> {
+        burstTimeline.setOnFinished(_ -> {
             burstFinished = true;
             closePopupIfConfettiFinished();
         });
@@ -93,7 +93,7 @@ public class SignUpSuccessPopupController {
 
         ParallelTransition animation = new ParallelTransition(move, spin, fade);
         runningConfettiAnimations++;
-        animation.setOnFinished(event -> {
+        animation.setOnFinished(_ -> {
             confettiLayer.getChildren().remove(piece);
             runningConfettiAnimations--;
             closePopupIfConfettiFinished();

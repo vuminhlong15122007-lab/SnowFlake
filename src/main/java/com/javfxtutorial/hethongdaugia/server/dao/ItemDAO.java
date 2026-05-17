@@ -112,7 +112,7 @@ public class ItemDAO implements DAOInterface<Item> {
 
   public int delete(Item item) throws DataDeleteException {
     int result = 0;
-    String deleteItemSQL = "DELETE FROM Item WHERE item_id = ?";
+    String deleteItemSQL = "DELETE FROM Item WHERE itemid = ?";
     try (Connection connection = JDBCUtil.getConnection();
          PreparedStatement pst = connection.prepareStatement(deleteItemSQL)) {
       pst.setInt(1, item.getItemId());

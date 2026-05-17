@@ -3,18 +3,15 @@ package com.javfxtutorial.hethongdaugia.client.handler;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionAlreadyEndedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotFoundException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotStartedException;
-import com.javfxtutorial.hethongdaugia.common.Exception.auth.UserAlreadyExistsException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auth.UserNotFoundException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.BidAmountExceedsLimitException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.InsufficientIncrementException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.LowerThanCurrentBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.SelfBidException;
-import com.javfxtutorial.hethongdaugia.common.Exception.bus.ConcurrentAccessException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bus.InvalidInputException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.*;
 import com.javfxtutorial.hethongdaugia.common.Exception.sys.ResourceExhaustedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.sys.UnknownSystemException;
-import com.javfxtutorial.hethongdaugia.common.Exception.bid.BidConflictException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.*;
 import javafx.application.Platform;
 import javafx.scene.control.Alert;
@@ -34,7 +31,7 @@ import java.util.Optional;
 public class GlobalExceptionHandler implements Thread.UncaughtExceptionHandler{
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    private static GlobalExceptionHandler instance;
+    private static volatile GlobalExceptionHandler instance;
 
     private GlobalExceptionHandler(){}
 

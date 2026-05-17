@@ -5,8 +5,6 @@ import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
-import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
-import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetUnpaidAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.LoginCommand;
@@ -18,6 +16,7 @@ import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -92,7 +91,7 @@ public class LoginController implements ResponseListener, Initializable {
                 Platform.runLater(() -> {
                     if (user.getAccountType() == AccountType.USER) {
                         log.info(rp.getMessage());
-                        Platform.runLater(() -> checkUpaidAuction());
+                        Platform.runLater(this::checkUpaidAuction);
                     } else if (user.getAccountType() == AccountType.ADMIN) {
                         log.info(rp.getMessage());
                         changeScene(loginEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UserManagement.fxml");
@@ -139,7 +138,7 @@ public class LoginController implements ResponseListener, Initializable {
             popup.initModality(Modality.APPLICATION_MODAL);
             popup.initStyle(StageStyle.UNDECORATED);
             popup.setScene(new Scene(root));
-            popup.setOnCloseRequest(e -> e.consume()); // Chặn Alt+F4
+            popup.setOnCloseRequest(Event::consume); // Chặn Alt+F4
 
             ctrl.setOnConfirmed(() -> {
                 markAsPaid(auction);

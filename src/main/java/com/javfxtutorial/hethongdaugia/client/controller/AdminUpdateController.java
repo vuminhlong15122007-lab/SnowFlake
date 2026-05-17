@@ -11,12 +11,9 @@ import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
-
-import java.io.IOException;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
@@ -30,7 +27,7 @@ public class AdminUpdateController implements ResponseListener {
     @FXML
     public void initialize(){
         // gan su kien dong cua so cho nut huy
-        btnCancel.setOnAction(event -> {
+        btnCancel.setOnAction(_ -> {
             // Llay va dong stage hien tai
             Stage stage = (Stage) btnCancel.getScene().getWindow();
             stage.close();
@@ -53,7 +50,7 @@ public class AdminUpdateController implements ResponseListener {
     }
     //cap nhat thong tin
     @FXML
-    public void handleUpdateInfo() throws IOException, ClassNotFoundException, ConnectionFailedException, SendFailedException {
+    public void handleUpdateInfo() throws ConnectionFailedException, SendFailedException {
         //lay du lieu tu o nhap
         String newName = txtName.getText();
         String newEmail = txtEmail.getText();

@@ -10,7 +10,6 @@ import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsComman
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
-import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -35,7 +34,6 @@ public class AuctionController implements ResponseListener {
     @FXML private TextField searchField;
     @FXML private Label sectionTitle;
     @FXML private Button btnAll, btnUpcoming, btnRunning, btnEnded;
-    @FXML private Button btnHome, btnmanageProducts, btnprofile, btnLiveAuction, logOut1;
     @FXML private ComboBox<String> categoryFilter;
 
     private final ObservableList<Auction> observable = FXCollections.observableArrayList();
@@ -46,38 +44,38 @@ public class AuctionController implements ResponseListener {
     public void initialize() throws ConnectionFailedException {
         VBox.setVgrow(featuredProductList, Priority.ALWAYS);
         featuredProductList.setMaxWidth(Double.MAX_VALUE);
-        featuredProductList.setCellFactory(lv -> new ProductCell());
+        featuredProductList.setCellFactory(_ -> new ProductCell());
         // Tạo FilteredList
-        filterData = new FilteredList<>(observable, auction -> true);
+        filterData = new FilteredList<>(observable, _ -> true);
         featuredProductList.setItems(filterData);
         // tim kiem
-        searchField.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
+        searchField.textProperty().addListener((_, _, _) -> applyFilters());
 
         // combox loai sp
         categoryFilter.getItems().addAll("All Products Type", "Art", "Vehicle", "Electronics", "Orther");
         categoryFilter.setValue("All Products Type");
-        categoryFilter.valueProperty().addListener((obs, oldVal, newVal) -> applyFilters());
+        categoryFilter.valueProperty().addListener((_, _, _) -> applyFilters());
 
         //loc trang thai
-        btnAll.setOnAction(e -> {
+        btnAll.setOnAction(_ -> {
             currentStatus = null;
             sectionTitle.setText("📋  " + "TẤT CẢ PHIÊN ĐẤU GIÁ");
             setActiveButton(btnAll);
             applyFilters();
         });
-        btnUpcoming.setOnAction(e -> {
+        btnUpcoming.setOnAction(_ -> {
             currentStatus = AuctionStatus.NOT_START;
             sectionTitle.setText("📋  " + "PHIÊN SẮP DIỄN RA");
             setActiveButton(btnUpcoming);
             applyFilters();
         });
-        btnRunning.setOnAction(e -> {
+        btnRunning.setOnAction(_ -> {
             currentStatus = AuctionStatus.RUNNING;
             sectionTitle.setText("📋  " + "PHIÊN ĐANG DIỄN RA");
             setActiveButton(btnRunning);
             applyFilters();
         });
-        btnEnded.setOnAction(e -> {
+        btnEnded.setOnAction(_ -> {
             currentStatus = AuctionStatus.CLOSED;
             sectionTitle.setText("📋  " + "PHIÊN ĐÃ KẾT THÚC");
             setActiveButton(btnEnded);
@@ -110,29 +108,19 @@ public class AuctionController implements ResponseListener {
             String selectedCategory = categoryFilter.getValue();
             if (selectedCategory != null && !selectedCategory.equals("All Products Type")) {
                 String auctionCategory = getCategoryName(auction);
-                if (!selectedCategory.equals(auctionCategory)) {
-                    return false;
-                }
-            } else if (selectedCategory.equals("Electronics")) {
+                return selectedCategory.equals(auctionCategory);
+            }else if (selectedCategory.equals("Electronics")) {
                 String auctionCategory = getCategoryName(auction);
-                if (!selectedCategory.equals(auctionCategory)) {
-                    return false;
-                }
+                return selectedCategory.equals(auctionCategory);
             }else if (selectedCategory.equals("Art")) {
                 String auctionCategory = getCategoryName(auction);
-                if (!selectedCategory.equals(auctionCategory)) {
-                    return false;
-                }
+                return selectedCategory.equals(auctionCategory);
             }else if (selectedCategory.equals("Vehicle")) {
                 String auctionCategory = getCategoryName(auction);
-                if (!selectedCategory.equals(auctionCategory)) {
-                    return false;
-                }
+                return selectedCategory.equals(auctionCategory);
             }else if (selectedCategory.equals("Orther")) {
                 String auctionCategory = getCategoryName(auction);
-                if (!selectedCategory.equals(auctionCategory)) {
-                    return false;
-                }
+                return selectedCategory.equals(auctionCategory);
             }
             return true;
         });
@@ -142,12 +130,12 @@ public class AuctionController implements ResponseListener {
     private String getCategoryName(Auction auction) {
         if (auction.getItem() == null || auction.getItem().getCategory() == null)
             return "Orther";
-        switch (auction.getItem().getCategory()) {
-            case ART:         return "Art";
-            case VEHICLE:     return "Vehicle";
-            case ELECTRONICS: return "Electronics";
-            default:          return "Orther";
-        }
+        return switch (auction.getItem().getCategory()) {
+            case ART -> "Art";
+            case VEHICLE -> "Vehicle";
+            case ELECTRONICS -> "Electronics";
+            default -> "Orther";
+        };
     }
 
     // Method dổi màu nút đang active
@@ -211,11 +199,6 @@ public class AuctionController implements ResponseListener {
     public void onResponse(Response rp) {
         if (rp.getCommand().getClass() == GetAllAuctionsCommand.class) {
             Platform.runLater(() -> {
-                if (rp == null) {
-                    showAlert("Loi tai du lieu", "Server khong tra ve du lieu phien dau gia.", "Loading.gif");
-                    return;
-                }
-
                 if (!rp.isSuccess()) {
                     showAlert("Loi tai du lieu", rp.getMessage(), "Loading.gif");
                     return;

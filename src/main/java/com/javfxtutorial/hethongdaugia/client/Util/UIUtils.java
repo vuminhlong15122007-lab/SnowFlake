@@ -85,7 +85,7 @@ public class UIUtils {
                 "-fx-effect: dropshadow(gaussian, rgba(47,128,237,0.24), 12, 0.22, 0, 3);"
         );
 
-        alert.setOnShowing(event -> {
+        alert.setOnShowing(_ -> {
             Scene scene = dialogPane.getScene();
             if (scene != null) {
                 scene.setFill(Color.TRANSPARENT);

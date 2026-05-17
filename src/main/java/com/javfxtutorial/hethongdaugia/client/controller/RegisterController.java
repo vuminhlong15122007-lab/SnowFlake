@@ -4,7 +4,6 @@ import com.javfxtutorial.hethongdaugia.client.MainApplication;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
-import com.javfxtutorial.hethongdaugia.common.Exception.data.DuplicateKeyException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
@@ -48,16 +47,14 @@ public class RegisterController implements ResponseListener {
     private boolean confirmPasswordShown = false;
     ActionEvent signUpEvent;
 
-    private Command cmd;
-
     @FXML
     public void clickBackToLogin(ActionEvent event) {
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
     }
-    public void clickSignUp(ActionEvent event) throws IOException, ClassNotFoundException {
+    public void clickSignUp(ActionEvent event) {
         signUpEvent = event;
         String name = Username.getText();
-        String password = null;
+        String password;
         if (passwordShown){
             password = PasswordVisible.getText();
         } else {
@@ -104,38 +101,35 @@ public class RegisterController implements ResponseListener {
             return;
         }
 
-        if (!name.isEmpty() && !email.isEmpty() && !password.isEmpty() && !confirmPassword.isEmpty()){
-            if (password.equals(confirmPassword)){
-                String finalPassword = password;
-                new Thread(() -> {
-                    try {
-                        ServerConnection connection = NetworkManager.getConnection();
-                        Command cmd = new AddAccountCommand();
-                        cmd.addData("username", name);
-                        cmd.addData("password", finalPassword);
-                        cmd.addData("email", email);
-                        cmd.addData("sdt", sdt);
-                        cmd.addData("accountType", "USER");
-                        connection.sendCommand(cmd);
-                        NetworkManager networkManager = NetworkManager.getInstance();
-                        networkManager.register(AddAccountCommand.class, this);} catch (ConnectionFailedException e) {
-                        log.error("Lỗi kết nối: {}", e.getMessage());
-                        Platform.runLater(() -> message.setText("Lỗi kết nối server"));
-                    } catch (SendFailedException e) {
-                        log.error("Lỗi gửi: {}", e.getMessage());
-                        Platform.runLater(() -> message.setText("Không thể gửi yêu cầu đăng ký"));
-                    } catch (Exception e) {
-                        log.error("Lỗi đăng ký: {}", e.getMessage(), e);
-                        Platform.runLater(() -> message.setText("Lỗi: " + e.getMessage()));
-                    }
-                }).start();
+        String finalPassword = password;
+        new Thread(() -> {
+            try {
+                ServerConnection connection = NetworkManager.getConnection();
+                Command cmd = new AddAccountCommand();
+                cmd.addData("username", name);
+                cmd.addData("password", finalPassword);
+                cmd.addData("email", email);
+                cmd.addData("sdt", sdt);
+                cmd.addData("accountType", "USER");
+                connection.sendCommand(cmd);
+                NetworkManager networkManager = NetworkManager.getInstance();
+                networkManager.register(AddAccountCommand.class, this);
+            } catch (ConnectionFailedException e) {
+                log.error("Lỗi kết nối: {}", e.getMessage());
+                Platform.runLater(() -> message.setText("Lỗi kết nối server"));
+            } catch (SendFailedException e) {
+                log.error("Lỗi gửi: {}", e.getMessage());
+                Platform.runLater(() -> message.setText("Không thể gửi yêu cầu đăng ký"));
+            } catch (Exception e) {
+                log.error("Lỗi đăng ký: {}", e.getMessage(), e);
+                Platform.runLater(() -> message.setText("Lỗi: " + e.getMessage()));
             }
-        }
+        }).start();
     }
 
     // ẩn hiện mkh
     @FXML
-    public void togglePasswordVisibility(ActionEvent event) {
+    public void togglePasswordVisibility() {
         passwordShown = !passwordShown;
         if (passwordShown) {
             PasswordVisible.setText(Password.getText());
@@ -149,7 +143,7 @@ public class RegisterController implements ResponseListener {
     }
     //ẩn hiện xác nhận mk
     @FXML
-    public void toggleConfirmPasswordVisibility(ActionEvent event) {
+    public void toggleConfirmPasswordVisibility() {
         confirmPasswordShown = !confirmPasswordShown;
         if (confirmPasswordShown) {
             ConfirmPasswordVisible.setText(Confirm_Password.getText());
@@ -164,7 +158,7 @@ public class RegisterController implements ResponseListener {
 
     // Mở popup đkhoan
     @FXML
-    public void showTerms(ActionEvent event) {
+    public void showTerms() {
         try {
             FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource(
                     "/com/javfxtutorial/hethongdaugia/view/fxml/TermsPopup.fxml"));
@@ -181,9 +175,7 @@ public class RegisterController implements ResponseListener {
             termsStage.setScene(scene);
 
             // nhận kq đý / Từ chối
-            termsController.setResultCallback(agreed -> {
-                agreeCheckBox.setSelected(agreed);
-            });
+            termsController.setResultCallback(agreed -> agreeCheckBox.setSelected(agreed));
 
             termsStage.show();
         } catch (IOException e) {

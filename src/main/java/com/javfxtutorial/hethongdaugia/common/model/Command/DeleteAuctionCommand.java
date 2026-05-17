@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 public class DeleteAuctionCommand extends Command {
     private static final Logger log = LoggerFactory.getLogger(DeleteAuctionCommand.class);
-    private Auction auction;
+    private final Auction auction;
     public DeleteAuctionCommand(Auction auction) {this.auction = auction;}
 
     @Override
