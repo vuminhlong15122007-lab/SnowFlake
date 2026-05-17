@@ -37,13 +37,17 @@ public class ParticipatedAuctionController implements  ResponseListener {
   @FXML private Button btnCTToan;
   @FXML private Button btnDTGia;
   @FXML private Button btnDTToan;
+  @FXML private Button btnDaHuy;
+  @FXML private Button btnDaThamGia;
   @FXML private ListView<Auction> productList;
   @FXML private TextField searchField;
   @FXML private Label sectionTitle;
 
+
   private final ObservableList<Auction> participatedAuctionList = FXCollections.observableArrayList();
   private FilteredList<Auction> filterData;
   private AuctionStatus currentStatus = null;
+  private boolean filterLoser = false;
 
   @FXML void goMenu(ActionEvent event) { changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");}
 
@@ -63,17 +67,20 @@ public class ParticipatedAuctionController implements  ResponseListener {
     btnAll.setOnAction(_ -> {
       currentStatus = null;
       sectionTitle.setText("📋  " + "TẤT CẢ PHIÊN ĐẤU GIÁ ĐÃ THAM GIA");
+      filterLoser = false;
       setActiveButton(btnAll);
       applyFilters();
     });
     btnDTToan.setOnAction(_ -> {
       currentStatus = AuctionStatus.PAID;
       sectionTitle.setText("📋  " + "PHIÊN ĐẤU GIÁ ĐÃ THANH TOÁN");
+      filterLoser = false;
       setActiveButton(btnDTToan);
       applyFilters();
     });
     btnCTToan.setOnAction(_ -> {
       currentStatus = AuctionStatus.CLOSED;
+      filterLoser = false;
       sectionTitle.setText("📋  " + "PHIÊN ĐẤU GIÁ CHƯA THANH TOÁN");
       setActiveButton(btnCTToan);
       applyFilters();
@@ -81,10 +88,24 @@ public class ParticipatedAuctionController implements  ResponseListener {
     btnDTGia.setOnAction(_ -> {
       currentStatus = AuctionStatus.RUNNING;
       sectionTitle.setText("📋  " + "PHIÊN ĐẤU GIÁ ĐANG THAM GIA ");
+      filterLoser = false;
       setActiveButton(btnDTGia);
       applyFilters();
     });
-
+    btnDaHuy.setOnAction(e -> {
+      currentStatus = AuctionStatus.CANCELLED;
+      sectionTitle.setText("📋  PHIÊN ĐẤU GIÁ ĐÃ BỊ HỦY");
+      filterLoser = false;
+      setActiveButton(btnDaHuy);
+      applyFilters();
+    });
+    btnDaThamGia.setOnAction(e -> {
+      currentStatus = AuctionStatus.CLOSED;
+      filterLoser = true;
+      sectionTitle.setText("📋  PHIÊN ĐẤU GIÁ ĐÃ THAM GIA");
+      setActiveButton(btnDaThamGia);
+      applyFilters();
+    });
     loadData();
   }
 
@@ -103,16 +124,16 @@ public class ParticipatedAuctionController implements  ResponseListener {
       }
 
       // 2. Lọc theo trạng thái
-      if (currentStatus == AuctionStatus.CLOSED){ //những phiên đấu giá thanh toán không thành công cũng hiện ở phần chowf thanh toán
-        if(auction.getStatus() == AuctionStatus.CANCELLED){
-          return true;
-        }
-      }
       if (currentStatus != null && auction.getStatus() != currentStatus) {
         return false;
       }
       if (currentStatus == AuctionStatus.CLOSED || currentStatus == AuctionStatus.PAID){
-        return auction.getWinnerId() == ClientModel.getInstance().getCurrentUser().getId();
+        int userId = ClientModel.getInstance().getCurrentUser().getId();
+        if (filterLoser) { // Đã tham gia nhưng không thắng
+          return auction.getWinnerId() != userId;
+        } else {// Chờ thanh toán → user thắng
+          return auction.getWinnerId() == userId;
+        }
       }
 
       return true;
@@ -123,7 +144,7 @@ public class ParticipatedAuctionController implements  ResponseListener {
 
   // Đổi màu nút đang active
   private void setActiveButton(Button active) {
-    Button[] buttons = {btnAll, btnCTToan, btnDTGia, btnDTToan};
+    Button[] buttons = {btnAll, btnCTToan, btnDTGia, btnDTToan, btnDaHuy, btnDaThamGia};
     String activeStyle = "-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15;";
     String inactiveStyle = "-fx-background-color: white; -fx-text-fill: #7f8c8d; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15; -fx-border-color: #dcdde1; -fx-border-radius: 8;";
     for (Button b : buttons) {
