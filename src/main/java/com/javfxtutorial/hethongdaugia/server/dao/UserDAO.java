@@ -45,7 +45,8 @@ public class UserDAO implements DAOInterface<User> {
                     }
                 }
             }
-            throw new DataInsertException("User");
+            else {
+                throw new DataInsertException("User");}
         } catch (SQLIntegrityConstraintViolationException e) {
             if (e.getErrorCode() == 1062) {
                 log.error("Lỗi: Dữ liệu bị trùng lặp!");

@@ -33,7 +33,8 @@ public class AddAccountCommand extends Command {
         }
         try{
             int result = UserDAO.getInstance().insert(new User(username1, password, email, sdt, role));
-            return new Response(true, "tạo tài khoản thành công", null, this);} catch (DuplicateKeyException e) {
+            return new Response(true, "tạo tài khoản thành công", null, this);}
+        catch (DuplicateKeyException e) {
             log.warn("Tạo tài khoản thất bại: {}", e.getMessage());
             return new Response(false, e.getMessage(), null, this);
         } catch (DataInsertException e) {
