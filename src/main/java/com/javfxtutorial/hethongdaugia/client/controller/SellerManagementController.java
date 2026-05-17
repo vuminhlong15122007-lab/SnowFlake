@@ -266,6 +266,18 @@ public class SellerManagementController implements ResponseListener {
                     throw new RuntimeException(e);
                   }
                 });
+                //hiển thị người thắng
+                if (newVal.getStatus() == AuctionStatus.CLOSED) {
+                    if (newVal.getWinnerId() <= 0) {
+                        showAlert("Kết quả đấu giá",
+                                "Sản phẩm \"" + newVal.getItem().getName() + "\" không có ai đặt giá.", "Wait.gif");
+                    } else {
+                        showAlert("Kết quả đấu giá",
+                                "Sản phẩm \"" + newVal.getItem().getName() + "\" đã có người thắng!\n"
+                                        + "ID người thắng: " + newVal.getWinnerId() + "\n"
+                                        + "Giá thắng: " + String.format("%,.0f VND", newVal.getWinningPrice()), "Happy.gif");
+                    }
+                }
             }
         });
 
