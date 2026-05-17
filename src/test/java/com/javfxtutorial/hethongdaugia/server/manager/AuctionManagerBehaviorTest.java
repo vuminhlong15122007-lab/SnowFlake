@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
@@ -81,7 +82,7 @@ class AuctionManagerBehaviorTest {
     @DisplayName("Auction status")
     class AuctionStatusRefresh {
         @Test
-        void refreshAuctionStatus_keepsNotStartBeforeStart_withoutDatabaseUpdate() {
+        void refreshAuctionStatus_keepsNotStartBeforeStart_withoutDatabaseUpdate() throws DataException {
             Auction auction = auctionWithTime(
                     LocalDateTime.now().plusHours(1),
                     LocalDateTime.now().plusHours(2),
@@ -93,7 +94,7 @@ class AuctionManagerBehaviorTest {
         }
 
         @Test
-        void refreshAuctionStatus_keepsRunningDuringAuction_withoutDatabaseUpdate() {
+        void refreshAuctionStatus_keepsRunningDuringAuction_withoutDatabaseUpdate() throws DataException {
             Auction auction = auctionWithTime(
                     LocalDateTime.now().minusMinutes(5),
                     LocalDateTime.now().plusMinutes(5),
@@ -105,7 +106,7 @@ class AuctionManagerBehaviorTest {
         }
 
         @Test
-        void refreshAuctionStatus_keepsClosedAfterEnd_withoutDatabaseUpdate() {
+        void refreshAuctionStatus_keepsClosedAfterEnd_withoutDatabaseUpdate() throws DataException {
             Auction auction = auctionWithTime(
                     LocalDateTime.now().minusHours(2),
                     LocalDateTime.now().minusHours(1),
@@ -117,7 +118,7 @@ class AuctionManagerBehaviorTest {
         }
 
         @Test
-        void checkPaymentStatus_keepsPaidAuctionAfterPaymentWindow() {
+        void checkPaymentStatus_keepsPaidAuctionAfterPaymentWindow() throws DataException {
             Auction auction = auctionWithTime(
                     LocalDateTime.now().minusDays(2),
                     LocalDateTime.now().minusHours(25),
@@ -128,7 +129,7 @@ class AuctionManagerBehaviorTest {
         }
 
         @Test
-        void checkPaymentStatus_keepsStatusBeforePaymentWindowExpires() {
+        void checkPaymentStatus_keepsStatusBeforePaymentWindowExpires() throws DataException {
             Auction auction = auctionWithTime(
                     LocalDateTime.now().minusHours(2),
                     LocalDateTime.now().minusHours(1),

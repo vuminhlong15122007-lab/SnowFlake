@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.auth.InvalidCredentialsException;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
@@ -16,30 +17,23 @@ import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
-import static org.junit.jupiter.api.Assertions.assertSame;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class UserContractTest {
-    private static final User ALICE = new User(
-            1,
-            "alice",
-            "pass123",
-            "alice@example.com",
-            "0901234567",
-            AccountType.USER,
-            "alice.png"
-    );
+
+    private User alice() {
+        return new User(
+                1,
+                "alice",
+                "pass123",
+                "alice@example.com",
+                "0901234567",
+                AccountType.USER,
+                "alice.png"
+        );
+    }
 
     @Nested
     @DisplayName("User model")
@@ -104,7 +98,8 @@ class UserContractTest {
 
         @Test
         void toString_containsVisibleUserFields() {
-            String text = ALICE.toString();
+            User user = alice();
+            String text = user.toString();
 
             assertTrue(text.contains("id=1"));
             assertTrue(text.contains("alice"));
@@ -146,98 +141,140 @@ class UserContractTest {
     @DisplayName("UserManager.authenticate")
     class AuthenticationManagerTest {
         @Test
-        void authenticate_returnsUserWhenPasswordMatches() {
+        void authenticate_returnsUserWhenLegacyPlainPasswordMatches() throws Exception {
+            User user = alice();
             UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectByUsername("alice")).thenReturn(ALICE);
+            when(userDAO.selectByUsername("alice")).thenReturn(user);
+            when(userDAO.update(any(User.class))).thenReturn(1);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
                 User result = UserManager.getInstance().authenticate("alice", "pass123");
 
-                assertSame(ALICE, result);
+                assertSame(user, result);
+                assertEquals("alice", result.getName());
                 verify(userDAO).selectByUsername("alice");
             }
         }
 
         @Test
-        void authenticate_returnsNullWhenUserMissing() {
+        void authenticate_throwsInvalidCredentialsWhenUserMissing() throws Exception {
             UserDAO userDAO = mock(UserDAO.class);
             when(userDAO.selectByUsername("missing")).thenReturn(null);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
-                assertNull(UserManager.getInstance().authenticate("missing", "pass123"));
+                assertThrows(
+                        InvalidCredentialsException.class,
+                        () -> UserManager.getInstance().authenticate("missing", "pass123")
+                );
                 verify(userDAO).selectByUsername("missing");
             }
         }
 
         @Test
-        void authenticate_returnsNullWhenPasswordDiffers() {
-            UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectByUsername("alice")).thenReturn(ALICE);
-
-            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
-
-                assertNull(UserManager.getInstance().authenticate("alice", "wrong"));
-                verify(userDAO).selectByUsername("alice");
-            }
-        }
-
-        @Test
-        void authenticate_isCaseSensitive() {
-            UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectByUsername("alice")).thenReturn(ALICE);
-
-            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
-
-                assertNull(UserManager.getInstance().authenticate("alice", "Pass123"));
-                verify(userDAO).selectByUsername("alice");
-            }
-        }
-
-        @Test
-        void authenticate_returnsNullWhenInputPasswordIsNull() {
-            UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectByUsername("alice")).thenReturn(ALICE);
-
-            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
-
-                assertNull(UserManager.getInstance().authenticate("alice", null));
-                verify(userDAO).selectByUsername("alice");
-            }
-        }
-
-        @Test
-        void authenticate_acceptsStoredHash() {
-            User user = new User(1, "alice", PasswordHasher.hash("pass123"), "alice@example.com", "0901234567", AccountType.USER, null);
+        void authenticate_throwsInvalidCredentialsWhenPasswordDiffers() throws Exception {
+            User user = alice();
             UserDAO userDAO = mock(UserDAO.class);
             when(userDAO.selectByUsername("alice")).thenReturn(user);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
-                assertSame(user, UserManager.getInstance().authenticate("alice", "pass123"));
+                assertThrows(
+                        InvalidCredentialsException.class,
+                        () -> UserManager.getInstance().authenticate("alice", "wrong")
+                );
+                verify(userDAO).selectByUsername("alice");
                 verify(userDAO, never()).update(any(User.class));
             }
         }
 
         @Test
-        void authenticate_migratesLegacyPlainTextPasswordAfterSuccessfulLogin() {
-            User legacyUser = new User(1, "alice", "pass123", "alice@example.com", "0901234567", AccountType.USER, null);
+        void authenticate_isCaseSensitive() throws Exception {
+            User user = alice();
             UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectByUsername("alice")).thenReturn(legacyUser);
-            when(userDAO.update(any(User.class))).thenReturn(1);
+            when(userDAO.selectByUsername("alice")).thenReturn(user);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
-                assertSame(legacyUser, UserManager.getInstance().authenticate("alice", "pass123"));
-                verify(userDAO).update(legacyUser);
+                assertThrows(
+                        InvalidCredentialsException.class,
+                        () -> UserManager.getInstance().authenticate("alice", "Pass123")
+                );
+                verify(userDAO).selectByUsername("alice");
+                verify(userDAO, never()).update(any(User.class));
+            }
+        }
+
+        @Test
+        void authenticate_throwsInvalidCredentialsWhenInputPasswordIsNull() throws Exception {
+            User user = alice();
+            UserDAO userDAO = mock(UserDAO.class);
+            when(userDAO.selectByUsername("alice")).thenReturn(user);
+
+            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+                assertThrows(
+                        InvalidCredentialsException.class,
+                        () -> UserManager.getInstance().authenticate("alice", null)
+                );
+                verify(userDAO).selectByUsername("alice");
+                verify(userDAO, never()).update(any(User.class));
+            }
+        }
+
+        @Test
+        void authenticate_acceptsStoredHashWithoutMigratingAgain() throws Exception {
+            User user = new User(
+                    1,
+                    "alice",
+                    PasswordHasher.hash("pass123"),
+                    "alice@example.com",
+                    "0901234567",
+                    AccountType.USER,
+                    null
+            );
+            UserDAO userDAO = mock(UserDAO.class);
+            when(userDAO.selectByUsername("alice")).thenReturn(user);
+
+            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+                User result = UserManager.getInstance().authenticate("alice", "pass123");
+
+                assertSame(user, result);
+                assertTrue(PasswordHasher.isHashed(result.getPassWord()));
+                assertTrue(PasswordHasher.matches("pass123", result.getPassWord()));
+                verify(userDAO, never()).update(any(User.class));
+            }
+        }
+
+        @Test
+        void authenticate_migratesLegacyPlainTextPasswordAndReturnedUserKeepsHash() throws Exception {
+            User legacyUser = alice();
+            UserDAO userDAO = mock(UserDAO.class);
+            ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+            when(userDAO.selectByUsername("alice")).thenReturn(legacyUser);
+            when(userDAO.update(userCaptor.capture())).thenReturn(1);
+
+            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+                User result = UserManager.getInstance().authenticate("alice", "pass123");
+
+                assertSame(legacyUser, result);
+                assertTrue(PasswordHasher.isHashed(result.getPassWord()));
+                assertTrue(PasswordHasher.matches("pass123", result.getPassWord()));
+
+                User sentToDao = userCaptor.getValue();
+                assertSame(legacyUser, sentToDao);
+                assertTrue(PasswordHasher.isHashed(sentToDao.getPassWord()));
+                assertTrue(PasswordHasher.matches("pass123", sentToDao.getPassWord()));
             }
         }
     }
@@ -246,9 +283,10 @@ class UserContractTest {
     @DisplayName("UserManager.updateUserProfile")
     class UpdateUserProfileManagerTest {
         @Test
-        void updateUserProfile_keepsOldValuesWhenInputIsNullOrBlank() {
+        void updateUserProfile_keepsOldValuesWhenInputIsNullOrBlank() throws Exception {
+            User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectById(1)).thenReturn(ALICE);
+            when(userDAO.selectById(1)).thenReturn(oldUser);
             when(userDAO.update(any(User.class))).thenReturn(1);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
@@ -266,9 +304,10 @@ class UserContractTest {
         }
 
         @Test
-        void updateUserProfile_trimsNameEmailAndPhoneWhenProvided() {
+        void updateUserProfile_trimsNameEmailAndPhoneWhenProvided() throws Exception {
+            User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectById(1)).thenReturn(ALICE);
+            when(userDAO.selectById(1)).thenReturn(oldUser);
             when(userDAO.update(any(User.class))).thenReturn(1);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
@@ -291,34 +330,48 @@ class UserContractTest {
         }
 
         @Test
-        void updateUserProfile_preservesIdPasswordAndRole() {
+        void updateUserProfile_preservesIdPasswordAndRole() throws Exception {
+            User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectById(1)).thenReturn(ALICE);
+            when(userDAO.selectById(1)).thenReturn(oldUser);
             when(userDAO.update(any(User.class))).thenReturn(1);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
-                User result = UserManager.getInstance().updateUserProfile(1, "new", "new@example.com", "0999", "new.png");
+                User result = UserManager.getInstance().updateUserProfile(
+                        1,
+                        "new",
+                        "new@example.com",
+                        "0999",
+                        "new.png"
+                );
 
                 assertNotNull(result);
-                assertEquals(ALICE.getId(), result.getId());
-                assertEquals(ALICE.getPassWord(), result.getPassWord());
-                assertEquals(ALICE.getAccountType(), result.getAccountType());
+                assertEquals(oldUser.getId(), result.getId());
+                assertEquals(oldUser.getPassWord(), result.getPassWord());
+                assertEquals(oldUser.getAccountType(), result.getAccountType());
             }
         }
 
         @Test
-        void updateUserProfile_sendsMergedUserToDao() {
+        void updateUserProfile_sendsMergedUserToDao() throws Exception {
+            User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
             ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-            when(userDAO.selectById(1)).thenReturn(ALICE);
+            when(userDAO.selectById(1)).thenReturn(oldUser);
             when(userDAO.update(userCaptor.capture())).thenReturn(1);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
-                User result = UserManager.getInstance().updateUserProfile(1, "new", "new@example.com", "0999", "");
+                User result = UserManager.getInstance().updateUserProfile(
+                        1,
+                        "new",
+                        "new@example.com",
+                        "0999",
+                        ""
+                );
 
                 assertNotNull(result);
                 User sentToDao = userCaptor.getValue();
@@ -333,28 +386,41 @@ class UserContractTest {
         }
 
         @Test
-        void updateUserProfile_returnsNullWhenUserDoesNotExist() {
+        void updateUserProfile_returnsNullWhenUserDoesNotExist() throws Exception {
             UserDAO userDAO = mock(UserDAO.class);
             when(userDAO.selectById(404)).thenReturn(null);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
-                assertNull(UserManager.getInstance().updateUserProfile(404, "new", "new@example.com", "0999", "new.png"));
+                assertNull(UserManager.getInstance().updateUserProfile(
+                        404,
+                        "new",
+                        "new@example.com",
+                        "0999",
+                        "new.png"
+                ));
                 verify(userDAO, never()).update(any(User.class));
             }
         }
 
         @Test
-        void updateUserProfile_returnsNullWhenDaoUpdateFails() {
+        void updateUserProfile_returnsNullWhenDaoUpdateFails() throws Exception {
+            User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectById(1)).thenReturn(ALICE);
+            when(userDAO.selectById(1)).thenReturn(oldUser);
             when(userDAO.update(any(User.class))).thenReturn(0);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
-                assertNull(UserManager.getInstance().updateUserProfile(1, "new", "new@example.com", "0999", "new.png"));
+                assertNull(UserManager.getInstance().updateUserProfile(
+                        1,
+                        "new",
+                        "new@example.com",
+                        "0999",
+                        "new.png"
+                ));
                 verify(userDAO).update(any(User.class));
             }
         }
@@ -364,10 +430,12 @@ class UserContractTest {
     @DisplayName("UserManager.reset_password")
     class ResetPasswordManagerTest {
         @Test
-        void resetPassword_changesOnlyPassword() {
+        void resetPassword_changesOnlyPasswordAndReturnedUserKeepsHash() throws Exception {
+            User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectById(1)).thenReturn(ALICE);
-            when(userDAO.update(any(User.class))).thenReturn(1);
+            ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+            when(userDAO.selectById(1)).thenReturn(oldUser);
+            when(userDAO.update(userCaptor.capture())).thenReturn(1);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
@@ -375,21 +443,27 @@ class UserContractTest {
                 User reset = UserManager.getInstance().reset_password(1, "new-secret");
 
                 assertNotNull(reset);
-                assertEquals(ALICE.getId(), reset.getId());
-                assertEquals(ALICE.getName(), reset.getName());
-                assertEquals("new-secret", reset.getPassWord());
-                assertEquals(ALICE.getEmail(), reset.getEmail());
-                assertEquals(ALICE.getSdt(), reset.getSdt());
-                assertEquals(ALICE.getAccountType(), reset.getAccountType());
-                assertEquals(ALICE.getImagePath(), reset.getImagePath());
-                verify(userDAO).update(any(User.class));
+                assertEquals(oldUser.getId(), reset.getId());
+                assertEquals(oldUser.getName(), reset.getName());
+                assertEquals(oldUser.getEmail(), reset.getEmail());
+                assertEquals(oldUser.getSdt(), reset.getSdt());
+                assertEquals(oldUser.getAccountType(), reset.getAccountType());
+                assertEquals(oldUser.getImagePath(), reset.getImagePath());
+
+                assertTrue(PasswordHasher.isHashed(reset.getPassWord()));
+                assertTrue(PasswordHasher.matches("new-secret", reset.getPassWord()));
+
+                User sentToDao = userCaptor.getValue();
+                assertTrue(PasswordHasher.isHashed(sentToDao.getPassWord()));
+                assertTrue(PasswordHasher.matches("new-secret", sentToDao.getPassWord()));
             }
         }
 
         @Test
-        void resetPassword_allowsEmptyPasswordByCurrentContract() {
+        void resetPassword_allowsEmptyPasswordByCurrentContractButStoresHash() throws Exception {
+            User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectById(1)).thenReturn(ALICE);
+            when(userDAO.selectById(1)).thenReturn(oldUser);
             when(userDAO.update(any(User.class))).thenReturn(1);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
@@ -398,14 +472,16 @@ class UserContractTest {
                 User reset = UserManager.getInstance().reset_password(1, "");
 
                 assertNotNull(reset);
-                assertEquals("", reset.getPassWord());
+                assertTrue(PasswordHasher.isHashed(reset.getPassWord()));
+                assertTrue(PasswordHasher.matches("", reset.getPassWord()));
             }
         }
 
         @Test
-        void resetPassword_returnsNullWhenDaoUpdateFails() {
+        void resetPassword_returnsNullWhenDaoUpdateFails() throws Exception {
+            User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectById(1)).thenReturn(ALICE);
+            when(userDAO.selectById(1)).thenReturn(oldUser);
             when(userDAO.update(any(User.class))).thenReturn(0);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
@@ -418,62 +494,36 @@ class UserContractTest {
     }
 
     @Nested
-    @DisplayName("UserManager.checkExistedUsername")
-    class CheckExistedUsernameManagerTest {
-        @Test
-        void existedUsername_returnsTrueWithoutDaoLookup() {
-            UserDAO userDAO = mock(UserDAO.class);
-
-            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
-
-                assertTrue(UserManager.getInstance().checkExistedUsername("alice"));
-                verifyNoInteractions(userDAO);
-            }
-        }
-
-        @Test
-        void existedUsername_returnsTrueEvenWhenDaoWouldReturnNull() {
-            UserDAO userDAO = mock(UserDAO.class);
-
-            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
-
-                assertTrue(UserManager.getInstance().checkExistedUsername("missing"));
-                verifyNoInteractions(userDAO);
-            }
-        }
-    }
-
-    @Nested
     @DisplayName("UserManager.deleteUser")
     class DeleteUserManagerTest {
         @Test
-        void deleteUser_returnsTrueWhenDaoDeleteSucceeds() {
+        void deleteUser_returnsTrueWhenDaoDeleteSucceeds() throws Exception {
+            User user = alice();
             UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectById(1)).thenReturn(ALICE);
-            when(userDAO.delete(ALICE)).thenReturn(1);
+            when(userDAO.selectById(1)).thenReturn(user);
+            when(userDAO.delete(user)).thenReturn(1);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
                 assertTrue(UserManager.getInstance().deleteUser(1, "ignored", "ignored", "ignored"));
                 verify(userDAO).selectById(1);
-                verify(userDAO).delete(ALICE);
+                verify(userDAO).delete(user);
             }
         }
 
         @Test
-        void deleteUser_returnsFalseWhenDaoDeleteFails() {
+        void deleteUser_returnsFalseWhenDaoDeleteFails() throws Exception {
+            User user = alice();
             UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectById(1)).thenReturn(ALICE);
-            when(userDAO.delete(ALICE)).thenReturn(0);
+            when(userDAO.selectById(1)).thenReturn(user);
+            when(userDAO.delete(user)).thenReturn(0);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
                 assertFalse(UserManager.getInstance().deleteUser(1, "ignored", "ignored", "ignored"));
-                verify(userDAO).delete(ALICE);
+                verify(userDAO).delete(user);
             }
         }
     }

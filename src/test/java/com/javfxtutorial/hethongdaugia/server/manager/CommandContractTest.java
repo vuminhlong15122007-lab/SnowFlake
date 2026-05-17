@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AutoBidCommand;
@@ -28,6 +29,7 @@ import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -118,15 +120,19 @@ class CommandContractTest {
         }
 
         @Test
-        void registerToAuctionCommand_registersCurrentContextListenerAndReturnsNull() throws Exception {
+        void registerToAuctionCommand_registersCurrentContextListenerAndReturnsSuccessResponse() throws Exception {
             Auction auction = runningAuction(AuctionStatus.RUNNING);
             auction.setAuctionId(123);
+
             RegisterToAuctionCommand command = new RegisterToAuctionCommand();
             command.addData("currentAuction", auction);
 
             Response response = command.handle();
 
-            assertNull(response);
+            assertNotNull(response);
+            assertTrue(response.isSuccess());
+            assertNull(response.getPayLoad());
+            assertSame(command, response.getCommand());
             assertEquals(1, TestStateSupport.auctionSubscribers(manager).get(123).size());
             assertNull(TestStateSupport.auctionSubscribers(manager).get(123).get(0));
         }
@@ -158,7 +164,7 @@ class CommandContractTest {
         }
 
         @Test
-        void updateProfileCommand_successResponseKeepsCommandForClientDispatch() {
+        void updateProfileCommand_successResponseKeepsCommandForClientDispatch() throws DataException {
             UpdateProfileCommand command = new UpdateProfileCommand();
             command.addData("userId", 1);
             command.addData("username", "Alice Nguyen");

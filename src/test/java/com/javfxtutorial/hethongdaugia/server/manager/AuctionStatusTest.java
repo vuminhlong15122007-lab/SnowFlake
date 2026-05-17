@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
@@ -32,7 +33,7 @@ public class AuctionStatusTest {
 
         @Test
         @DisplayName("trả về NOT_START khi startingTime ở tương lai")
-        void status_notStarted() {
+        void status_notStarted() throws DataException {
             AuctionDAO auctionDAO = mock(AuctionDAO.class);
             Auction auction = buildAuction(
                     LocalDateTime.now().plusHours(1),
@@ -50,7 +51,7 @@ public class AuctionStatusTest {
 
         @Test
         @DisplayName("trả về RUNNING khi đang trong thời gian đấu giá")
-        void status_running() {
+        void status_running() throws DataException {
             AuctionDAO auctionDAO = mock(AuctionDAO.class);
             when(auctionDAO.update(any(Auction.class))).thenReturn(1);
             Auction auction = buildAuction(
@@ -63,12 +64,14 @@ public class AuctionStatusTest {
 
                 assertEquals(AuctionStatus.RUNNING, status);
                 verify(auctionDAO).update(auction);
+            } catch (DataException e) {
+                throw new RuntimeException(e);
             }
         }
 
         @Test
         @DisplayName("trả về CLOSED khi endingTime đã qua")
-        void status_closed() {
+        void status_closed() throws DataException {
             AuctionDAO auctionDAO = mock(AuctionDAO.class);
             when(auctionDAO.update(any(Auction.class))).thenReturn(1);
             Auction auction = buildAuction(
@@ -86,7 +89,7 @@ public class AuctionStatusTest {
 
         @Test
         @DisplayName("trạng thái auction được cập nhật trực tiếp trên object")
-        void status_updatesAuctionObject() {
+        void status_updatesAuctionObject() throws DataException {
             AuctionDAO auctionDAO = mock(AuctionDAO.class);
             when(auctionDAO.update(any(Auction.class))).thenReturn(1);
             Auction auction = buildAuction(
@@ -99,13 +102,15 @@ public class AuctionStatusTest {
 
                 assertEquals(AuctionStatus.RUNNING, auction.getStatus());
                 verify(auctionDAO).update(auction);
+            } catch (DataException e) {
+                throw new RuntimeException(e);
             }
         }
 
         // method nội bộ để build sẵn một Auction
         private Auction buildAuction(LocalDateTime start, LocalDateTime end) {
             Auction a = new Auction();
-            a.setAuctionId(0); // id giả, không gọi DB
+            a.setAuctionId(1);
             a.setStartingTime(start);
             a.setEndingTime(end);
             a.setStatus(AuctionStatus.NOT_START);

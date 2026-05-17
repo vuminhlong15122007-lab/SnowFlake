@@ -38,7 +38,7 @@ public class UserManager {
 
         if (user != null && PasswordHasher.matches(password, user.getPassWord())) {
             if (!PasswordHasher.isHashed(user.getPassWord())) {
-                user.setPassWord(password);
+                user.setPassWord(PasswordHasher.hash(password));
                 UserDAO.getInstance().update(user);
             }
             log.info("Xác thực thành công: {}", username);
@@ -95,7 +95,7 @@ public class UserManager {
             User newUser = new User(
                     userId,
                     resetPW.getName(),
-                    passWord,
+                    PasswordHasher.hash(passWord),
                     resetPW.getEmail(),
                     resetPW.getSdt(),
                     resetPW.getAccountType(),
