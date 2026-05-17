@@ -1,11 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.effect.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.effect.DropShadow?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="720.0" maxWidth="1280.0" minHeight="720.0" minWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.UserProfileController">
+<BorderPane maxHeight="720.0" maxWidth="1280.0" minHeight="720.0" minWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.UserProfileController">
 
    <top>
       <HBox alignment="CENTER_LEFT" prefHeight="83.0" prefWidth="1280.0" spacing="14.0" style="-fx-padding: 10; -fx-background-color: linear-gradient(to right, #89CFF0, lavender);">
@@ -36,7 +47,10 @@
 
          <Button onAction="#clickToSellerMangement" prefHeight="42.0" prefWidth="178.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" text="Sản phẩm của tôi" />
 
-         <Pane VBox.vgrow="ALWAYS" />
+         <Pane VBox.vgrow="ALWAYS">
+            <children>
+               <Button layoutX="11.0" onAction="#clickToAuctionList" prefHeight="42.0" prefWidth="178.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" text="Các phiên đấu giá" />
+            </children></Pane>
 
          <Button fx:id="logOut" onAction="#clickToLogOut" prefHeight="42.0" prefWidth="178.0" style="-fx-background-color: #fff3f3; -fx-text-fill: #d64545; -fx-font-weight: bold; -fx-background-radius: 12; -fx-border-color: #ffd4d4; -fx-border-radius: 12;" text="Đăng xuất" />
       </VBox>

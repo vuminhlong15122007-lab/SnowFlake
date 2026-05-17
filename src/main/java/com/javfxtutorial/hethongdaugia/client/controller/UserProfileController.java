@@ -62,6 +62,10 @@ public class UserProfileController implements ResponseListener {
     public void clickToSellerMangement(ActionEvent event) {
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Seller_ProductManagement.fxml");
     }
+    @FXML
+    public void clickToAuctionList(ActionEvent event){
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml");
+    }
 
     @FXML
     public void goParticipatedAuction(ActionEvent event ){
