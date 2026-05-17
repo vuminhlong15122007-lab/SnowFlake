@@ -4,6 +4,7 @@ import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
+import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
@@ -22,6 +23,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 
@@ -29,40 +32,76 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 public class ParticipatedAuctionCellController implements ResponseListener {
-    @FXML
-    private Button actionButton;
-    @FXML
-    private Label lbCategory;
-    @FXML
-    private Label lbCurrentPrice;
-    @FXML
-    private Label lbProductName;
-    @FXML
-    private Label lbWinnerName;
-    @FXML
-    private Label lbTime;
-    @FXML
-    private StackPane countdownBadge;
-    @FXML
-    private ImageView productImage;
+  private static final Logger log = LoggerFactory.getLogger(ParticipatedAuctionCellController.class);
+  @FXML
+  private Button actionButton;
+  @FXML
+  private Label lbCategory;
+  @FXML
+  private Label lbCurrentPrice;
+  @FXML
+  private Label lbProductName;
+  @FXML
+  private Label lbWinnerName;
+  @FXML
+  private Label lbTime;
+  @FXML
+  private StackPane countdownBadge;
+  @FXML
+  private ImageView productImage;
 
-    private Auction auction;
+  private Auction auction;
 
-    private void showCountdown(LocalDateTime deadline) {
-        if (countdownBadge != null) {
-            countdownBadge.setVisible(true);
-            countdownBadge.setManaged(true);
-        }
-        if (lbTime != null) {
-            TimeLeft timer = new TimeLeft(lbTime, deadline);
-            timer.setOnFinished(() -> {
-                // Khi hết giờ, đổi badge sang đỏ
-                if (lbTime != null)
-                    lbTime.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;");
-            });
-            timer.start();
-        }
+  private void showCountdown(LocalDateTime deadline) {
+    if (countdownBadge != null) {
+      countdownBadge.setVisible(true);
+      countdownBadge.setManaged(true);
     }
+    if (lbTime != null) {
+      TimeLeft timer = new TimeLeft(lbTime, deadline);
+      timer.setOnFinished(() -> {
+        // Khi hết giờ, đổi badge sang đỏ
+        if (lbTime != null) {
+          lbTime.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;");
+        }
+        if (auction.getStatus() == AuctionStatus.RUNNING) { //hết countdow running
+          auction.setStatus(AuctionStatus.CLOSED);
+          NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
+          Platform.runLater(() -> {
+            try {
+              ServerConnection connection = NetworkManager.getConnection();
+              Command cmd = new UpdateAuctionStatusCommand(auction);
+              connection.sendCommand(cmd);
+            } catch (ConnectionFailedException e) {
+              log.error("Không kết nối được server");
+              showAlert("Lỗi", e.getMessage());
+            } catch (SendFailedException e) {
+              log.error("Không gửi được command");
+              showAlert("Lỗi", e.getMessage());
+            }
+          });
+        }
+        if (auction.getStatus() == AuctionStatus.CLOSED) { //ết countdown chờ thanh toán
+          auction.setStatus(AuctionStatus.CANCELLED);
+          NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
+          Platform.runLater(() -> {
+            try {
+              ServerConnection connection = NetworkManager.getConnection();
+              Command cmd = new UpdateAuctionStatusCommand(auction);
+              connection.sendCommand(cmd);
+            } catch (ConnectionFailedException e) {
+              log.error("Không kết nối được server");
+              showAlert("Lỗi", e.getMessage());
+            } catch (SendFailedException e) {
+              log.error("Không gửi được command");
+              showAlert("Lỗi", e.getMessage());
+            }
+          });
+        }
+      });
+      timer.start();
+    }
+  }
 
     private void hideCountdown() {
         if (countdownBadge != null) {
@@ -71,17 +110,17 @@ public class ParticipatedAuctionCellController implements ResponseListener {
         }
     }
 
-    public void setData(Auction auction) {
-        if (auction == null || auction.getItem() == null) return;
-        this.auction = auction;
-        updateUI(auction.getStatus()); //khởi tạo UI ban đầu
-        auction.statusProperty().addListener(((_, _, newVal) -> {
-            updateUI(newVal);
-        })); //thay đổi UI nếu có status mơid
-        lbProductName.setText(auction.getItem().getName());
-        lbCategory.setText(String.valueOf(auction.getItem().getCategory()));
-        lbWinnerName.setText(String.valueOf(auction.getWinnerId()));
-        lbCurrentPrice.setText(String.valueOf(auction.getCurrentPrice()));
+  public void setData(Auction auction) {
+    if (auction == null || auction.getItem() == null) return;
+    this.auction = auction;
+    updateUI(auction.getStatus()); //khởi tạo UI ban đầu
+    auction.statusProperty().addListener(((_, _, newVal) -> {
+      updateUI(newVal);
+    })); //thay đổi UI nếu có status mơid
+    lbProductName.setText(auction.getItem().getName());
+    lbCategory.setText(String.valueOf(auction.getItem().getCategory()));
+    lbWinnerName.setText(String.valueOf(auction.getWinnerId()));
+    lbCurrentPrice.setText(String.valueOf(auction.getCurrentPrice()));
 
         if (productImage != null
             && auction.getItem().getImage() != null
@@ -117,12 +156,12 @@ public class ParticipatedAuctionCellController implements ResponseListener {
             PaymentPopupController popupController = loader.getController();
             popupController.setAuction(auction);
 
-            popupController.setOnConfirmed(() -> {
-                auction.setStatus(AuctionStatus.PAID);
-                NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
-              try {
-                NetworkManager.getConnection().sendCommand(new UpdateAuctionStatusCommand(auction));
-              } catch (SendFailedException | ConnectionFailedException e) {
+      popupController.setOnConfirmed(() -> {
+        auction.setStatus(AuctionStatus.PAID);
+        NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
+        try {
+          NetworkManager.getConnection().sendCommand(new UpdateAuctionStatusCommand(auction));
+        } catch (SendFailedException | ConnectionFailedException e) {
                 throw new RuntimeException(e);
               }
             });

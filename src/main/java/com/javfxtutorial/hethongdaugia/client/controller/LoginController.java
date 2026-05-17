@@ -96,7 +96,9 @@ public class LoginController implements ResponseListener, Initializable {
                         log.info(rp.getMessage());
                         changeScene(loginEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UserManagement.fxml");
                     }
-                });
+                });}
+            else {
+                Platform.runLater(() -> message.setText(rp.getMessage()));
             }
         } else if (rp.getCommand() instanceof GetUnpaidAuctionCommand) {
             NetworkManager.getInstance().unregister(GetUnpaidAuctionCommand.class, this);

@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
-public class AuctionController implements ResponseListener {
-    private static final Logger log = LoggerFactory.getLogger(AuctionController.class);
+public class AuctionListController implements ResponseListener {
+    private static final Logger log = LoggerFactory.getLogger(AuctionListController.class);
 
     @FXML private ListView<Auction> featuredProductList;
     @FXML private TextField searchField;

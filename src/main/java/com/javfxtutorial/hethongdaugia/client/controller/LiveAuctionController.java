@@ -37,8 +37,8 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 
-public class LiveAuctionController implements  ResponseListener {
-    private static final Logger log = LoggerFactory.getLogger(LiveAuctionController.class);
+public class LiveAuctionController implements ResponseListener {
+  private static final Logger log = LoggerFactory.getLogger(LiveAuctionController.class);
 
     volatile boolean running = true;
     Auction currentAuction;
@@ -69,7 +69,7 @@ public class LiveAuctionController implements  ResponseListener {
     @FXML
     public void goMenu(ActionEvent event){
         timer.stop();
-        running = false; 
+        running = false;
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.unregister(PlaceBidCommand.class, this);

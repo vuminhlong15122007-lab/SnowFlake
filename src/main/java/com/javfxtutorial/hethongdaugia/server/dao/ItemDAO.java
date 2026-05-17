@@ -189,41 +189,6 @@ public class ItemDAO implements DAOInterface<Item> {
       return result;
   }
 
-  ;
-
-  public ArrayList<Item> selectByCondition(String condition) throws QueryExecutionException {
-      ArrayList<Item> result = new ArrayList<>();
-      String sql = null;
-      try {
-          Connection connection = JDBCUtil.getConnection(); // Tao ket noi
-          Statement statement = connection.createStatement(); // tao ra obj statement
-          // Thuc thi cau lech sql
-          sql = "SELECT * FROM item where " + condition;
-          ResultSet resultSet = statement.executeQuery(sql);
-
-          // tim kiem
-          while (resultSet.next()) {
-              int itemId = resultSet.getInt("itemid");
-              int idseller = resultSet.getInt("idseller");
-              String name = resultSet.getString("name");
-              String description = resultSet.getString("description");
-              String imagePath = resultSet.getString("imagePath");
-              String sellerName = resultSet.getString("sellerName");
-              String categoryStr = resultSet.getString("category");
-              ItemCategory category = (categoryStr != null) ? ItemCategory.valueOf(categoryStr) : null;
-              Item item = new Item(sellerName, idseller, itemId, name, description, imagePath, category);
-              result.add(item);
-          }
-          //dong ket noi
-          JDBCUtil.closeConnection(connection);
-      } catch (SQLException | DatabaseConnectionException e) {
-          log.error("Lỗi SQL khi selectByCondition: {}", e.getMessage(), e);
-          throw new QueryExecutionException(sql);
-      }
-      return result;
-
-  }
-
   public void insertSubType(Connection conn, Item item) throws SQLException, DataDeleteException {
     switch (item.getCategory()) {
       case ItemCategory.ART -> {
@@ -300,7 +265,7 @@ public class ItemDAO implements DAOInterface<Item> {
       }
       case ItemCategory.ELECTRONICS -> {
         Electronics elec = (Electronics) item;
-        String sql = "UPDATE electronic SET brand = ?, model = ? WHERE item_id = ?";
+        String sql = "UPDATE electronics SET brand = ?, model = ? WHERE item_id = ?";
         try (PreparedStatement pst = conn.prepareStatement(sql)) {
           pst.setString(1, elec.getBrand());
           pst.setString(2, elec.getModel());
