@@ -3,6 +3,7 @@ package com.javfxtutorial.hethongdaugia.common.model.Command;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionAlreadyEndedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotFoundException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotStartedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.bid.BidAmountExceedsLimitException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.InsufficientIncrementException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.LowerThanCurrentBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.SelfBidException;
@@ -38,7 +39,11 @@ public class PlaceBidCommand extends Command {
         } catch (LowerThanCurrentBidException e) {
             log.warn("Giá thấp hơn giá hiện tại: {}", e.getMessage());
             return new Response(false, e.getMessage(), null, this);
-        } catch (SelfBidException e) {
+        }
+        catch (BidAmountExceedsLimitException e) {
+            log.warn("Giá vượt giới hạn: {}", e.getMessage());
+            return new Response(false, e.getMessage(), null, this);
+        }catch (SelfBidException e) {
             log.warn("Tự đặt giá: {}", e.getMessage());
             return new Response(false, e.getMessage(), null, this);
         } catch (InsufficientIncrementException e) {

@@ -266,6 +266,7 @@ public class SellerManagementController implements ResponseListener {
                     throw new RuntimeException(e);
                   }
                 });
+                //hiển thị người thắng
                 if (newVal.getStatus() == AuctionStatus.CLOSED) {
                     if (newVal.getWinnerId() <= 0) {
                         showAlert("Kết quả đấu giá",

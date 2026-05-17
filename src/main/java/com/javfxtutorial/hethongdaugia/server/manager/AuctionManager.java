@@ -4,6 +4,7 @@ import com.javfxtutorial.hethongdaugia.client.controller.RegisterController;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionAlreadyEndedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotFoundException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotStartedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.bid.BidAmountExceedsLimitException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.InsufficientIncrementException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.LowerThanCurrentBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.SelfBidException;
@@ -102,7 +103,7 @@ public class AuctionManager {
 
     public synchronized boolean placeBid(BidTransaction bid,
                                          ClientHandler senderThread) throws AuctionNotFoundException, AuctionNotStartedException, AuctionAlreadyEndedException,
-            LowerThanCurrentBidException, SelfBidException, InsufficientIncrementException, DataException {
+            LowerThanCurrentBidException, SelfBidException, InsufficientIncrementException, DataException, BidAmountExceedsLimitException {
         if (bid == null || bid.getAmount() == null) {
             return false;
         }
@@ -136,14 +137,20 @@ public class AuctionManager {
             throw new InsufficientIncrementException(auction.getStepPrice().doubleValue(),
                     bid.getAmount().subtract(auction.getCurrentPrice()).doubleValue());
         }
-        System.out.println("Bid hợp lệ");
-
-
+        if (bid.getAmount().compareTo(new BigDecimal("999999999999.99")) > 0) {
+            throw new BidAmountExceedsLimitException(
+                    999999999999.99,
+                    bid.getAmount().doubleValue()
+            );}
         // KIỂM TRA NGƯỜI BÁN KHÔNG ĐƯỢC ĐẶT GIÁ
         if (bid.getBidderId() == auction.getSellerId()) {
             log.warn("Người bán {} cố gắng đặt giá sản phẩm của chính mình", bid.getBidderId());
             throw new SelfBidException();
         }
+
+        System.out.println("Bid hợp lệ");
+
+
 
         // 4. Cập nhật auction trong RAM
         auction.setCurrentPrice(bid.getAmount());
@@ -233,7 +240,7 @@ public class AuctionManager {
     // ─────────────────────────────────────────────────
     // AUTO BID — giữ nguyên logic của người khác viết
     // ─────────────────────────────────────────────────
-    public synchronized boolean registerAutoBid(AutoBidConfig config) throws DataException, LowerThanCurrentBidException, SelfBidException, InsufficientIncrementException, AuctionNotFoundException, AuctionNotStartedException, AuctionAlreadyEndedException {
+    public synchronized boolean registerAutoBid(AutoBidConfig config) throws DataException, LowerThanCurrentBidException, SelfBidException, InsufficientIncrementException, AuctionNotFoundException, AuctionNotStartedException, AuctionAlreadyEndedException, BidAmountExceedsLimitException {
         config.setRegisteredAt(LocalDateTime.now());
         List<AutoBidConfig> configs = autoBidRegistry.computeIfAbsent(
                 config.getAuctionId(),
@@ -263,7 +270,7 @@ public class AuctionManager {
         return true;
     }
 
-    private void checkAndExecuteAutoBids(Auction auction) throws LowerThanCurrentBidException, DataException, SelfBidException, InsufficientIncrementException, AuctionNotFoundException, AuctionNotStartedException, AuctionAlreadyEndedException {
+    private void checkAndExecuteAutoBids(Auction auction) throws LowerThanCurrentBidException, DataException, SelfBidException, InsufficientIncrementException, AuctionNotFoundException, AuctionNotStartedException, AuctionAlreadyEndedException, BidAmountExceedsLimitException {
         List<AutoBidConfig> configs = autoBidRegistry
                 .get(auction.getAuctionId());
         if (configs == null || configs.isEmpty()) return;
