@@ -3,23 +3,21 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.common.model.SellerNotification;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
 import java.time.format.DateTimeFormatter;
 import java.util.function.Consumer;
 
-/**
- * Controller cho NotificationCellPopup.fxml
- * Được dùng bởi NotificationListCell (ListCell) để hiển thị từng thông báo trong ListView.
- */
 public class NotificationCellController {
 
     @FXML private Circle statusDot;
     @FXML private Label  iconLabel;
     @FXML private Label  msgLabel;
     @FXML private Label  timeLabel;
-    @FXML private Label  readBtn;
+    @FXML private Label  readBtn;   // kept in FXML but always hidden
+    @FXML private HBox   rootHBox;  // optional — for click-to-read on whole row
 
     private static final DateTimeFormatter TIME_FMT =
             DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
@@ -33,14 +31,20 @@ public class NotificationCellController {
     public void setData(SellerNotification notif) {
         if (notif == null) return;
 
-        boolean isClosed   = notif.getType() == SellerNotification.Type.CLOSED;
-        String borderColor = isClosed ? "#16c784" : (notif.getType() == SellerNotification.Type.PAID ? "#2980b9" : "#dc3545");
+        String borderColor = switch (notif.getType()) {
+            case CLOSED    -> "#16c784";
+            case PAID      -> "#2980b9";
+            case CANCELLED -> "#dc3545";
+        };
 
+        // Chấm tròn — chỉ hiện khi chưa đọc
         if (statusDot != null) {
             statusDot.setFill(notif.isRead() ? Color.TRANSPARENT : Color.web(borderColor));
             statusDot.setVisible(!notif.isRead());
+            statusDot.setManaged(!notif.isRead());
         }
 
+        // Icon loại thông báo
         if (iconLabel != null) {
             iconLabel.setText(switch (notif.getType()) {
                 case CLOSED    -> "🏆";
@@ -49,11 +53,12 @@ public class NotificationCellController {
             });
         }
 
+        // Nội dung: đậm + tối khi chưa đọc, mờ khi đã đọc
         if (msgLabel != null) {
             msgLabel.setText(notif.getMessage());
             msgLabel.setStyle(
                     "-fx-font-size: 12px;" +
-                            "-fx-text-fill: " + (notif.isRead() ? "#888888" : "#1a1a2e") + ";" +
+                            "-fx-text-fill: " + (notif.isRead() ? "#aaaaaa" : "#1a1a2e") + ";" +
                             (notif.isRead() ? "" : "-fx-font-weight: bold;")
             );
         }
@@ -61,27 +66,33 @@ public class NotificationCellController {
         if (timeLabel != null) {
             timeLabel.setText(notif.getCreatedAt() != null
                     ? notif.getCreatedAt().format(TIME_FMT) : "");
+            timeLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: " +
+                    (notif.isRead() ? "#cccccc" : "#9b9b9b") + ";");
         }
 
+        // Nút "Đã đọc" — ẩn hoàn toàn, dùng click cả row thay thế
         if (readBtn != null) {
-            if (notif.isRead()) {
-                readBtn.setVisible(false);
-                readBtn.setManaged(false);
-            } else {
-                readBtn.setVisible(true);
-                readBtn.setManaged(true);
-                readBtn.setStyle(
-                        "-fx-font-size: 10px; -fx-text-fill: " + borderColor + ";" +
-                                "-fx-cursor: hand; -fx-padding: 3 8 3 8;" +
-                                "-fx-background-color: white; -fx-background-radius: 8;" +
-                                "-fx-border-color: " + borderColor + "; -fx-border-radius: 8;"
-                );
-                readBtn.setOnMouseClicked(e -> {
-                    notif.setRead(true);
-                    if (onMarkRead != null) onMarkRead.accept(notif);
-                    setData(notif);
-                });
-            }
+            readBtn.setVisible(false);
+            readBtn.setManaged(false);
+        }
+
+        // Click vào cả row để mark read
+        if (msgLabel != null) {
+            msgLabel.setOnMouseClicked(e -> markRead(notif));
+        }
+        if (iconLabel != null) {
+            iconLabel.setOnMouseClicked(e -> markRead(notif));
+        }
+        if (timeLabel != null) {
+            timeLabel.setOnMouseClicked(e -> markRead(notif));
+        }
+    }
+
+    private void markRead(SellerNotification notif) {
+        if (!notif.isRead()) {
+            notif.setRead(true);
+            if (onMarkRead != null) onMarkRead.accept(notif);
+            setData(notif);
         }
     }
 }

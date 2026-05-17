@@ -246,7 +246,7 @@ public class SellerManagementController implements ResponseListener {
     }
 
     @FXML
-    public void initialize() throws IOException, ClassNotFoundException {
+    public void initialize() {
         //  Cấu hình Spinner cho giờ phút
         startHourSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0));
         startMinuteSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
@@ -279,25 +279,37 @@ public class SellerManagementController implements ResponseListener {
                         throw new RuntimeException(e);
                     }
                 });
-                //hiển thị người thắng
-                if (newVal.getStatus() == AuctionStatus.CLOSED) {
-                    if (newVal.getWinnerId() <= 0) {
-                        showAlert("Kết quả đấu giá",
-                                "Sản phẩm \"" + newVal.getItem().getName() + "\" không có ai đặt giá.", "Wait.gif");
+                // Khi chon sp CLOSED/PAID/CANCELLED -> them vao danh sach thong bao chuong (khong showAlert rieng)
+                AuctionStatus st = newVal.getStatus();
+                if (st == AuctionStatus.CLOSED || st == AuctionStatus.PAID || st == AuctionStatus.CANCELLED) {
+                    SellerNotification.Type type = switch (st) {
+                        case CLOSED    -> SellerNotification.Type.CLOSED;
+                        case PAID      -> SellerNotification.Type.PAID;
+                        default        -> SellerNotification.Type.CANCELLED;
+                    };
+                    String pName = (newVal.getItem() != null) ? newVal.getItem().getName() : String.valueOf(newVal.getAuctionId());
+                    String wName = (newVal.getWinnerName() != null) ? newVal.getWinnerName() : "N/A";
+                    SellerNotification notif = new SellerNotification(
+                            newVal.getAuctionId(), type, pName, wName, newVal.getWinningPrice());
+                    // Chi giu 1 thong bao moi nhat cho moi auction (PAID > CANCELLED > CLOSED)
+                    java.util.Optional<SellerNotification> existing1 = notifications.stream()
+                            .filter(n -> n.getAuctionId() == notif.getAuctionId()).findFirst();
+                    if (existing1.isPresent()) {
+                        if (priority(notif.getType()) > priority(existing1.get().getType())) {
+                            notifications.remove(existing1.get());
+                            notifications.add(0, notif);
+                        }
                     } else {
-                        showAlert("Kết quả đấu giá",
-                                "Sản phẩm \"" + newVal.getItem().getName() + "\" đã có người thắng!\n"
-                                        + "Tên người thắng: " + newVal.getWinnerName() + "\n"
-                                        + "Giá thắng: " + String.format("%,.0f VND", newVal.getWinningPrice()), "Happy.gif");
+                        notifications.add(0, notif);
                     }
                 }
             }
         });
 
-        loadMyProducts();  // Tải danh sách ban đùa của server ứng với IDserver ng dùng đăng nhập và đổ vào obs
-        buildNotificationPopup();
-        // Lấy list thông báo từ ClientModel — tồn tại suốt phiên đăng nhập, không reset khi đổi màn hình
+        // Phai gan notifications truoc loadMyProducts de response handler dung duoc ngay
         notifications = ClientModel.getInstance().getSellerNotifications();
+        buildNotificationPopup();
+        loadMyProducts();  // Tải danh sách ban đùa của server ứng với IDserver ng dùng đăng nhập và đổ vào obs
         updateBadge();
 
         // Lắng nghe thông báo mới đẩy từ server (CLOSED/PAID/CANCELLED)
@@ -311,6 +323,15 @@ public class SellerManagementController implements ResponseListener {
 
 
 
+    }
+
+    /** Uu tien hien thi: PAID(2) > CANCELLED(1) > CLOSED(0) */
+    private static int priority(SellerNotification.Type type) {
+        return switch (type) {
+            case PAID      -> 2;
+            case CANCELLED -> 1;
+            case CLOSED    -> 0;
+        };
     }
 
     private void buildNotificationPopup() {
@@ -363,9 +384,10 @@ public class SellerManagementController implements ResponseListener {
         // QUAN TRỌNG: Luôn load lại dữ liệu trước khi hiển thị
         popupController.loadNotifications(notifications);
 
-        // Hiển thị popup
-        Stage stage = (Stage) bellPane.getScene().getWindow();
-        javafx.geometry.Bounds bounds = bellPane.localToScreen(bellPane.getBoundsInLocal());
+        // Hiển thị popup — dùng source node từ event để tránh NPE khi bellPane null
+        javafx.scene.Node sourceNode = (javafx.scene.Node) event.getSource();
+        Stage stage = (Stage) sourceNode.getScene().getWindow();
+        javafx.geometry.Bounds bounds = sourceNode.localToScreen(sourceNode.getBoundsInLocal());
         notificationPopup.show(stage, bounds.getMinX() - 260, bounds.getMaxY() + 6);
     }
 
@@ -707,6 +729,39 @@ public class SellerManagementController implements ResponseListener {
                 if (rp.isSuccess()) {  // kiểm tra xem có nhận được danh sách cân ko
                     ArrayList<Auction> auctions = (ArrayList<Auction>) rp.getPayLoad();  // lấy đồ ra
                     observable.setAll(auctions); // sắp xếp lên listView
+                    // Load thong bao cho tat ca phien da ket thuc (CLOSED/PAID/CANCELLED)
+                    for (Auction a : auctions) {
+                        AuctionStatus st = a.getStatus();
+                        if (st != AuctionStatus.CLOSED && st != AuctionStatus.PAID && st != AuctionStatus.CANCELLED) continue;
+                        SellerNotification.Type type = switch (st) {
+                            case CLOSED    -> SellerNotification.Type.CLOSED;
+                            case PAID      -> SellerNotification.Type.PAID;
+                            default        -> SellerNotification.Type.CANCELLED;
+                        };
+                        String pName = (a.getItem() != null) ? a.getItem().getName() : String.valueOf(a.getAuctionId());
+                        String wName = (a.getWinnerName() != null) ? a.getWinnerName() : "N/A";
+                        SellerNotification newNotif = new SellerNotification(
+                                a.getAuctionId(), type, pName, wName, a.getWinningPrice());
+                        if (a.getEndingTime() != null) newNotif.setCreatedAt(a.getEndingTime());
+                        java.util.Optional<SellerNotification> existing2 = notifications.stream()
+                                .filter(n -> n.getAuctionId() == a.getAuctionId()).findFirst();
+                        if (existing2.isPresent()) {
+                            if (priority(newNotif.getType()) > priority(existing2.get().getType())) {
+                                notifications.remove(existing2.get());
+                                notifications.add(newNotif);
+                            }
+                        } else {
+                            notifications.add(newNotif);
+                        }
+                    }
+                    // Sap xep: chua doc len truoc, sau do moi nhat len truoc
+                    notifications.sort((n1, n2) -> {
+                        if (n1.isRead() != n2.isRead()) return n1.isRead() ? 1 : -1;
+                        if (n1.getCreatedAt() != null && n2.getCreatedAt() != null)
+                            return n2.getCreatedAt().compareTo(n1.getCreatedAt());
+                        return 0;
+                    });
+                    updateBadge();
                 }
             });
         }
@@ -742,16 +797,36 @@ public class SellerManagementController implements ResponseListener {
             });
         }
 
-        // Nhận SellerNotification đẩy từ server (khi auction của mình CLOSED/PAID/CANCELLED)
-        // KHÔNG unregister — luôn lắng nghe trong suốt phiên màn hình này
+        // Khi server push UpdateAuctionStatusCommand voi payload la Auction (CLOSED/PAID/CANCELLED)
+        // -> tu tao SellerNotification de hien thi trong danh sach chuong
         if (rp.getCommand().getClass() == com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand.class
-                && rp.getPayLoad() instanceof SellerNotification notif) {
-            // Tránh duplicate
-            boolean exists = notifications.stream()
-                    .anyMatch(n -> n.getNotificationId() == notif.getNotificationId());
-            if (!exists) {
+                && rp.getPayLoad() instanceof Auction auction) {
+            com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus status = auction.getStatus();
+            if (status == com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus.CLOSED
+                    || status == com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus.PAID
+                    || status == com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus.CANCELLED) {
+                SellerNotification.Type type = switch (status) {
+                    case CLOSED    -> SellerNotification.Type.CLOSED;
+                    case PAID      -> SellerNotification.Type.PAID;
+                    default        -> SellerNotification.Type.CANCELLED;
+                };
+                String productName = (auction.getItem() != null) ? auction.getItem().getName() : String.valueOf(auction.getAuctionId());
+                String winnerName  = (auction.getWinnerName() != null) ? auction.getWinnerName() : "N/A";
+                SellerNotification notif = new SellerNotification(
+                        auction.getAuctionId(), type, productName, winnerName, auction.getWinningPrice());
+                // Chi giu 1 thong bao moi nhat cho moi auction (PAID > CANCELLED > CLOSED)
+                final SellerNotification finalNotif = notif;
                 Platform.runLater(() -> {
-                    notifications.add(0, notif); // mới nhất lên đầu → badge tự cập nhật qua ListChangeListener
+                    java.util.Optional<SellerNotification> existing3 = notifications.stream()
+                            .filter(n -> n.getAuctionId() == finalNotif.getAuctionId()).findFirst();
+                    if (existing3.isPresent()) {
+                        if (priority(finalNotif.getType()) > priority(existing3.get().getType())) {
+                            notifications.remove(existing3.get());
+                            notifications.add(0, finalNotif);
+                        }
+                    } else {
+                        notifications.add(0, finalNotif);
+                    }
                 });
             }
         }
