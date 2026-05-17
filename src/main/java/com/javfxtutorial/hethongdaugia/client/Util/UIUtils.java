@@ -11,6 +11,7 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.DialogPane;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -64,6 +65,7 @@ public class UIUtils {
 
         DialogPane dialogPane = alert.getDialogPane();
         dialogPane.setPrefWidth(430);
+        dialogPane.setMinHeight(Region.USE_PREF_SIZE);
         dialogPane.setStyle(
                 "-fx-background-color: linear-gradient(to bottom right, #e6f7ff, #ffffff 50%, #f5e6ff);" +
                 "-fx-background-radius: 24;" +

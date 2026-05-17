@@ -134,7 +134,7 @@ public class LiveAuctionController implements ResponseListener {
         currentAuction = ClientModel.getInstance().getCurrentAuction();
         currentPrice_tf.setText(String.format("%,.0f VND", currentAuction.getCurrentPrice()));
         stepPrice_tf.setText(String.format("%,.0f VND", currentAuction.getStepPrice()));
-        highestPayer_tf.setText(String.valueOf(currentAuction.getWinnerId()));
+        highestPayer_tf.setText(currentAuction.getWinnerName());
         itemNameLb.setText(currentAuction.getItem().getName());
         String base64Data = currentAuction.getItem().getImage();
         ImageHelper.loadBase64ToImageView(itemImageView,base64Data);

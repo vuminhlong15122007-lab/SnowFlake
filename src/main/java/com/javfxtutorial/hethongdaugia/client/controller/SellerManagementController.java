@@ -274,7 +274,7 @@ public class SellerManagementController implements ResponseListener {
                     } else {
                         showAlert("Kết quả đấu giá",
                                 "Sản phẩm \"" + newVal.getItem().getName() + "\" đã có người thắng!\n"
-                                        + "ID người thắng: " + newVal.getWinnerId() + "\n"
+                                        + "Tên người thắng: " + newVal.getWinnerName() + "\n"
                                         + "Giá thắng: " + String.format("%,.0f VND", newVal.getWinningPrice()), "Happy.gif");
                     }
                 }

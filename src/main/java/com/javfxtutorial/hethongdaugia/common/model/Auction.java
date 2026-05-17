@@ -34,6 +34,7 @@ public class Auction implements Serializable {
 
     // ID của người chiến thắng (sau khi phiên kết thúc)
     private int winnerId;
+    private String winnerName = "";
     public Auction(){}
 
     public Auction(Item item, int sellerId, BigDecimal initPrice, BigDecimal stepPrice, LocalDateTime startingTime, LocalDateTime endingTime) {
@@ -47,7 +48,7 @@ public class Auction implements Serializable {
     }
 
 
-    public Auction(int auctionId, Item item, int sellerId, int winnerId, BigDecimal initPrice, BigDecimal currentPrice, BigDecimal stepPrice, BigDecimal winningPrice, LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
+    public Auction(int auctionId, Item item, int sellerId, int winnerId, String winnerName, BigDecimal initPrice, BigDecimal currentPrice, BigDecimal stepPrice, BigDecimal winningPrice, LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
         this.auctionId = auctionId;
         this.item = item;
         this.sellerId = sellerId;
@@ -59,6 +60,7 @@ public class Auction implements Serializable {
         this.endingTime = endingTime;
         this.status = status;
         this.winnerId = winnerId;
+        this.winnerName = winnerName;
     }
 
     public Auction(Item item, int sellerId, BigDecimal initPrice, BigDecimal stepPrice, LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
@@ -147,6 +149,14 @@ public class Auction implements Serializable {
         this.winnerId = winnerId;
     }
 
+    public String getWinnerName() {
+        return winnerName;
+    }
+
+    public void setWinnerName(String winnerName) {
+        this.winnerName = winnerName;
+    }
+
     @Override
     public String toString() {
         return "Auction{" +
@@ -160,7 +170,7 @@ public class Auction implements Serializable {
                 ", startingTime=" + startingTime +
                 ", endingTime=" + endingTime +
                 ", status=" + status +
-                ", winnerId=" + winnerId +
+                ", winnerId=" + winnerId + ", winnerName=" + winnerName +
                 '}';
     }
 }

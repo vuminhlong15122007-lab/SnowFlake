@@ -26,6 +26,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
           "    i.imagepath, \n" +
           "    i.idseller AS seller_id, \n" +
           "    i.sellerName, \n" +
+          "    u.name AS winner_name,\n" +
           "    i.category,\n" +
           "    \n" +
           "    -- Dữ liệu từ bảng 1 (brand, model - ví dụ: đồ điện tử/đồng hồ)\n" +
@@ -49,7 +50,8 @@ public class AuctionDAO implements DAOInterface<Auction> {
           "-- Dùng LEFT JOIN để nếu item không thuộc loại này, nó vẫn ra kết quả (các cột kia sẽ null)\n" +
           "LEFT JOIN electronics e ON i.itemid = e.item_id\n" +
           "LEFT JOIN art art ON i.itemid = art.item_id\n" +
-          "LEFT JOIN vehicle v ON i.itemid = v.item_id";
+          "LEFT JOIN vehicle v ON i.itemid = v.item_id\n" +
+          "LEFT JOIN user u ON a.winner_id = u.id";
 
 
   private AuctionDAO() {
@@ -188,6 +190,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
         item,
         rs.getInt("seller_id"),
         rs.getInt("winner_id"),
+        rs.getString("winner_name") != null ? rs.getString("winner_name") : "",
         rs.getBigDecimal("init_price"),
         rs.getBigDecimal("current_price"),
         rs.getBigDecimal("step_price"),
