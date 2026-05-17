@@ -11,7 +11,7 @@ import java.util.Map;
 public class ParticipatedAuctionCell extends ListCell<Auction> {
 
   // Cache controller theo auctionId → tránh tạo lại + reset countdown mỗi lần re-render
-  private static final Map<Integer, CachedCell> cellCache = new HashMap<>();
+  private final Map<Integer, CachedCell> cellCache = new HashMap<>();
 
   private static class CachedCell {
     Parent root;

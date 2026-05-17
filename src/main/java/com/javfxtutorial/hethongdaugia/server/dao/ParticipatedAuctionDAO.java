@@ -44,15 +44,15 @@ public class ParticipatedAuctionDAO {
 
       result = pst.executeUpdate();
     } catch (SQLIntegrityConstraintViolationException e) {
-    // Lỗi duplicate key - người dùng đã tham gia rồi
-    log.info("Người dùng {} đã tham gia phiên đấu giá {} rồi",
-            bid.getBidderId(), bid.getAuctionId());
-    throw new DuplicateKeyException("AuctionParticipation",
-            "bidderId=" + bid.getBidderId() + ", auctionId=" + bid.getAuctionId(), bid.getBidderName());
-  } catch (SQLException | DatabaseConnectionException e) {
-    log.error("Lỗi SQL khi insert AuctionParticipation: {}", e.getMessage(), e);
-    throw new QueryExecutionException(sql);
-  }
+      // Lỗi duplicate key - người dùng đã tham gia rồi
+      log.info("Người dùng {} đã tham gia phiên đấu giá {} rồi",
+              bid.getBidderId(), bid.getAuctionId());
+      throw new DuplicateKeyException("AuctionParticipation",
+              "bidderId=" + bid.getBidderId() + ", auctionId=" + bid.getAuctionId(), bid.getBidderName());
+    } catch (SQLException | DatabaseConnectionException e) {
+      log.error("Lỗi SQL khi insert AuctionParticipation: {}", e.getMessage(), e);
+      throw new QueryExecutionException(sql);
+    }
     return result;
   }
 
@@ -78,40 +78,37 @@ public class ParticipatedAuctionDAO {
     List<Auction> list = new ArrayList<>();
     // Câu query lấy thông tin đấu giá mà một người tham gia
     String sql =
-        "SELECT \n" +
-            "    a.*, \n" +
-            "    pa.bidderId, \n" +               // <-- Thêm cột bidderId từ bảng Participation
-            "    i.name, \n" +
-            "    i.description, \n" +
-            "    i.imagepath, \n" +
-            "    i.idseller AS seller_id, \n" +
-            "    i.sellerName, \n" +
-            "    i.category,\n" +
-            "    \n" +
-            "    -- Dữ liệu từ bảng 1 (electronics)\n" +
-            "    e.brand AS e_brand, \n" +
-            "    e.model,\n" +
-            "    \n" +
-            "    -- Dữ liệu từ bảng 2 (art)\n" +
-            "    art.artist, \n" +
-            "    art.year_created, \n" +
-            "    art.title,\n" +
-            "    \n" +
-            "    -- Dữ liệu từ bảng 3 (vehicle)\n" +
-            "    v.license_plate, \n" +
-            "    v.year AS vehicle_year, \n" +
-            "    v.brand AS vehicle_brand, \n" +
-            "    v.color\n" +
-            "\n" +
-            "FROM auction a\n" +
-            "JOIN item i ON a.item_id = i.itemid\n" +
-            "JOIN AuctionParticipation pa ON a.auction_id = pa.auctionId\n" + // <-- Thêm JOIN bảng Participation
-            "\n" +
-            "-- Dùng LEFT JOIN cho các bảng category con\n" +
-            "LEFT JOIN electronics e ON i.itemid = e.item_id\n" +
-            "LEFT JOIN art art ON i.itemid = art.item_id\n" +
-            "LEFT JOIN vehicle v ON i.itemid = v.item_id\n" +
-            "WHERE pa.bidderId = ?"; // <-- Thêm điều kiện lọc theo người đấu giá
+            "SELECT \n" +
+                    "    a.*, \n" +
+                    "    pa.bidderId, \n" +
+                    "    i.name, \n" +
+                    "    i.description, \n" +
+                    "    i.imagepath, \n" +
+                    "    i.idseller AS seller_id, \n" +
+                    "    i.sellerName, \n" +
+                    "    i.category,\n" +
+                    "    u.name AS winner_name,\n" +
+                    "\n" +
+                    "    e.brand AS e_brand, \n" +
+                    "    e.model,\n" +
+                    "\n" +
+                    "    art.artist, \n" +
+                    "    art.year_created, \n" +
+                    "    art.title,\n" +
+                    "\n" +
+                    "    v.license_plate, \n" +
+                    "    v.year AS vehicle_year, \n" +
+                    "    v.brand AS vehicle_brand, \n" +
+                    "    v.color\n" +
+                    "\n" +
+                    "FROM auction a\n" +
+                    "JOIN item i ON a.item_id = i.itemid\n" +
+                    "JOIN AuctionParticipation pa ON a.auction_id = pa.auctionId\n" +
+                    "LEFT JOIN electronics e ON i.itemid = e.item_id\n" +
+                    "LEFT JOIN art art ON i.itemid = art.item_id\n" +
+                    "LEFT JOIN vehicle v ON i.itemid = v.item_id\n" +
+                    "LEFT JOIN user u ON a.winner_id = u.id\n" +
+                    "WHERE pa.bidderId = ?";
 
     try (Connection con = JDBCUtil.getConnection();
          PreparedStatement pst = con.prepareStatement(sql)) {

@@ -7,7 +7,6 @@ import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetParticipatedAuctionsByBidderCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
@@ -39,6 +38,7 @@ public class ParticipatedAuctionController implements  ResponseListener {
   @FXML private Button btnDTGia;
   @FXML private Button btnDTToan;
   @FXML private Button btnDaHuy;
+  @FXML private Button btnDaThamGia;
   @FXML private ListView<Auction> productList;
   @FXML private TextField searchField;
   @FXML private Label sectionTitle;
@@ -47,11 +47,12 @@ public class ParticipatedAuctionController implements  ResponseListener {
   private final ObservableList<Auction> participatedAuctionList = FXCollections.observableArrayList();
   private FilteredList<Auction> filterData;
   private AuctionStatus currentStatus = null;
+  private boolean filterLoser = false;
 
   @FXML void goMenu(ActionEvent event) { changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");}
 
   @FXML
-  public void initialize() throws ConnectionFailedException {
+  public void initialize() {
     VBox.setVgrow(productList, Priority.ALWAYS);
     productList.setMaxWidth(Double.MAX_VALUE);
     productList.setCellFactory(_ -> new ParticipatedAuctionCell());
@@ -66,17 +67,20 @@ public class ParticipatedAuctionController implements  ResponseListener {
     btnAll.setOnAction(_ -> {
       currentStatus = null;
       sectionTitle.setText("📋  " + "TẤT CẢ PHIÊN ĐẤU GIÁ ĐÃ THAM GIA");
+      filterLoser = false;
       setActiveButton(btnAll);
       applyFilters();
     });
     btnDTToan.setOnAction(_ -> {
       currentStatus = AuctionStatus.PAID;
       sectionTitle.setText("📋  " + "PHIÊN ĐẤU GIÁ ĐÃ THANH TOÁN");
+      filterLoser = false;
       setActiveButton(btnDTToan);
       applyFilters();
     });
     btnCTToan.setOnAction(_ -> {
       currentStatus = AuctionStatus.CLOSED;
+      filterLoser = false;
       sectionTitle.setText("📋  " + "PHIÊN ĐẤU GIÁ CHƯA THANH TOÁN");
       setActiveButton(btnCTToan);
       applyFilters();
@@ -84,16 +88,24 @@ public class ParticipatedAuctionController implements  ResponseListener {
     btnDTGia.setOnAction(_ -> {
       currentStatus = AuctionStatus.RUNNING;
       sectionTitle.setText("📋  " + "PHIÊN ĐẤU GIÁ ĐANG THAM GIA ");
+      filterLoser = false;
       setActiveButton(btnDTGia);
       applyFilters();
     });
     btnDaHuy.setOnAction(e -> {
       currentStatus = AuctionStatus.CANCELLED;
-      sectionTitle.setText("📋  " + "PHIÊN ĐẤU GIÁ ĐANG THAM GIA ");
-      setActiveButton(btnDTGia);
+      sectionTitle.setText("📋  PHIÊN ĐẤU GIÁ ĐÃ BỊ HỦY");
+      filterLoser = false;
+      setActiveButton(btnDaHuy);
       applyFilters();
     });
-
+    btnDaThamGia.setOnAction(e -> {
+      currentStatus = AuctionStatus.CLOSED;
+      filterLoser = true;
+      sectionTitle.setText("📋  PHIÊN ĐẤU GIÁ ĐÃ THAM GIA");
+      setActiveButton(btnDaThamGia);
+      applyFilters();
+    });
     loadData();
   }
 
@@ -115,9 +127,12 @@ public class ParticipatedAuctionController implements  ResponseListener {
       if (currentStatus != null && auction.getStatus() != currentStatus) {
         return false;
       }
-      if (currentStatus == AuctionStatus.PAID || currentStatus == AuctionStatus.CLOSED || currentStatus == AuctionStatus.CANCELLED){
-        if (auction.getWinnerId() != ClientModel.getInstance().getCurrentUser().getId()){
-          return false;
+      if (currentStatus == AuctionStatus.CLOSED || currentStatus == AuctionStatus.PAID){
+        int userId = ClientModel.getInstance().getCurrentUser().getId();
+        if (filterLoser) { // Đã tham gia nhưng không thắng
+          return auction.getWinnerId() != userId;
+        } else {// Chờ thanh toán / đã thanh toán → user thắng
+          return auction.getWinnerId() == userId;
         }
       }
 
@@ -129,7 +144,7 @@ public class ParticipatedAuctionController implements  ResponseListener {
 
   // Đổi màu nút đang active
   private void setActiveButton(Button active) {
-    Button[] buttons = {btnAll, btnCTToan, btnDTGia, btnDTToan, btnDaHuy};
+    Button[] buttons = {btnAll, btnCTToan, btnDTGia, btnDTToan, btnDaHuy, btnDaThamGia};
     String activeStyle = "-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15;";
     String inactiveStyle = "-fx-background-color: white; -fx-text-fill: #7f8c8d; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15; -fx-border-color: #dcdde1; -fx-border-radius: 8;";
     for (Button b : buttons) {
@@ -137,22 +152,30 @@ public class ParticipatedAuctionController implements  ResponseListener {
     }
   }
 
-  public void loadData() throws ConnectionFailedException {
-    Command cmd = new GetParticipatedAuctionsByBidderCommand();
-    cmd.addData("currentUserId", ClientModel.getInstance().getCurrentUser().getId());
-    ServerConnection connection = NetworkManager.getConnection();
-    new Thread(() -> {
-      try{
-        connection.sendCommand(cmd);
-        NetworkManager networkManager = NetworkManager.getInstance();
-        networkManager.register(GetParticipatedAuctionsByBidderCommand.class, this);} catch (SendFailedException e) {
-        log.error("Lỗi gửi: {}", e.getMessage());
-        Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "Loading.gif"));
-      } catch (Exception e) {
-        log.error("Lỗi load data: {}", e.getMessage(), e);
-        Platform.runLater(() -> showAlert("Lỗi", "Tải dữ liệu thất bại", "Loading.gif"));
-      }
-    }).start();
+  public void loadData() {
+    try {
+      Command cmd = new GetParticipatedAuctionsByBidderCommand();
+      cmd.addData("currentUserId", ClientModel.getInstance().getCurrentUser().getId());
+      ServerConnection connection = NetworkManager.getConnection();
+      // Đăng ký TRƯỚC khi gửi để không bỏ lỡ response
+      NetworkManager.getInstance().register(GetParticipatedAuctionsByBidderCommand.class, this);
+      new Thread(() -> {
+        try {
+          connection.sendCommand(cmd);
+        } catch (SendFailedException e) {
+          log.error("Lỗi gửi: {}", e.getMessage());
+          NetworkManager.getInstance().unregister(GetParticipatedAuctionsByBidderCommand.class, this);
+          Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "Loading.gif"));
+        } catch (Exception e) {
+          log.error("Lỗi load data: {}", e.getMessage(), e);
+          NetworkManager.getInstance().unregister(GetParticipatedAuctionsByBidderCommand.class, this);
+          Platform.runLater(() -> showAlert("Lỗi", "Tải dữ liệu thất bại", "Loading.gif"));
+        }
+      }).start();
+    } catch (ConnectionFailedException e) {
+      log.error("Lỗi kết nối khi load phiên đấu giá: {}", e.getMessage());
+      showAlert("Lỗi kết nối", "Không thể kết nối đến server", "Loading.gif");
+    }
   }
 
 
@@ -164,7 +187,9 @@ public class ParticipatedAuctionController implements  ResponseListener {
           showAlert("Loi tai du lieu", rp.getMessage(), "Loading.gif");
           return;
         }
-        if (rp.getPayLoad() == null){return;}
+        if (rp.getPayLoad() == null) {
+          return;
+        }
         ArrayList<Auction> auctions = (ArrayList<Auction>) rp.getPayLoad();
         participatedAuctionList.setAll(auctions);
       });
@@ -172,6 +197,4 @@ public class ParticipatedAuctionController implements  ResponseListener {
       networkManager.unregister(GetParticipatedAuctionsByBidderCommand.class, this);
     }
   }
-
-
 }
