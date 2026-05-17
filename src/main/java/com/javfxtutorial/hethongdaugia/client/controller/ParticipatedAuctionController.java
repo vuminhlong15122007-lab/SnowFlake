@@ -38,6 +38,7 @@ public class ParticipatedAuctionController implements  ResponseListener {
   @FXML private Button btnCTToan;
   @FXML private Button btnDTGia;
   @FXML private Button btnDTToan;
+  @FXML private Button btnDaHuy;
   @FXML private Button goMenu;
   @FXML private ListView<Auction> productList;
   @FXML private TextField searchField;
@@ -86,6 +87,12 @@ public class ParticipatedAuctionController implements  ResponseListener {
       setActiveButton(btnDTGia);
       applyFilters();
     });
+    btnDaHuy.setOnAction(e -> {
+      currentStatus = AuctionStatus.CANCELLED;
+      sectionTitle.setText("📋  " + "PHIÊN ĐẤU GIÁ ĐANG THAM GIA ");
+      setActiveButton(btnDTGia);
+      applyFilters();
+    });
 
     loadData();
   }
@@ -105,15 +112,10 @@ public class ParticipatedAuctionController implements  ResponseListener {
       }
 
       // 2. Lọc theo trạng thái
-      if (currentStatus == AuctionStatus.CLOSED){ //những phiên đấu giá thanh toán không thành công cũng hiện ở phần chowf thanh toán
-        if(auction.getStatus() == AuctionStatus.CANCELLED){
-          return true;
-        }
-      }
       if (currentStatus != null && auction.getStatus() != currentStatus) {
         return false;
       }
-      if (currentStatus == AuctionStatus.CLOSED || currentStatus == AuctionStatus.PAID){
+      if (currentStatus == AuctionStatus.PAID || currentStatus == AuctionStatus.CLOSED || currentStatus == AuctionStatus.CANCELLED){
         if (auction.getWinnerId() != ClientModel.getInstance().getCurrentUser().getId()){
           return false;
         }
