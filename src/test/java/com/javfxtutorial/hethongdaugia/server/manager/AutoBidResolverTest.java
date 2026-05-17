@@ -1,5 +1,7 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
+import com.javfxtutorial.hethongdaugia.common.Exception.data.QueryExecutionException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
@@ -177,7 +179,7 @@ class AutoBidResolverTest {
         return new AutoBidResult(auctionDAO, bidDAO, bidCaptor.getAllValues());
     }
 
-    private void assertBid(AutoBidResult result, int expectedUserId, String expectedAmount) {
+    private void assertBid(AutoBidResult result, int expectedUserId, String expectedAmount) throws DataException {
         assertEquals(1, result.capturedBids().size());
         BidTransaction bid = result.capturedBids().get(0);
 
@@ -187,7 +189,7 @@ class AutoBidResolverTest {
         verify(result.bidDAO()).insertBid(any(BidTransaction.class));
     }
 
-    private void assertNoBid(AutoBidResult result) {
+    private void assertNoBid(AutoBidResult result) throws DataException {
         assertTrue(result.capturedBids().isEmpty());
         verify(result.auctionDAO(), never()).update(any(Auction.class));
         verify(result.bidDAO(), never()).insertBid(any(BidTransaction.class));

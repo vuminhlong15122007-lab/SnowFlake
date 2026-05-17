@@ -1,5 +1,7 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
+import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotStartedException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
@@ -97,7 +99,7 @@ public class AuctionManagerTest {
 
         @Test
         @DisplayName("phiên còn 30 giây vẫn là RUNNING (chưa qua endingTime)")
-        void stillRunning_within30Seconds() {
+        void stillRunning_within30Seconds() throws DataException {
             AuctionDAO auctionDAO = mock(AuctionDAO.class);
             when(auctionDAO.update(any(Auction.class))).thenReturn(1);
             Auction auction = new Auction();
@@ -116,7 +118,7 @@ public class AuctionManagerTest {
 
         @Test
         @DisplayName("phiên còn 0 giây (đúng thời điểm kết thúc) là CLOSED")
-        void closed_atEndingTime() {
+        void closed_atEndingTime() throws DataException {
             AuctionDAO auctionDAO = mock(AuctionDAO.class);
             when(auctionDAO.update(any(Auction.class))).thenReturn(1);
             Auction auction = new Auction();
@@ -198,7 +200,7 @@ public class AuctionManagerTest {
                  MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
                  MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
                          mockParticipatedAuctionDAO(participatedAuctionDAO)) {
-                assertFalse(auctionManager.placeBid(bid, null));
+                assertThrows(AuctionNotStartedException.class, () -> auctionManager.placeBid(bid, null));
 
                 verify(bidDAO, never()).insertBid(any(BidTransaction.class));
                 verify(participatedAuctionDAO, never()).insert(any(BidTransaction.class));

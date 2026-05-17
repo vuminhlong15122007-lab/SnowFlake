@@ -26,28 +26,25 @@ public class UserManager {
     }
 
     public User authenticate(String username, String password)  throws InvalidCredentialsException, DataException{
-        try{
-            User user = UserDAO.getInstance().selectByUsername(username);
-            if (user == null) {
-                log.warn("Không tìm thấy user: {}", username);
-                throw new InvalidCredentialsException();
-            }
-            if (!PasswordHasher.matches(password, user.getPassWord())) {
-                log.warn("Mật khẩu sai cho user: {}", username);
-                throw new InvalidCredentialsException();
-            }
+        User user = UserDAO.getInstance().selectByUsername(username);
+        if (user == null) {
+            log.warn("Không tìm thấy user: {}", username);
+            throw new InvalidCredentialsException();
+        }
+        if (!PasswordHasher.matches(password, user.getPassWord())) {
+            log.warn("Mật khẩu sai cho user: {}", username);
+            throw new InvalidCredentialsException();
+        }
 
-            if (user != null && PasswordHasher.matches(password, user.getPassWord())) {
-                if (!PasswordHasher.isHashed(user.getPassWord())) {
-                    user.setPassWord(password);
-                    UserDAO.getInstance().update(user);
-                }}
+        if (user != null && PasswordHasher.matches(password, user.getPassWord())) {
+            if (!PasswordHasher.isHashed(user.getPassWord())) {
+                user.setPassWord(password);
+                UserDAO.getInstance().update(user);
+            }
             log.info("Xác thực thành công: {}", username);
             return user;
-            } catch (EntityNotFoundException e) {
-            log.warn("Không tìm thấy user: {}", username);
-            throw new InvalidCredentialsException();}
-
+        }
+        return null;
     }
 
     public User updateUserProfile(int userId, String username, String email, String phone, String avt) throws UserNotFoundException, DataException {
