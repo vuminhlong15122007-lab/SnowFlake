@@ -34,22 +34,14 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 public class ParticipatedAuctionCellController implements ResponseListener {
   private static final Logger log = LoggerFactory.getLogger(ParticipatedAuctionCellController.class);
-  @FXML
-  private Button actionButton;
-  @FXML
-  private Label lbCategory;
-  @FXML
-  private Label lbCurrentPrice;
-  @FXML
-  private Label lbProductName;
-  @FXML
-  private Label lbWinnerName;
-  @FXML
-  private Label lbTime;
-  @FXML
-  private StackPane countdownBadge;
-  @FXML
-  private ImageView productImage;
+  @FXML private Button actionButton;
+  @FXML private Label lbCategory;
+  @FXML private Label lbCurrentPrice;
+  @FXML private Label lbProductName;
+  @FXML private Label lbWinnerName;
+  @FXML private Label lbTime;
+  @FXML private StackPane countdownBadge;
+  @FXML private ImageView productImage;
 
   private Auction auction;
 
@@ -121,7 +113,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
     lbProductName.setText(auction.getItem().getName());
     lbCategory.setText(String.valueOf(auction.getItem().getCategory()));
     lbWinnerName.setText(String.valueOf(auction.getWinnerId()));
-    lbCurrentPrice.setText(String.valueOf(auction.getCurrentPrice()));
+    lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
 
         if (productImage != null
             && auction.getItem().getImage() != null
@@ -194,19 +186,26 @@ public class ParticipatedAuctionCellController implements ResponseListener {
             case CLOSED:
                 lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
                 lbWinnerName.setText("Người thắng: " + auction.getWinnerId());
-                if (actionButton != null) {
+                int userId = ClientModel.getInstance().getCurrentUser().getId();
+                if (auction.getWinnerId() == userId) {
                     actionButton.setDisable(false);
                     actionButton.setText("THANH TOÁN");
                     actionButton.setStyle(
-                        "-fx-background-color: linear-gradient(to right, #e74c3c, #f39c12);" +
-                            "-fx-text-fill: white; -fx-font-weight: bold;" +
-                            "-fx-background-radius: 25; -fx-cursor: hand;");
+                            "-fx-background-color: linear-gradient(to right, #e74c3c, #f39c12);" +
+                                    "-fx-text-fill: white; -fx-font-weight: bold;" +
+                                    "-fx-background-radius: 25; -fx-cursor: hand;");
+                    LocalDateTime deadline = (auction.getEndingTime() != null)
+                            ? auction.getEndingTime().plusHours(24)
+                            : LocalDateTime.now().plusHours(24);
+                    showCountdown(deadline);
+                } else {
+                    hideCountdown();
+                    actionButton.setDisable(true);
+                    actionButton.setText("ĐÃ KẾT THÚC");
+                    actionButton.setStyle(
+                            "-fx-background-color: #7f8c8d; -fx-text-fill: white;" +
+                                    "-fx-font-weight: bold; -fx-background-radius: 25;");
                 }
-                // Đếm ngược 24h từ lúc phiên kết thúc
-                LocalDateTime deadline = (auction.getEndingTime() != null)
-                    ? auction.getEndingTime().plusHours(24)
-                    : LocalDateTime.now().plusHours(24);
-                showCountdown(deadline);
                 break;
 
             case CANCELLED:

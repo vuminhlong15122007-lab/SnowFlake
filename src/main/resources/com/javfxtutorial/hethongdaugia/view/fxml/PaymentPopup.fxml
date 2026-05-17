@@ -27,7 +27,8 @@
     <Separator />
 
     <!-- QR Code -->
-    <Label style="-fx-font-weight: bold; -fx-font-size: 13; -fx-text-fill: #555;" text="QUÉT MÃ QR ĐỂ THANH TOÁN" />
+    <Label style="-fx-font-weight: bold; -fx-font-size: 13; -fx-text-fill: #555;" text="QUÉT MÃ QR ĐỂ THANH TOÁN TRƯỚC " />
+   <Label fx:id="lbTime" style="-fx-font-weight: bold; -fx-font-size: 13; -fx-text-fill: #555;" text="TIME" />
     <ImageView fx:id="qrImageView" fitHeight="220.0" fitWidth="220.0" pickOnBounds="true" preserveRatio="true">
       <image>
          <Image url="@../../assets/anh_qr_popup.png" />

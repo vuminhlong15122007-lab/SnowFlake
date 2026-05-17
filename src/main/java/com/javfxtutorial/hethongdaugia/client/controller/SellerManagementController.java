@@ -239,10 +239,10 @@ public class SellerManagementController implements ResponseListener {
     @FXML
     public void initialize() throws IOException, ClassNotFoundException {
         //  Cấu hình Spinner cho giờ phút
-        startHourSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0));
-        startMinuteSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
-        endHourSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0));
-        endMinuteSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
+        startHourSpinner.setEditable(true);
+        startMinuteSpinner.setEditable(true);
+        endHourSpinner.setEditable(true);
+        endMinuteSpinner.setEditable(true);
 
         productList.setItems(observable);   //dùng để gắn một nguồn dữ liệu obs vào ListView (method có sẵn của class ListView<T>)
         productList.setCellFactory((ListView<Auction> listView) -> new ProductCell2()); // trả về một instance của ProductCell2 –class tự load giao diện cell tùy chỉnh
