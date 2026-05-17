@@ -5,15 +5,13 @@
 <?import javafx.scene.layout.*?>
 
 <!--
-    NotificationPopup.fxml
-    Popup danh sách thông báo dành cho Seller.
-    Được load bằng FXMLLoader và hiển thị trong Popup JavaFX.
+    NotifiCationPopup.fxml
+    Popup thông báo dành cho Seller — dùng ListView + NotificationCellPopup.fxml.
 -->
 <VBox maxWidth="420.0" minWidth="360.0" prefWidth="400.0"
       style="-fx-background-color: white; -fx-background-radius: 16; -fx-border-color: #c9ddff; -fx-border-radius: 16; -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.22), 20, 0.25, 0, 4);"
       xmlns="http://javafx.com/javafx/17.0.12"
       xmlns:fx="http://javafx.com/fxml/1"
-      stylesheets="@../css/global.css"
       fx:controller="com.javfxtutorial.hethongdaugia.client.controller.NotifiCationPopupController">
 
     <!-- Header -->
@@ -23,11 +21,10 @@
         <Region HBox.hgrow="ALWAYS" />
     </HBox>
 
-    <!-- Danh sách thông báo -->
-    <ScrollPane fx:id="scrollPane" fitToWidth="true" maxHeight="360.0" prefHeight="320.0"
-                style="-fx-background: transparent; -fx-background-color: transparent; -fx-border-color: transparent;">
-        <VBox fx:id="notificationListBox" spacing="8.0" style="-fx-padding: 12 10 12 10;" />
-    </ScrollPane>
+    <!-- ListView thông báo -->
+    <ListView fx:id="notificationListView"
+              maxHeight="360.0" prefHeight="320.0"
+              style="-fx-background-color: transparent; -fx-background-insets: 0; -fx-control-inner-background: transparent; -fx-padding: 6 4 6 4;" />
 
     <!-- Label khi không có thông báo -->
     <Label fx:id="emptyLabel" alignment="CENTER" maxWidth="Infinity"

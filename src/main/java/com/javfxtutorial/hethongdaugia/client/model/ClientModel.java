@@ -2,43 +2,46 @@ package com.javfxtutorial.hethongdaugia.client.model;
 
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
+import com.javfxtutorial.hethongdaugia.common.model.SellerNotification;
 import com.javfxtutorial.hethongdaugia.common.model.User;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
-public class ClientModel {            //class dùng để lưu trữ trạng thái toàn cục của ứng dụng Client(VD:ai đang đăng nhập, giỏ hàng, cài đặt...)
+public class ClientModel {
     private static ClientModel instance;
-    private ClientModel(){}
+    private ClientModel() {}
 
     public static ClientModel getInstance() {
-        if (instance == null){
+        if (instance == null) {
             instance = new ClientModel();
         }
         return instance;
     }
 
+    private User currentUser;
+    public User getCurrentUser() { return currentUser; }
+    public void setCurrentUser(User currentUser) { this.currentUser = currentUser; }
 
-    private User currentUser;       //Lưu và lấy thông tin obj User đã đăng nhập tcong
-    public User getCurrentUser() {
-        return currentUser;
-    }
-    public void setCurrentUser(User currentUser) {
-        this.currentUser = currentUser;
+    private Auction currentAuction;
+    public Auction getCurrentAuction() { return currentAuction; }
+    public void setCurrentAuction(Auction currentAuction) { this.currentAuction = currentAuction; }
+
+    private Item currentItem;
+    public Item getCurrentItem() { return currentItem; }
+    public void setCurrentItem(Item currentItem) { this.currentItem = currentItem; }
+
+    // ── Seller notifications — tồn tại suốt phiên đăng nhập ──────────────────
+    // Dùng ObservableList để các controller có thể lắng nghe thay đổi
+    private final ObservableList<SellerNotification> sellerNotifications =
+            FXCollections.observableArrayList();
+
+    /** Trả về list thông báo seller — dùng chung cho mọi lần vào màn hình seller */
+    public ObservableList<SellerNotification> getSellerNotifications() {
+        return sellerNotifications;
     }
 
-
-
-    private Auction currentAuction;        // Khi người dùng nhấp vào một phiên đấu giá từ danh sách, phiên đó được lưu và lấy ở đây.
-    public Auction getCurrentAuction() {
-        return currentAuction;
-    }
-    public void setCurrentAuction(Auction currentAuction) {
-        this.currentAuction = currentAuction;
-    }
-
-    private Item currentItem;   //dùng để lưu và lấy sản phẩm giữa đang xem ( chi tiết sp đang xem).
-    public Item getCurrentItem(){
-        return currentItem;
-    }
-    public void setCurrentItem(Item currentItem) {
-        this.currentItem = currentItem;
+    /** Xóa hết thông báo khi user logout */
+    public void clearSellerNotifications() {
+        sellerNotifications.clear();
     }
 }

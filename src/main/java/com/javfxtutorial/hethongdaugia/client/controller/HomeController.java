@@ -73,7 +73,6 @@ public class HomeController implements ResponseListener {
     }
 
     private void showPaymentPopupChain(ArrayList<Auction> unpaidList, int index) {
-        // ✅ Boundary check
         if (index >= unpaidList.size()) return;
 
         Auction auction = unpaidList.get(index);
