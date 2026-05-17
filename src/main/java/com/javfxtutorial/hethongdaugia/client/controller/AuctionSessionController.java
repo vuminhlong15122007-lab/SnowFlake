@@ -47,12 +47,12 @@ public class AuctionSessionController {
         switch (auction.getStatus()) {
             case RUNNING:
                 statusBadge.setText("ĐANG DIỄN RA");
-                if (statusBadge != null) statusBadge.setStyle("-fx-background-color: green; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 2 8; -fx-background-radius: 8;");
+                if (statusBadge != null) statusBadge.setStyle("-fx-background-color: -sf-success; -fx-text-fill: -sf-on-accent; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 2 8; -fx-background-radius: 8;");
                 lbPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
                 if (actionButton != null) {
                     actionButton.setDisable(false);
                     actionButton.setText("THAM GIA");
-                    actionButton.setStyle("-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20; -fx-cursor: hand;");
+                    actionButton.setStyle("-fx-background-color: linear-gradient(to right, -sf-accent-2, -sf-accent); -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-background-radius: 20; -fx-cursor: hand;");
 
                 }
                 if (nguoidandau != null) nguoidandau.setText("ID dẫn đầu : ");
@@ -62,11 +62,11 @@ public class AuctionSessionController {
 
             case NOT_START:
                 statusBadge.setText("SẮP DIỄN RA");
-                if (statusBadge != null) statusBadge.setStyle("-fx-background-color: #f39c12; -fx-text-fill: white; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 2 8; -fx-background-radius: 8;");
+                if (statusBadge != null) statusBadge.setStyle("-fx-background-color: -sf-warning; -fx-text-fill: -sf-on-accent; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 2 8; -fx-background-radius: 8;");
                 lbPrice.setText(String.format("%,.0f VND", auction.getInitPrice()));
                 if (actionButton != null) {
                     actionButton.setText("CHƯA BẮT ĐẦU");
-                    actionButton.setStyle("-fx-background-color: linear-gradient(to right, red, #f39c12); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 20;");
+                    actionButton.setStyle("-fx-background-color: linear-gradient(to right, -sf-danger, -sf-warning); -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-background-radius: 20;");
                 }
                 gia.setText("Giá khởi điểm : ");
                 if (nguoidandau != null) nguoidandau.setText("ID dẫn đầu : ");

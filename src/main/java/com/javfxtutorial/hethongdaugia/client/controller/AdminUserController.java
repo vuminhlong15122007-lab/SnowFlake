@@ -3,6 +3,7 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.client.Util.ThemeManager;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteUserCommand;
@@ -123,6 +124,7 @@ public class AdminUserController implements Initializable, ResponseListener {
             //khong dong cua so cu ma khoa cua so cu o phía  sau
             stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
             Scene scene = new Scene(root);
+            ThemeManager.apply(scene);
             stage.setScene(scene);
             stage.show();
         } catch (Exception e) {

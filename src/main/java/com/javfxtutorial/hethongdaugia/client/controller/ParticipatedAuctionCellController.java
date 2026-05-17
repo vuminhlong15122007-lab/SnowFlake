@@ -1,6 +1,7 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
+import com.javfxtutorial.hethongdaugia.client.Util.ThemeManager;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
@@ -33,68 +34,76 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 public class ParticipatedAuctionCellController implements ResponseListener {
-  private static final Logger log = LoggerFactory.getLogger(ParticipatedAuctionCellController.class);
-  @FXML private Button actionButton;
-  @FXML private Label lbCategory;
-  @FXML private Label lbCurrentPrice;
-  @FXML private Label lbProductName;
-  @FXML private Label lbWinnerName;
-  @FXML private Label lbTime;
-  @FXML private StackPane countdownBadge;
-  @FXML private ImageView productImage;
+    private static final Logger log = LoggerFactory.getLogger(ParticipatedAuctionCellController.class);
 
-  private Auction auction;
+    @FXML private Button actionButton;
+    @FXML private Label lbCategory;
+    @FXML private Label lbCurrentPrice;
+    @FXML private Label lbProductName;
+    @FXML private Label lbWinnerName;
+    @FXML private Label lbTime;
+    @FXML private StackPane countdownBadge;
+    @FXML private ImageView productImage;
 
-  private void showCountdown(LocalDateTime deadline) {
-    if (countdownBadge != null) {
-      countdownBadge.setVisible(true);
-      countdownBadge.setManaged(true);
+    private Auction auction;
+
+    public void setData(Auction auction) {
+        if (auction == null || auction.getItem() == null) {
+            return;
+        }
+
+        this.auction = auction;
+
+        lbProductName.setText(auction.getItem().getName());
+        lbCategory.setText(String.valueOf(auction.getItem().getCategory()));
+        lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
+        lbWinnerName.setText(String.valueOf(auction.getWinnerId()));
+
+        if (productImage != null
+                && auction.getItem().getImage() != null
+                && !auction.getItem().getImage().isBlank()) {
+            ImageHelper.loadBase64ToImageView(productImage, auction.getItem().getImage());
+        }
+
+        updateUI(auction.getStatus());
+
+        auction.statusProperty().addListener((obs, oldVal, newVal) -> updateUI(newVal));
     }
-    if (lbTime != null) {
-      TimeLeft timer = new TimeLeft(lbTime, deadline);
-      timer.setOnFinished(() -> {
-        // Khi hết giờ, đổi badge sang đỏ
-        if (lbTime != null) {
-          lbTime.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;");
+
+    private void showCountdown(LocalDateTime deadline) {
+        if (countdownBadge != null) {
+            countdownBadge.setVisible(true);
+            countdownBadge.setManaged(true);
         }
-        if (auction.getStatus() == AuctionStatus.RUNNING) { //hết countdow running
-          auction.setStatus(AuctionStatus.CLOSED);
-          NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
-          Platform.runLater(() -> {
-            try {
-              ServerConnection connection = NetworkManager.getConnection();
-              Command cmd = new UpdateAuctionStatusCommand(auction);
-              connection.sendCommand(cmd);
-            } catch (ConnectionFailedException e) {
-              log.error("Không kết nối được server");
-              showAlert("Lỗi", e.getMessage());
-            } catch (SendFailedException e) {
-              log.error("Không gửi được command");
-              showAlert("Lỗi", e.getMessage());
+
+        if (lbTime == null) {
+            return;
+        }
+
+        TimeLeft timer = new TimeLeft(lbTime, deadline);
+        timer.setOnFinished(() -> {
+            if (lbTime != null) {
+                lbTime.setStyle(
+                        "-fx-font-size: 14px;" +
+                                "-fx-font-weight: bold;" +
+                                "-fx-text-fill: -sf-danger;"
+                );
             }
-          });
-        }
-        if (auction.getStatus() == AuctionStatus.CLOSED) { //ết countdown chờ thanh toán
-          auction.setStatus(AuctionStatus.CANCELLED);
-          NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
-          Platform.runLater(() -> {
-            try {
-              ServerConnection connection = NetworkManager.getConnection();
-              Command cmd = new UpdateAuctionStatusCommand(auction);
-              connection.sendCommand(cmd);
-            } catch (ConnectionFailedException e) {
-              log.error("Không kết nối được server");
-              showAlert("Lỗi", e.getMessage());
-            } catch (SendFailedException e) {
-              log.error("Không gửi được command");
-              showAlert("Lỗi", e.getMessage());
+
+            if (auction == null) {
+                return;
             }
-          });
-        }
-      });
-      timer.start();
+
+            AuctionStatus currentStatus = auction.getStatus();
+
+            if (currentStatus == AuctionStatus.RUNNING) {
+                updateAuctionStatus(AuctionStatus.CLOSED);
+            } else if (currentStatus == AuctionStatus.CLOSED) {
+                updateAuctionStatus(AuctionStatus.CANCELLED);
+            }
+        });
+        timer.start();
     }
-  }
 
     private void hideCountdown() {
         if (countdownBadge != null) {
@@ -103,34 +112,16 @@ public class ParticipatedAuctionCellController implements ResponseListener {
         }
     }
 
-  public void setData(Auction auction) {
-    if (auction == null || auction.getItem() == null) return;
-    this.auction = auction;
-    updateUI(auction.getStatus()); //khởi tạo UI ban đầu
-    auction.statusProperty().addListener(((_, _, newVal) -> {
-      updateUI(newVal);
-    })); //thay đổi UI nếu có status mơid
-    lbProductName.setText(auction.getItem().getName());
-    lbCategory.setText(String.valueOf(auction.getItem().getCategory()));
-    lbWinnerName.setText(String.valueOf(auction.getWinnerId()));
-    lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
-
-        if (productImage != null
-            && auction.getItem().getImage() != null
-            && !auction.getItem().getImage().isBlank()) {
-            ImageHelper.loadBase64ToImageView(productImage, auction.getItem().getImage());
-        }
-
-    }
-
     @FXML
     public void goPayment(ActionEvent event) {
-        if (auction == null) return;
+        if (auction == null) {
+            return;
+        }
+
         AuctionStatus status = auction.getStatus();
 
         if (status == AuctionStatus.CLOSED) {
             openPaymentPopup();
-
         } else if (status == AuctionStatus.RUNNING) {
             ClientModel.getInstance().setCurrentAuction(auction);
             changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/LiveAuction.fxml");
@@ -144,95 +135,152 @@ public class ParticipatedAuctionCellController implements ResponseListener {
     private void openPaymentPopup() {
         try {
             FXMLLoader loader = new FXMLLoader(
-                getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/PaymentPopup.fxml"));
+                    getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/PaymentPopup.fxml")
+            );
+
             Parent root = loader.load();
             PaymentPopupController popupController = loader.getController();
             popupController.setAuction(auction);
 
-      popupController.setOnConfirmed(() -> {
-        auction.setStatus(AuctionStatus.PAID);
-        NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
-        try {
-          NetworkManager.getConnection().sendCommand(new UpdateAuctionStatusCommand(auction));
-        } catch (SendFailedException | ConnectionFailedException e) {
-                throw new RuntimeException(e);
-              }
-            });
+            popupController.setOnConfirmed(() -> updateAuctionStatus(AuctionStatus.PAID));
 
             Stage popupStage = new Stage();
             popupStage.initModality(Modality.APPLICATION_MODAL);
-            popupStage.setScene(new Scene(root));
+
+            Scene scene = new Scene(root);
+            ThemeManager.apply(scene);
+
+            popupStage.setScene(scene);
             popupStage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Không thể mở cửa sổ thanh toán", e);
             showAlert("Lỗi", "Không thể mở cửa sổ thanh toán: " + e.getMessage());
         }
     }
 
+    private void updateAuctionStatus(AuctionStatus newStatus) {
+        if (auction == null || newStatus == null) {
+            return;
+        }
+
+        AuctionStatus oldStatus = auction.getStatus();
+        auction.setStatus(newStatus);
+
+        NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
+
+        Platform.runLater(() -> {
+            try {
+                ServerConnection connection = NetworkManager.getConnection();
+                Command cmd = new UpdateAuctionStatusCommand(auction);
+                connection.sendCommand(cmd);
+            } catch (ConnectionFailedException e) {
+                auction.setStatus(oldStatus);
+                log.error("Không kết nối được server", e);
+                showAlert("Lỗi", e.getMessage());
+            } catch (SendFailedException e) {
+                auction.setStatus(oldStatus);
+                log.error("Không gửi được command", e);
+                showAlert("Lỗi", e.getMessage());
+            }
+        });
+    }
 
     private void updateUI(AuctionStatus status) {
+        if (auction == null || status == null) {
+            hideCountdown();
+            return;
+        }
+
         switch (status) {
             case RUNNING:
                 hideCountdown();
                 lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
                 lbWinnerName.setText(String.valueOf(auction.getWinnerId()));
+
                 if (actionButton != null) {
                     actionButton.setDisable(false);
                     actionButton.setText("THAM GIA");
-                    actionButton.setStyle("-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed);" + "-fx-text-fill: white; -fx-font-weight: bold;" + "-fx-background-radius: 25; -fx-cursor: hand;");
+                    actionButton.setStyle(
+                            "-fx-background-color: linear-gradient(to right, -sf-accent-2, -sf-accent);" +
+                                    "-fx-text-fill: -sf-on-accent;" +
+                                    "-fx-font-weight: bold;" +
+                                    "-fx-background-radius: 25;" +
+                                    "-fx-cursor: hand;"
+                    );
                 }
                 break;
 
             case CLOSED:
                 lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
                 lbWinnerName.setText("Người thắng: " + auction.getWinnerId());
+
                 int userId = ClientModel.getInstance().getCurrentUser().getId();
-                if (auction.getWinnerId() == userId) {
-                    actionButton.setDisable(false);
-                    actionButton.setText("THANH TOÁN");
-                    actionButton.setStyle(
-                            "-fx-background-color: linear-gradient(to right, #e74c3c, #f39c12);" +
-                                    "-fx-text-fill: white; -fx-font-weight: bold;" +
-                                    "-fx-background-radius: 25; -fx-cursor: hand;");
-                    LocalDateTime deadline = (auction.getEndingTime() != null)
-                            ? auction.getEndingTime().plusHours(24)
-                            : LocalDateTime.now().plusHours(24);
-                    showCountdown(deadline);
-                } else {
-                    hideCountdown();
-                    actionButton.setDisable(true);
-                    actionButton.setText("ĐÃ KẾT THÚC");
-                    actionButton.setStyle(
-                            "-fx-background-color: #7f8c8d; -fx-text-fill: white;" +
-                                    "-fx-font-weight: bold; -fx-background-radius: 25;");
+                if (actionButton != null) {
+                    if (auction.getWinnerId() == userId) {
+                        actionButton.setDisable(false);
+                        actionButton.setText("THANH TOÁN");
+                        actionButton.setStyle(
+                                "-fx-background-color: linear-gradient(to right, -sf-danger, -sf-warning);" +
+                                        "-fx-text-fill: -sf-on-accent;" +
+                                        "-fx-font-weight: bold;" +
+                                        "-fx-background-radius: 25;" +
+                                        "-fx-cursor: hand;"
+                        );
+                    } else {
+                        actionButton.setDisable(true);
+                        actionButton.setText("ĐÃ KẾT THÚC");
+                        actionButton.setStyle(
+                                "-fx-background-color: -sf-neutral;" +
+                                        "-fx-text-fill: -sf-on-accent;" +
+                                        "-fx-font-weight: bold;" +
+                                        "-fx-background-radius: 25;"
+                        );
+                    }
                 }
+
+                LocalDateTime deadline = auction.getEndingTime() != null
+                        ? auction.getEndingTime().plusHours(24)
+                        : LocalDateTime.now().plusHours(24);
+                showCountdown(deadline);
                 break;
 
             case CANCELLED:
                 hideCountdown();
                 lbCurrentPrice.setText(String.format("%,.0f VND", auction.getInitPrice()));
                 lbWinnerName.setText("Phiên bị hủy");
+
                 if (actionButton != null) {
                     actionButton.setDisable(true);
                     actionButton.setText("ĐÃ HỦY");
                     actionButton.setStyle(
-                        "-fx-background-color: #bdc3c7; -fx-text-fill: white;" +
-                            "-fx-font-weight: bold; -fx-background-radius: 25;");
+                            "-fx-background-color: -sf-neutral;" +
+                                    "-fx-text-fill: -sf-on-accent;" +
+                                    "-fx-font-weight: bold;" +
+                                    "-fx-background-radius: 25;"
+                    );
                 }
                 break;
 
             case PAID:
                 hideCountdown();
                 lbCurrentPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
-                lbCategory.setText("Loại: " + (auction.getItem().getCategory() != null
-                    ? auction.getItem().getCategory() : "Khác"));
+                lbCategory.setText("Loại: " + (
+                        auction.getItem().getCategory() != null
+                                ? auction.getItem().getCategory()
+                                : "Khác"
+                ));
                 lbWinnerName.setText("Người thắng: " + auction.getWinnerId());
+
                 if (actionButton != null) {
                     actionButton.setDisable(true);
                     actionButton.setText("ĐÃ THANH TOÁN");
-                    actionButton.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white;" + "-fx-font-weight: bold; -fx-background-radius: 25;");
+                    actionButton.setStyle(
+                            "-fx-background-color: -sf-success;" +
+                                    "-fx-text-fill: -sf-on-accent;" +
+                                    "-fx-font-weight: bold;" +
+                                    "-fx-background-radius: 25;"
+                    );
                 }
-                lbTime = null;
                 break;
 
             default:
@@ -244,10 +292,13 @@ public class ParticipatedAuctionCellController implements ResponseListener {
     @Override
     public void onResponse(Response rp) {
         NetworkManager.getInstance().unregister(UpdateAuctionStatusCommand.class, this);
+
         if (!rp.isSuccess()) {
             Platform.runLater(() -> {
-                auction.setStatus(AuctionStatus.CLOSED);
-                showAlert("Thanh toán không thành công", "vui lòng thử lại");
+                if (auction != null) {
+                    auction.setStatus(AuctionStatus.CLOSED);
+                }
+                showAlert("Thanh toán không thành công", "Vui lòng thử lại");
             });
         }
     }

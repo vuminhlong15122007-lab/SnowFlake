@@ -73,18 +73,18 @@ public class ProductDisplayController {
             timer.start();
         } else if (auction.getStatus() == AuctionStatus.NOT_START) {
             lbtimeLeft.setText("CHƯA BẮT ĐẦU");
-            UI01.setStyle("-fx-text-fill: orange; -fx-alignment: CENTER;");
-            UI02.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: orange; -fx-alignment: CENTER;");
-            lbtimeLeft.setStyle("-fx-text-fill: orange;");
+            UI01.setStyle("-fx-text-fill: -sf-warning; -fx-alignment: CENTER;");
+            UI02.setStyle("-fx-background-color: -sf-surface; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: -sf-warning; -fx-alignment: CENTER;");
+            lbtimeLeft.setStyle("-fx-text-fill: -sf-warning;");
             ThamGiaDauGiaBtn.setText("Chưa thể tham gia");
-            ThamGiaDauGiaBtn.setStyle("-fx-background-color: linear-gradient(to right, red, orange); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
+            ThamGiaDauGiaBtn.setStyle("-fx-background-color: linear-gradient(to right, -sf-danger, -sf-warning); -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
         } else {
             lbtimeLeft.setText("ĐÃ KẾT THÚC");
-            UI01.setStyle("-fx-text-fill: red; -fx-alignment: CENTER;");
-            UI02.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: red; -fx-alignment: CENTER;");
-            lbtimeLeft.setStyle("-fx-text-fill: red;");
+            UI01.setStyle("-fx-text-fill: -sf-danger; -fx-alignment: CENTER;");
+            UI02.setStyle("-fx-background-color: -sf-surface; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: -sf-danger; -fx-alignment: CENTER;");
+            lbtimeLeft.setStyle("-fx-text-fill: -sf-danger;");
             ThamGiaDauGiaBtn.setText("Phiên đấu giá đã đóng");
-            ThamGiaDauGiaBtn.setStyle("-fx-background-color: grey; -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
+            ThamGiaDauGiaBtn.setStyle("-fx-background-color: -sf-neutral; -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
         }
     }
 

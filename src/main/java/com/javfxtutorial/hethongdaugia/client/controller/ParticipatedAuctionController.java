@@ -89,11 +89,12 @@ public class ParticipatedAuctionController implements  ResponseListener {
     });
     btnDaHuy.setOnAction(e -> {
       currentStatus = AuctionStatus.CANCELLED;
-      sectionTitle.setText("📋  " + "PHIÊN ĐẤU GIÁ ĐANG THAM GIA ");
-      setActiveButton(btnDTGia);
+      sectionTitle.setText("📋  " + "PHIÊN ĐẤU GIÁ ĐÃ BỊ HỦY");
+      setActiveButton(btnDaHuy);
       applyFilters();
     });
 
+    setActiveButton(btnAll);
     loadData();
   }
 
@@ -127,13 +128,18 @@ public class ParticipatedAuctionController implements  ResponseListener {
 
 
 
-  // Đổi màu nút đang active
+  // Đổi class CSS cho nút đang active
   private void setActiveButton(Button active) {
     Button[] buttons = {btnAll, btnCTToan, btnDTGia, btnDTToan, btnDaHuy};
-    String activeStyle = "-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15;";
-    String inactiveStyle = "-fx-background-color: white; -fx-text-fill: #7f8c8d; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15; -fx-border-color: #dcdde1; -fx-border-radius: 8;";
     for (Button b : buttons) {
-      b.setStyle(b == active ? activeStyle : inactiveStyle);
+      if (b == null) continue;
+      b.getStyleClass().remove("sf-filter-button-active");
+      if (!b.getStyleClass().contains("sf-filter-button")) {
+        b.getStyleClass().add("sf-filter-button");
+      }
+      if (b == active) {
+        b.getStyleClass().add("sf-filter-button-active");
+      }
     }
   }
 

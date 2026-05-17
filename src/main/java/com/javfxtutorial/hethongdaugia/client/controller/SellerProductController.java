@@ -31,12 +31,12 @@ public class SellerProductController {
         AuctionStatus status = auction.getStatus();
 
         if (status == NOT_START){
-            lbStatus.setStyle("-fx-text-fill: orange; -fx-font-size : 18px;");
+            lbStatus.setStyle("-fx-text-fill: -sf-warning; -fx-font-size : 18px;");
         }
         else if(status == RUNNING){
-            lbStatus.setStyle("-fx-text-fill: green; -fx-font-size : 18px;");
+            lbStatus.setStyle("-fx-text-fill: -sf-success; -fx-font-size : 18px;");
         }else{
-            lbStatus.setStyle("-fx-text-fill: red; -fx-font-size : 18px;");
+            lbStatus.setStyle("-fx-text-fill: -sf-danger; -fx-font-size : 18px;");
         }
         makeElementFlash(lbStatus);
     }

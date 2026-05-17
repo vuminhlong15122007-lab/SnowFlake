@@ -1,6 +1,7 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.MainApplication;
+import com.javfxtutorial.hethongdaugia.client.Util.ThemeManager;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
@@ -163,6 +164,7 @@ public class RegisterController implements ResponseListener {
             FXMLLoader loader = new FXMLLoader(MainApplication.class.getResource(
                     "/com/javfxtutorial/hethongdaugia/view/fxml/TermsPopup.fxml"));
             Scene scene = new Scene(loader.load());
+            ThemeManager.apply(scene);
 
 
             TermsController termsController = loader.getController();
@@ -195,6 +197,7 @@ public class RegisterController implements ResponseListener {
                 stage.initStyle(StageStyle.TRANSPARENT);
                 Scene scene = null;
                 scene = new Scene(fxmlLoader.load());
+                ThemeManager.apply(scene);
                 scene.setFill(Color.TRANSPARENT);
                 stage.setScene(scene);
                 stage.show();

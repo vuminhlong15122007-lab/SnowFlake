@@ -23,6 +23,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -159,7 +160,7 @@ public class SellerManagementController implements ResponseListener {
     }
 
     @FXML public void onAddButton (ActionEvent event){
-        saveButton.setStyle("-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 5 0; -fx-font-size: 12px;");
+        saveButton.setStyle("-fx-background-color: -sf-accent; -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 5 0; -fx-font-size: 12px;");
         saveButton.setText("Lưu");
         saveButton.setOnAction(_ -> {
           try {
@@ -258,7 +259,7 @@ public class SellerManagementController implements ResponseListener {
         productList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
                 hienThiChiTietSanPham(newVal);      // LUÔN hiển thị thông tin
-                saveButton.setStyle("-fx-background-color: #E67E22; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 5 0; -fx-font-size: 12px;");
+                saveButton.setStyle("-fx-background-color: -sf-warning; -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 5 0; -fx-font-size: 12px;");
                 saveButton.setOnAction( event -> {
                   try {
                     suaSp(event);
@@ -551,5 +552,8 @@ public class SellerManagementController implements ResponseListener {
                 }
             });
         }
+    }
+
+    public void openNotifications(MouseEvent mouseEvent) {
     }
 }
