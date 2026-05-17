@@ -156,6 +156,7 @@ public class AuctionManager {
         auction.setCurrentPrice(bid.getAmount());
         auction.setWinnerId(bid.getBidderId());
         auction.setWinningPrice(bid.getAmount());
+        auction.setWinnerName(bid.getBidderName());
 
         System.out.println("Đã cập nhật lại auction");
 

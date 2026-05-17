@@ -37,7 +37,7 @@ public class AuctionSessionController {
         lbSellerName.setText(auction.getItem().getSellerName());
         lbCategory.setText(String.valueOf(auction.getItem().getCategory()));
 
-        lbWinner.setText(auction.getWinnerId() != 0 ? String.valueOf(auction.getWinnerId()) : "Không có người đấu giá");
+        lbWinner.setText(auction.getWinnerId() != 0 ? auction.getWinnerName() : "Không có người đấu giá");
         // Load ảnh
         if (!(productImage == null || auction.getItem().getImage() == null || auction.getItem().getImage().isBlank()))
         {ImageHelper.loadBase64ToImageView(productImage, auction.getItem().getImage());}
@@ -56,7 +56,7 @@ public class AuctionSessionController {
 
                 }
                 if (nguoidandau != null) nguoidandau.setText("ID dẫn đầu : ");
-                if (lbWinner != null) lbWinner.setText(""+auction.getWinnerId());
+                if (lbWinner != null) lbWinner.setText(""+auction.getWinnerName());
                 gia.setText("Giá hiện tại : ");
                 break;
 
