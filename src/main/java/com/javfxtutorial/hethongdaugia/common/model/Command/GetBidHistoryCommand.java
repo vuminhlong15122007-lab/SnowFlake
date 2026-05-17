@@ -1,6 +1,5 @@
 package com.javfxtutorial.hethongdaugia.common.model.Command;
 
-import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.QueryExecutionException;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
@@ -27,9 +26,6 @@ public class GetBidHistoryCommand extends Command {
         } catch (QueryExecutionException e) {
             log.error("Lỗi truy vấn database: {}", e.getMessage(), e);
             return new Response(false, "Lỗi truy vấn dữ liệu: " + e.getMessage(), null, this);
-        } catch (DataException e) {
-            log.error("Lỗi dữ liệu: {}", e.getMessage(), e);
-            return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);
         } catch (Exception e) {
             log.error("Lỗi không xác định: {}", e.getMessage(), e);
             return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);

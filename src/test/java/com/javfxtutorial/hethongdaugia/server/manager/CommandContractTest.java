@@ -3,6 +3,7 @@ package com.javfxtutorial.hethongdaugia.server.manager;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
+import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AutoBidCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAuctionStatusCommand;
@@ -36,6 +37,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 class CommandContractTest {
@@ -138,6 +141,18 @@ class CommandContractTest {
         }
 
         @Test
+        void registerToAuctionCommand_missingAuctionReturnsFailureWithoutRegisteringListener() throws Exception {
+            RegisterToAuctionCommand command = new RegisterToAuctionCommand();
+
+            Response response = command.handle();
+
+            assertFalse(response.isSuccess());
+            assertNull(response.getPayLoad());
+            assertSame(command, response.getCommand());
+            assertTrue(TestStateSupport.auctionSubscribers(manager).isEmpty());
+        }
+
+        @Test
         void placeBidCommand_missingBidReturnsFailureResponse() {
             PlaceBidCommand command = new PlaceBidCommand();
 
@@ -146,6 +161,63 @@ class CommandContractTest {
             assertFalse(response.isSuccess());
             assertNull(response.getPayLoad());
             assertSame(command, response.getCommand());
+        }
+    }
+
+    @Nested
+    @DisplayName("Account command")
+    class AccountCommandTest {
+        @Test
+        void addAccountCommand_returnsSuccessOnlyWhenDaoInsertSucceeds() throws DataException {
+            AddAccountCommand command = validAddAccountCommand();
+            UserDAO userDAO = mock(UserDAO.class);
+            when(userDAO.insert(any(User.class))).thenReturn(1);
+
+            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+                Response response = command.handle();
+
+                assertTrue(response.isSuccess());
+                assertNull(response.getPayLoad());
+                assertSame(command, response.getCommand());
+                verify(userDAO).insert(any(User.class));
+            }
+        }
+
+        @Test
+        void addAccountCommand_duplicateUsernameReturnsFailure() throws DataException {
+            AddAccountCommand command = validAddAccountCommand();
+            UserDAO userDAO = mock(UserDAO.class);
+            when(userDAO.insert(any(User.class))).thenReturn(-1);
+
+            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+                Response response = command.handle();
+
+                assertFalse(response.isSuccess());
+                assertNull(response.getPayLoad());
+                assertSame(command, response.getCommand());
+            }
+        }
+
+        @Test
+        void addAccountCommand_invalidRoleReturnsFailureBeforeDao() throws DataException {
+            AddAccountCommand command = validAddAccountCommand();
+            command.addData("accountType", "MANAGER");
+            UserDAO userDAO = mock(UserDAO.class);
+
+            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+                Response response = command.handle();
+
+                assertFalse(response.isSuccess());
+                assertNull(response.getPayLoad());
+                assertSame(command, response.getCommand());
+                verify(userDAO, never()).insert(any(User.class));
+            }
         }
     }
 
@@ -198,6 +270,16 @@ class CommandContractTest {
         auction.setCurrentPrice(new BigDecimal("100"));
         auction.setStepPrice(new BigDecimal("10"));
         return auction;
+    }
+
+    private static AddAccountCommand validAddAccountCommand() {
+        AddAccountCommand command = new AddAccountCommand();
+        command.addData("username", "alice");
+        command.addData("password", "secret123");
+        command.addData("email", "alice@example.com");
+        command.addData("sdt", "0901234567");
+        command.addData("accountType", "USER");
+        return command;
     }
 
     private static Response runWithSuppressedErrorOutput(java.util.function.Supplier<Response> action) {

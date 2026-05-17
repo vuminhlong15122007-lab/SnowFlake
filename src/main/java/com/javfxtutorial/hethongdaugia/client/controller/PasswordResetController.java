@@ -6,23 +6,17 @@ import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
-import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.ResetPassWordCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
-import javafx.scene.Parent;
-import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.awt.event.ActionEvent;
-import java.io.IOException;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
@@ -34,7 +28,7 @@ public class PasswordResetController implements ResponseListener {
 
     @FXML
     public void initialize(){
-        btnCancel.setOnAction(event -> {
+        btnCancel.setOnAction(_ -> {
             // Llay va dong stage hien tai
             Stage stage = (Stage) btnCancel.getScene().getWindow();
             stage.close();
@@ -56,10 +50,9 @@ public class PasswordResetController implements ResponseListener {
     String newPW;
 
     @FXML
-    public void updatePW() throws IOException, ClassNotFoundException {
+    public void updatePW() {
         //lay du lieu tu o nhap
         newPW = txtNewPW.getText();
-        String confirmPW = txtConfirmPW.getText();
 
         //lay user hien tai
 

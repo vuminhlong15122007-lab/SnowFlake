@@ -44,8 +44,10 @@ public class UserDAO implements DAOInterface<User> {
                         user.setId(rs.getInt(1));
                     }
                 }
+                return result;
             }
-            throw new DataInsertException("User");
+            else {
+                throw new DataInsertException("User");}
         } catch (SQLIntegrityConstraintViolationException e) {
             if (e.getErrorCode() == 1062) {
                 log.error("Lỗi: Dữ liệu bị trùng lặp!");
@@ -57,6 +59,7 @@ public class UserDAO implements DAOInterface<User> {
                     return -3;
                 }
             }
+            throw new DataInsertException("User");
         } catch (SQLException e) {
             log.error("Lỗi tạo user: {}", e.getMessage(), e);
             if (e.getSQLState().equals("23505")) {
@@ -64,7 +67,6 @@ public class UserDAO implements DAOInterface<User> {
             }
             throw new DataInsertException("User");
         }
-        return result;
     }
 
     @Override

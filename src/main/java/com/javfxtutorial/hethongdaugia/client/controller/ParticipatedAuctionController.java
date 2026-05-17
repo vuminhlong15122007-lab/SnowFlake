@@ -39,12 +39,12 @@ public class ParticipatedAuctionController implements  ResponseListener {
   @FXML private Button btnDTGia;
   @FXML private Button btnDTToan;
   @FXML private Button btnDaHuy;
-  @FXML private Button goMenu;
   @FXML private ListView<Auction> productList;
   @FXML private TextField searchField;
   @FXML private Label sectionTitle;
 
-  private ObservableList<Auction> participatedAuctionList = FXCollections.observableArrayList();
+
+  private final ObservableList<Auction> participatedAuctionList = FXCollections.observableArrayList();
   private FilteredList<Auction> filterData;
   private AuctionStatus currentStatus = null;
 
@@ -54,34 +54,34 @@ public class ParticipatedAuctionController implements  ResponseListener {
   public void initialize() throws ConnectionFailedException {
     VBox.setVgrow(productList, Priority.ALWAYS);
     productList.setMaxWidth(Double.MAX_VALUE);
-    productList.setCellFactory(lv -> new ParticipatedAuctionCell());
+    productList.setCellFactory(_ -> new ParticipatedAuctionCell());
     // Tạo FilteredList
-    filterData = new FilteredList<>(participatedAuctionList, auction -> true);
+    filterData = new FilteredList<>(participatedAuctionList, _ -> true);
     productList.setItems(filterData);
     // Tìm kiếm
-    searchField.textProperty().addListener((obs, oldVal, newVal) -> applyFilters());
+    searchField.textProperty().addListener((_, _, _) -> applyFilters());
 
 
     // Nút lọc trạng thái
-    btnAll.setOnAction(e -> {
+    btnAll.setOnAction(_ -> {
       currentStatus = null;
       sectionTitle.setText("📋  " + "TẤT CẢ PHIÊN ĐẤU GIÁ ĐÃ THAM GIA");
       setActiveButton(btnAll);
       applyFilters();
     });
-    btnDTToan.setOnAction(e -> {
+    btnDTToan.setOnAction(_ -> {
       currentStatus = AuctionStatus.PAID;
       sectionTitle.setText("📋  " + "PHIÊN ĐẤU GIÁ ĐÃ THANH TOÁN");
       setActiveButton(btnDTToan);
       applyFilters();
     });
-    btnCTToan.setOnAction(e -> {
+    btnCTToan.setOnAction(_ -> {
       currentStatus = AuctionStatus.CLOSED;
       sectionTitle.setText("📋  " + "PHIÊN ĐẤU GIÁ CHƯA THANH TOÁN");
       setActiveButton(btnCTToan);
       applyFilters();
     });
-    btnDTGia.setOnAction(e -> {
+    btnDTGia.setOnAction(_ -> {
       currentStatus = AuctionStatus.RUNNING;
       sectionTitle.setText("📋  " + "PHIÊN ĐẤU GIÁ ĐANG THAM GIA ");
       setActiveButton(btnDTGia);
@@ -129,7 +129,7 @@ public class ParticipatedAuctionController implements  ResponseListener {
 
   // Đổi màu nút đang active
   private void setActiveButton(Button active) {
-    Button[] buttons = {btnAll, btnCTToan, btnDTGia, btnDTToan};
+    Button[] buttons = {btnAll, btnCTToan, btnDTGia, btnDTToan, btnDaHuy};
     String activeStyle = "-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15;";
     String inactiveStyle = "-fx-background-color: white; -fx-text-fill: #7f8c8d; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15; -fx-border-color: #dcdde1; -fx-border-radius: 8;";
     for (Button b : buttons) {
@@ -160,11 +160,6 @@ public class ParticipatedAuctionController implements  ResponseListener {
   public void onResponse(Response rp) {
     if (rp.getCommand().getClass() == GetParticipatedAuctionsByBidderCommand.class) {
       Platform.runLater(() -> {
-        if (rp == null) {
-          showAlert("Loi tai du lieu", "Server khong tra ve du lieu phien dau gia.", "Loading.gif");
-          return;
-        }
-
         if (!rp.isSuccess()) {
           showAlert("Loi tai du lieu", rp.getMessage(), "Loading.gif");
           return;

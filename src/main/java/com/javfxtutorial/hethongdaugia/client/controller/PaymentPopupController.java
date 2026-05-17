@@ -3,7 +3,6 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
@@ -13,18 +12,13 @@ import java.time.LocalDateTime;
 public class PaymentPopupController {
 
     @FXML private ImageView productImageView;
-    @FXML private ImageView qrImageView;
     @FXML private Label lbProductName;
     @FXML private Label lbWinningPrice;
     @FXML private Label lbAuctionId;
-    @FXML private Label lbCountdown;
-    @FXML private Button onIdentify ;
+    @FXML private Label lbTime;
     private Runnable onConfirmed;
 
-    private Auction auction;
-
     public void setAuction(Auction auction) {
-        this.auction = auction;
         if (auction == null || auction.getItem() == null) return;
 
         if (lbProductName != null)
@@ -46,9 +40,9 @@ public class PaymentPopupController {
         }
 
         // Đếm ngược 24h kể từ endingTime của phiên
-        if (lbCountdown != null && auction.getEndingTime() != null) {
+        if (lbTime != null && auction.getEndingTime() != null) {
             LocalDateTime deadline = auction.getEndingTime().plusHours(24);
-            TimeLeft timer = new TimeLeft(lbCountdown, deadline);
+            TimeLeft timer = new TimeLeft(lbTime, deadline);
             timer.start();
         }
     }

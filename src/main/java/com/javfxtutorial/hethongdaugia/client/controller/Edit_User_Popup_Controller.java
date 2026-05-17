@@ -23,6 +23,7 @@ import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+
 import java.io.IOException;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
@@ -33,14 +34,13 @@ public class Edit_User_Popup_Controller implements ResponseListener {
     @FXML private TextField txtEmail;
     @FXML private TextField txtPhoneNumber;
     @FXML private ComboBox<String> cbRole ;
-    @FXML private ComboBox cbStatus ;
     @FXML private Button btnCancel;
     @FXML private Label message;
 
     @FXML
     public void initialize() {
         // gan su kien dong cua so cho nut huy
-        btnCancel.setOnAction(event -> {
+        btnCancel.setOnAction(_ -> {
             // Llay va dong stage hien tai
             Stage stage = (Stage) btnCancel.getScene().getWindow();
             stage.close();
@@ -52,16 +52,15 @@ public class Edit_User_Popup_Controller implements ResponseListener {
     }
     ActionEvent saveEvent;
     @FXML
-    public void clickToSave(ActionEvent event) throws IOException, ClassNotFoundException, SendFailedException, ConnectionFailedException {
+    public void clickToSave(ActionEvent event) throws SendFailedException, ConnectionFailedException {
         saveEvent = event;
         String name = txtName.getText();
         String email = txtEmail.getText();
         String sdt = txtPhoneNumber.getText();
         String selectRole = cbRole.getValue();
         String password = "000000";
-        String confirmPassword = "000000";
         //khong de o trong
-        if(name.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty() || sdt.isEmpty() || selectRole == null){
+        if(name.isEmpty() || email.isEmpty() || sdt.isEmpty() || selectRole == null){
             message.setText("Vui lòng điền đầy đủ thông tin!");
             return;
         }
@@ -81,18 +80,16 @@ public class Edit_User_Popup_Controller implements ResponseListener {
             message.setText(" Email phải có đuôi @gmail.com!");
             return;
         }
-        if (!name.isEmpty() && !email.isEmpty() && selectRole != null){
-            ServerConnection connection = NetworkManager.getConnection();
-            Command cmd = new AddAccountCommand();
-            cmd.addData("username", name);
-            cmd.addData("password", password);
-            cmd.addData("email", email);
-            cmd.addData("sdt", sdt);
-            cmd.addData("accountType", selectRole);
-            connection.sendCommand(cmd);
-            NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.register(AddAccountCommand.class, this);
-        }
+        ServerConnection connection = NetworkManager.getConnection();
+        Command cmd = new AddAccountCommand();
+        cmd.addData("username", name);
+        cmd.addData("password", password);
+        cmd.addData("email", email);
+        cmd.addData("sdt", sdt);
+        cmd.addData("accountType", selectRole);
+        connection.sendCommand(cmd);
+        NetworkManager networkManager = NetworkManager.getInstance();
+        networkManager.register(AddAccountCommand.class, this);
     }
 
     @Override

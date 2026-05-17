@@ -10,7 +10,6 @@ import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllUsersCommand;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
-import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -25,9 +24,9 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.*;
@@ -41,7 +40,6 @@ public class AdminUserController implements Initializable, ResponseListener {
     @FXML private TableColumn<User, String> colEmail;
     @FXML private TableColumn<User, String> colPhone;
     @FXML private TableColumn<User, String> colRole;
-    @FXML private TableColumn<User, String> colStatus;
     @FXML private TextField searchField;
     private User selectUser;
 
@@ -76,8 +74,6 @@ public class AdminUserController implements Initializable, ResponseListener {
         }).start();
     }
     @FXML
-    private Button btnEditUser;
-    @FXML
     public void getUpdateAdmin(ActionEvent event) {
         changePopup(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UpdateAdminInfo.fxml","sửa thông tin admin");
 
@@ -87,7 +83,7 @@ public class AdminUserController implements Initializable, ResponseListener {
     }
 
     @FXML
-    public void clickToDeleteUser() throws IOException, ConnectionFailedException, SendFailedException {
+    public void clickToDeleteUser() throws ConnectionFailedException, SendFailedException {
         ServerConnection connection =NetworkManager.getConnection();
         selectUser = userTable.getSelectionModel().getSelectedItem();
         if (selectUser == null){
@@ -118,11 +114,10 @@ public class AdminUserController implements Initializable, ResponseListener {
             networkManager.register(DeleteUserCommand.class, this);
         }
 }
-    @FXML private Button btnResetPassword;
     @FXML
-    public void clickToResetPW(ActionEvent event) {
+    public void clickToResetPW() {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/reset_password.fxml"));
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/reset_password.fxml")));
 
             Stage stage = new Stage();
             //khong dong cua so cu ma khoa cua so cu o phía  sau
@@ -135,12 +130,11 @@ public class AdminUserController implements Initializable, ResponseListener {
         }
     }
 
-    public void reLoad(ActionEvent event) {
+    public void reLoad() {
         loadUserData(); // ✅ Gọi lại method loadUserData() thay vì gọi DAO
         System.out.println("Dữ liệu đã được cập nhật!");
     }
 
-    @FXML private Button logOutAd;
     @FXML
     public void logOut(ActionEvent event) {
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");

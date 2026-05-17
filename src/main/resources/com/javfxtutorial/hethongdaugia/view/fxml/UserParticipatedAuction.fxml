@@ -22,7 +22,7 @@
     <!-- ==================== MENU TRÁI ==================== -->
     <left>
         <VBox prefWidth="246.0" spacing="14" style="-fx-padding: 22 16 18 22; -fx-background-color: transparent;">
-            <VBox prefHeight="365.0" prefWidth="208.0" spacing="10" style="-fx-background-color: rgba(255,255,255,0.72); -fx-background-radius: 28; -fx-border-color: rgba(47,128,237,0.14); -fx-border-radius: 28; -fx-border-width: 1; -fx-padding: 18; -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.12), 20, 0, 0, 6);">
+            <VBox prefHeight="317.0" prefWidth="208.0" spacing="10" style="-fx-background-color: rgba(255,255,255,0.72); -fx-background-radius: 28; -fx-border-color: rgba(47,128,237,0.14); -fx-border-radius: 28; -fx-border-width: 1; -fx-padding: 18; -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.12), 20, 0, 0, 6);">
 
                 <Button fx:id="btnAll" maxWidth="Infinity" prefHeight="44.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 14; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 16; -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.25), 10, 0, 0, 3);" text="📋  Tất cả" />
 
@@ -36,11 +36,11 @@
 
             <VBox spacing="10" style="-fx-background-color: linear-gradient(to bottom right, rgba(255,255,255,0.82), rgba(230,247,255,0.82)); -fx-background-radius: 26; -fx-border-color: rgba(47,128,237,0.13); -fx-border-radius: 26; -fx-padding: 16; -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.10), 18, 0, 0, 5);">
                 <Label style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #4b0082;" text="Lưu ý" />
-                <Label style="-fx-font-size: 12px; -fx-text-fill: #61708a; -fx-line-spacing: 3;" text="Tại đây bạn có thể xem phiên đấu giá bạn đã tham gia và thanh toán đúng hạn với những phiên đã thắng." wrapText="true" />
+                <Label prefHeight="91.0" prefWidth="173.0" style="-fx-font-size: 12px; -fx-text-fill: #61708a; -fx-line-spacing: 3;" text="Tại đây bạn có thể xem phiên đấu giá bạn đã tham gia và thanh toán đúng hạn với những phiên đã thắng." wrapText="true" />
             </VBox>
 
             <Region VBox.vgrow="ALWAYS" />
-            <Button fx:id="goMenu" maxWidth="Infinity" onAction="#goMenu" prefHeight="44.0" prefWidth="184.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 14; -fx-border-radius: 14;" text="←  Trang chủ">
+            <Button fx:id="goMenu" maxWidth="Infinity" onAction="#goMenu" prefHeight="45.0" prefWidth="146.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 14; -fx-border-radius: 14;" text="←  Trang chủ">
             </Button>
         </VBox>
     </left>
