@@ -1,6 +1,7 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.MainApplication;
+import com.javfxtutorial.hethongdaugia.client.Util.ThemeManager;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
@@ -105,6 +106,7 @@ public class Edit_User_Popup_Controller implements ResponseListener {
             Scene scene = null;
             try {
                 scene = new Scene(fxmlLoader.load());
+                ThemeManager.apply(scene);
             } catch (IOException e) {
                 log.error("Lỗi load popup thành công: {}", e.getMessage(), e);
                 showAlert("Thành công", "Tạo tài khoản thành công!");

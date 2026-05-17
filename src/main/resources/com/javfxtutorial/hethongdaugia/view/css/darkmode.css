@@ -1,0 +1,207 @@
+.root {
+    -sf-page-start: #14263A;
+    -sf-page-end: #1A314A;
+    -sf-page-soft: #243F5F;
+    -sf-surface: #203650;
+    -sf-surface-soft: #294664;
+    -sf-surface-raised: #33587A;
+    -sf-surface-muted: #426B92;
+    -sf-border: #6E91BA;
+    -sf-border-soft: #557AA3;
+    -sf-border-muted: #3B5B80;
+    -sf-text: #F2F8FF;
+    -sf-heading: #FFFFFF;
+    -sf-muted: #D9E8F8;
+    -sf-subtle: #B1C7DD;
+    -sf-on-accent: #061C2E;
+    -sf-accent: #7DE3FF;
+    -sf-accent-2: #B9D7FF;
+    -sf-accent-soft: #315E82;
+    -sf-purple: #F0E8FF;
+    -sf-purple-soft: #473E73;
+    -sf-success: #87EBC4;
+    -sf-success-2: #52D9A1;
+    -sf-success-soft: #204D3E;
+    -sf-danger: #FFB1BE;
+    -sf-danger-2: #FB8297;
+    -sf-danger-soft: #553040;
+    -sf-warning: #FFE082;
+    -sf-warning-soft: #5A421E;
+    -sf-neutral: #B4C8DE;
+    -sf-panel-strong: rgba(34,57,85,0.97);
+    -sf-panel: rgba(34,57,85,0.90);
+    -sf-panel-soft: rgba(52,85,121,0.78);
+    -sf-shadow: rgba(125,227,255,0.24);
+    -sf-shadow-soft: rgba(185,215,255,0.18);
+    -sf-shadow-neutral: rgba(0,0,0,0.26);
+}
+
+.root {
+    -fx-background-color: linear-gradient(to bottom right, -sf-page-start, -sf-surface 48%, -sf-page-soft);
+}
+
+.label {
+    -fx-text-fill: -sf-text;
+}
+
+.button {
+    -fx-text-fill: -sf-text;
+}
+
+.button:hover {
+    -fx-effect: dropshadow(gaussian, -sf-shadow, 12, 0.22, 0, 2);
+}
+
+.text-field,
+.password-field,
+.text-area,
+.combo-box,
+.choice-box {
+    -fx-background-color: -sf-surface;
+    -fx-border-color: -sf-border-soft;
+    -fx-control-inner-background: -sf-surface;
+    -fx-control-inner-background-alt: -sf-surface-soft;
+    -fx-text-fill: -sf-text;
+    -fx-prompt-text-fill: -sf-subtle;
+}
+
+.text-field:focused,
+.password-field:focused,
+.text-area:focused,
+.combo-box:focused,
+.choice-box:focused {
+    -fx-border-color: -sf-accent;
+    -fx-effect: dropshadow(three-pass-box, -sf-shadow, 10, 0, 0, 0);
+}
+
+.combo-box .list-cell,
+.choice-box .label {
+    -fx-text-fill: -sf-text;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: -sf-surface-raised;
+    -fx-border-color: -sf-border;
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: -sf-surface-raised;
+    -fx-text-fill: -sf-text;
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: -sf-accent-soft;
+}
+
+.table-view,
+.list-view,
+.scroll-pane,
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.table-row-cell {
+    -fx-background-color: -sf-surface;
+    -fx-text-background-color: -sf-text;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: -sf-surface-soft;
+}
+
+.table-row-cell:selected,
+.table-row-cell:focused:selected {
+    -fx-background-color: linear-gradient(to right, -sf-accent-soft, -sf-surface-muted);
+    -fx-text-background-color: -sf-heading;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: linear-gradient(to right, -sf-surface-raised, -sf-surface-muted);
+}
+
+.table-view .column-header,
+.table-view .filler {
+    -fx-background-color: transparent;
+    -fx-border-color: -sf-border-soft;
+}
+
+.table-view .column-header .label {
+    -fx-text-fill: -sf-heading;
+}
+
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -sf-text;
+}
+
+.list-cell:selected {
+    -fx-background-color: -sf-accent-soft;
+    -fx-text-fill: -sf-heading;
+}
+
+.scroll-bar:vertical .thumb,
+.scroll-bar:horizontal .thumb {
+    -fx-background-color: -sf-border;
+    -fx-background-radius: 8;
+}
+
+.scroll-bar:vertical,
+.scroll-bar:horizontal {
+    -fx-background-color: transparent;
+}
+
+.theme-switcher {
+    -fx-background-color: linear-gradient(to right, -sf-accent-2, -sf-accent);
+    -fx-text-fill: -sf-on-accent;
+    -fx-border-color: -sf-border-soft;
+    -fx-effect: dropshadow(gaussian, -sf-shadow, 10, 0.18, 0, 2);
+}
+
+.theme-switcher:hover {
+    -fx-background-color: linear-gradient(to right, -sf-accent, -sf-purple);
+}
+
+#login:hover {
+    -fx-background-color: -sf-warning;
+}
+
+#sign_in:hover {
+    -fx-background-color: -sf-panel-soft;
+}
+
+/* Repair: keep shared SnowFox component colors after this theme overrides .label/.button. */
+.label.sf-title,
+.label.sf-screen-title,
+.label.sf-section-title,
+.label.sf-hero-title {
+    -fx-text-fill: linear-gradient(to right, -sf-purple, -sf-accent);
+}
+
+.button.sf-btn-primary,
+.button.sf-btn-success,
+.button.sf-filter-button-active,
+.button.theme-switcher {
+    -fx-text-fill: -sf-on-accent;
+}
+
+.button.sf-btn-secondary,
+.button.sf-filter-button {
+    -fx-text-fill: -sf-muted;
+}
+
+.button.sf-filter-button-active {
+    -fx-text-fill: -sf-on-accent;
+}
+
+.button.sf-btn-danger {
+    -fx-text-fill: -sf-danger;
+}
+
+/* Theme-only contrast tuning: keep the SnowFox gradient visible on Dark backgrounds. */
+.label.sf-title,
+.label.sf-screen-title,
+.label.sf-section-title,
+.label.sf-hero-title {
+    -fx-text-fill: linear-gradient(to right, #FFFFFF, #92ECFF);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.42), 9, 0.30, 0, 2);
+}

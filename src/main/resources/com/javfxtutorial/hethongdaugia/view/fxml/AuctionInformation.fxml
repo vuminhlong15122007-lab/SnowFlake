@@ -4,17 +4,17 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: #f0f8ff;" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.ProductDisplayController">
+<BorderPane prefHeight="720.0" prefWidth="1280.0" styleClass="sf-page" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.ProductDisplayController">
 
     <!-- ==================== HEADER ==================== -->
     <top>
-        <HBox alignment="CENTER_LEFT" prefHeight="36.0" prefWidth="1280.0" style="-fx-background-color: linear-gradient(to right, #89CFF0,lavender); -fx-padding: 0 20;">
+        <HBox alignment="CENTER_LEFT" prefHeight="75.0" prefWidth="1280.0" styleClass="sf-header">
             <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                 <image><Image url="@../../assets/Logo.png" /></image>
             </ImageView>
-            <Label style="-fx-text-fill: linear-gradient(to right, #6A11CB, #2575FC); -fx-font-size: 18px; -fx-font-weight: bold; -fx-padding: 0 0 0 10;" text="SnowFox " />
-            <Region HBox.hgrow="ALWAYS" />
-            <Button fx:id="btnMenu" mnemonicParsing="false" onAction="#QuaylaiMenu" prefHeight="36.0" prefWidth="155.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 15;" text="Quay lại" />
+            <Label styleClass="sf-title" text="SnowFox " />
+            <Region prefHeight="71.0" prefWidth="942.0" HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnMenu" mnemonicParsing="false" onAction="#QuaylaiMenu" prefHeight="36.0" prefWidth="155.0" styleClass="sf-btn-primary" text="Quay lại" />
         </HBox>
     </top>
 
@@ -24,34 +24,34 @@
             <HBox spacing="20" style="-fx-padding: 20;">
 
                 <!-- ========== BÊN TRÁI: ẢNH + GIÁ + ĐỒNG HỒ ========== -->
-                <VBox maxWidth="405.0" prefWidth="405.0" spacing="10" style="-fx-background-color: white; -fx-padding: 14; -fx-background-radius: 18; -fx-border-color: #d9eaff; -fx-border-radius: 18; -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.13), 12, 0, 0, 4);">
+                <VBox maxWidth="405.0" prefWidth="405.0" spacing="10" style="-fx-padding: 14;" styleClass="sf-card">
 
-                    <StackPane maxHeight="254.0" prefHeight="254.0" style="-fx-background-color: linear-gradient(to bottom right, #f8fbff, #eef7ff); -fx-background-radius: 14; -fx-border-color: #e1efff; -fx-border-radius: 14;">
+                    <StackPane maxHeight="254.0" prefHeight="254.0" style="-fx-background-color: linear-gradient(to bottom right, -sf-surface-soft, -sf-page-start); -fx-background-radius: 14; -fx-border-color: -sf-border-soft; -fx-border-radius: 14;">
                         <ImageView fx:id="itemImageView" fitHeight="238.0" fitWidth="360.0" pickOnBounds="true" preserveRatio="true" />
                     </StackPane>
 
-                    <Label fx:id="ItemNameLabel" alignment="CENTER" maxHeight="44.0" maxWidth="Infinity" prefHeight="44.0" style="-fx-font-size: 21px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, purple, #2f80ed);" text="Tên sản phẩm" textAlignment="CENTER" wrapText="true" />
+                    <Label fx:id="ItemNameLabel" alignment="CENTER" maxHeight="44.0" maxWidth="Infinity" prefHeight="44.0" styleClass="sf-section-title" text="Tên sản phẩm" textAlignment="CENTER" wrapText="true" />
 
-                    <VBox alignment="CENTER" maxHeight="58.0" prefHeight="58.0" spacing="2" style="-fx-background-color: #fff7f7; -fx-background-radius: 14; -fx-border-color: #ffd6d6; -fx-border-radius: 14; -fx-padding: 6 10;">
-                        <Label style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #6f7f91;" text="Giá hiện tại" />
-                        <Label fx:id="ItemPriceLabel" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;" text="0 VND" />
+                    <VBox alignment="CENTER" maxHeight="58.0" prefHeight="58.0" spacing="2" style="-fx-background-color: -sf-danger-soft; -fx-background-radius: 14; -fx-border-color: -sf-danger-soft; -fx-border-radius: 14; -fx-padding: 6 10;">
+                        <Label style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: -sf-muted;" text="Giá hiện tại" />
+                        <Label fx:id="ItemPriceLabel" style="-fx-font-size: 24px; -fx-font-weight: bold; -fx-text-fill: -sf-danger;" text="0 VND" />
                     </VBox>
 
-                    <VBox fx:id="UI02" alignment="CENTER" maxHeight="70.0" prefHeight="70.0" spacing="2" style="-fx-background-color: #f7fff9; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: #2ecc71; -fx-border-width: 1.2; -fx-padding: 6;">
-                        <Label fx:id="UI01" style="-fx-text-fill: #159947; -fx-font-weight: bold; -fx-font-size: 12px;" text="THỜI GIAN CÒN LẠI" />
-                        <Label fx:id="lbtimeLeft" style="-fx-font-size: 27px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;" text="00:00:00" />
+                    <VBox fx:id="UI02" alignment="CENTER" maxHeight="70.0" prefHeight="70.0" spacing="2" style="-fx-background-color: -sf-success-soft; -fx-background-radius: 14; -fx-border-radius: 14; -fx-border-color: -sf-success; -fx-border-width: 1.2; -fx-padding: 6;">
+                        <Label fx:id="UI01" style="-fx-text-fill: -sf-success; -fx-font-weight: bold; -fx-font-size: 12px;" text="THỜI GIAN CÒN LẠI" />
+                        <Label fx:id="lbtimeLeft" style="-fx-font-size: 27px; -fx-font-weight: bold; -fx-text-fill: -sf-danger;" text="00:00:00" />
                     </VBox>
 
-                    <Button fx:id="ThamGiaDauGiaBtn" maxWidth="Infinity" onAction="#goToManHinhDauGiaTrucTiep" prefHeight="46.0" style="-fx-background-color: linear-gradient(to right, #6A11CB, #2575FC); -fx-text-fill: white; -fx-font-weight: bold; -fx-font-size: 15px; -fx-background-radius: 23; -fx-cursor: hand;" text="THAM GIA ĐẤU GIÁ NGAY" />
+                    <Button fx:id="ThamGiaDauGiaBtn" maxWidth="Infinity" onAction="#goToManHinhDauGiaTrucTiep" prefHeight="46.0" styleClass="sf-btn-primary" text="THAM GIA ĐẤU GIÁ NGAY" />
                 </VBox>
 
                 <!-- ========== BÊN PHẢI: THÔNG TIN CHI TIẾT ========== -->
-                <VBox spacing="10" style="-fx-background-color: white; -fx-padding: 14 16; -fx-background-radius: 18; -fx-border-color: #d9eaff; -fx-border-radius: 18; -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.11), 12, 0, 0, 4);" HBox.hgrow="ALWAYS">
+                <VBox spacing="10" style="-fx-padding: 14 16;" styleClass="sf-card" HBox.hgrow="ALWAYS">
 
                     <HBox alignment="CENTER_LEFT" maxHeight="34.0" prefHeight="34.0" spacing="10">
-                        <Label style="-fx-font-size: 21px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, purple, #2f80ed);" text="Thông tin phiên đấu giá" />
+                        <Label styleClass="sf-section-title" text="Thông tin phiên đấu giá" />
                         <Region HBox.hgrow="ALWAYS" />
-                        <Label fx:id="lbLoaisp" alignment="CENTER" minWidth="110.0" style="-fx-background-color: #eef6ff; -fx-text-fill: #2f80ed; -fx-font-size: 12px; -fx-font-weight: bold; -fx-padding: 6 12; -fx-background-radius: 14; -fx-border-color: #cde5ff; -fx-border-radius: 14;" text="..." />
+                        <Label fx:id="lbLoaisp" alignment="CENTER" minWidth="110.0" style="-fx-background-color: -sf-page-start; -fx-text-fill: -sf-accent; -fx-font-size: 12px; -fx-font-weight: bold; -fx-padding: 6 12; -fx-background-radius: 14; -fx-border-color: -sf-border-soft; -fx-border-radius: 14;" text="..." />
                     </HBox>
 
                     <GridPane hgap="14" maxHeight="168.0" prefHeight="168.0" vgap="8">
@@ -59,20 +59,20 @@
                             <ColumnConstraints minWidth="128.0" prefWidth="138.0" />
                             <ColumnConstraints hgrow="ALWAYS" />
                         </columnConstraints>
-                        <Label style="-fx-font-weight: bold; -fx-text-fill: #6f7f91;" text="Người đăng:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                        <Label fx:id="lbTenngban" style="-fx-font-weight: bold; -fx-text-fill: #26394d;" text="..." GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: -sf-muted;" text="Người đăng:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                        <Label fx:id="lbTenngban" style="-fx-font-weight: bold; -fx-text-fill: -sf-heading;" text="..." GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-                        <Label style="-fx-font-weight: bold; -fx-text-fill: #6f7f91;" text="Bắt đầu:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                        <Label fx:id="StartTimeLabel" style="-fx-text-fill: #26394d;" text="..." GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: -sf-muted;" text="Bắt đầu:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                        <Label fx:id="StartTimeLabel" style="-fx-text-fill: -sf-heading;" text="..." GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                        <Label style="-fx-font-weight: bold; -fx-text-fill: #6f7f91;" text="Kết thúc:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                        <Label fx:id="EndingtimeLabel" style="-fx-text-fill: #26394d;" text="..." GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: -sf-muted;" text="Kết thúc:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                        <Label fx:id="EndingtimeLabel" style="-fx-text-fill: -sf-heading;" text="..." GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-                        <Label style="-fx-font-weight: bold; -fx-text-fill: #6f7f91;" text="Giá khởi điểm:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                        <Label fx:id="initPriceLabel" style="-fx-font-weight: bold; -fx-text-fill: #26394d;" text="..." GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: -sf-muted;" text="Giá khởi điểm:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                        <Label fx:id="initPriceLabel" style="-fx-font-weight: bold; -fx-text-fill: -sf-heading;" text="..." GridPane.columnIndex="1" GridPane.rowIndex="3" />
 
-                        <Label style="-fx-font-weight: bold; -fx-text-fill: #6f7f91;" text="Bước giá:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
-                        <Label fx:id="stepPriceLabel" style="-fx-font-weight: bold; -fx-text-fill: #26394d;" text="..." GridPane.columnIndex="1" GridPane.rowIndex="4" />
+                        <Label style="-fx-font-weight: bold; -fx-text-fill: -sf-muted;" text="Bước giá:" GridPane.columnIndex="0" GridPane.rowIndex="4" />
+                        <Label fx:id="stepPriceLabel" style="-fx-font-weight: bold; -fx-text-fill: -sf-heading;" text="..." GridPane.columnIndex="1" GridPane.rowIndex="4" />
                   <rowConstraints>
                      <RowConstraints />
                      <RowConstraints />
@@ -82,23 +82,23 @@
                   </rowConstraints>
                     </GridPane>
 
-                    <VBox maxHeight="106.0" prefHeight="106.0" spacing="6" style="-fx-background-color: #fbfdff; -fx-background-radius: 14; -fx-border-color: #e3f0ff; -fx-border-radius: 14; -fx-padding: 10 12;">
-                        <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #333366;" text="Mô tả sản phẩm" />
-                        <Label fx:id="LbMotasp" maxHeight="62.0" maxWidth="Infinity" prefHeight="62.0" style="-fx-text-fill: #40566e; -fx-line-spacing: 1;" text="..." wrapText="true" />
+                    <VBox maxHeight="106.0" prefHeight="106.0" spacing="6" style="-fx-background-color: -sf-surface-soft; -fx-background-radius: 14; -fx-border-color: -sf-border-soft; -fx-border-radius: 14; -fx-padding: 10 12;">
+                        <Label style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: -sf-text;" text="Mô tả sản phẩm" />
+                        <Label fx:id="LbMotasp" maxHeight="62.0" maxWidth="Infinity" prefHeight="62.0" style="-fx-text-fill: -sf-heading; -fx-line-spacing: 1;" text="..." wrapText="true" />
                     </VBox>
 
-                    <VBox spacing="8" style="-fx-background-color: #fbfdff; -fx-background-radius: 14; -fx-border-color: #e3f0ff; -fx-border-radius: 14; -fx-padding: 10 12;" VBox.vgrow="ALWAYS">
-                        <Label fx:id="detailTitle" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #4b0082;" text="Thông tin chi tiết" />
+                    <VBox spacing="8" style="-fx-background-color: -sf-surface-soft; -fx-background-radius: 14; -fx-border-color: -sf-border-soft; -fx-border-radius: 14; -fx-padding: 10 12;" VBox.vgrow="ALWAYS">
+                        <Label fx:id="detailTitle" styleClass="sf-section-title" text="Thông tin chi tiết" />
 
-                        <VBox fx:id="artInfoBox" managed="false" spacing="6" style="-fx-background-color: #fff5f7; -fx-padding: 10; -fx-background-radius: 12; -fx-border-color: #ffc8d1; -fx-border-radius: 12;" visible="false">
+                        <VBox fx:id="artInfoBox" managed="false" spacing="6" style="-fx-background-color: -sf-danger-soft; -fx-padding: 10; -fx-background-radius: 12; -fx-border-color: -sf-danger-soft; -fx-border-radius: 12;" visible="false">
                             <GridPane hgap="12" vgap="7">
                                 <columnConstraints><ColumnConstraints minWidth="110.0" /><ColumnConstraints hgrow="ALWAYS" /></columnConstraints>
-                                <Label style="-fx-font-weight: bold; -fx-text-fill: #8a4b5a;" text="Tiêu đề:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                <Label fx:id="artTitleValue" style="-fx-text-fill: #26394d; -fx-font-weight: bold;" text="..." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                                <Label style="-fx-font-weight: bold; -fx-text-fill: #8a4b5a;" text="Nghệ sĩ:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                                <Label fx:id="artistValue" style="-fx-text-fill: #26394d;" text="..." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                <Label style="-fx-font-weight: bold; -fx-text-fill: #8a4b5a;" text="Năm sáng tác:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                                <Label fx:id="yearCreatedValue" style="-fx-text-fill: #26394d;" text="..." GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                <Label style="-fx-font-weight: bold; -fx-text-fill: -sf-danger;" text="Tiêu đề:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                <Label fx:id="artTitleValue" style="-fx-text-fill: -sf-heading; -fx-font-weight: bold;" text="..." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                <Label style="-fx-font-weight: bold; -fx-text-fill: -sf-danger;" text="Nghệ sĩ:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                <Label fx:id="artistValue" style="-fx-text-fill: -sf-heading;" text="..." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                <Label style="-fx-font-weight: bold; -fx-text-fill: -sf-danger;" text="Năm sáng tác:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                <Label fx:id="yearCreatedValue" style="-fx-text-fill: -sf-heading;" text="..." GridPane.columnIndex="1" GridPane.rowIndex="2" />
                         <rowConstraints>
                            <RowConstraints />
                            <RowConstraints />
@@ -107,17 +107,17 @@
                             </GridPane>
                         </VBox>
 
-                        <VBox fx:id="vehicleInfoBox" managed="false" spacing="6" style="-fx-background-color: #fff8ef; -fx-padding: 10; -fx-background-radius: 12; -fx-border-color: #ffd79b; -fx-border-radius: 12;" visible="false">
+                        <VBox fx:id="vehicleInfoBox" managed="false" spacing="6" style="-fx-background-color: -sf-warning-soft; -fx-padding: 10; -fx-background-radius: 12; -fx-border-color: -sf-warning; -fx-border-radius: 12;" visible="false">
                             <GridPane hgap="12" vgap="7">
                                 <columnConstraints><ColumnConstraints minWidth="110.0" /><ColumnConstraints hgrow="ALWAYS" /></columnConstraints>
-                                <Label style="-fx-font-weight: bold; -fx-text-fill: #8a642b;" text="Biển số:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                <Label fx:id="licensePlateValue" style="-fx-text-fill: #26394d; -fx-font-weight: bold;" text="..." GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                                <Label style="-fx-font-weight: bold; -fx-text-fill: #8a642b;" text="Năm SX:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                                <Label fx:id="vehicleYearValue" style="-fx-text-fill: #26394d;" text="..." GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                                <Label style="-fx-font-weight: bold; -fx-text-fill: #8a642b;" text="Hãng xe:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                                <Label fx:id="brandValue" style="-fx-text-fill: #26394d;" text="..." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                                <Label style="-fx-font-weight: bold; -fx-text-fill: #8a642b;" text="Màu sắc:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
-                                <Label fx:id="colorValue" style="-fx-text-fill: #26394d;" text="..." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+                                <Label style="-fx-font-weight: bold; -fx-text-fill: -sf-warning;" text="Biển số:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                <Label fx:id="licensePlateValue" style="-fx-text-fill: -sf-heading; -fx-font-weight: bold;" text="..." GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                <Label style="-fx-font-weight: bold; -fx-text-fill: -sf-warning;" text="Năm SX:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                <Label fx:id="vehicleYearValue" style="-fx-text-fill: -sf-heading;" text="..." GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                <Label style="-fx-font-weight: bold; -fx-text-fill: -sf-warning;" text="Hãng xe:" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                                <Label fx:id="brandValue" style="-fx-text-fill: -sf-heading;" text="..." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                                <Label style="-fx-font-weight: bold; -fx-text-fill: -sf-warning;" text="Màu sắc:" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                                <Label fx:id="colorValue" style="-fx-text-fill: -sf-heading;" text="..." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="3" />
                         <rowConstraints>
                            <RowConstraints />
                            <RowConstraints />
@@ -127,13 +127,13 @@
                             </GridPane>
                         </VBox>
 
-                        <VBox fx:id="electronicsInfoBox" managed="false" spacing="6" style="-fx-background-color: #f0f8ff; -fx-padding: 10; -fx-background-radius: 12; -fx-border-color: #b9dcff; -fx-border-radius: 12;" visible="false">
+                        <VBox fx:id="electronicsInfoBox" managed="false" spacing="6" style="-fx-background-color: -sf-surface-raised; -fx-padding: 10; -fx-background-radius: 12; -fx-border-color: -sf-border; -fx-border-radius: 12;" visible="false">
                             <GridPane hgap="12" vgap="7">
                                 <columnConstraints><ColumnConstraints minWidth="110.0" /><ColumnConstraints hgrow="ALWAYS" /></columnConstraints>
-                                <Label style="-fx-font-weight: bold; -fx-text-fill: #35678f;" text="Hãng SX:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                                <Label fx:id="elecBrandValue" style="-fx-text-fill: #26394d; -fx-font-weight: bold;" text="..." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="0" />
-                                <Label style="-fx-font-weight: bold; -fx-text-fill: #35678f;" text="Dòng máy:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                                <Label fx:id="modelValue" style="-fx-text-fill: #26394d;" text="..." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                                <Label style="-fx-font-weight: bold; -fx-text-fill: -sf-accent;" text="Hãng SX:" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                                <Label fx:id="elecBrandValue" style="-fx-text-fill: -sf-heading; -fx-font-weight: bold;" text="..." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                                <Label style="-fx-font-weight: bold; -fx-text-fill: -sf-accent;" text="Dòng máy:" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                                <Label fx:id="modelValue" style="-fx-text-fill: -sf-heading;" text="..." wrapText="true" GridPane.columnIndex="1" GridPane.rowIndex="1" />
                         <rowConstraints>
                            <RowConstraints />
                            <RowConstraints />
@@ -148,7 +148,7 @@
     </center>
 
     <bottom>
-        <HBox alignment="CENTER" prefHeight="30" style="-fx-background-color: linear-gradient(to right, #FFF0F5, #B3E5FC);">
+        <HBox alignment="CENTER" prefHeight="30" styleClass="sf-footer">
             <Label style="-fx-font-size: 11px;" text="© 2026 SnowFox - Studio SnowFlake" />
         </HBox>
     </bottom>

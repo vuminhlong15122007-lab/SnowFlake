@@ -42,11 +42,11 @@ public class TimeLeft {       // Class tái sd — truyền vào Label và end l
 
         if (second <= 0) {
             label.setText("00:00:00");
-            label.setStyle("-fx-text-fill: red; -fx-font-weight: bold; -fx-font-size: px;");
+            label.setStyle("-fx-text-fill: -sf-danger; -fx-font-weight: bold; -fx-font-size: px;");
             stop();
             if (onFinished != null) onFinished.run();    //nếu co hd can sau khi het gio, thi no se chay
         } else {
-            label.setStyle("-fx-text-fill: #159947; -fx-font-weight: bold; -fx-font-size: 20px;");
+            label.setStyle("-fx-text-fill: -sf-success; -fx-font-weight: bold; -fx-font-size: 20px;");
         }
     }
 

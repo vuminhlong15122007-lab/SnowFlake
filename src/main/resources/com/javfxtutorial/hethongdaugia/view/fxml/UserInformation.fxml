@@ -16,24 +16,24 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="720.0" maxWidth="1280.0" minHeight="720.0" minWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" style="-fx-background-color: linear-gradient(to bottom, #e6f7ff, #ffffff);" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.UserProfileController">
+<BorderPane maxHeight="720.0" maxWidth="1280.0" minHeight="720.0" minWidth="1280.0" prefHeight="720.0" prefWidth="1280.0" styleClass="sf-page" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.UserProfileController">
 
    <top>
-      <HBox alignment="CENTER_LEFT" prefHeight="83.0" prefWidth="1280.0" spacing="14.0" style="-fx-padding: 10; -fx-background-color: linear-gradient(to right, #89CFF0, lavender);">
+      <HBox alignment="CENTER_LEFT" prefHeight="83.0" prefWidth="1280.0" spacing="14.0" styleClass="sf-header">
          <ImageView fitHeight="50.0" fitWidth="50.0" preserveRatio="true">
             <image>
                <Image url="@../../assets/ClassicLogo.png" />
             </image>
          </ImageView>
          <VBox alignment="CENTER_LEFT" spacing="1.0" HBox.hgrow="ALWAYS">
-            <Label style="-fx-font-size: 22px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, purple, #2f80ed);" text="SnowFox - Tài Khoản" />
+            <Label styleClass="sf-title" text="SnowFox - Tài Khoản" />
          </VBox>
       </HBox>
    </top>
 
    <left>
-      <VBox alignment="TOP_CENTER" prefWidth="232.0" spacing="13.0" style="-fx-padding: 18 15 15 15; -fx-background-color: #f4f8fc; -fx-border-color: #d6e2ee; -fx-border-width: 0 1 0 0;">
-         <StackPane prefHeight="126.0" prefWidth="178.0" style="-fx-background-color: linear-gradient(to bottom right, #ffffff, #f0faff); -fx-background-radius: 20; -fx-border-color: #b3c6ff; -fx-border-radius: 20;">
+      <VBox alignment="TOP_CENTER" prefWidth="232.0" spacing="13.0" styleClass="sf-sidebar">
+         <StackPane prefHeight="126.0" prefWidth="178.0" styleClass="sf-card-soft">
             <ImageView fitHeight="104.0" fitWidth="104.0" preserveRatio="true">
                <image>
                   <Image url="@../../assets/Logo.png" />
@@ -41,29 +41,29 @@
             </ImageView>
          </StackPane>
 
-         <Button fx:id="clickToBackToSceneMain" mnemonicParsing="false" onAction="#clickToBackToSceneMain" prefHeight="42.0" prefWidth="178.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" text="Trang chủ" />
+         <Button fx:id="clickToBackToSceneMain" mnemonicParsing="false" onAction="#clickToBackToSceneMain" prefHeight="42.0" prefWidth="178.0" styleClass="sf-btn-primary" text="Trang chủ" />
 
-         <Button onAction="#goParticipatedAuction" prefHeight="42.0" prefWidth="178.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" text="Lịch sử đấu giá" />
+         <Button onAction="#goParticipatedAuction" prefHeight="42.0" prefWidth="178.0" styleClass="sf-btn-primary" text="Lịch sử đấu giá" />
 
-         <Button onAction="#clickToSellerMangement" prefHeight="42.0" prefWidth="178.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" text="Sản phẩm của tôi" />
+         <Button onAction="#clickToSellerMangement" prefHeight="42.0" prefWidth="178.0" styleClass="sf-btn-primary" text="Sản phẩm của tôi" />
 
          <Pane VBox.vgrow="ALWAYS">
             <children>
-               <Button layoutX="11.0" onAction="#clickToAuctionList" prefHeight="42.0" prefWidth="178.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8;" text="Các phiên đấu giá" />
+               <Button layoutX="11.0" onAction="#clickToAuctionList" prefHeight="42.0" prefWidth="178.0" styleClass="sf-btn-primary" text="Các phiên đấu giá" />
             </children></Pane>
 
-         <Button fx:id="logOut" onAction="#clickToLogOut" prefHeight="42.0" prefWidth="178.0" style="-fx-background-color: #fff3f3; -fx-text-fill: #d64545; -fx-font-weight: bold; -fx-background-radius: 12; -fx-border-color: #ffd4d4; -fx-border-radius: 12;" text="Đăng xuất" />
+         <Button fx:id="logOut" onAction="#clickToLogOut" prefHeight="42.0" prefWidth="178.0" styleClass="sf-btn-danger" text="Đăng xuất" />
       </VBox>
    </left>
 
    <center>
-      <VBox alignment="TOP_CENTER" prefHeight="628.0" spacing="16.0" style="-fx-padding: 22 28 20 28; -fx-background-color: linear-gradient(to bottom right, #ffffff, #f0faff);">
+      <VBox alignment="TOP_CENTER" prefHeight="628.0" spacing="16.0" styleClass="sf-content">
 
          <HBox alignment="CENTER_LEFT" prefHeight="58.0" spacing="12.0" style="-fx-padding: 0 4 0 4;">
             <children>
                <VBox alignment="CENTER_LEFT" spacing="3.0">
                   <children>
-                     <Label style="-fx-font-size: 27px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, #4b0082, #2f80ed); -fx-effect: dropshadow(three-pass-box, rgba(47,128,237,0.18), 12, 0, 0, 3);" text="Thông tin cá nhân" />
+                     <Label styleClass="sf-screen-title" text="Thông tin cá nhân" />
                   </children>
                </VBox>
             </children>
@@ -71,36 +71,30 @@
 
          <HBox alignment="TOP_CENTER" prefHeight="510.0" spacing="22.0">
 
-            <VBox alignment="TOP_CENTER" prefHeight="510.0" prefWidth="312.0" spacing="15.0" style="-fx-padding: 24 22 22 22; -fx-background-color: linear-gradient(to bottom right, #ffffff, #f0faff); -fx-background-radius: 18; -fx-border-color: #d6e2ee; -fx-border-radius: 18;">
-               <effect>
-                  <DropShadow blurType="GAUSSIAN" color="#2f80ed33" height="22.0" radius="10.5" width="22.0" />
-               </effect>
+            <VBox alignment="TOP_CENTER" prefHeight="510.0" prefWidth="312.0" spacing="15.0" style="-fx-padding: 24 22 22 22;" styleClass="sf-card">
 
-               <Label style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #34495e;" text="Ảnh đại diện" />
+               <Label styleClass="sf-section-title" text="Ảnh đại diện" />
 
-               <StackPane prefHeight="196.0" prefWidth="196.0" style="-fx-background-color: linear-gradient(to bottom right, #ffffff, #e6f7ff); -fx-background-radius: 28; -fx-border-color: #b3c6ff; -fx-border-radius: 28; -fx-padding: 8;">
+               <StackPane prefHeight="196.0" prefWidth="196.0" styleClass="sf-card-soft">
                   <ImageView fx:id="myImageView" fitHeight="180.0" fitWidth="180.0" preserveRatio="true">
                      <image>
                         <Image url="@../../assets/LogoUser.jpg" />
                      </image></ImageView>
                </StackPane>
 
-               <Button onAction="#clickToChooseImage" prefHeight="42.0" prefWidth="190.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 10;" text="Đổi ảnh đại diện" />
-               <VBox prefWidth="250.0" spacing="8.0" style="-fx-padding: 14; -fx-background-color: #f7fbff; -fx-background-radius: 16; -fx-border-color: #e1efff; -fx-border-radius: 16;">
-                  <Label style="-fx-font-weight: bold; -fx-text-fill: #245d96;" text="Gợi ý" />
-                  <Label style="-fx-font-size: 12px; -fx-text-fill: #66798c;" text="Nên dùng ảnh rõ mặt hoặc logo cá nhân, định dạng PNG/JPG/JPEG/GIF." wrapText="true" />
+               <Button onAction="#clickToChooseImage" prefHeight="42.0" prefWidth="190.0" styleClass="sf-btn-primary" text="Đổi ảnh đại diện" />
+               <VBox prefWidth="250.0" spacing="8.0" styleClass="sf-note">
+                  <Label style="-fx-font-weight: bold; -fx-text-fill: -sf-accent;" text="Gợi ý" />
+                  <Label style="-fx-font-size: 12px; -fx-text-fill: -sf-muted;" text="Nên dùng ảnh rõ mặt hoặc logo cá nhân, định dạng PNG/JPG/JPEG/GIF." wrapText="true" />
                </VBox>
             </VBox>
 
 
-            <VBox alignment="TOP_LEFT" prefHeight="510.0" prefWidth="646.0" spacing="17.0" style="-fx-padding: 26 30 24 30; -fx-background-color: linear-gradient(to bottom right, #ffffff, #f0faff); -fx-background-radius: 18; -fx-border-color: #d6e2ee; -fx-border-radius: 18;">
-               <effect>
-                  <DropShadow blurType="GAUSSIAN" color="#2f80ed33" height="22.0" radius="10.5" width="22.0" />
-               </effect>
+            <VBox alignment="TOP_LEFT" prefHeight="510.0" prefWidth="646.0" spacing="17.0" style="-fx-padding: 26 30 24 30;" styleClass="sf-card">
 
                <HBox alignment="CENTER_LEFT" spacing="12.0">
                   <VBox spacing="3.0" HBox.hgrow="ALWAYS">
-                     <Label style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #34495e;" text="Hồ sơ người dùng" />
+                     <Label styleClass="sf-section-title" text="Hồ sơ người dùng" />
                   </VBox>
                </HBox>
 
@@ -118,31 +112,31 @@
                      <RowConstraints prefHeight="50.0" />
                   </rowConstraints>
 
-                  <Label fx:id="usernameLabel" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #34495e;" text="Họ tên" GridPane.columnIndex="0" GridPane.rowIndex="0" />
-                  <TextField fx:id="updateNameText" prefHeight="42.0" promptText="Nhập họ tên" style="-fx-background-color: #ffffff; -fx-background-radius: 9; -fx-border-color: #b3c6ff; -fx-border-radius: 9; -fx-padding: 0 14 0 14; -fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
+                  <Label fx:id="usernameLabel" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: -sf-text;" text="Họ tên" GridPane.columnIndex="0" GridPane.rowIndex="0" />
+                  <TextField fx:id="updateNameText" prefHeight="42.0" promptText="Nhập họ tên" style="-fx-background-color: -sf-surface; -fx-background-radius: 9; -fx-border-color: -sf-border-soft; -fx-border-radius: 9; -fx-padding: 0 14 0 14; -fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="0" />
 
-                  <Label fx:id="emailLabel" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #34495e;" text="Email" GridPane.columnIndex="0" GridPane.rowIndex="1" />
-                  <TextField fx:id="updateEmailText" prefHeight="42.0" promptText="Nhập email" style="-fx-background-color: #ffffff; -fx-background-radius: 9; -fx-border-color: #b3c6ff; -fx-border-radius: 9; -fx-padding: 0 14 0 14; -fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+                  <Label fx:id="emailLabel" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: -sf-text;" text="Email" GridPane.columnIndex="0" GridPane.rowIndex="1" />
+                  <TextField fx:id="updateEmailText" prefHeight="42.0" promptText="Nhập email" style="-fx-background-color: -sf-surface; -fx-background-radius: 9; -fx-border-color: -sf-border-soft; -fx-border-radius: 9; -fx-padding: 0 14 0 14; -fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
 
-                  <Label fx:id="phoneLabel" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #34495e;" text="Số điện thoại" GridPane.columnIndex="0" GridPane.rowIndex="2" />
-                  <TextField fx:id="updatePhoneText" prefHeight="42.0" promptText="Nhập số điện thoại" style="-fx-background-color: #ffffff; -fx-background-radius: 9; -fx-border-color: #b3c6ff; -fx-border-radius: 9; -fx-padding: 0 14 0 14; -fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+                  <Label fx:id="phoneLabel" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: -sf-text;" text="Số điện thoại" GridPane.columnIndex="0" GridPane.rowIndex="2" />
+                  <TextField fx:id="updatePhoneText" prefHeight="42.0" promptText="Nhập số điện thoại" style="-fx-background-color: -sf-surface; -fx-background-radius: 9; -fx-border-color: -sf-border-soft; -fx-border-radius: 9; -fx-padding: 0 14 0 14; -fx-font-size: 13px;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
 
-                  <Label fx:id="roleLabel" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #34495e;" text="Vai trò" GridPane.columnIndex="0" GridPane.rowIndex="3" />
+                  <Label fx:id="roleLabel" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: -sf-text;" text="Vai trò" GridPane.columnIndex="0" GridPane.rowIndex="3" />
                   <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                     <Label style="-fx-background-color: linear-gradient(to right, #fff4bd, #ffd85a); -fx-text-fill: #304c9c; -fx-font-weight: bold; -fx-padding: 8 14 8 14; -fx-background-radius: 999; -fx-border-color: #f2c94c; -fx-border-radius: 999;" text="Bidder / Seller" />
+                     <Label style="-fx-background-color: -sf-warning-soft; -fx-text-fill: -sf-accent; -fx-font-weight: bold; -fx-padding: 8 14 8 14; -fx-background-radius: 999; -fx-border-color: -sf-warning; -fx-border-radius: 999;" text="Bidder / Seller" />
                   </HBox>
                </GridPane>
 
                <Pane prefHeight="6.0" />
 
                <HBox alignment="CENTER_LEFT" spacing="12.0">
-                  <Button fx:id="updateInfo" onAction="#handleUpdateInfo" prefHeight="43.0" prefWidth="132.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 14;" text="Cập nhật" />
-                  <Button fx:id="resetPW" onAction="#clickToResetPassword" prefHeight="43.0" prefWidth="142.0" style="-fx-background-color: #ffffff; -fx-text-fill: #2f80ed; -fx-font-weight: bold; -fx-background-radius: 10; -fx-border-color: #b3c6ff; -fx-border-radius: 10;" text="Đổi mật khẩu" />
+                  <Button fx:id="updateInfo" onAction="#handleUpdateInfo" prefHeight="43.0" prefWidth="132.0" styleClass="sf-btn-primary" text="Cập nhật" />
+                  <Button fx:id="resetPW" onAction="#clickToResetPassword" prefHeight="43.0" prefWidth="142.0" styleClass="sf-btn-secondary" text="Đổi mật khẩu" />
                </HBox>
 
-               <HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-padding: 12 14 12 14; -fx-background-color: #ffffff; -fx-background-radius: 14; -fx-border-color: #d6e2ee; -fx-border-radius: 14;">
-                  <Label style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #2f80ed; -fx-padding: 5 10 5 10; -fx-background-color: #e6f7ff; -fx-background-radius: 999;" text="Lưu ý" />
-                  <Label style="-fx-font-size: 12px; -fx-text-fill: #34495e;" text="Sau khi cập nhật thành công, thông tin mới sẽ được nạp lại vào hồ sơ hiện tại." />
+               <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="sf-note">
+                  <Label style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: -sf-accent; -fx-padding: 5 10 5 10; -fx-background-color: -sf-accent-soft; -fx-background-radius: 999;" text="Lưu ý" />
+                  <Label style="-fx-font-size: 12px; -fx-text-fill: -sf-text;" text="Sau khi cập nhật thành công, thông tin mới sẽ được nạp lại vào hồ sơ hiện tại." />
                </HBox>
             </VBox>
          </HBox>
@@ -150,8 +144,8 @@
    </center>
 
    <bottom>
-      <HBox alignment="CENTER" prefHeight="28.0" style="-fx-background-color: #b3c6ff; -fx-padding: 5;">
-         <Label alignment="CENTER" style="-fx-text-fill: #902a2a; -fx-font-size: 12px;" text="© 2026 SnowFox - Studio SnowFlake" />
+      <HBox alignment="CENTER" prefHeight="28.0" styleClass="sf-footer">
+         <Label alignment="CENTER" style="-fx-text-fill: -sf-danger; -fx-font-size: 12px;" text="© 2026 SnowFox - Studio SnowFlake" />
       </HBox>
    </bottom>
 </BorderPane>

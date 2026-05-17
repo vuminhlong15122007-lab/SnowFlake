@@ -13,6 +13,7 @@
       style="-fx-background-color: white; -fx-background-radius: 16; -fx-border-color: #c9ddff; -fx-border-radius: 16; -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.22), 20, 0.25, 0, 4);"
       xmlns="http://javafx.com/javafx/17.0.12"
       xmlns:fx="http://javafx.com/fxml/1"
+      stylesheets="@../css/global.css"
       fx:controller="com.javfxtutorial.hethongdaugia.client.controller.NotifiCationPopupController">
 
     <!-- Header -->

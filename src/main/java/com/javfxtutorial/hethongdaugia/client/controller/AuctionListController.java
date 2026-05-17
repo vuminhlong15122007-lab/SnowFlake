@@ -82,6 +82,7 @@ public class AuctionListController implements ResponseListener {
             applyFilters();
         });
 
+        setActiveButton(btnAll);
         loadData();
     }
 
@@ -138,13 +139,18 @@ public class AuctionListController implements ResponseListener {
         };
     }
 
-    // Method dổi màu nút đang active
+    // Method đổi class CSS cho nút đang active
     private void setActiveButton(Button active) {
         Button[] buttons = {btnAll, btnUpcoming, btnRunning, btnEnded};
-        String activeStyle = "-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15;";
-        String inactiveStyle = "-fx-background-color: white; -fx-text-fill: #7f8c8d; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15; -fx-border-color: #dcdde1; -fx-border-radius: 8;";
         for (Button b : buttons) {
-            b.setStyle(b == active ? activeStyle : inactiveStyle);
+            if (b == null) continue;
+            b.getStyleClass().remove("sf-filter-button-active");
+            if (!b.getStyleClass().contains("sf-filter-button")) {
+                b.getStyleClass().add("sf-filter-button");
+            }
+            if (b == active) {
+                b.getStyleClass().add("sf-filter-button-active");
+            }
         }
     }
 
