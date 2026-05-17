@@ -69,7 +69,7 @@
 //            new FxmlCase("Admin_UserManagement.fxml", AdminUserController.class),
 //            new FxmlCase("AuctionCell.fxml", AuctionSessionController.class),
 //            new FxmlCase("AuctionInformation.fxml", ProductDisplayController.class),
-//            new FxmlCase("AuctionList.fxml", AuctionController.class),
+//            new FxmlCase("AuctionList.fxml", AuctionListController.class),
 //            new FxmlCase("BidTransactionCell.fxml", BidTransactionCellController.class),
 //            new FxmlCase("LiveAuction.fxml", LiveAuctionController.class),
 //            new FxmlCase("login.fxml", LoginController.class),
@@ -381,7 +381,7 @@
 //        runOnFxThread(() -> {
 //            LoadedFxml<TestableAuctionController> loaded = loadFxml(
 //                    "AuctionList.fxml",
-//                    type -> type == AuctionController.class ? new TestableAuctionController() : instantiate(type)
+//                    type -> type == AuctionListController.class ? new TestableAuctionController() : instantiate(type)
 //            );
 //            TestableAuctionController controller = loaded.controller();
 //
@@ -533,7 +533,7 @@
 //        assertDoesNotThrow(() -> {
 //            try (NetworkMocks ignored = mockNetwork()) {
 //                assertInstanceOf(NoNetworkLoginController.class, controllerForSmokeTest(LoginController.class));
-//                assertInstanceOf(NoNetworkAuctionController.class, controllerForSmokeTest(AuctionController.class));
+//                assertInstanceOf(NoNetworkAuctionController.class, controllerForSmokeTest(AuctionListController.class));
 //                assertInstanceOf(NoNetworkLiveAuctionController.class, controllerForSmokeTest(LiveAuctionController.class));
 //                assertInstanceOf(NoNetworkSellerManagementController.class, controllerForSmokeTest(SellerManagementController.class));
 //            }
@@ -645,7 +645,7 @@
 //        if (type == AdminItemController.class) {
 //            return new NoNetworkAdminItemController();
 //        }
-//        if (type == AuctionController.class) {
+//        if (type == AuctionListController.class) {
 //            return new NoNetworkAuctionController();
 //        }
 //        if (type == ParticipatedAuctionController.class) {
@@ -777,7 +777,7 @@
 //        }
 //    }
 //
-//    public static class TestableAuctionController extends AuctionController {
+//    public static class TestableAuctionController extends AuctionListController {
 //        @Override
 //        public void loadData() {
 //            // Keep initialize listener setup, but avoid the asynchronous network load.
@@ -812,7 +812,7 @@
 //        }
 //    }
 //
-//    public static class NoNetworkAuctionController extends AuctionController {
+//    public static class NoNetworkAuctionController extends AuctionListController {
 //        @Override
 //        public void initialize() {
 //            // FXML wiring only; behavior tests use TestableAuctionController.
