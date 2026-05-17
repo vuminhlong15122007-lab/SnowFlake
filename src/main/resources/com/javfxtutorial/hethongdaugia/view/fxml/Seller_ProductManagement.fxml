@@ -25,6 +25,16 @@
 
             <Region HBox.hgrow="ALWAYS" />
 
+            <!-- Thêm vào HBox top, trước nút Trang chủ -->
+            <StackPane onMouseClicked="#openNotifications" style="-fx-cursor: hand;">
+                <Label text="🔔" style="-fx-font-size: 26px;" />
+                <Label fx:id="badgeLabel" text="0"
+                       style="-fx-background-color: red; -fx-text-fill: white;
+                  -fx-background-radius: 10; -fx-font-size: 10px;
+                  -fx-padding: 1 5; -fx-font-weight: bold;"
+                       StackPane.alignment="TOP_RIGHT" translateX="8" translateY="-4"/>
+            </StackPane>
+
             <Button fx:id="goMenu" onAction="#goMenu" prefHeight="34.0" prefWidth="105.0" style="-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 18; -fx-cursor: hand;" text="Trang chủ" />
         </HBox>
     </top>
@@ -104,7 +114,6 @@
                         </HBox>
 
                         <StackPane maxHeight="126.0" minHeight="126.0" prefHeight="126.0">
-                            <!-- Placeholder phải nằm dưới cùng. Nếu để cuối StackPane, nó sẽ đè lên artFields/vehicleFields/electronicsFields khi ComboBox đổi loại. -->
                             <VBox alignment="CENTER" mouseTransparent="true" style="-fx-background-color: #f8fbff; -fx-background-radius: 14; -fx-border-color: #e1ecff; -fx-border-radius: 14; -fx-padding: 10;">
                                 <Label style="-fx-font-size: 12px; -fx-text-fill: #7b879f; -fx-font-weight: bold;" text="Chọn ART / VEHICLE / ELECTRONICS để nhập thông tin riêng" />
                             </VBox>
