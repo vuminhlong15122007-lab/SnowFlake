@@ -28,8 +28,6 @@
 
                 <Button fx:id="btnDTGia" maxWidth="Infinity" prefHeight="44.0" style="-fx-background-color: white; -fx-text-fill: #607087; -fx-font-weight: bold; -fx-background-radius: 14; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 16; -fx-border-color: #d9e8ff; -fx-border-radius: 14;" text="⚡  Đang tham gia" />
 
-                <Button fx:id="btnDaThamGia" maxWidth="Infinity" prefHeight="44.0" style="-fx-background-color: white; -fx-text-fill: #607087; -fx-font-weight: bold; -fx-background-radius: 14; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 16; -fx-border-color: #d9e8ff; -fx-border-radius: 14;" text="🔨 Đã tham gia" />
-
                 <Button fx:id="btnCTToan" maxWidth="Infinity" prefHeight="44.0" style="-fx-background-color: white; -fx-text-fill: #607087; -fx-font-weight: bold; -fx-background-radius: 14; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 16; -fx-border-color: #d9e8ff; -fx-border-radius: 14;" text="💳  Chờ thanh toán" />
                 <Button fx:id="btnDTToan" maxWidth="Infinity" prefHeight="44.0" style="-fx-background-color: white; -fx-text-fill: #607087; -fx-font-weight: bold; -fx-background-radius: 14; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 16; -fx-border-color: #d9e8ff; -fx-border-radius: 14;" text="✅  Đã thanh toán" />
                 <Button fx:id="btnDaHuy" maxWidth="Infinity" prefHeight="44.0" style="-fx-background-color: white; -fx-text-fill: #607087; -fx-font-weight: bold; -fx-background-radius: 14; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 16; -fx-border-color: #d9e8ff; -fx-border-radius: 14;" text="❌  Đã bị hủy" textFill="#2b2323" />
