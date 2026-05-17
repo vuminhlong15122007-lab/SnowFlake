@@ -6,7 +6,7 @@ import com.javfxtutorial.hethongdaugia.common.model.User;
 
 public class ClientModel {            //class dùng để lưu trữ trạng thái toàn cục của ứng dụng Client(VD:ai đang đăng nhập, giỏ hàng, cài đặt...)
     private static ClientModel instance;
-    private ClientModel(){};
+    private ClientModel(){}
 
     public static ClientModel getInstance() {
         if (instance == null){

@@ -17,8 +17,6 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -34,14 +32,10 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 public class UserProfileController implements ResponseListener {
     private static final Logger log = LoggerFactory.getLogger(UserProfileController.class);
-    @FXML private Label usernameLabel;
-    @FXML private Label emailLabel;
-    @FXML private Label phoneLabel;
     @FXML private TextField updateNameText;
     @FXML private TextField updateEmailText;
     @FXML private TextField updatePhoneText;
     @FXML private ImageView myImageView;
-    @FXML private Button resetPW;
     @FXML
     public void initialize() {
         loadUserInfo();
@@ -177,8 +171,7 @@ public class UserProfileController implements ResponseListener {
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.unregister(UpdateProfileCommand.class, this);
         Platform.runLater(() -> {
-            if (response != null && response.isSuccess() && response.getPayLoad() instanceof User) {
-                User updatedUser = (User) response.getPayLoad();
+            if (response != null && response.isSuccess() && response.getPayLoad() instanceof User updatedUser) {
                 ClientModel.getInstance().setCurrentUser(updatedUser);
                 loadUserInfo();
                 showAlert("Thành công", "Cập nhật thông tin thành công", "Happy.gif");

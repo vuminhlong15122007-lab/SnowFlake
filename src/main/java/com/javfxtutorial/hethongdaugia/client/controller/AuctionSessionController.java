@@ -3,14 +3,11 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.Item;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 
@@ -43,7 +40,7 @@ public class AuctionSessionController {
         lbWinner.setText(auction.getWinnerId() != 0 ? String.valueOf(auction.getWinnerId()) : "Không có người đấu giá");
         // Load ảnh
         if (!(productImage == null || auction.getItem().getImage() == null || auction.getItem().getImage().isBlank()))
-        {ImageHelper.loadBase64ToImageView(productImage, auction.getItem().getImage());} ;
+        {ImageHelper.loadBase64ToImageView(productImage, auction.getItem().getImage());}
 
 
         // Xử lý theo trạng thái

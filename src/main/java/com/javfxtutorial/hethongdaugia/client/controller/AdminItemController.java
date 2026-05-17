@@ -69,7 +69,7 @@ public class AdminItemController implements  Initializable, ResponseListener {
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UserManagement.fxml");
     }
     @FXML
-    public void clickToDeleteItem() throws IOException, ClassNotFoundException, SendFailedException, ConnectionFailedException {
+    public void clickToDeleteItem() throws SendFailedException, ConnectionFailedException {
         ServerConnection connection = NetworkManager.getConnection();
         Auction selectItem = itemTable.getSelectionModel().getSelectedItem();
         if (selectItem == null) {

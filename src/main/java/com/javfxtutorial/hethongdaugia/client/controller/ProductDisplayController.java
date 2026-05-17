@@ -36,9 +36,8 @@ public class ProductDisplayController {
     @FXML private Label detailTitle;
 
 
-    private TimeLeft timer;
-    private Item item = ClientModel.getInstance().getCurrentItem();
-    private Auction auction = ClientModel.getInstance().getCurrentAuction();
+    private final Item item = ClientModel.getInstance().getCurrentItem();
+    private final Auction auction = ClientModel.getInstance().getCurrentAuction();
 
     public void setData() { // nhan du lieu tu man Item..
         LbMotasp.setText(item.getDescription());
@@ -70,7 +69,7 @@ public class ProductDisplayController {
         showCategoryInfo();
         if (auction == null) return;
         if (auction.getStatus() == AuctionStatus.RUNNING) {
-            timer = new TimeLeft(lbtimeLeft, auction.getEndingTime());
+            TimeLeft timer = new TimeLeft(lbtimeLeft, auction.getEndingTime());
             timer.start();
         } else if (auction.getStatus() == AuctionStatus.NOT_START) {
             lbtimeLeft.setText("CHƯA BẮT ĐẦU");
@@ -118,26 +117,23 @@ public class ProductDisplayController {
 
         if (item == null) return;
 
-        if (item instanceof Art ) {
+        if (item instanceof Art art) {
             showBox(artInfoBox);
-            Art art = (Art) item;
             if (detailTitle != null) detailTitle.setText("THÔNG TIN ART");
             if (artTitleValue != null) artTitleValue.setText(art.getTitle() != null ? art.getTitle() : "...");
             if (artistValue != null) artistValue.setText(art.getArtist() != null ? art.getArtist() : "...");
             if (yearCreatedValue != null) yearCreatedValue.setText(String.valueOf(art.getYearCreated()));
 
-        } else if (item instanceof Vehicle ) {
+        } else if (item instanceof Vehicle vehicle) {
             showBox(vehicleInfoBox);
-            Vehicle vehicle = (Vehicle) item;
             if (detailTitle != null) detailTitle.setText("THÔNG TIN VEHICLE");
             if (licensePlateValue != null) licensePlateValue.setText(vehicle.getLicensePlate() != null ? vehicle.getLicensePlate() : "...");
             if (vehicleYearValue != null) vehicleYearValue.setText(vehicle.getYear() > 0 ? String.valueOf(vehicle.getYear()) : "...");
             if (brandValue != null) brandValue.setText(vehicle.getBrand() != null ? vehicle.getBrand() : "...");
             if (colorValue != null) colorValue.setText(vehicle.getColor() != null ? vehicle.getColor() : "...");
 
-        } else if (item instanceof Electronics ) {
+        } else if (item instanceof Electronics elec) {
             showBox(electronicsInfoBox);
-            Electronics elec = (Electronics) item;
             if (detailTitle != null) detailTitle.setText("THÔNG TIN ELECTRONICS");
             if (elecBrandValue != null) elecBrandValue.setText(elec.getBrand() != null ? elec.getBrand() : "...");
             if (modelValue != null) modelValue.setText(elec.getModel() != null ? elec.getModel() : "...");

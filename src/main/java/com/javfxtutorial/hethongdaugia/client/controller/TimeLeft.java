@@ -20,7 +20,7 @@ public class TimeLeft {       // Class tái sd — truyền vào Label và end l
     }
 
     public void start() {
-        timeline = new Timeline(new KeyFrame(Duration.seconds(1), e -> tick()));
+        timeline = new Timeline(new KeyFrame(Duration.seconds(1), _ -> tick()));
         timeline.setCycleCount(Timeline.INDEFINITE);  //tgian dong ho dem nguoc chua xd
         tick();
         timeline.play();

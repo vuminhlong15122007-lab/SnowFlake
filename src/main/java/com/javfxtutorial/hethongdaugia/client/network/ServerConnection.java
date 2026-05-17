@@ -17,9 +17,9 @@ public class ServerConnection {
 
   public String IP = "localhost";
   public int PORT = 5000;
-  private Socket clientSocket;
-  private ObjectOutputStream out;
-  private ObjectInputStream in;
+  private final Socket clientSocket;
+  private final ObjectOutputStream out;
+  private final ObjectInputStream in;
   private static ServerConnection instance;
 
   public static ServerConnection getInstance() throws IOException {

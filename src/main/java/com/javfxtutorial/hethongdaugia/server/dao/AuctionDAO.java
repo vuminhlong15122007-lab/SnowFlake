@@ -244,7 +244,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
 
   public Auction selectByItemId(int id) throws DataException {      // lấy auction dựa trên itemId
     Auction result = null;
-    String sql = "SELECT * FROM Auction WHERE item_id = ?";
+    String sql = BASE_QUERY + " WHERE a.item_id = ?";
 
     try (Connection connection = JDBCUtil.getConnection();
          PreparedStatement pst = connection.prepareStatement(sql)) {

@@ -31,21 +31,18 @@ public class NetworkManager {
   }
 
   public static ServerConnection getConnection() throws ConnectionFailedException{
-    ServerConnection connection = null;
+    ServerConnection connection;
     try {
       connection = ServerConnection.getInstance();
       return connection;
     } catch (IOException e) {
-      if (connection != null) {
-        connection.close();
-      }
-      log.error("Khong tim thay server: {}", e.getMessage());
+        log.error("Khong tim thay server: {}", e.getMessage());
       throw new ConnectionFailedException("localhost", e);
     }
   }
 
   public void register(Class<?> commandClass, ResponseListener listener) {
-    listeners.computeIfAbsent(commandClass, k -> new CopyOnWriteArrayList<>());
+    listeners.computeIfAbsent(commandClass, _ -> new CopyOnWriteArrayList<>());
 
     List<ResponseListener> list = listeners.get(commandClass);
     if (!list.contains(listener)) {

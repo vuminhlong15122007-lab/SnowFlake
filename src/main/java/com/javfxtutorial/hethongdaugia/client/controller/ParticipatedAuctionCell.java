@@ -58,9 +58,4 @@ public class ParticipatedAuctionCell extends ListCell<Auction> {
       setText(auction.getItem() != null ? auction.getItem().getName() : "Lỗi");
     }
   }
-
-  // Gọi khi chuyển màn hình để tránh memory leak
-  public static void clearCache() {
-    cellCache.clear();
-  }
 }

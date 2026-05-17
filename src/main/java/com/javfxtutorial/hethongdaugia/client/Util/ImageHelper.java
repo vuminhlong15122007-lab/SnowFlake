@@ -25,18 +25,16 @@ public class ImageHelper {
         return new Image(new ByteArrayInputStream(imageBytes));
     }
     // load ảnh lên ImageView
-    public static boolean loadBase64ToImageView(ImageView imageView, String base64Data) {
+    public static void loadBase64ToImageView(ImageView imageView, String base64Data) {
         if (imageView == null) {
-            return false;
+            return;
         }
 
         Image image = base64ToImage(base64Data); // chuyển hóa từ base64 thành ảnh qua method base64ToImage
         if (image != null && !image.isError()) {
             imageView.setImage(image);
-            return true;
         } else {
             imageView.setImage(null);
-            return false;
         }
     }
     // chuyển từ ảnh thành mã hóa base64

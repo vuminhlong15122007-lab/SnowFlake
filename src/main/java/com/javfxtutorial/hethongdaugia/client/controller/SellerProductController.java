@@ -9,7 +9,6 @@ import javafx.fxml.FXML;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.util.Duration;
 
 import static com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus.NOT_START;
