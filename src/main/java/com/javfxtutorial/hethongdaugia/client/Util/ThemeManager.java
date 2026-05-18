@@ -127,15 +127,19 @@ public final class ThemeManager {
             ensureFlexibleSpacer(topBar);
             topBar.getChildren().add(switcher);
         } else if (root instanceof StackPane stackPane) {
-            HBox shell = new HBox(switcher);
-            shell.setId(SWITCHER_SHELL_ID);
-            shell.getStyleClass().add("theme-switcher-shell");
-            shell.setAlignment(Pos.TOP_RIGHT);
-            shell.setPickOnBounds(false);
-            StackPane.setAlignment(shell, Pos.TOP_RIGHT);
-            StackPane.setMargin(shell, new Insets(14, 18, 0, 0));
-            stackPane.getChildren().add(shell);
-        }
+        HBox shell = new HBox(switcher);
+        shell.setId(SWITCHER_SHELL_ID);
+        shell.getStyleClass().add("theme-switcher-shell");
+        shell.setAlignment(Pos.TOP_RIGHT);
+        shell.setPickOnBounds(false);
+
+        shell.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+        shell.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+
+        StackPane.setAlignment(shell, Pos.TOP_RIGHT);
+        StackPane.setMargin(shell, new Insets(14, 18, 0, 0));
+        stackPane.getChildren().add(shell);
+    }
     }
 
     private static boolean isApplicationScreenRoot(Parent root) {
