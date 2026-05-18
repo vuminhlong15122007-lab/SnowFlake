@@ -16,8 +16,7 @@ public class NotificationCellController {
     @FXML private Label  iconLabel;
     @FXML private Label  msgLabel;
     @FXML private Label  timeLabel;
-    @FXML private Label  readBtn;   // kept in FXML but always hidden
-    @FXML private HBox   rootHBox;  // optional — for click-to-read on whole row
+    @FXML private Label  readBtn;
 
     private static final DateTimeFormatter TIME_FMT =
             DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
@@ -36,13 +35,6 @@ public class NotificationCellController {
             case PAID      -> "#2980b9";
             case CANCELLED -> "#dc3545";
         };
-
-        // Chấm tròn — chỉ hiện khi chưa đọc
-        if (statusDot != null) {
-            statusDot.setFill(notif.isRead() ? Color.TRANSPARENT : Color.web(borderColor));
-            statusDot.setVisible(!notif.isRead());
-            statusDot.setManaged(!notif.isRead());
-        }
 
         // Icon loại thông báo
         if (iconLabel != null) {

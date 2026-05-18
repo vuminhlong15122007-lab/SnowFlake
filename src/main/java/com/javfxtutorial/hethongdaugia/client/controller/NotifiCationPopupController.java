@@ -9,11 +9,7 @@ import javafx.scene.control.ListView;
 
 import java.util.function.Consumer;
 
-/**
- * Controller của NotifiCationPopup.fxml.
- * Sử dụng ListView<SellerNotification> + NotificationListCell (FXML cell).
- * Không xây HBox tay nữa.
- */
+
 public class NotifiCationPopupController {
 
     @FXML private ListView<SellerNotification> notificationListView;
@@ -44,10 +40,7 @@ public class NotifiCationPopupController {
         }
     }
 
-    /**
-     * Được gọi từ SellerManagementController sau khi FXML load xong.
-     * Truyền thẳng ObservableList — ListView sẽ tự cập nhật khi list thay đổi.
-     */
+
     public void loadNotifications(ObservableList<SellerNotification> notifications) {
         if (notificationListView == null) return;
 
