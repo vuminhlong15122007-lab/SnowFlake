@@ -12,7 +12,6 @@ import java.util.function.Consumer;
 
 public class NotificationCellController {
 
-    @FXML private Circle statusDot;
     @FXML private Label  iconLabel;
     @FXML private Label  msgLabel;
     @FXML private Label  timeLabel;

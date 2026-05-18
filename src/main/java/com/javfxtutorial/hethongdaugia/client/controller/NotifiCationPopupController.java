@@ -15,7 +15,7 @@ public class NotifiCationPopupController {
     @FXML private ListView<SellerNotification> notificationListView;
     @FXML private Label emptyLabel;
 
-    /** Callback gọi lại khi một thông báo được đánh dấu đã đọc */
+    // gọi lại khi một thông báo được đánh dấu đã đọc
     private Consumer<SellerNotification> onMarkRead;
 
     public void setOnMarkRead(Consumer<SellerNotification> onMarkRead) {
@@ -40,7 +40,10 @@ public class NotifiCationPopupController {
         }
     }
 
-
+    /**
+     * Được gọi từ SellerManagementController sau khi FXML load xong.
+     * Truyền thẳng ObservableList — ListView sẽ tự cập nhật khi list thay đổi.
+     */
     public void loadNotifications(ObservableList<SellerNotification> notifications) {
         if (notificationListView == null) return;
 
