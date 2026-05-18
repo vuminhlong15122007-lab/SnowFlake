@@ -1,39 +1,39 @@
 .root {
-    -sf-page-start: #F0FFF1;
+    -sf-page-start: #EFFBEF;
     -sf-page-end: #FFFFFF;
-    -sf-page-soft: #F6FFF4;
+    -sf-page-soft: #F8FFF8;
     -sf-surface: #FFFFFF;
-    -sf-surface-soft: #FAFFFA;
-    -sf-surface-raised: #E5F8E5;
-    -sf-surface-muted: #D8EFD8;
-    -sf-border: #A8DBA9;
-    -sf-border-soft: #CCECCC;
-    -sf-border-muted: #E6F6E6;
-    -sf-text: #263B2B;
-    -sf-heading: #123017;
-    -sf-muted: #5F7B65;
-    -sf-subtle: #7F9B85;
+    -sf-surface-soft: #FBFFFB;
+    -sf-surface-raised: #E0F4DF;
+    -sf-surface-muted: #D0E9CE;
+    -sf-border: #9ACF98;
+    -sf-border-soft: #C9E8C7;
+    -sf-border-muted: #E6F4E5;
+    -sf-text: #283D2B;
+    -sf-heading: #15351B;
+    -sf-muted: #5E7962;
+    -sf-subtle: #7F9882;
     -sf-on-accent: #FFFFFF;
     -sf-accent: #2F9E44;
     -sf-accent-2: #75C77A;
-    -sf-accent-soft: #E2F8E5;
-    -sf-purple: #7C6EE6;
-    -sf-purple-soft: #F0EEFF;
-    -sf-success: #21A35E;
-    -sf-success-2: #52CA80;
-    -sf-success-soft: #E8FAEF;
-    -sf-danger: #D55267;
-    -sf-danger-2: #EF8494;
+    -sf-accent-soft: #E2F6E3;
+    -sf-purple: #687BE8;
+    -sf-purple-soft: #EEF2FF;
+    -sf-success: #209B4A;
+    -sf-success-2: #65C878;
+    -sf-success-soft: #E6FAEA;
+    -sf-danger: #D64B68;
+    -sf-danger-2: #EF8294;
     -sf-danger-soft: #FFF0F3;
-    -sf-warning: #D3931F;
-    -sf-warning-soft: #FFF4DA;
-    -sf-neutral: #839E86;
+    -sf-warning: #D59020;
+    -sf-warning-soft: #FFF4D9;
+    -sf-neutral: #7B9B7E;
     -sf-panel-strong: rgba(255,255,255,0.98);
-    -sf-panel: rgba(255,255,255,0.92);
-    -sf-panel-soft: rgba(229,248,229,0.78);
-    -sf-shadow: rgba(47,158,68,0.17);
-    -sf-shadow-soft: rgba(117,199,122,0.13);
-    -sf-shadow-neutral: rgba(18,48,23,0.10);
+    -sf-panel: rgba(255,255,255,0.94);
+    -sf-panel-soft: rgba(224,244,223,0.82);
+    -sf-shadow: rgba(47,158,68,0.14);
+    -sf-shadow-soft: rgba(117,199,122,0.12);
+    -sf-shadow-neutral: rgba(21,53,27,0.10);
 }
 
 .root {
@@ -91,6 +91,14 @@
 
 .combo-box-popup .list-cell:hover {
     -fx-background-color: -sf-accent-soft;
+    -fx-text-fill: -sf-heading;
+}
+
+.combo-box-popup .list-cell:selected,
+.combo-box-popup .list-cell:filled:selected,
+.combo-box-popup .list-cell:focused:selected {
+    -fx-background-color: linear-gradient(to right, -sf-accent-soft, -sf-surface-muted);
+    -fx-text-fill: -sf-heading;
 }
 
 .table-view,
@@ -134,8 +142,15 @@
     -fx-text-fill: -sf-text;
 }
 
-.list-cell:selected {
-    -fx-background-color: -sf-accent-soft;
+.list-cell:filled:hover {
+    -fx-background-color: -sf-surface-soft;
+    -fx-text-fill: -sf-heading;
+}
+
+.list-cell:selected,
+.list-cell:filled:selected,
+.list-cell:focused:selected {
+    -fx-background-color: linear-gradient(to right, -sf-accent-soft, -sf-surface-muted);
     -fx-text-fill: -sf-heading;
 }
 
@@ -158,15 +173,8 @@
 }
 
 .theme-switcher:hover {
-    -fx-background-color: linear-gradient(to right, -sf-accent, -sf-purple);
-}
-
-#login:hover {
-    -fx-background-color: -sf-warning;
-}
-
-#sign_in:hover {
-    -fx-background-color: -sf-panel-soft;
+    -fx-opacity: 0.88;
+    -fx-border-color: -sf-surface;
 }
 
 /* Repair: keep shared SnowFox component colors after this theme overrides .label/.button. */
@@ -194,5 +202,5 @@
 }
 
 .button.sf-btn-danger {
-    -fx-text-fill: -sf-danger;
+    -fx-text-fill: -sf-on-accent;
 }

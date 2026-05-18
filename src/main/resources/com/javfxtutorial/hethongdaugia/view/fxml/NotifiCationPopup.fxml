@@ -9,15 +9,15 @@
     Popup thông báo dành cho Seller — dùng ListView + NotificationCellPopup.fxml.
 -->
 <VBox maxWidth="420.0" minWidth="360.0" prefWidth="400.0"
-      style="-fx-background-color: white; -fx-background-radius: 16; -fx-border-color: #c9ddff; -fx-border-radius: 16; -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.22), 20, 0.25, 0, 4);"
+      styleClass="sf-popup"
+      stylesheets="@../css/global.css"
       xmlns="http://javafx.com/javafx/17.0.12"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.javfxtutorial.hethongdaugia.client.controller.NotifiCationPopupController">
 
     <!-- Header -->
-    <HBox alignment="CENTER_LEFT" spacing="8.0"
-          style="-fx-background-color: linear-gradient(to right, #7b2ff7, #2f80ed); -fx-background-radius: 16 16 0 0; -fx-padding: 12 16 12 16;">
-        <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: white;" text="🔔  Thông báo của bạn" />
+    <HBox alignment="CENTER_LEFT" spacing="8.0" styleClass="sf-popup-header">
+        <Label styleClass="sf-popup-title" text="🔔  Thông báo của bạn" />
         <Region HBox.hgrow="ALWAYS" />
     </HBox>
 
@@ -28,12 +28,11 @@
 
     <!-- Label khi không có thông báo -->
     <Label fx:id="emptyLabel" alignment="CENTER" maxWidth="Infinity"
-           style="-fx-font-size: 13px; -fx-text-fill: #9b9b9b; -fx-padding: 24 0 24 0;"
+           style="-fx-font-size: 13px; -fx-text-fill: -sf-muted; -fx-padding: 24 0 24 0;"
            text="Không có thông báo nào." visible="false" managed="false" />
 
     <!-- Footer -->
-    <HBox alignment="CENTER" prefHeight="36.0"
-          style="-fx-background-color: #f8fbff; -fx-background-radius: 0 0 16 16; -fx-border-color: #e1ecff; -fx-border-width: 1 0 0 0;">
-        <Label style="-fx-font-size: 10px; -fx-text-fill: #b0b8d0;" text="© SnowFox – Hệ thống đấu giá" />
+    <HBox alignment="CENTER" prefHeight="36.0" styleClass="sf-popup-footer">
+        <Label style="-fx-font-size: 10px; -fx-text-fill: -sf-subtle;" text="© SnowFox – Hệ thống đấu giá" />
     </HBox>
 </VBox>

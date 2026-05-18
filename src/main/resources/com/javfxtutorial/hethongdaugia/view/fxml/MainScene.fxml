@@ -45,7 +45,7 @@
     <center>
         <StackPane styleClass="sf-content">
             <children>
-                <VBox alignment="CENTER" prefHeight="375.0" prefWidth="418.0" spacing="5" style="-fx-background-color: radial-gradient(center 20% 20%, radius 40%, -sf-shadow, transparent),    radial-gradient(center 80% 80%, radius 45%, -sf-shadow, transparent),    -sf-surface-soft;">
+                <VBox alignment="CENTER" prefHeight="375.0" prefWidth="418.0" spacing="5" styleClass="sf-home-hero">
                     <children>
                   <Label alignment="CENTER" prefHeight="85.0" prefWidth="231.0" style="-fx-font-size: 20; -fx-font-weight: bold; -fx-font-family: Poppins; -fx-text-fill: -sf-heading; -fx-effect: dropshadow(three-pass-box, -sf-shadow, 15, 0, 0, 5); -fx-padding: 0 0 10 0;" text="--WELCOME TO--" textAlignment="CENTER">
                      <font>
@@ -77,7 +77,7 @@
     <bottom>
         <HBox prefHeight="22.0" prefWidth="600.0" styleClass="sf-footer" BorderPane.alignment="CENTER">
             <children>
-                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="1288.0" style="-fx-font-size: 12px; -fx-text-fill: -sf-danger;" text="© 2026 SnowFox - Studio SnowFlake" textAlignment="CENTER" />
+                <Label alignment="CENTER" contentDisplay="CENTER" prefHeight="18.0" prefWidth="1288.0" style="-fx-font-size: 12px; -fx-text-fill: -sf-muted;" text="© 2026 SnowFox - Studio SnowFlake" textAlignment="CENTER" />
             </children>
         </HBox>
     </bottom>

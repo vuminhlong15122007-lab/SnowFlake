@@ -1,39 +1,39 @@
 .root {
-    -sf-page-start: #EAF7FF;
+    -sf-page-start: #EAF8FF;
     -sf-page-end: #FFFFFF;
-    -sf-page-soft: #F2FAFF;
+    -sf-page-soft: #F4FBFF;
     -sf-surface: #FFFFFF;
     -sf-surface-soft: #F8FCFF;
-    -sf-surface-raised: #E7F3FF;
-    -sf-surface-muted: #DDEEFF;
-    -sf-border: #9FCAE8;
-    -sf-border-soft: #C7E0F2;
-    -sf-border-muted: #E5F1FA;
-    -sf-text: #21344A;
-    -sf-heading: #0D2742;
-    -sf-muted: #5B728C;
-    -sf-subtle: #7A8EA5;
+    -sf-surface-raised: #E4F4FF;
+    -sf-surface-muted: #D7ECFA;
+    -sf-border: #8EC5EA;
+    -sf-border-soft: #C3DFF2;
+    -sf-border-muted: #E3F0F8;
+    -sf-text: #20354A;
+    -sf-heading: #0B2944;
+    -sf-muted: #58718A;
+    -sf-subtle: #7891A7;
     -sf-on-accent: #FFFFFF;
     -sf-accent: #2563EB;
     -sf-accent-2: #38BDF8;
-    -sf-accent-soft: #E0F2FE;
-    -sf-purple: #7C6EE6;
+    -sf-accent-soft: #DDF3FF;
+    -sf-purple: #6D72E6;
     -sf-purple-soft: #F0EEFF;
-    -sf-success: #16A66A;
-    -sf-success-2: #34C98A;
-    -sf-success-soft: #E8FBEF;
+    -sf-success: #12A66A;
+    -sf-success-2: #38C98B;
+    -sf-success-soft: #E6FAEF;
     -sf-danger: #D83F62;
-    -sf-danger-2: #F26F86;
+    -sf-danger-2: #F06D84;
     -sf-danger-soft: #FFF0F4;
-    -sf-warning: #D78A18;
-    -sf-warning-soft: #FFF3D6;
-    -sf-neutral: #7F98B2;
+    -sf-warning: #D88716;
+    -sf-warning-soft: #FFF2D2;
+    -sf-neutral: #7B96AE;
     -sf-panel-strong: rgba(255,255,255,0.98);
-    -sf-panel: rgba(255,255,255,0.92);
-    -sf-panel-soft: rgba(231,243,255,0.78);
-    -sf-shadow: rgba(37,99,235,0.17);
+    -sf-panel: rgba(255,255,255,0.94);
+    -sf-panel-soft: rgba(228,244,255,0.82);
+    -sf-shadow: rgba(37,99,235,0.16);
     -sf-shadow-soft: rgba(56,189,248,0.13);
-    -sf-shadow-neutral: rgba(13,39,66,0.10);
+    -sf-shadow-neutral: rgba(11,41,68,0.10);
 }
 
 .root {
@@ -49,35 +49,34 @@
 }
 
 .button:hover {
-    -fx-scale-x: 1.03;
-    -fx-scale-y: 1.03;
+    -fx-opacity: 0.96;
 }
 
 .button:pressed {
-    -fx-scale-x: 0.97;
-    -fx-scale-y: 0.97;
+    -fx-opacity: 0.90;
 }
 
 .theme-switcher {
-    -fx-min-width: 72;
-    -fx-pref-width: 72;
-    -fx-max-width: 86;
+    -fx-min-width: 28;
+    -fx-pref-width: 28;
+    -fx-max-width: 28;
     -fx-min-height: 28;
     -fx-pref-height: 28;
+    -fx-max-height: 28;
     -fx-background-color: linear-gradient(to right, -sf-accent-2, -sf-accent);
     -fx-background-radius: 999;
     -fx-border-color: -sf-panel-soft;
     -fx-border-radius: 999;
-    -fx-border-width: 1;
-    -fx-text-fill: -sf-on-accent;
-    -fx-font-size: 11px;
-    -fx-font-weight: bold;
-    -fx-padding: 5 9;
-    -fx-effect: dropshadow(gaussian, -sf-shadow, 10, 0.18, 0, 2);
+    -fx-border-width: 2;
+    -fx-text-fill: transparent;
+    -fx-font-size: 1px;
+    -fx-padding: 0;
+    -fx-effect: dropshadow(gaussian, -sf-shadow, 8, 0.14, 0, 2);
 }
 
 .theme-switcher:hover {
-    -fx-background-color: linear-gradient(to right, -sf-accent, -sf-purple);
+    -fx-opacity: 0.88;
+    -fx-border-color: -sf-surface;
 }
 
 .theme-switcher.theme-light {
@@ -138,6 +137,7 @@
 
 .theme-switcher-shell {
     -fx-background-color: transparent;
+    -fx-padding: 0;
 }
 
 .text-field,
@@ -145,14 +145,21 @@
 .text-area,
 .combo-box,
 .choice-box {
-    -fx-background-color: -sf-surface;
+    -fx-background-color: white;
     -fx-border-color: -sf-border-soft;
     -fx-border-radius: 10;
     -fx-background-radius: 10;
-    -fx-text-fill: -sf-text;
-    -fx-prompt-text-fill: -sf-muted;
 }
 
+.combo-box > .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -sf-text;
+    -fx-padding: 0 0 0 12;
+}
+
+.combo-box > .arrow-button {
+    -fx-background-color: transparent;
+}
 .text-field:focused,
 .password-field:focused,
 .text-area:focused,
@@ -166,16 +173,26 @@
 .table-view,
 .scroll-pane,
 .scroll-pane > .viewport {
-    -fx-background-color: transparent;
+    -fx-background-color: -sf-surface;
+    -fx-background-radius: 10;
+    -fx-border-color: -sf-border-soft;
+    -fx-border-radius: 10;
 }
 
 .list-cell {
-    -fx-background-color: transparent;
+    -fx-background-color: -sf-surface;
     -fx-text-fill: -sf-text;
 }
 
-.list-cell:selected {
-    -fx-background-color: -sf-accent-soft;
+.list-cell:filled:hover {
+    -fx-background-color: -sf-surface-soft;
+    -fx-text-fill: -sf-heading;
+}
+
+.list-cell:selected,
+.list-cell:filled:selected,
+.list-cell:focused:selected {
+    -fx-background-color: linear-gradient(to right, -sf-accent-soft, -sf-surface-muted);
     -fx-text-fill: -sf-heading;
 }
 
@@ -245,22 +262,17 @@
     -fx-fill: -sf-heading;
 }
 
-#login:hover {
-    -fx-background-color: -sf-warning;
-}
-
-#sign_in:hover {
-    -fx-background-color: -sf-panel-soft;
-}
-
 /* ==================== SnowFox shared layout/style classes ==================== */
 .sf-page {
     -fx-background-color: linear-gradient(to bottom right, -sf-page-start, -sf-surface 48%, -sf-page-soft);
 }
 
 .sf-header {
-    -fx-background-color: linear-gradient(to right, -sf-accent-2, -sf-page-soft);
+    -fx-background-color: linear-gradient(to right, -sf-surface-raised, -sf-page-soft, -sf-surface);
+    -fx-border-color: -sf-border-soft;
+    -fx-border-width: 0 0 1 0;
     -fx-padding: 15;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-soft, 12, 0.18, 0, 2);
 }
 
 .sf-header-soft {
@@ -271,30 +283,30 @@
 }
 
 .sf-sidebar {
-    -fx-background-color: -sf-surface-soft;
+    -fx-background-color: linear-gradient(to bottom, -sf-surface-soft, -sf-page-soft);
     -fx-border-color: -sf-border-soft;
     -fx-border-width: 0 1 0 0;
     -fx-padding: 18 15 15 15;
 }
 
 .sf-content {
-    -fx-background-color: linear-gradient(to bottom right, -sf-surface, -sf-surface-raised);
+    -fx-background-color: linear-gradient(to bottom right, -sf-surface, -sf-page-soft 54%, -sf-surface-raised);
     -fx-padding: 22 28 20 28;
 }
 
 .sf-card {
     -fx-background-color: -sf-panel-strong;
-    -fx-background-radius: 18;
+    -fx-background-radius: 16;
     -fx-border-color: -sf-border;
-    -fx-border-radius: 18;
-    -fx-effect: dropshadow(gaussian, -sf-shadow, 14, 0.18, 0, 3);
+    -fx-border-radius: 16;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-neutral, 16, 0.16, 0, 4);
 }
 
 .sf-card-soft {
     -fx-background-color: -sf-panel;
-    -fx-background-radius: 22;
-    -fx-border-color: -sf-shadow;
-    -fx-border-radius: 22;
+    -fx-background-radius: 18;
+    -fx-border-color: -sf-border-soft;
+    -fx-border-radius: 18;
     -fx-padding: 14;
     -fx-effect: dropshadow(gaussian, -sf-shadow-soft, 12, 0, 0, 3);
 }
@@ -333,11 +345,12 @@
     -fx-font-weight: bold;
     -fx-background-radius: 14;
     -fx-border-radius: 14;
+    -fx-effect: dropshadow(gaussian, -sf-shadow, 9, 0.16, 0, 2);
     -fx-cursor: hand;
 }
 
 .sf-btn-secondary {
-    -fx-background-color: -sf-surface;
+    -fx-background-color: linear-gradient(to bottom, -sf-surface, -sf-surface-soft);
     -fx-text-fill: -sf-muted;
     -fx-font-weight: bold;
     -fx-background-radius: 14;
@@ -347,11 +360,11 @@
 }
 
 .sf-btn-danger {
-    -fx-background-color: -sf-danger-soft;
-    -fx-text-fill: -sf-danger;
+    -fx-background-color: linear-gradient(to right, -sf-danger-2, -sf-danger);
+    -fx-text-fill: -sf-on-accent;
     -fx-font-weight: bold;
     -fx-background-radius: 14;
-    -fx-border-color: -sf-danger-soft;
+    -fx-border-color: transparent;
     -fx-border-radius: 14;
     -fx-cursor: hand;
 }
@@ -365,7 +378,7 @@
 }
 
 .sf-filter-button {
-    -fx-background-color: -sf-surface;
+    -fx-background-color: linear-gradient(to bottom, -sf-surface, -sf-surface-soft);
     -fx-text-fill: -sf-muted;
     -fx-font-weight: bold;
     -fx-background-radius: 14;
@@ -379,13 +392,18 @@
     -fx-background-color: linear-gradient(to right, -sf-accent-2, -sf-accent);
     -fx-text-fill: -sf-on-accent;
     -fx-border-color: transparent;
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 16;
+    -fx-font-weight: bold;
     -fx-effect: dropshadow(gaussian, -sf-shadow, 10, 0, 0, 2);
 }
 
 .sf-search-box {
     -fx-background-color: -sf-panel-strong;
     -fx-background-radius: 24;
-    -fx-border-color: -sf-shadow;
+    -fx-border-color: -sf-border-soft;
     -fx-border-radius: 24;
     -fx-padding: 0 8 0 16;
     -fx-effect: dropshadow(gaussian, -sf-shadow-soft, 12, 0, 0, 2);
@@ -399,16 +417,234 @@
 }
 
 .sf-footer {
-    -fx-background-color: linear-gradient(to right, -sf-danger-soft, -sf-border);
+    -fx-background-color: linear-gradient(to right, -sf-surface-raised, -sf-page-soft);
+    -fx-border-color: -sf-border-soft;
+    -fx-border-width: 1 0 0 0;
     -fx-padding: 8;
 }
 
 .sf-note {
     -fx-background-color: linear-gradient(to bottom right, -sf-panel-strong, -sf-panel);
-    -fx-background-radius: 26;
-    -fx-border-color: -sf-shadow;
-    -fx-border-radius: 26;
+    -fx-background-radius: 18;
+    -fx-border-color: -sf-border-soft;
+    -fx-border-radius: 18;
     -fx-padding: 16;
     -fx-effect: dropshadow(gaussian, -sf-shadow-soft, 18, 0, 0, 5);
 }
 
+.sf-auth-backdrop {
+    -fx-background-color: linear-gradient(to bottom right, -sf-page-start, -sf-surface 45%, -sf-page-soft);
+}
+
+.sf-auth-brand {
+    -fx-background-color: linear-gradient(to bottom right, -sf-panel, -sf-panel-soft);
+    -fx-background-radius: 24;
+    -fx-border-color: -sf-border-soft;
+    -fx-border-radius: 24;
+    -fx-padding: 0;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-soft, 20, 0.14, 0, 6);
+}
+
+.sf-auth-panel {
+    -fx-background-color: -sf-panel-strong;
+    -fx-background-radius: 24;
+    -fx-padding: 20;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-neutral, 24, 0.18, 0, 8);
+    -fx-border-color: -sf-border;
+    -fx-border-radius: 24;
+}
+
+.sf-auth-field {
+    -fx-background-color: -sf-surface;
+    -fx-background-radius: 12;
+    -fx-border-color: -sf-border-soft;
+    -fx-border-radius: 12;
+    -fx-padding: 8 12;
+    -fx-font-size: 13px;
+}
+
+.sf-icon-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -sf-accent;
+    -fx-cursor: hand;
+    -fx-font-size: 14px;
+    -fx-padding: 0 8 0 0;
+}
+
+.sf-link-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -sf-accent;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.sf-panel-card {
+    -fx-background-color: -sf-panel-strong;
+    -fx-background-radius: 22;
+    -fx-border-color: -sf-border-soft;
+    -fx-border-radius: 22;
+    -fx-padding: 18;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-soft, 18, 0.14, 0, 5);
+}
+
+.sf-content-shell {
+    -fx-background-color: -sf-panel;
+    -fx-background-radius: 24;
+    -fx-border-color: -sf-border-soft;
+    -fx-border-radius: 24;
+    -fx-padding: 18;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-neutral, 20, 0.12, 0, 6);
+}
+
+.sf-list-panel {
+    -fx-background-color: linear-gradient(to bottom, -sf-surface, -sf-surface-soft);
+    -fx-background-radius: 18;
+    -fx-border-color: -sf-border-soft;
+    -fx-border-radius: 18;
+    -fx-padding: 12;
+}
+
+.sf-chip {
+    -fx-background-color: -sf-accent-soft;
+    -fx-text-fill: -sf-accent;
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 10;
+    -fx-background-radius: 999;
+    -fx-border-color: -sf-border-soft;
+    -fx-border-radius: 999;
+}
+
+.sf-price-text {
+    -fx-text-fill: -sf-danger;
+    -fx-font-weight: bold;
+}
+
+.sf-popup {
+    -fx-background-color: -sf-panel-strong;
+    -fx-background-radius: 16;
+    -fx-border-color: -sf-border;
+    -fx-border-radius: 16;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-neutral, 22, 0.22, 0, 5);
+}
+
+.sf-popup-header {
+    -fx-background-color: linear-gradient(to right, -sf-accent-2, -sf-accent);
+    -fx-background-radius: 16 16 0 0;
+    -fx-padding: 12 16;
+}
+
+.sf-popup-footer {
+    -fx-background-color: -sf-surface-soft;
+    -fx-background-radius: 0 0 16 16;
+    -fx-border-color: -sf-border-muted;
+    -fx-border-width: 1 0 0 0;
+    -fx-padding: 10 16;
+}
+
+.sf-popup-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -sf-on-accent;
+}
+
+.sf-subtitle {
+    -fx-font-size: 12px;
+    -fx-text-fill: -sf-muted;
+    -fx-font-weight: bold;
+}
+
+.sf-home-hero {
+    -fx-background-color: radial-gradient(center 18% 18%, radius 42%, -sf-accent-soft, transparent),
+                          radial-gradient(center 82% 84%, radius 46%, -sf-purple-soft, transparent),
+                          linear-gradient(to bottom right, -sf-panel-strong, -sf-surface-soft);
+    -fx-background-radius: 26;
+    -fx-border-color: -sf-border-soft;
+    -fx-border-radius: 26;
+    -fx-padding: 0;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-soft, 22, 0.16, 0, 6);
+}
+
+.sf-btn-primary:hover,
+.sf-filter-button-active:hover {
+    -fx-background-color: linear-gradient(to right, derive(-sf-accent-2, -8%), derive(-sf-accent, -8%));
+    -fx-effect: dropshadow(gaussian, -sf-shadow, 9, 0.16, 0, 2);
+}
+
+.sf-btn-success:hover {
+    -fx-background-color: linear-gradient(to right, derive(-sf-success-2, -8%), derive(-sf-success, -8%));
+    -fx-effect: dropshadow(gaussian, -sf-shadow, 9, 0.16, 0, 2);
+}
+
+.sf-btn-danger:hover {
+    -fx-background-color: linear-gradient(to right, derive(-sf-danger-2, -8%), derive(-sf-danger, -8%));
+    -fx-effect: dropshadow(gaussian, -sf-shadow, 9, 0.16, 0, 2);
+}
+
+.sf-btn-secondary:hover,
+.sf-filter-button:hover {
+    -fx-background-color: linear-gradient(to bottom, derive(-sf-surface, -4%), derive(-sf-surface-soft, -8%));
+    -fx-text-fill: -sf-heading;
+}
+
+.sf-transparent-list .list-cell {
+    -fx-padding: 6 4;
+}
+
+.sf-transparent-list .list-cell:hover {
+    -fx-background-color: -sf-accent-soft;
+    -fx-background-radius: 12;
+}
+
+.sf-transparent-list .list-cell:selected,
+.sf-transparent-list .list-cell:filled:selected,
+.sf-transparent-list .list-cell:focused:selected {
+    -fx-background-color: linear-gradient(to right, -sf-accent-soft, -sf-surface-muted);
+    -fx-background-radius: 12;
+    -fx-text-fill: -sf-heading;
+}
+
+.date-picker,
+.spinner {
+    -fx-background-color: -sf-surface;
+    -fx-border-color: -sf-border-soft;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
+}
+
+.date-picker .text-field,
+.spinner .text-field {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-text-fill: -sf-text;
+}
+
+.chart {
+    -fx-background-color: transparent;
+}
+
+.chart-title,
+.axis-label {
+    -fx-text-fill: -sf-heading;
+}
+
+.axis {
+    -fx-tick-label-fill: -sf-muted;
+}
+
+.chart-plot-background {
+    -fx-background-color: -sf-surface-soft;
+}
+
+.chart-horizontal-grid-lines,
+.chart-vertical-grid-lines {
+    -fx-stroke: -sf-border-muted;
+}
+
+.default-color0.chart-series-line {
+    -fx-stroke: -sf-accent;
+}
+
+.default-color0.chart-line-symbol {
+    -fx-background-color: -sf-accent, -sf-surface;
+}

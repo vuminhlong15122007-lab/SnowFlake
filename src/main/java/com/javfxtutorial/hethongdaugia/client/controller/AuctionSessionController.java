@@ -75,7 +75,7 @@ public class AuctionSessionController {
 
             case CLOSED:
                 lbPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
-                lbCategory.setText("Loại: " + (auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
+                lbCategory.setText(""+(auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
                 if (lbWinner != null) lbWinner.setText(""+auction.getWinnerId());
                 break;
         }

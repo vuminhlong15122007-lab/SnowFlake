@@ -1,39 +1,39 @@
 .root {
     -sf-page-start: #FFF4E7;
     -sf-page-end: #FFFFFF;
-    -sf-page-soft: #FFF1E0;
+    -sf-page-soft: #FFFAF4;
     -sf-surface: #FFFFFF;
-    -sf-surface-soft: #FFFAF4;
+    -sf-surface-soft: #FFFCF8;
     -sf-surface-raised: #FFE7CD;
     -sf-surface-muted: #F6D6B8;
-    -sf-border: #E2AC7E;
-    -sf-border-soft: #F1D4B8;
-    -sf-border-muted: #F7E7D8;
-    -sf-text: #443120;
-    -sf-heading: #2D1C10;
-    -sf-muted: #7B604B;
-    -sf-subtle: #997D67;
+    -sf-border: #E3AA72;
+    -sf-border-soft: #F0CEAA;
+    -sf-border-muted: #F9E9D7;
+    -sf-text: #46372B;
+    -sf-heading: #372310;
+    -sf-muted: #786A5E;
+    -sf-subtle: #998A7C;
     -sf-on-accent: #FFFFFF;
     -sf-accent: #CC6A18;
     -sf-accent-2: #F09A3D;
     -sf-accent-soft: #FFEBD6;
-    -sf-purple: #8068D8;
-    -sf-purple-soft: #F0ECFF;
-    -sf-success: #2FA66A;
-    -sf-success-2: #5DC988;
-    -sf-success-soft: #E8FAEF;
-    -sf-danger: #D64E55;
-    -sf-danger-2: #EF8181;
-    -sf-danger-soft: #FFF0F0;
-    -sf-warning: #D08C18;
-    -sf-warning-soft: #FFF3D6;
-    -sf-neutral: #A0866D;
+    -sf-purple: #746FE8;
+    -sf-purple-soft: #F1EFFF;
+    -sf-success: #18A56F;
+    -sf-success-2: #4BCD94;
+    -sf-success-soft: #E8FAF1;
+    -sf-danger: #D64B68;
+    -sf-danger-2: #EF8294;
+    -sf-danger-soft: #FFF0F3;
+    -sf-warning: #D88716;
+    -sf-warning-soft: #FFF3D7;
+    -sf-neutral: #9B856D;
     -sf-panel-strong: rgba(255,255,255,0.98);
-    -sf-panel: rgba(255,255,255,0.92);
-    -sf-panel-soft: rgba(255,231,205,0.78);
-    -sf-shadow: rgba(204,106,24,0.17);
-    -sf-shadow-soft: rgba(240,154,61,0.13);
-    -sf-shadow-neutral: rgba(45,28,16,0.10);
+    -sf-panel: rgba(255,255,255,0.94);
+    -sf-panel-soft: rgba(255,231,205,0.82);
+    -sf-shadow: rgba(204,106,24,0.14);
+    -sf-shadow-soft: rgba(240,154,61,0.12);
+    -sf-shadow-neutral: rgba(55,35,16,0.10);
 }
 
 .root {
@@ -91,6 +91,14 @@
 
 .combo-box-popup .list-cell:hover {
     -fx-background-color: -sf-accent-soft;
+    -fx-text-fill: -sf-heading;
+}
+
+.combo-box-popup .list-cell:selected,
+.combo-box-popup .list-cell:filled:selected,
+.combo-box-popup .list-cell:focused:selected {
+    -fx-background-color: linear-gradient(to right, -sf-accent-soft, -sf-surface-muted);
+    -fx-text-fill: -sf-heading;
 }
 
 .table-view,
@@ -134,8 +142,15 @@
     -fx-text-fill: -sf-text;
 }
 
-.list-cell:selected {
-    -fx-background-color: -sf-accent-soft;
+.list-cell:filled:hover {
+    -fx-background-color: -sf-surface-soft;
+    -fx-text-fill: -sf-heading;
+}
+
+.list-cell:selected,
+.list-cell:filled:selected,
+.list-cell:focused:selected {
+    -fx-background-color: linear-gradient(to right, -sf-accent-soft, -sf-surface-muted);
     -fx-text-fill: -sf-heading;
 }
 
@@ -158,15 +173,8 @@
 }
 
 .theme-switcher:hover {
-    -fx-background-color: linear-gradient(to right, -sf-accent, -sf-purple);
-}
-
-#login:hover {
-    -fx-background-color: -sf-warning;
-}
-
-#sign_in:hover {
-    -fx-background-color: -sf-panel-soft;
+    -fx-opacity: 0.88;
+    -fx-border-color: -sf-surface;
 }
 
 /* Repair: keep shared SnowFox component colors after this theme overrides .label/.button. */
@@ -194,5 +202,5 @@
 }
 
 .button.sf-btn-danger {
-    -fx-text-fill: -sf-danger;
+    -fx-text-fill: -sf-on-accent;
 }
