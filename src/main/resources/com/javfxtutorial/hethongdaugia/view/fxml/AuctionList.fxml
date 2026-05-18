@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
@@ -35,12 +36,15 @@
 
             <VBox alignment="CENTER" spacing="8.0" styleClass="sf-card-soft">
                 <Label alignment="CENTER" prefHeight="16.0" prefWidth="153.0" style="-fx-font-size: 11px; -fx-text-fill: -sf-muted; -fx-font-weight: bold;" text="LOẠI SẢN PHẨM" />
-                <ComboBox fx:id="categoryFilter" prefHeight="40.0" prefWidth="210.0" promptText="Tất cả loại" style="-fx-background-color: -sf-surface; -fx-border-color: -sf-border-soft; -fx-border-radius: 14; -fx-background-radius: 14; -fx-padding: 2 8 2 8;" />
+                <ComboBox fx:id="categoryFilter" prefHeight="40.0" prefWidth="210.0" promptText="Tất cả loại" style="-fx-background-color: -sf-surface; -fx-border-color: -sf-border-soft; -fx-border-radius: 14; -fx-background-radius: 14; -fx-padding: 2 8 2 8;">
+               <cursor>
+                  <Cursor fx:constant="DEFAULT" />
+               </cursor></ComboBox>
             </VBox>
 
             <VBox alignment="CENTER" prefHeight="234.0" prefWidth="184.0" spacing="8.0" styleClass="sf-card-soft">
                 <Label alignment="CENTER" prefHeight="16.0" prefWidth="140.0" style="-fx-font-size: 11px; -fx-text-fill: -sf-muted; -fx-font-weight: bold;" text="ĐIỀU HƯỚNG" />
-                <Button fx:id="btnHome" alignment="CENTER" contentDisplay="CENTER" nodeOrientation="LEFT_TO_RIGHT" onAction="#btnHome" prefHeight="38.0" prefWidth="234.0" style="-fx-background-color: -sf-surface; -fx-text-fill: -sf-muted; -fx-font-weight: bold; -fx-background-radius: 14; -fx-border-color: -sf-border-soft; -fx-border-radius: 14;" text="Trang chủ" />
+                <Button fx:id="btnHome" alignment="CENTER" contentDisplay="CENTER" nodeOrientation="LEFT_TO_RIGHT" onAction="#btnHome" prefHeight="38.0" prefWidth="234.0" styleClass="sf-btn-secondary" text="Trang chủ" />
                 <Button fx:id="btnmanageProducts" onAction="#manageProducts" prefHeight="39.0" prefWidth="210.0" styleClass="sf-btn-secondary" text="Quản lý sản phẩm" />
                 <Button fx:id="btnprofile" onAction="#goToProfile" prefHeight="39.0" prefWidth="210.0" styleClass="sf-btn-secondary" text="Thông tin User" />
                 <Button fx:id="logOut1" onAction="#logOut1" prefHeight="39.0" prefWidth="210.0" styleClass="sf-btn-danger" text="Đăng xuất" />
@@ -53,11 +57,11 @@
     <!-- ==================== NỘI DUNG CHÍNH ==================== -->
     <center>
         <ScrollPane fitToHeight="true" fitToWidth="true" hbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-padding: 0;">
-            <VBox prefHeight="606.0" prefWidth="1051.0" spacing="15" style="-fx-padding: 18 22 14 22; -fx-background-color: -sf-surface;">
+            <VBox prefHeight="606.0" prefWidth="1051.0" spacing="15" style="-fx-padding: 18 22 14 22; -fx-background-color: linear-gradient(to bottom right, -sf-surface, -sf-page-soft);">
 
                 <!-- Tiêu đề + Kết quả -->
                 <HBox alignment="CENTER_LEFT">
-                    <Label fx:id="sectionTitle" style="-fx-font-size: 20px; -fx-text-fill: -sf-text; -fx-font-weight: bold;" text="📋  TẤT CẢ PHIÊN ĐẤU GIÁ" />
+                    <Label fx:id="sectionTitle" styleClass="sf-section-title" text="📋  TẤT CẢ PHIÊN ĐẤU GIÁ" />
                     <Region HBox.hgrow="ALWAYS" />
                 </HBox>
 

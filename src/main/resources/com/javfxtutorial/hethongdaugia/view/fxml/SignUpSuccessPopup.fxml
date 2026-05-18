@@ -9,19 +9,19 @@
 <StackPane fx:id="rootPane" prefHeight="360.0" prefWidth="460.0" style="-fx-background-color: linear-gradient(to bottom right, -sf-page-start, -sf-surface 48%, -sf-purple-soft); -fx-background-radius: 28; -fx-border-color: -sf-border; -fx-border-radius: 28; -fx-border-width: 1.4; -fx-padding: 28;" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.SignUpSuccessPopupController">
 
     <children>
-        <Circle style="-fx-fill: -sf-accent-soft;" opacity="0.28" radius="56.0" translateX="184.0" translateY="-124.0" />
-        <Circle style="-fx-fill: -sf-surface;" opacity="0.72" radius="6.0" translateX="-132.0" translateY="-112.0" />
-        <Circle style="-fx-fill: -sf-surface;" opacity="0.70" radius="4.0" translateX="-82.0" translateY="-138.0" />
-        <Circle style="-fx-fill: -sf-surface;" opacity="0.75" radius="5.0" translateX="102.0" translateY="-118.0" />
-        <Circle style="-fx-fill: -sf-surface;" opacity="0.62" radius="3.0" translateX="142.0" translateY="-82.0" />
-        <Circle style="-fx-fill: -sf-surface;" opacity="0.64" radius="4.0" translateX="-178.0" translateY="76.0" />
-        <Circle style="-fx-fill: -sf-surface;" opacity="0.70" radius="5.0" translateX="-118.0" translateY="132.0" />
+        <Circle opacity="0.28" radius="56.0" style="-fx-fill: -sf-accent-soft;" translateX="184.0" translateY="-124.0" />
+        <Circle opacity="0.72" radius="6.0" style="-fx-fill: -sf-surface;" translateX="-132.0" translateY="-112.0" />
+        <Circle opacity="0.70" radius="4.0" style="-fx-fill: -sf-surface;" translateX="-82.0" translateY="-138.0" />
+        <Circle opacity="0.75" radius="5.0" style="-fx-fill: -sf-surface;" translateX="102.0" translateY="-118.0" />
+        <Circle opacity="0.62" radius="3.0" style="-fx-fill: -sf-surface;" translateX="142.0" translateY="-82.0" />
+        <Circle opacity="0.64" radius="4.0" style="-fx-fill: -sf-surface;" translateX="-178.0" translateY="76.0" />
+        <Circle opacity="0.70" radius="5.0" style="-fx-fill: -sf-surface;" translateX="-118.0" translateY="132.0" />
 
-        <Rectangle arcHeight="8.0" arcWidth="8.0" style="-fx-fill: -sf-warning;" height="10.0" opacity="0.86" rotate="18.0" translateX="-166.0" translateY="-48.0" width="28.0" />
-        <Rectangle arcHeight="8.0" arcWidth="8.0" style="-fx-fill: -sf-accent-2;" height="10.0" opacity="0.86" rotate="-24.0" translateX="164.0" translateY="-42.0" width="24.0" />
-        <Rectangle arcHeight="8.0" arcWidth="8.0" style="-fx-fill: -sf-accent-soft;" height="9.0" opacity="0.90" rotate="34.0" translateX="-178.0" translateY="34.0" width="22.0" />
-        <Rectangle arcHeight="8.0" arcWidth="8.0" style="-fx-fill: -sf-danger-2;" height="9.0" opacity="0.82" rotate="-18.0" translateX="182.0" translateY="54.0" width="24.0" />
-        <Rectangle arcHeight="8.0" arcWidth="8.0" style="-fx-fill: -sf-success-2;" height="9.0" opacity="0.84" rotate="28.0" translateX="-58.0" translateY="-142.0" width="24.0" />
+        <Rectangle arcHeight="8.0" arcWidth="8.0" height="10.0" opacity="0.86" rotate="18.0" style="-fx-fill: -sf-warning;" translateX="-166.0" translateY="-48.0" width="28.0" />
+        <Rectangle arcHeight="8.0" arcWidth="8.0" height="10.0" opacity="0.86" rotate="-24.0" style="-fx-fill: -sf-accent-2;" translateX="164.0" translateY="-42.0" width="24.0" />
+        <Rectangle arcHeight="8.0" arcWidth="8.0" height="9.0" opacity="0.90" rotate="34.0" style="-fx-fill: -sf-accent-soft;" translateX="-178.0" translateY="34.0" width="22.0" />
+        <Rectangle arcHeight="8.0" arcWidth="8.0" height="9.0" opacity="0.82" rotate="-18.0" style="-fx-fill: -sf-danger-2;" translateX="182.0" translateY="54.0" width="24.0" />
+        <Rectangle arcHeight="8.0" arcWidth="8.0" height="9.0" opacity="0.84" rotate="28.0" style="-fx-fill: -sf-success-2;" translateX="-58.0" translateY="-142.0" width="24.0" />
 
         <VBox alignment="CENTER" spacing="14.0">
             <padding>
@@ -29,8 +29,8 @@
             </padding>
 
             <StackPane prefHeight="92.0" prefWidth="92.0">
-                <Circle style="-fx-fill: linear-gradient(to bottom right, -sf-accent-2, -sf-purple);" radius="46.0" />
-                <Circle style="-fx-fill: -sf-surface;" opacity="0.28" radius="34.0" translateX="-8.0" translateY="-10.0" />
+                <Circle radius="46.0" style="-fx-fill: linear-gradient(to bottom right, -sf-accent-2, -sf-purple);" />
+                <Circle opacity="0.28" radius="34.0" style="-fx-fill: -sf-surface;" translateX="-8.0" translateY="-10.0" />
                 <ImageView fitHeight="90.0" fitWidth="89.0" pickOnBounds="true" preserveRatio="true">
                     <image>
                         <Image url="@../../assets/ClassicLogo.png" />
@@ -44,25 +44,25 @@
             </VBox>
 
             <HBox alignment="CENTER" spacing="10.0">
-                <Label style="-fx-background-color: -sf-panel-strong;                               -fx-background-radius: 16;                               -fx-border-color: -sf-border;                               -fx-border-radius: 16;                               -fx-padding: 7 14;                               -fx-font-size: 12px;                               -fx-font-weight: bold;                               -fx-text-fill: -sf-text;" text="Hoàn tất" />
-                <Label style="-fx-background-color: -sf-purple-soft;                               -fx-background-radius: 16;                               -fx-border-color: -sf-purple-soft;                               -fx-border-radius: 16;                               -fx-padding: 7 14;                               -fx-font-size: 12px;                               -fx-font-weight: bold;                               -fx-text-fill: -sf-purple;" text="Chào mừng" />
-                <Label style="-fx-background-color: -sf-success-soft;                               -fx-background-radius: 16;                               -fx-border-color: -sf-success-soft;                               -fx-border-radius: 16;                               -fx-padding: 7 14;                               -fx-font-size: 12px;                               -fx-font-weight: bold;                               -fx-text-fill: -sf-success;" text="Sẵn sàng" />
+                <Label style="-fx-background-color: -sf-panel-strong;                               -fx-background-radius: 16;                               -fx-border-color: -sf-border;                               -fx-border-radius: 16;                               -fx-padding: 7 14;                               -fx-font-size: 12px;                               -fx-font-weight: bold;                               -fx-text-fill: -sf-text;" text="Tiến Bộ" />
+                <Label style="-fx-background-color: -sf-purple-soft;                               -fx-background-radius: 16;                               -fx-border-color: -sf-purple-soft;                               -fx-border-radius: 16;                               -fx-padding: 7 14;                               -fx-font-size: 12px;                               -fx-font-weight: bold;                               -fx-text-fill: -sf-purple;" text="Vươn Mình" />
+                <Label style="-fx-background-color: -sf-success-soft;                               -fx-background-radius: 16;                               -fx-border-color: -sf-success-soft;                               -fx-border-radius: 16;                               -fx-padding: 7 14;                               -fx-font-size: 12px;                               -fx-font-weight: bold;                               -fx-text-fill: -sf-success;" text="Đột Phá" />
             </HBox>
 
             <Region prefHeight="2.0" />
 
             <HBox alignment="CENTER" spacing="7.0">
-                <Circle style="-fx-fill: -sf-accent-2;" radius="4.0" />
-                <Circle style="-fx-fill: -sf-accent-soft;" radius="4.0" />
-                <Circle style="-fx-fill: -sf-purple-soft;" radius="4.0" />
-                <Circle style="-fx-fill: -sf-success-2;" radius="4.0" />
+                <Circle radius="4.0" style="-fx-fill: -sf-accent-2;" />
+                <Circle radius="4.0" style="-fx-fill: -sf-accent-soft;" />
+                <Circle radius="4.0" style="-fx-fill: -sf-purple-soft;" />
+                <Circle radius="4.0" style="-fx-fill: -sf-success-2;" />
             </HBox>
         </VBox>
 
         <Pane fx:id="confettiLayer" mouseTransparent="true" pickOnBounds="false" prefHeight="360.0" prefWidth="460.0">
          <children>
-              <Circle style="-fx-fill: -sf-purple-soft;" layoutX="293.0" layoutY="273.0" opacity="0.22" radius="78.0" />
-              <Circle style="-fx-fill: -sf-accent-2;" layoutX="76.0" layoutY="20.0" opacity="0.20" radius="74.0" />
+              <Circle layoutX="293.0" layoutY="273.0" opacity="0.22" radius="78.0" style="-fx-fill: -sf-purple-soft;" />
+              <Circle layoutX="76.0" layoutY="20.0" opacity="0.20" radius="74.0" style="-fx-fill: -sf-accent-2;" />
          </children></Pane>
     </children>
 </StackPane>

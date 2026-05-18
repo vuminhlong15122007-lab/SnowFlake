@@ -4,7 +4,7 @@
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="164.0" prefWidth="900.0" style="-fx-background-color: -sf-surface; -fx-border-color: -sf-border-muted; -fx-border-radius: 12; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, -sf-shadow-neutral, 8, 0, 0, 2);" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AuctionSessionController">
+<AnchorPane prefHeight="164.0" prefWidth="900.0" styleClass="sf-card" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AuctionSessionController">
 
     <HBox alignment="CENTER_LEFT" spacing="20.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
 
@@ -16,11 +16,11 @@
         <!-- ==================== THÔNG TIN CHÍNH ==================== -->
         <VBox prefHeight="147.0" prefWidth="300.0" spacing="10.0" HBox.hgrow="ALWAYS">
             <HBox alignment="CENTER_LEFT" spacing="8.0">
-                <Label fx:id="lbCategory" style="-fx-background-color: linear-gradient(to right, -sf-page-start, -sf-surface); -fx-background-radius: 12; -fx-border-color: -sf-border; -fx-border-radius: 12; -fx-padding: 3 10; -fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: -sf-accent;" text="Loại sản phẩm" />
+                <Label fx:id="lbCategory" styleClass="sf-chip" text="Loại sản phẩm" />
             </HBox>
 
             <!-- Tên sản phẩm -->
-            <Label fx:id="lbProductName" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to right, -sf-purple, -sf-accent);" text="Toyota Camry 2022" />
+            <Label fx:id="lbProductName" style="-fx-font-size: 20px;" styleClass="sf-section-title" text="Toyota Camry 2022" />
 
             <!-- Chi tiết sản phẩm -->
             <HBox alignment="CENTER_LEFT" spacing="5.0">

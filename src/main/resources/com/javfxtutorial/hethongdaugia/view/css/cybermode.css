@@ -1,39 +1,39 @@
 .root {
-    -sf-page-start: #EAF8FF;
+    -sf-page-start: #EAF7FF;
     -sf-page-end: #FFFFFF;
-    -sf-page-soft: #EEF3FF;
+    -sf-page-soft: #F7FBFF;
     -sf-surface: #FFFFFF;
     -sf-surface-soft: #FAFCFF;
-    -sf-surface-raised: #E4F3FF;
-    -sf-surface-muted: #DFE8FF;
-    -sf-border: #8AC8F5;
-    -sf-border-soft: #C4DDF7;
-    -sf-border-muted: #E4EFFB;
-    -sf-text: #1D304A;
-    -sf-heading: #08213F;
-    -sf-muted: #5C718B;
-    -sf-subtle: #7C8FA5;
+    -sf-surface-raised: #E1F0FF;
+    -sf-surface-muted: #E3E7FF;
+    -sf-border: #9DC6F0;
+    -sf-border-soft: #C7DDF5;
+    -sf-border-muted: #E6F0FA;
+    -sf-text: #23354D;
+    -sf-heading: #102947;
+    -sf-muted: #5F728A;
+    -sf-subtle: #7E93AA;
     -sf-on-accent: #FFFFFF;
-    -sf-accent: #0B72E7;
-    -sf-accent-2: #6D5DF6;
-    -sf-accent-soft: #DFEEFF;
-    -sf-purple: #6D28D9;
-    -sf-purple-soft: #F0E9FF;
-    -sf-success: #22A874;
-    -sf-success-2: #55CF99;
+    -sf-accent: #126FE8;
+    -sf-accent-2: #7B6DF2;
+    -sf-accent-soft: #E0EEFF;
+    -sf-purple: #725CF0;
+    -sf-purple-soft: #F0EDFF;
+    -sf-success: #18A873;
+    -sf-success-2: #4CCF9A;
     -sf-success-soft: #E8FAF1;
-    -sf-danger: #D65076;
-    -sf-danger-2: #EF84A2;
-    -sf-danger-soft: #FFF0F4;
-    -sf-warning: #D3951F;
-    -sf-warning-soft: #FFF4DA;
-    -sf-neutral: #8299B3;
+    -sf-danger: #D64B68;
+    -sf-danger-2: #EF8294;
+    -sf-danger-soft: #FFF0F3;
+    -sf-warning: #D59020;
+    -sf-warning-soft: #FFF4D9;
+    -sf-neutral: #7E96B2;
     -sf-panel-strong: rgba(255,255,255,0.98);
-    -sf-panel: rgba(255,255,255,0.92);
-    -sf-panel-soft: rgba(226,241,255,0.78);
-    -sf-shadow: rgba(11,114,231,0.20);
-    -sf-shadow-soft: rgba(109,93,246,0.14);
-    -sf-shadow-neutral: rgba(11,36,66,0.10);
+    -sf-panel: rgba(255,255,255,0.94);
+    -sf-panel-soft: rgba(225,240,255,0.82);
+    -sf-shadow: rgba(18,111,232,0.15);
+    -sf-shadow-soft: rgba(123,109,242,0.12);
+    -sf-shadow-neutral: rgba(16,41,71,0.10);
 }
 
 .root {
@@ -91,6 +91,14 @@
 
 .combo-box-popup .list-cell:hover {
     -fx-background-color: -sf-accent-soft;
+    -fx-text-fill: -sf-heading;
+}
+
+.combo-box-popup .list-cell:selected,
+.combo-box-popup .list-cell:filled:selected,
+.combo-box-popup .list-cell:focused:selected {
+    -fx-background-color: linear-gradient(to right, -sf-accent-soft, -sf-surface-muted);
+    -fx-text-fill: -sf-heading;
 }
 
 .table-view,
@@ -134,8 +142,15 @@
     -fx-text-fill: -sf-text;
 }
 
-.list-cell:selected {
-    -fx-background-color: -sf-accent-soft;
+.list-cell:filled:hover {
+    -fx-background-color: -sf-surface-soft;
+    -fx-text-fill: -sf-heading;
+}
+
+.list-cell:selected,
+.list-cell:filled:selected,
+.list-cell:focused:selected {
+    -fx-background-color: linear-gradient(to right, -sf-accent-soft, -sf-surface-muted);
     -fx-text-fill: -sf-heading;
 }
 
@@ -158,15 +173,8 @@
 }
 
 .theme-switcher:hover {
-    -fx-background-color: linear-gradient(to right, -sf-accent, -sf-purple);
-}
-
-#login:hover {
-    -fx-background-color: -sf-warning;
-}
-
-#sign_in:hover {
-    -fx-background-color: -sf-panel-soft;
+    -fx-opacity: 0.88;
+    -fx-border-color: -sf-surface;
 }
 
 /* Repair: keep shared SnowFox component colors after this theme overrides .label/.button. */
@@ -194,7 +202,7 @@
 }
 
 .button.sf-btn-danger {
-    -fx-text-fill: -sf-danger;
+    -fx-text-fill: -sf-on-accent;
 }
 
 /* Theme-only contrast tuning: keep the SnowFox gradient, but make it readable on Cyber headers. */

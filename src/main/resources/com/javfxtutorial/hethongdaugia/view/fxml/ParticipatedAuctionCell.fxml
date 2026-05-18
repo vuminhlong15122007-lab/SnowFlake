@@ -5,7 +5,7 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 
-<AnchorPane prefHeight="152.0" prefWidth="896.0" style="-fx-background-color: linear-gradient(to bottom right, -sf-surface, -sf-surface-raised); -fx-border-color: -sf-accent; -fx-border-radius: 12; -fx-background-radius: 12; -fx-effect: dropshadow(gaussian, -sf-shadow-neutral, 8, 0, 0, 2);" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.ParticipatedAuctionCellController">
+<AnchorPane prefHeight="152.0" prefWidth="896.0" styleClass="sf-card" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.ParticipatedAuctionCellController">
 
     <HBox alignment="CENTER_LEFT" spacing="20.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
 
@@ -17,9 +17,9 @@
         <!-- THÔNG TIN CHÍNH -->
         <VBox prefHeight="148.0" prefWidth="220.0" spacing="8.0" HBox.hgrow="ALWAYS">
             <HBox alignment="CENTER_LEFT" spacing="8">
-                <Label fx:id="lbCategory" style="-fx-background-color: -sf-shadow-soft; -fx-background-radius: 12; -fx-padding: 4 10; -fx-text-fill: -sf-accent; -fx-font-size: 11px; -fx-font-weight: bold;" text="Loại sản phẩm" />
+                <Label fx:id="lbCategory" styleClass="sf-chip" text="Loại sản phẩm" />
             </HBox>
-            <Label fx:id="lbProductName" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: linear-gradient(to bottom right, -sf-accent , -sf-purple);;" text="Tên sản phẩm" />
+            <Label fx:id="lbProductName" style="-fx-font-size: 20px;" styleClass="sf-section-title" text="Tên sản phẩm" />
             <HBox alignment="CENTER_LEFT" prefHeight="50.0" prefWidth="207.0" spacing="6" style="-fx-background-color: -sf-panel; -fx-background-radius: 16; -fx-border-color: -sf-accent; -fx-border-radius: 16; -fx-padding: 7 11;">
                 <Label style="-fx-font-size: 13px; -fx-text-fill: -sf-warning;" text="👑" />
                 <VBox spacing="0">

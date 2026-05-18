@@ -123,23 +123,29 @@ public final class ThemeManager {
         }
 
         Button switcher = createSwitcher();
-        if (root instanceof BorderPane borderPane && borderPane.getTop() instanceof HBox topBar) {
-            ensureFlexibleSpacer(topBar);
-            topBar.getChildren().add(switcher);
-        } else if (root instanceof StackPane stackPane) {
+        if (root instanceof StackPane stackPane) {
+            addSwitcherOverlay(stackPane, switcher);
+        } else if (root instanceof BorderPane borderPane) {
+            StackPane wrapper = new StackPane(borderPane);
+            wrapper.setPrefSize(borderPane.getPrefWidth(), borderPane.getPrefHeight());
+            scene.setRoot(wrapper);
+            addSwitcherOverlay(wrapper, switcher);
+        }
+    }
+
+    private static void addSwitcherOverlay(StackPane stackPane, Button switcher) {
         HBox shell = new HBox(switcher);
         shell.setId(SWITCHER_SHELL_ID);
         shell.getStyleClass().add("theme-switcher-shell");
-        shell.setAlignment(Pos.TOP_RIGHT);
+        shell.setAlignment(Pos.BOTTOM_RIGHT);
         shell.setPickOnBounds(false);
 
         shell.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
         shell.setMaxSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
 
-        StackPane.setAlignment(shell, Pos.TOP_RIGHT);
-        StackPane.setMargin(shell, new Insets(14, 18, 0, 0));
+        StackPane.setAlignment(shell, Pos.BOTTOM_RIGHT);
+        StackPane.setMargin(shell, new Insets(0, 18, 18, 0));
         stackPane.getChildren().add(shell);
-    }
     }
 
     private static boolean isApplicationScreenRoot(Parent root) {
@@ -154,9 +160,12 @@ public final class ThemeManager {
         switcher.setId(SWITCHER_ID);
         switcher.setMnemonicParsing(false);
         switcher.setFocusTraversable(false);
-        switcher.setMinWidth(68);
-        switcher.setPrefWidth(86);
-        switcher.setMaxWidth(98);
+        switcher.setMinWidth(28);
+        switcher.setPrefWidth(28);
+        switcher.setMaxWidth(28);
+        switcher.setMinHeight(28);
+        switcher.setPrefHeight(28);
+        switcher.setMaxHeight(28);
         switcher.getStyleClass().add("theme-switcher");
         switcher.setTooltip(new Tooltip("Change color mode: Light, Frost, Ocean, Mint, Aurora, Royal, Lavender, Blossom, Sunset, Ember, Forest, Graphite, Cyber, Dark"));
         switcher.setOnAction(_ -> {
@@ -169,7 +178,8 @@ public final class ThemeManager {
     }
 
     private static void updateSwitcher(Button switcher) {
-        switcher.setText(currentMode.label());
+        switcher.setText("");
+        switcher.setTooltip(new Tooltip("Color mode: " + currentMode.label()));
         switcher.getStyleClass().removeAll(ColorMode.styleClasses());
         switcher.getStyleClass().add(currentMode.styleClass());
     }
