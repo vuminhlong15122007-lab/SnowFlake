@@ -123,7 +123,7 @@
 
                   <Label fx:id="roleLabel" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: -sf-text;" text="Vai trò" GridPane.columnIndex="0" GridPane.rowIndex="3" />
                   <HBox alignment="CENTER_LEFT" spacing="8.0" GridPane.columnIndex="1" GridPane.rowIndex="3">
-                     <Label style="-fx-background-color: -sf-warning-soft; -fx-text-fill: -sf-accent; -fx-font-weight: bold; -fx-padding: 8 14 8 14; -fx-background-radius: 999; -fx-border-color: -sf-warning; -fx-border-radius: 999;" text="Bidder / Seller" />
+                     <Label styleClass="sf-role-badge" text="Bidder / Seller" />
                   </HBox>
                </GridPane>
 

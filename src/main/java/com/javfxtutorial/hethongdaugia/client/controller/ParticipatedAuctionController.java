@@ -106,6 +106,7 @@ public class ParticipatedAuctionController implements  ResponseListener {
       setActiveButton(btnDaThamGia);
       applyFilters();
     });
+    setActiveButton(btnAll);
     loadData();
   }
 
@@ -142,13 +143,14 @@ public class ParticipatedAuctionController implements  ResponseListener {
 
 
 
-  // Đổi màu nút đang active
+  // Đổi nút đang active bằng CSS class để không phá theme khi đổi màu
   private void setActiveButton(Button active) {
     Button[] buttons = {btnAll, btnCTToan, btnDTGia, btnDTToan, btnDaHuy, btnDaThamGia};
-    String activeStyle = "-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15;";
-    String inactiveStyle = "-fx-background-color: white; -fx-text-fill: #7f8c8d; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15; -fx-border-color: #dcdde1; -fx-border-radius: 8;";
     for (Button b : buttons) {
-      b.setStyle(b == active ? activeStyle : inactiveStyle);
+      if (b == null) continue;
+      b.setStyle("");
+      b.getStyleClass().removeAll("sf-filter-button", "sf-filter-button-active");
+      b.getStyleClass().add(b == active ? "sf-filter-button-active" : "sf-filter-button");
     }
   }
 

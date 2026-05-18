@@ -55,7 +55,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
             timer.setOnFinished(() -> {
                 // Khi hết giờ, đổi badge sang đỏ
                 if (lbTime != null) {
-                    lbTime.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #e74c3c;");
+                    lbTime.setStyle("-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: -sf-danger;");
                 }
                 if (auction.getStatus() == AuctionStatus.RUNNING) { //hết countdown running → chuyển CLOSED
                     auction.setStatus(AuctionStatus.CLOSED);
@@ -178,7 +178,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
                 if (actionButton != null) {
                     actionButton.setDisable(false);
                     actionButton.setText("THAM GIA");
-                    actionButton.setStyle("-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed);" + "-fx-text-fill: white; -fx-font-weight: bold;" + "-fx-background-radius: 25; -fx-cursor: hand;");
+                    setActionButtonClass("sf-auction-action-primary");
                 }
                 break;
 
@@ -189,10 +189,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
                 if (auction.getWinnerId() == userId) {
                     actionButton.setDisable(false);
                     actionButton.setText("THANH TOÁN");
-                    actionButton.setStyle(
-                            "-fx-background-color: linear-gradient(to right, #e74c3c, #f39c12);" +
-                                    "-fx-text-fill: white; -fx-font-weight: bold;" +
-                                    "-fx-background-radius: 25; -fx-cursor: hand;");
+                    setActionButtonClass("sf-auction-action-warning");
                     LocalDateTime deadline = (auction.getEndingTime() != null)
                             ? auction.getEndingTime().plusHours(24)
                             : LocalDateTime.now().plusHours(24);
@@ -201,9 +198,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
                     hideCountdown();
                     actionButton.setDisable(true);
                     actionButton.setText("ĐÃ KẾT THÚC");
-                    actionButton.setStyle(
-                            "-fx-background-color: #7f8c8d; -fx-text-fill: white;" +
-                                    "-fx-font-weight: bold; -fx-background-radius: 25;");
+                    setActionButtonClass("sf-auction-action-neutral");
                 }
                 break;
 
@@ -214,9 +209,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
                 if (actionButton != null) {
                     actionButton.setDisable(true);
                     actionButton.setText("ĐÃ HỦY");
-                    actionButton.setStyle(
-                            "-fx-background-color: #bdc3c7; -fx-text-fill: white;" +
-                                    "-fx-font-weight: bold; -fx-background-radius: 25;");
+                    setActionButtonClass("sf-auction-action-danger");
                 }
                 break;
 
@@ -229,7 +222,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
                 if (actionButton != null) {
                     actionButton.setDisable(true);
                     actionButton.setText("ĐÃ THANH TOÁN");
-                    actionButton.setStyle("-fx-background-color: #27ae60; -fx-text-fill: white;" + "-fx-font-weight: bold; -fx-background-radius: 25;");
+                    setActionButtonClass("sf-auction-action-success");
                 }
                 lbTime = null;
                 break;
@@ -238,6 +231,19 @@ public class ParticipatedAuctionCellController implements ResponseListener {
                 hideCountdown();
                 break;
         }
+    }
+
+    private void setActionButtonClass(String styleClass) {
+        if (actionButton == null) return;
+        actionButton.setStyle("");
+        actionButton.getStyleClass().removeAll(
+                "sf-auction-action-primary",
+                "sf-auction-action-warning",
+                "sf-auction-action-neutral",
+                "sf-auction-action-success",
+                "sf-auction-action-danger"
+        );
+        actionButton.getStyleClass().add(styleClass);
     }
 
     @Override

@@ -11,7 +11,7 @@
 
         <AnchorPane maxHeight="556.0" maxWidth="985.0" prefHeight="556.0" prefWidth="985.0">
             <children>
-                <VBox alignment="CENTER" layoutX="50.0" layoutY="92.0" prefHeight="164.0" prefWidth="330.0" spacing="14.0" styleClass="sf-auth-brand">
+                <VBox alignment="CENTER" layoutX="50.0" layoutY="92.0" prefHeight="187.0" prefWidth="349.0" spacing="14.0" styleClass="sf-auth-brand">
                     <children>
                         <HBox alignment="CENTER">
                             <children>
@@ -38,9 +38,9 @@
                             <Button fx:id="togglePassword" onAction="#togglePasswordVisibility" prefHeight="26.0" prefWidth="32.0" styleClass="sf-icon-button" text="👁" StackPane.alignment="CENTER_RIGHT" />
                         </StackPane>
 
-                        <Button fx:id="login" onAction="#clickLogin" prefHeight="40.0" prefWidth="220.0" styleClass="sf-btn-primary" text="Đăng nhập" />
+                        <Button fx:id="login" onAction="#clickLogin" prefHeight="40.0" prefWidth="200.0" styleClass="sf-btn-primary" text="Đăng nhập" />
 
-                        <Button id="sign_in" fx:id="sign_in" onAction="#clickCreateAccount" prefHeight="35.0" prefWidth="220.0" styleClass="sf-btn-secondary" text="Tạo tài khoản mới" />
+                        <Button id="sign_in" fx:id="sign_in" onAction="#clickCreateAccount" prefHeight="40.0" prefWidth="200.0" styleClass="sf-btn-secondary" text="Tạo tài khoản mới" />
 
                         <Label fx:id="message" alignment="CENTER" prefHeight="18.0" prefWidth="272.0" style="-fx-text-fill: -sf-danger;" textAlignment="CENTER" />
                     </children>

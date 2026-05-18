@@ -1,10 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane prefHeight="164.0" prefWidth="900.0" styleClass="sf-card" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AuctionSessionController">
+<AnchorPane prefHeight="164.0" prefWidth="900.0" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AuctionSessionController">
+    <styleClass>
+        <String fx:value="sf-card" />
+        <String fx:value="sf-auction-cell" />
+    </styleClass>
 
     <HBox alignment="CENTER_LEFT" spacing="20.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
 
@@ -46,10 +51,10 @@
 
         <!-- ==================== NÚT HÀNH ĐỘNG ==================== -->
         <VBox alignment="CENTER" prefWidth="140.0" spacing="10.0">
-            <Button fx:id="actionButton" alignment="CENTER" onAction="#clickToGoToLiveAuction" prefHeight="40.0" prefWidth="140.0" style="-fx-background-color: -sf-neutral; -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-font-size: 13px; -fx-background-radius: 25;" text="ĐÃ KẾT THÚC" />
+            <Button fx:id="actionButton" alignment="CENTER" onAction="#clickToGoToLiveAuction" prefHeight="40.0" prefWidth="140.0" style="-fx-background-color: linear-gradient(to right, #94A3B8, #475569); -fx-text-fill: #FFFFFF; -fx-font-size: 13px; -fx-font-weight: bold; -fx-background-radius: 18; -fx-border-radius: 18; -fx-border-color: rgba(255,255,255,0.46); -fx-opacity: 1.0;" styleClass="sf-auction-action-neutral" text="ĐÃ KẾT THÚC" />
         </VBox>
 
     </HBox>
       <!-- Tag trạng thái ĐÃ KẾT THÚC (màu xám) -->
-      <Label fx:id="statusBadge" layoutY="4.0" style="-fx-background-color: -sf-danger; -fx-text-fill: -sf-on-accent; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 4 10; -fx-background-radius: 8;" text="ĐÃ KẾT THÚC" />
+      <Label fx:id="statusBadge" layoutX="12.0" layoutY="8.0" style="-fx-background-color: linear-gradient(to right, #FB7185, #E11D48); -fx-text-fill: #FFFFFF; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 4 10 4 10; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: rgba(255,255,255,0.56); -fx-border-width: 1; -fx-opacity: 1.0;" styleClass="sf-status-badge sf-status-ended" text="ĐÃ KẾT THÚC" />
 </AnchorPane>

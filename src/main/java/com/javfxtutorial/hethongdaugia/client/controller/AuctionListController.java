@@ -144,13 +144,9 @@ public class AuctionListController implements ResponseListener {
         Button[] buttons = {btnAll, btnUpcoming, btnRunning, btnEnded};
         for (Button b : buttons) {
             if (b == null) continue;
-            b.getStyleClass().remove("sf-filter-button-active");
-            if (!b.getStyleClass().contains("sf-filter-button")) {
-                b.getStyleClass().add("sf-filter-button");
-            }
-            if (b == active) {
-                b.getStyleClass().add("sf-filter-button-active");
-            }
+            b.setStyle("");
+            b.getStyleClass().removeAll("sf-filter-button", "sf-filter-button-active");
+            b.getStyleClass().add(b == active ? "sf-filter-button-active" : "sf-filter-button");
         }
     }
 
