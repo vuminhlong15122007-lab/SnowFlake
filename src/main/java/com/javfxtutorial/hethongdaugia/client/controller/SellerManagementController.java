@@ -20,7 +20,9 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -32,7 +34,8 @@ import javafx.stage.Popup;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -42,10 +45,7 @@ import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
@@ -115,7 +115,6 @@ public class SellerManagementController implements ResponseListener {
 
         //Lấy xong dữ liệu người dùng nhập vào
         int sellerId = ClientModel.getInstance().getCurrentUser().getId();
-
         int itemId;
         if (selectedAuction == null){
             itemId = 0;
@@ -279,7 +278,7 @@ public class SellerManagementController implements ResponseListener {
                         throw new RuntimeException(e);
                     }
                 });
-                // Khi chon sp CLOSED/PAID/CANCELLED -> them vao danh sach thong bao chuong (khong showAlert rieng)
+                //  tbao den ng ban
                 AuctionStatus st = newVal.getStatus();
                 if (st == AuctionStatus.CLOSED || st == AuctionStatus.PAID || st == AuctionStatus.CANCELLED) {
                     SellerNotification.Type type = switch (st) {
@@ -287,34 +286,22 @@ public class SellerManagementController implements ResponseListener {
                         case PAID      -> SellerNotification.Type.PAID;
                         default        -> SellerNotification.Type.CANCELLED;
                     };
-                    String pName = (newVal.getItem() != null) ? newVal.getItem().getName() : String.valueOf(newVal.getAuctionId());
-                    String wName = (newVal.getWinnerName() != null) ? newVal.getWinnerName() : "N/A";
-                    SellerNotification notif = new SellerNotification(
-                            newVal.getAuctionId(), type, pName, wName, newVal.getWinningPrice());
+                    String pName = newVal.getItem().getName() ;
+                    String wName = newVal.getWinnerName() ;
+                    SellerNotification notif = new SellerNotification( newVal.getAuctionId(), type, pName, wName, newVal.getWinningPrice());
                     // Chi giu 1 thong bao moi nhat cho moi auction (PAID > CANCELLED > CLOSED)
-                    java.util.Optional<SellerNotification> existing1 = notifications.stream()
-                            .filter(n -> n.getAuctionId() == notif.getAuctionId()).findFirst();
-                    if (existing1.isPresent()) {
-                        if (priority(notif.getType()) > priority(existing1.get().getType())) {
-                            notifications.remove(existing1.get());
-                            notifications.add(0, notif);
-                        }
-                    } else {
-                        notifications.add(0, notif);
-                    }
+                    addOrReplaceNotification( notif);
                 }
             }
         });
 
-        // Phai gan notifications truoc loadMyProducts de response handler dung duoc ngay
         notifications = ClientModel.getInstance().getSellerNotifications();
         buildNotificationPopup();
         loadMyProducts();  // Tải danh sách ban đùa của server ứng với IDserver ng dùng đăng nhập và đổ vào obs
         updateBadge();
 
         // Lắng nghe thông báo mới đẩy từ server (CLOSED/PAID/CANCELLED)
-        NetworkManager.getInstance().register(
-                com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand.class, this);
+        NetworkManager.getInstance().register( UpdateAuctionStatusCommand.class, this);
 
         // Khi list thông báo thay đổi (notification mới đến) → tự cập nhật badge
         notifications.addListener((javafx.collections.ListChangeListener<SellerNotification>) change -> {
@@ -324,8 +311,24 @@ public class SellerManagementController implements ResponseListener {
 
 
     }
+    private void addOrReplaceNotification(SellerNotification notif) {
+        SellerNotification existing = null;
+        for (SellerNotification n : notifications) {
+            if (n.getAuctionId() == notif.getAuctionId()) {
+                existing = n;
+                break;
+            }
+        }
 
-    /** Uu tien hien thi: PAID(2) > CANCELLED(1) > CLOSED(0) */
+        if (existing == null) {
+            notifications.add(0, notif);
+        } else if (priority(notif.getType()) > priority(existing.getType())) {
+            notifications.remove(existing);
+            notifications.add(0, notif);
+        }
+    }
+
+  // thuws tu uu tien
     private static int priority(SellerNotification.Type type) {
         return switch (type) {
             case PAID      -> 2;
@@ -336,9 +339,8 @@ public class SellerManagementController implements ResponseListener {
 
     private void buildNotificationPopup() {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/com/javfxtutorial/hethongdaugia/view/fxml/NotifiCationPopup.fxml"));
-            javafx.scene.layout.VBox popupRoot = loader.load();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/NotifiCationPopup.fxml"));
+            VBox popupRoot = loader.load();
             popupController = loader.getController();
             // Khi user đánh dấu đã đọc → cập nhật badge ngay
             popupController.setOnMarkRead(notif -> Platform.runLater(this::updateBadge));
@@ -350,13 +352,17 @@ public class SellerManagementController implements ResponseListener {
         }
     }
 
-    /** Cập nhật số đỏ trên chuông — đếm từ `notifications`. */
+    //cap nhat so do tren chuong
     private void updateBadge() {
         if (badgeLabel == null) return;
-        long unread = notifications.stream().filter(n -> !n.isRead()).count();
+        int unread = 0 ;
+        for (SellerNotification n : notifications) {
+            if (!n.isRead()) { unread++;}
+        }
+        final int count = unread;
         Platform.runLater(() -> {
-            if (unread > 0) {
-                badgeLabel.setText(unread > 99 ? "99+" : String.valueOf(unread));
+            if (count > 0) {
+                badgeLabel.setText((count > 99) ? "99+" : String.valueOf(count));
                 badgeLabel.setVisible(true);
                 // badgePane tùy chọn — hiện nếu có
                 if (badgePane != null) badgePane.setVisible(true);
@@ -367,134 +373,23 @@ public class SellerManagementController implements ResponseListener {
         });
     }
 
-    /** Nhấn chuông → show/hide popup. */
+
+
     @FXML
     public void openNotifications(MouseEvent event) {
-        if (notificationPopup == null || popupController == null) {
-            showFallbackNotifications();
-            return;
+        try {
+            Node source = (Node) event.getSource();
+            Stage stage = (Stage) source.getScene().getWindow();
+            FXMLLoader loader = new FXMLLoader(getClass().getResource(
+                    "/com/javfxtutorial/hethongdaugia/view/fxml/NotificationCellPopup.fxml"));
+            Parent root = loader.load();
+            stage.getScene().setRoot(root);
+        } catch (IOException e) {
+            log.error("Không mở được màn thông báo: {}", e.getMessage());
         }
-
-        // Nếu popup đang hiển thị → đóng
-        if (notificationPopup.isShowing()) {
-            notificationPopup.hide();
-            return;
-        }
-
-        // QUAN TRỌNG: Luôn load lại dữ liệu trước khi hiển thị
-        popupController.loadNotifications(notifications);
-
-        // Hiển thị popup — dùng source node từ event để tránh NPE khi bellPane null
-        javafx.scene.Node sourceNode = (javafx.scene.Node) event.getSource();
-        Stage stage = (Stage) sourceNode.getScene().getWindow();
-        javafx.geometry.Bounds bounds = sourceNode.localToScreen(sourceNode.getBoundsInLocal());
-        notificationPopup.show(stage, bounds.getMinX() - 260, bounds.getMaxY() + 6);
     }
 
-    /** Hiện thông báo bằng Dialog — mới nhất lên đầu, chưa đọc in đậm */
-    private void showFallbackNotifications() {
 
-        long unreadCount = notifications.stream().filter(n -> !n.isRead()).count();
-
-        javafx.scene.layout.VBox content = new javafx.scene.layout.VBox(8);
-        content.setPadding(new javafx.geometry.Insets(12));
-
-        // Header: tổng số chưa đọc
-        Label header = new Label(unreadCount > 0
-                ? "🔔 Bạn có " + unreadCount + " thông báo chưa đọc"
-                : "✅ Tất cả đã đọc");
-        header.setStyle(
-                "-fx-font-size: 13px; -fx-font-weight: bold;"
-                        + "-fx-text-fill: " + (unreadCount > 0 ? "#c0392b" : "#27ae60") + ";"
-                        + "-fx-padding: 0 0 8 0;"
-        );
-        content.getChildren().add(header);
-
-        // Separator
-        javafx.scene.control.Separator sep = new javafx.scene.control.Separator();
-        content.getChildren().add(sep);
-
-        // Thông báo — đã add(0,...) nên index 0 là mới nhất, giữ nguyên thứ tự
-        for (SellerNotification n : notifications) {
-            String color, bgColor, border;
-            switch (n.getType()) {
-                case CLOSED -> {
-                    color   = n.isRead() ? "#888888" : "#145a32";
-                    bgColor = n.isRead() ? "#f9f9f9" : "#eafaf1";
-                    border  = n.isRead() ? "#cccccc" : "#27ae60";
-                }
-                case PAID -> {
-                    color   = n.isRead() ? "#888888" : "#154360";
-                    bgColor = n.isRead() ? "#f9f9f9" : "#eaf2ff";
-                    border  = n.isRead() ? "#cccccc" : "#2980b9";
-                }
-                default -> {
-                    color   = n.isRead() ? "#888888" : "#922b21";
-                    bgColor = n.isRead() ? "#f9f9f9" : "#fef9f9";
-                    border  = n.isRead() ? "#cccccc" : "#e74c3c";
-                }
-            }
-
-            Label lbl = new Label(n.getMessage());
-            lbl.setWrapText(true);
-            lbl.setMaxWidth(410);
-            lbl.setStyle(
-                    "-fx-font-size: 12px;"
-                            + "-fx-text-fill: " + color + ";"
-                            + (n.isRead() ? "" : "-fx-font-weight: bold;")
-                            + "-fx-background-color: " + bgColor + ";"
-                            + "-fx-background-radius: 10;"
-                            + "-fx-border-color: " + border + ";"
-                            + "-fx-border-width: 0 0 0 4;"
-                            + "-fx-border-radius: 0 10 10 0;"
-                            + "-fx-padding: 10 12 10 12;"
-                            + "-fx-cursor: hand;"
-            );
-
-            final SellerNotification notif = n;
-            lbl.setOnMouseClicked(e -> {
-                if (!notif.isRead()) {
-                    notif.setRead(true);
-                    lbl.setStyle(
-                            "-fx-font-size: 12px; -fx-text-fill: #888888;"
-                                    + "-fx-background-color: #f9f9f9;"
-                                    + "-fx-background-radius: 10;"
-                                    + "-fx-border-color: #cccccc;"
-                                    + "-fx-border-width: 0 0 0 4;"
-                                    + "-fx-border-radius: 0 10 10 0;"
-                                    + "-fx-padding: 10 12 10 12;"
-                    );
-                    // Cập nhật header
-                    long remaining = notifications.stream().filter(nn -> !nn.isRead()).count();
-                    header.setText(remaining > 0
-                            ? "🔔 Bạn có " + remaining + " thông báo chưa đọc"
-                            : "✅ Tất cả đã đọc");
-                    header.setStyle(
-                            "-fx-font-size: 13px; -fx-font-weight: bold;"
-                                    + "-fx-text-fill: " + (remaining > 0 ? "#c0392b" : "#27ae60") + ";"
-                                    + "-fx-padding: 0 0 8 0;"
-                    );
-                    updateBadge();
-                }
-                e.consume();
-            });
-
-            content.getChildren().add(lbl);
-        }
-
-        ScrollPane scroll = new ScrollPane(content);
-        scroll.setFitToWidth(true);
-        scroll.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
-        scroll.setPrefHeight(Math.min(notifications.size() * 95.0 + 60, 480));
-
-        Dialog<Void> dialog = new Dialog<>();
-        dialog.setTitle("Thông báo phiên đấu giá");
-        dialog.getDialogPane().setContent(scroll);
-        dialog.getDialogPane().getButtonTypes().add(ButtonType.CLOSE);
-        dialog.getDialogPane().setPrefWidth(480);
-        dialog.showAndWait();
-        updateBadge();
-    }
 
 
 
@@ -797,38 +692,31 @@ public class SellerManagementController implements ResponseListener {
             });
         }
 
-        // Khi server push UpdateAuctionStatusCommand voi payload la Auction (CLOSED/PAID/CANCELLED)
-        // -> tu tao SellerNotification de hien thi trong danh sach chuong
-        if (rp.getCommand().getClass() == com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand.class
+
+        if (rp.getCommand().getClass().equals(UpdateAuctionStatusCommand.class)
                 && rp.getPayLoad() instanceof Auction auction) {
-            com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus status = auction.getStatus();
-            if (status == com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus.CLOSED
-                    || status == com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus.PAID
-                    || status == com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus.CANCELLED) {
-                SellerNotification.Type type = switch (status) {
-                    case CLOSED    -> SellerNotification.Type.CLOSED;
-                    case PAID      -> SellerNotification.Type.PAID;
-                    default        -> SellerNotification.Type.CANCELLED;
-                };
-                String productName = (auction.getItem() != null) ? auction.getItem().getName() : String.valueOf(auction.getAuctionId());
-                String winnerName  = (auction.getWinnerName() != null) ? auction.getWinnerName() : "N/A";
-                SellerNotification notif = new SellerNotification(
-                        auction.getAuctionId(), type, productName, winnerName, auction.getWinningPrice());
-                // Chi giu 1 thong bao moi nhat cho moi auction (PAID > CANCELLED > CLOSED)
-                final SellerNotification finalNotif = notif;
-                Platform.runLater(() -> {
-                    java.util.Optional<SellerNotification> existing3 = notifications.stream()
-                            .filter(n -> n.getAuctionId() == finalNotif.getAuctionId()).findFirst();
-                    if (existing3.isPresent()) {
-                        if (priority(finalNotif.getType()) > priority(existing3.get().getType())) {
-                            notifications.remove(existing3.get());
-                            notifications.add(0, finalNotif);
-                        }
-                    } else {
-                        notifications.add(0, finalNotif);
-                    }
-                });
-            }
+
+            AuctionStatus status = auction.getStatus();
+            if (status != AuctionStatus.CLOSED
+                    && status != AuctionStatus.PAID
+                    && status != AuctionStatus.CANCELLED) return;
+
+            SellerNotification.Type type = switch (status) {
+                case CLOSED -> SellerNotification.Type.CLOSED;
+                case PAID   -> SellerNotification.Type.PAID;
+                default     -> SellerNotification.Type.CANCELLED;
+            };
+
+            String productName = auction.getItem() != null
+                    ? auction.getItem().getName()
+                    : String.valueOf(auction.getAuctionId());
+            String winnerName = auction.getWinnerName() != null
+                    ? auction.getWinnerName() : "N/A";
+
+            SellerNotification notif = new SellerNotification(
+                    auction.getAuctionId(), type, productName, winnerName, auction.getWinningPrice());
+
+            Platform.runLater(() -> addOrReplaceNotification(notif));
         }
     }
 }
