@@ -25,6 +25,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -273,6 +274,16 @@ public class LiveAuctionController implements ResponseListener {
         if (rp.getCommand().getClass() == PlaceBidCommand.class) {
             BidTransaction bid = (BidTransaction) rp.getPayLoad();
             if (!rp.isSuccess()) {
+                // Nếu admin hủy phiên
+                if ("AUCTION_CANCELLED".equals(rp.getMessage())) {
+                    Platform.runLater(() -> {
+                        showAlert("Thông báo", "Phiên đấu giá đã bị hủy.");
+                        // Thoát ra màn hình trước
+                        Stage stage = (Stage) placeBidButton.getScene().getWindow();
+                        stage.close();
+                    });
+                    return;
+                }
                 Platform.runLater(() -> showAlert("Trạng thái đặt bid", rp.getMessage()));
                 return;
             }
