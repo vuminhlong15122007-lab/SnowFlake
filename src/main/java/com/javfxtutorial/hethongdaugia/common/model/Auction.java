@@ -161,7 +161,7 @@ public class Auction implements Serializable {
     public String toString() {
         return "Auction{" +
                 "auctionId=" + auctionId +
-                ", itemId=" + item.getItemId() +
+                ", itemId=" + (item == null ? null : item.getItemId()) +
                 ", sellerId=" + sellerId +
                 ", initPrice=" + initPrice +
                 ", currentPrice=" + currentPrice +
