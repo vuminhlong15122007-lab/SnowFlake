@@ -45,12 +45,13 @@ public class AuctionListController implements ResponseListener {
 
   private FilteredList<Auction> filterData;
   private AuctionStatus currentStatus = null;   // null = Tất cả
+  ObservableList<Auction> observable;
 
   private static boolean isLoaded = false;
 
   @FXML
   public void initialize() throws ConnectionFailedException {
-    ObservableList<Auction> observable = ClientModel.getInstance().getAllAuctions();
+    observable = ClientModel.getInstance().getAllAuctions();
 
     VBox.setVgrow(featuredProductList, Priority.ALWAYS);
     featuredProductList.setMaxWidth(Double.MAX_VALUE);
@@ -215,7 +216,7 @@ public class AuctionListController implements ResponseListener {
           return;
         }
         ArrayList<Auction> auctions = (ArrayList<Auction>) rp.getPayLoad();
-        ClientModel.getInstance().getAllAuctions().setAll(auctions);
+        observable.setAll(auctions);
       });
       NetworkManager networkManager = NetworkManager.getInstance();
       networkManager.unregister(GetAllAuctionsCommand.class, this);
