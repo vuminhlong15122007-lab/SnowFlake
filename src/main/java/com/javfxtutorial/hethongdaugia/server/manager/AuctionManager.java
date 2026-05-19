@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class AuctionManager {
     private static final Logger log = LoggerFactory.getLogger(AuctionManager.class);
@@ -68,6 +69,12 @@ public class AuctionManager {
     // ── AutoBid registry ─────────────────────────────
     private final Map<Integer, List<AutoBidConfig>> autoBidRegistry
             = new ConcurrentHashMap<>();
+    // ── Lock riêng theo từng auctionId ───────────────
+    private final Map<Integer, ReentrantLock> auctionLocks = new ConcurrentHashMap<>();
+
+    private ReentrantLock getAuctionLock(int auctionId) {
+        return auctionLocks.computeIfAbsent(auctionId, id -> new ReentrantLock());
+    }
 
     // ─────────────────────────────────────────────────
     // SUBSCRIBE / UNSUBSCRIBE
@@ -105,95 +112,101 @@ public class AuctionManager {
         auctionSubscribers.values().forEach(list -> list.remove(listener));
     }
 
-    public synchronized boolean placeBid(BidTransaction bid,
+    public boolean placeBid(BidTransaction bid,
                                          ClientHandler senderThread) throws AuctionNotFoundException, AuctionNotStartedException, AuctionAlreadyEndedException,
             LowerThanCurrentBidException, SelfBidException, InsufficientIncrementException, DataException, BidAmountExceedsLimitException {
         if (bid == null || bid.getAmount() == null) {
             return false;
         }
-
-        // 1. Lấy auction từ RAM
-        Auction auction = activeAuctions.get(bid.getAuctionId());
-
-        // 2. Nếu RAM trống → nạp từ DB
-        if (auction == null) {
-            auction = AuctionDAO.getInstance().selectById(bid.getAuctionId());
-            if (auction == null){ throw new AuctionNotFoundException(bid.getAuctionId());} // auction không tồn tại
-            activeAuctions.put(auction.getAuctionId(), auction);
-        }
-        System.out.println("Đã lấy xong auction từ bidAuctionId");
-
-        // 3. Kiểm tra hợp lệ
-        AuctionStatus status = refreshAuctionStatus(auction);
-        if (status == AuctionStatus.NOT_START) {
-            throw new AuctionNotStartedException(bid.getAuctionId());
-        }
-
-        if (status != AuctionStatus.RUNNING) {
-            throw new AuctionAlreadyEndedException(bid.getAuctionId());
-        }
-
-        BigDecimal minRequired = auction.getCurrentPrice().add(auction.getStepPrice());
-        if (bid.getAmount().compareTo(auction.getCurrentPrice()) <= 0) {
-            throw new LowerThanCurrentBidException(auction.getCurrentPrice().doubleValue(), bid.getAmount().doubleValue());
-        }
-        if (bid.getAmount().compareTo(minRequired) < 0) {
-            throw new InsufficientIncrementException(auction.getStepPrice().doubleValue(),
-                    bid.getAmount().subtract(auction.getCurrentPrice()).doubleValue());
-        }
-        if (bid.getAmount().compareTo(new BigDecimal("999999999999.99")) > 0) {
-            throw new BidAmountExceedsLimitException(
-                    999999999999.99,
-                    bid.getAmount().doubleValue()
-            );}
-        // KIỂM TRA NGƯỜI BÁN KHÔNG ĐƯỢC ĐẶT GIÁ
-        if (bid.getBidderId() == auction.getSellerId()) {
-            log.warn("Người bán {} cố gắng đặt giá sản phẩm của chính mình", bid.getBidderId());
-            throw new SelfBidException();
-        }
-
-        System.out.println("Bid hợp lệ");
-
-
-
-        // 4. Cập nhật auction trong RAM
-        auction.setCurrentPrice(bid.getAmount());
-        auction.setWinnerId(bid.getBidderId());
-        auction.setWinningPrice(bid.getAmount());
-        auction.setWinnerName(bid.getBidderName());
-
-        System.out.println("Đã cập nhật lại auction");
-
-        // Logic gia hạn phiên đấu giá
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime endingTime = auction.getEndingTime();
-        long secondsLeft = Duration.between(now, endingTime).toSeconds();
+        ReentrantLock lock = getAuctionLock(bid.getAuctionId());
+        lock.lock();
+        BidTransaction acceptedBid;
         LocalDateTime endTimeNew;
-        if (secondsLeft <= ANTI_SNIPE_X_SECONDS && secondsLeft > 0) {
-            endTimeNew = endingTime.plusSeconds(ANTI_SNIPE_Y_SECONDS);
-            auction.setEndingTime(endTimeNew);
-            System.out.println("GIA HẠN PHIÊN ĐẤU GIÁ THÀNH CÔNG");
-        } else {
-            endTimeNew = endingTime;
-        }
+        try{
+            // 1. Lấy auction từ RAM
+            Auction auction = activeAuctions.get(bid.getAuctionId());
 
-        // 5. Lưu DB
-        AuctionDAO.getInstance().update(auction);
-        BidDAO.getInstance().insertBid(bid);
-        try {
-            ParticipatedAuctionDAO.getInstance().insert(bid);
-        } catch (DuplicateKeyException e) {
-            log.info("User {} đã tham gia auction {} rồi, bỏ qua", bid.getBidderId(), bid.getAuctionId());
-        }
+            // 2. Nếu RAM trống → nạp từ DB
+            if (auction == null) {
+                auction = AuctionDAO.getInstance().selectById(bid.getAuctionId());
+                if (auction == null){ throw new AuctionNotFoundException(bid.getAuctionId());} // auction không tồn tại
+                activeAuctions.put(auction.getAuctionId(), auction);
+            }
+            System.out.println("Đã lấy xong auction từ bidAuctionId");
 
-        System.out.println("Đã lưu vào database");
+            // 3. Kiểm tra hợp lệ
+            AuctionStatus status = refreshAuctionStatus(auction);
+            if (status == AuctionStatus.NOT_START) {
+                throw new AuctionNotStartedException(bid.getAuctionId());
+            }
+
+            if (status != AuctionStatus.RUNNING) {
+                throw new AuctionAlreadyEndedException(bid.getAuctionId());
+            }
+
+            BigDecimal minRequired = auction.getCurrentPrice().add(auction.getStepPrice());
+            if (bid.getAmount().compareTo(auction.getCurrentPrice()) <= 0) {
+                throw new LowerThanCurrentBidException(auction.getCurrentPrice().doubleValue(), bid.getAmount().doubleValue());
+            }
+            if (bid.getAmount().compareTo(minRequired) < 0) {
+                throw new InsufficientIncrementException(auction.getStepPrice().doubleValue(),
+                        bid.getAmount().subtract(auction.getCurrentPrice()).doubleValue());
+            }
+            if (bid.getAmount().compareTo(new BigDecimal("999999999999.99")) > 0) {
+                throw new BidAmountExceedsLimitException(
+                        999999999999.99,
+                        bid.getAmount().doubleValue()
+                );}
+            // KIỂM TRA NGƯỜI BÁN KHÔNG ĐƯỢC ĐẶT GIÁ
+            if (bid.getBidderId() == auction.getSellerId()) {
+                log.warn("Người bán {} cố gắng đặt giá sản phẩm của chính mình", bid.getBidderId());
+                throw new SelfBidException();
+            }
+
+            System.out.println("Bid hợp lệ");
+
+
+
+            // 4. Cập nhật auction trong RAM
+            auction.setCurrentPrice(bid.getAmount());
+            auction.setWinnerId(bid.getBidderId());
+            auction.setWinningPrice(bid.getAmount());
+            auction.setWinnerName(bid.getBidderName());
+
+            System.out.println("Đã cập nhật lại auction");
+
+            // Logic gia hạn phiên đấu giá
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime endingTime = auction.getEndingTime();
+            long secondsLeft = Duration.between(now, endingTime).toSeconds();
+            if (secondsLeft <= ANTI_SNIPE_X_SECONDS && secondsLeft > 0) {
+                endTimeNew = endingTime.plusSeconds(ANTI_SNIPE_Y_SECONDS);
+                auction.setEndingTime(endTimeNew);
+                System.out.println("GIA HẠN PHIÊN ĐẤU GIÁ THÀNH CÔNG");
+            } else {
+                endTimeNew = endingTime;
+            }
+
+            // 5. Lưu DB
+            AuctionDAO.getInstance().update(auction);
+            BidDAO.getInstance().insertBid(bid);
+            try {
+                ParticipatedAuctionDAO.getInstance().insert(bid);
+            } catch (DuplicateKeyException e) {
+                log.info("User {} đã tham gia auction {} rồi, bỏ qua", bid.getBidderId(), bid.getAuctionId());
+            }
+
+            System.out.println("Đã lưu vào database");
+            acceptedBid = bid;
+            acceptedBid.setNewEndingTime(endTimeNew);}finally {
+            lock.unlock();
+        }
 
         // 6. Thông báo cho tất cả subscriber của auction này
-        bid.setNewEndingTime(endTimeNew);
-        notifySubscribers(bid.getAuctionId(), bid, senderThread);
+        notifySubscribers(acceptedBid.getAuctionId(), acceptedBid, senderThread);
 
         // 7. Kích hoạt AutoBid nếu có
-        checkAndExecuteAutoBids(auction);
+        checkAndExecuteAutoBids(activeAuctions.get(acceptedBid.getAuctionId()));
         return true;
     }
 
