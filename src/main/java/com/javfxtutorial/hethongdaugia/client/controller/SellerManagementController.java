@@ -83,7 +83,7 @@ public class SellerManagementController implements ResponseListener {
 
 
 
-    /** Danh sách thông báo — lấy từ ClientModel để tồn tại khi thoát vào lại màn hình */
+
     private ObservableList<SellerNotification> notifications;
 
     private Popup notificationPopup;
@@ -215,7 +215,7 @@ public class SellerManagementController implements ResponseListener {
         endMinuteSpinner.getValueFactory().setValue(0);
         categoryComboBox.setValue(null);
         Image.setImage(null);
-        image = "";  // BUG FIX: reset ảnh về rỗng khi xóa form
+        image = "";
         hideVbox(artFields);
         hideVbox(vehicleFields);
         hideVbox(electronicsFields);
@@ -223,7 +223,7 @@ public class SellerManagementController implements ResponseListener {
         licensePlateField.clear(); vehicleYearField.clear();
         brandVehicleField.clear(); colorField.clear();
         brandElecField.clear(); modelField.clear();
-        selectedAuction = null; // BUG FIX: reset selectedAuction khi thêm mới
+        selectedAuction = null;
     }
 
     @FXML public void onSaveButton (ActionEvent event) throws IOException {       // btn Lưu
@@ -767,7 +767,7 @@ public class SellerManagementController implements ResponseListener {
             SellerNotification notif = new SellerNotification(
                     auction.getAuctionId(), type, productName, winnerName, auction.getWinningPrice());
 
-            // BUG FIX: cũng cập nhật observable list khi có thay đổi trạng thái từ server
+            //  cũng cập nhật observable list khi có thay đổi trạng thái từ server
             Platform.runLater(() -> {
                 addOrReplaceNotification(notif);
                 // Cập nhật trạng thái auction trong danh sách nếu nó là auction của seller này
