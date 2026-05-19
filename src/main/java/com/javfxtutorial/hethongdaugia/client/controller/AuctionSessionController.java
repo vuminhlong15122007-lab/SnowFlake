@@ -117,6 +117,7 @@ public class AuctionSessionController {
     public void clickToGoToLiveAuction(ActionEvent event) {
         if (auction == null) return;
         ClientModel.getInstance().setCurrentAuction(auction);
+        ClientModel.getInstance().setCurrentItem(auction.getItem());
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionInformation.fxml");
     }
 }

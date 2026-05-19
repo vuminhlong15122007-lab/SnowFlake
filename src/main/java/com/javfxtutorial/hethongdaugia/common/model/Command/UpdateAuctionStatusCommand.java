@@ -6,7 +6,6 @@ import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
-import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,9 +22,7 @@ public class UpdateAuctionStatusCommand extends Command {
     try{
       int result1 = AuctionDAO.getInstance().update(auction);
       if (result1 > 0) {
-        Response rp = new Response(true, "Cập nhật status thành công", auction, this);
-        ClientHandler.broadcast(rp);
-        return rp;
+        return new Response(true, "Cập nhật status thành công", auction, this);
       }
       return new Response(false, "Cập nhật status thất bại", null, this); } catch (DataUpdateException e) {
       log.error("Lỗi cập nhật trạng thái: {}", e.getMessage(), e);

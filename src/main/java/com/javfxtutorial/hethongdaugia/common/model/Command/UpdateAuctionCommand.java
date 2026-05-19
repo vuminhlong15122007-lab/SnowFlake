@@ -11,7 +11,6 @@ import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.DAOInterface;
 import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
 import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
-import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +30,7 @@ public class UpdateAuctionCommand extends Command {
                 int result2 = ItemDAO.getInstance().update(item);
                 int result1 = AuctionDAO.getInstance().update(auction);
                 if (result1 > 0 || result2 > 0) {
-                    Response rp = new Response(true, "Sửa sản phẩm  thành công", auction, this);
-                    ClientHandler.broadcast(rp);
-                    return rp;
+                    return new Response(true, "Sửa sản phẩm  thành công", auction, this);
                 }
                 return new Response(false, "Lỗi!!! Sửa thất bại", null, this);
             }

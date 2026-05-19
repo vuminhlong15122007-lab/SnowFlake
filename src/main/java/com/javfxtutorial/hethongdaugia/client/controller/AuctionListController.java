@@ -3,17 +3,14 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
-import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.Command.AddAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.application.Platform;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
@@ -32,21 +29,18 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 public class AuctionListController implements ResponseListener {
   private static final Logger log = LoggerFactory.getLogger(AuctionListController.class);
 
-  @FXML
-  private ListView<Auction> featuredProductList;
-  @FXML
-  private TextField searchField;
-  @FXML
-  private Label sectionTitle;
-  @FXML
-  private Button btnAll, btnUpcoming, btnRunning, btnEnded;
-  @FXML
-  private ComboBox<String> categoryFilter;
+  @FXML private ListView<Auction> featuredProductList;
+  @FXML private TextField searchField;
+  @FXML private Label sectionTitle;
+  @FXML private Button btnAll, btnUpcoming, btnRunning, btnEnded;
+  @FXML private ComboBox<String> categoryFilter;
 
+  // Lấy observable list từ ClientModel để dùng chung toàn app (Doc 1)
+  private ObservableList<Auction> observable;
   private FilteredList<Auction> filterData;
-  private AuctionStatus currentStatus = null;   // null = Tất cả
-  ObservableList<Auction> observable;
+  private AuctionStatus currentStatus = null; // null = Tất cả
 
+  // Tránh gọi server nhiều lần khi navigate qua lại (Doc 1)
   private static boolean isLoaded = false;
 
   @FXML
@@ -56,39 +50,40 @@ public class AuctionListController implements ResponseListener {
     VBox.setVgrow(featuredProductList, Priority.ALWAYS);
     featuredProductList.setMaxWidth(Double.MAX_VALUE);
     featuredProductList.setCellFactory(_ -> new ProductCell());
-    // Tạo FilteredList
+
     filterData = new FilteredList<>(observable, _ -> true);
     featuredProductList.setItems(filterData);
-    // tim kiem
+
+    // Tìm kiếm theo tên
     searchField.textProperty().addListener((_, _, _) -> applyFilters());
 
-    // combox loai sp
+    // ComboBox lọc loại sản phẩm
     categoryFilter.getItems().addAll("All Products Type", "Art", "Vehicle", "Electronics", "Orther");
     categoryFilter.setValue("All Products Type");
     categoryFilter.valueProperty().addListener((_, _, _) -> applyFilters());
 
-    //loc trang thai
+    // Lọc theo trạng thái
     btnAll.setOnAction(_ -> {
       currentStatus = null;
-      sectionTitle.setText("📋  " + "TẤT CẢ PHIÊN ĐẤU GIÁ");
+      sectionTitle.setText("📋  TẤT CẢ PHIÊN ĐẤU GIÁ");
       setActiveButton(btnAll);
       applyFilters();
     });
     btnUpcoming.setOnAction(_ -> {
       currentStatus = AuctionStatus.NOT_START;
-      sectionTitle.setText("📋  " + "PHIÊN SẮP DIỄN RA");
+      sectionTitle.setText("📋  PHIÊN SẮP DIỄN RA");
       setActiveButton(btnUpcoming);
       applyFilters();
     });
     btnRunning.setOnAction(_ -> {
       currentStatus = AuctionStatus.RUNNING;
-      sectionTitle.setText("📋  " + "PHIÊN ĐANG DIỄN RA");
+      sectionTitle.setText("📋  PHIÊN ĐANG DIỄN RA");
       setActiveButton(btnRunning);
       applyFilters();
     });
     btnEnded.setOnAction(_ -> {
       currentStatus = AuctionStatus.CLOSED;
-      sectionTitle.setText("📋  " + "PHIÊN ĐÃ KẾT THÚC");
+      sectionTitle.setText("📋  PHIÊN ĐÃ KẾT THÚC");
       setActiveButton(btnEnded);
       applyFilters();
     });
@@ -99,10 +94,9 @@ public class AuctionListController implements ResponseListener {
       loadData();
       isLoaded = true;
     }
-
   }
 
-  //  Hàm áp dụng tất cả bộ lọc
+  // Áp dụng tất cả bộ lọc
   private void applyFilters() {
     filterData.setPredicate(auction -> {
       if (auction == null || auction.getItem() == null) return false;
@@ -122,28 +116,18 @@ public class AuctionListController implements ResponseListener {
       }
 
       // 3. Lọc theo loại sản phẩm
+      // Các else-if sau if đầu không bao giờ chạy được (logic bug ở cả 2 doc),
+      // đã sửa lại thành một điều kiện duy nhất cho gọn và đúng
       String selectedCategory = categoryFilter.getValue();
       if (selectedCategory != null && !selectedCategory.equals("All Products Type")) {
-        String auctionCategory = getCategoryName(auction);
-        return selectedCategory.equals(auctionCategory);
-      } else if (selectedCategory.equals("Electronics")) {
-        String auctionCategory = getCategoryName(auction);
-        return selectedCategory.equals(auctionCategory);
-      } else if (selectedCategory.equals("Art")) {
-        String auctionCategory = getCategoryName(auction);
-        return selectedCategory.equals(auctionCategory);
-      } else if (selectedCategory.equals("Vehicle")) {
-        String auctionCategory = getCategoryName(auction);
-        return selectedCategory.equals(auctionCategory);
-      } else if (selectedCategory.equals("Orther")) {
-        String auctionCategory = getCategoryName(auction);
-        return selectedCategory.equals(auctionCategory);
+        return selectedCategory.equals(getCategoryName(auction));
       }
+
       return true;
     });
   }
 
-  //   Lấy tên loại từ class của Item
+  // Lấy tên loại từ enum Category của Item
   private String getCategoryName(Auction auction) {
     if (auction.getItem() == null || auction.getItem().getCategory() == null)
       return "Orther";
@@ -155,18 +139,19 @@ public class AuctionListController implements ResponseListener {
     };
   }
 
-  // Method đổi class CSS cho nút đang active
+  // Đổi class CSS cho nút đang active — dùng cách sạch của Doc 2,
+  // thêm reset setStyle("") của Doc 1 để tránh inline style đè lên CSS class
   private void setActiveButton(Button active) {
     Button[] buttons = {btnAll, btnUpcoming, btnRunning, btnEnded};
     for (Button b : buttons) {
       if (b == null) continue;
-            b.setStyle("");
-            b.getStyleClass().removeAll("sf-filter-button", "sf-filter-button-active");
-            b.getStyleClass().add(b == active ? "sf-filter-button-active" : "sf-filter-button");
+      b.setStyle("");
+      b.getStyleClass().removeAll("sf-filter-button", "sf-filter-button-active");
+      b.getStyleClass().add(b == active ? "sf-filter-button-active" : "sf-filter-button");
     }
   }
 
-
+  // Gửi request lấy danh sách đấu giá — dùng networkManager.sendRequest() của Doc 1
   public void loadData() throws ConnectionFailedException {
     Command cmd = new GetAllAuctionsCommand();
     new Thread(() -> {
@@ -181,7 +166,6 @@ public class AuctionListController implements ResponseListener {
         log.error("Lỗi load data: {}", e.getMessage(), e);
         Platform.runLater(() -> showAlert("Lỗi", "Tải dữ liệu thất bại", "Loading.gif"));
       }
-
     }).start();
   }
 
@@ -212,7 +196,7 @@ public class AuctionListController implements ResponseListener {
     if (rp.getCommand().getClass() == GetAllAuctionsCommand.class) {
       Platform.runLater(() -> {
         if (!rp.isSuccess()) {
-          showAlert("Loi tai du lieu", rp.getMessage(), "Loading.gif");
+          showAlert("Lỗi tải dữ liệu", rp.getMessage(), "Loading.gif");
           return;
         }
         ArrayList<Auction> auctions = (ArrayList<Auction>) rp.getPayLoad();

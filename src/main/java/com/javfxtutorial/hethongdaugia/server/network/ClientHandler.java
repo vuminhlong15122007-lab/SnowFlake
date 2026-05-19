@@ -6,12 +6,11 @@ import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
 
-import java.io.ObjectInputFilter;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.io.ObjectInputFilter;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
@@ -19,10 +18,11 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ClientHandler extends Thread implements BidListener {
   private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
+
   private Socket clientSocket;
   private ObjectInputStream in;
   private ObjectOutputStream out;
-  private static CopyOnWriteArrayList<ClientHandler> allClients = new CopyOnWriteArrayList<>();
+  private static final CopyOnWriteArrayList<ClientHandler> allClients = new CopyOnWriteArrayList<>();
 
   public ClientHandler(Socket socket) {
     this.clientSocket = socket;
@@ -32,25 +32,24 @@ public class ClientHandler extends Thread implements BidListener {
   public void run() {
     try {
       allClients.add(this);
-      System.out.println("Luong " + this.getName() + " dang chay");
+      log.info("Luong {} dang chay", this.getName());
       ClientHandlerContextHolder.set(this);
-      System.out.println("Vua khoi tao " + ClientHandlerContextHolder.get().getName());
+      log.info("Vua khoi tao {}", ClientHandlerContextHolder.get().getName());
 
       out = new ObjectOutputStream(clientSocket.getOutputStream());
       in = new ObjectInputStream(clientSocket.getInputStream());
-
       in.setObjectInputFilter(this::validateInput);
 
       while (true) {
         Object obj = in.readObject();
 
         if (!(obj instanceof Command cmd)) {
-          System.err.println("[SERVER WARN] Object khong phai Command: " + obj.getClass().getName());
+          log.warn("[SERVER WARN] Object khong phai Command: {}", obj.getClass().getName());
           continue;
         }
 
         if (!isAllowedCommand(cmd)) {
-          System.err.println("[SERVER WARN] Command bi tu choi: " + cmd.getClass().getName());
+          log.warn("[SERVER WARN] Command bi tu choi: {}", cmd.getClass().getName());
           continue;
         }
 
@@ -58,10 +57,10 @@ public class ClientHandler extends Thread implements BidListener {
         try {
           rp = cmd.handle();
         } catch (Exception e) {
-          System.err.println("[SERVER ERROR] Command " + cmd.getClass().getSimpleName() + " crash: " + e.getMessage());
-          e.printStackTrace();
+          log.error("[SERVER ERROR] Command {} crash: {}", cmd.getClass().getSimpleName(), e.getMessage(), e);
           rp = new Response(false, "Lỗi server: " + e.getMessage(), null, cmd);
         }
+
         if (rp != null) {
           synchronized (out) {
             out.writeObject(rp);
@@ -71,7 +70,7 @@ public class ClientHandler extends Thread implements BidListener {
         }
       }
     } catch (IOException | ClassNotFoundException e) {
-      System.out.println("Client ngung ket noi");
+      log.info("Client ngung ket noi");
       try {
         clientSocket.close();
         allClients.remove(this);
@@ -85,7 +84,7 @@ public class ClientHandler extends Thread implements BidListener {
         try {
           clientSocket.close();
         } catch (IOException e) {
-          System.out.println("Client ngat ket noi");
+          log.info("Client ngat ket noi");
         }
       }
     }
@@ -104,26 +103,27 @@ public class ClientHandler extends Thread implements BidListener {
         out.flush();
         out.reset();
       }
-      System.out.println("Da gui PlaceBidCommand ve cho luong " + this.getName());
+      log.info("Da gui PlaceBidCommand ve cho luong {}", this.getName());
     } catch (IOException e) {
-      System.out.println("Loi outputStream");
+      log.error("Loi outputStream: {}", e.getMessage());
     }
   }
 
   public static void broadcast(Response rp) {
     allClients.forEach(clientHandler -> {
       try {
-        clientHandler.out.writeObject(rp);
-        clientHandler.out.flush();
-        clientHandler.out.reset();
+        synchronized (clientHandler.out) {
+          clientHandler.out.writeObject(rp);
+          clientHandler.out.flush();
+          clientHandler.out.reset();
+        }
       } catch (IOException e) {
-        log.error("lỗi output stream");
+        log.error("Loi output stream khi broadcast: {}", e.getMessage());
       }
-
     });
   }
 
-  // 2 method này sinh ra để fix bug B08 => kiểm tra trước
+  // Fix bug B08 — chỉ cho phép Command từ đúng package
   private boolean isAllowedCommand(Command cmd) {
     return cmd.getClass().getPackageName()
         .equals("com.javfxtutorial.hethongdaugia.common.model.Command");
@@ -147,7 +147,6 @@ public class ClientHandler extends Thread implements BidListener {
     }
 
     String name = clazz.getName();
-
     if (name.startsWith("com.javfxtutorial.hethongdaugia.common.model.")
         || name.startsWith("com.javfxtutorial.hethongdaugia.common.network.")
         || name.startsWith("java.lang.")
