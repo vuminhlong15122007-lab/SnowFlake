@@ -15,7 +15,7 @@ import java.net.Socket;
 public class ServerConnection {
   private static final Logger log = LoggerFactory.getLogger(ServerConnection.class);
 
-  public String IP = "localhost";
+  public String IP = "10.11.6.209";
   public int PORT = 5000;
   private final Socket clientSocket;
   private final ObjectOutputStream out;

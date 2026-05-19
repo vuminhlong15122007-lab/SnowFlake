@@ -94,7 +94,7 @@ public class SellerManagementController implements ResponseListener {
     public void goMenu(ActionEvent event) {
         changeScene(event , "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");}
 
-    public Auction getInfo(){
+    public Auction getInfo() throws Exception {
         String rawPrice2 = priceField.getText().replaceAll("[^0-9.]", "");
         BigDecimal initPrice = new BigDecimal(rawPrice2);
 
@@ -110,6 +110,15 @@ public class SellerManagementController implements ResponseListener {
 
         LocalDateTime tGianBD = LocalDateTime.of(ngayBD, LocalTime.of(starhour, starminu));
         LocalDateTime tGianKT = LocalDateTime.of(ngayKT, LocalTime.of(endhour, endminu));
+
+        if(tGianBD.isAfter(tGianKT)){
+            showAlert("Lỗi", "Thời gian bắt đầu không được sau thời gian kết thúc");
+            throw new Exception();
+        }
+        if(tGianBD.isBefore(LocalDateTime.now())){
+            showAlert("Lỗi", "Thời gian bắt đầu phải sau thời gian bây giờ");
+            throw new Exception();
+        }
 
         //Lấy xong dữ liệu người dùng nhập vào
         int sellerId = ClientModel.getInstance().getCurrentUser().getId();
@@ -274,6 +283,8 @@ public class SellerManagementController implements ResponseListener {
                         suaSp(event);
                     } catch (IOException e) {
                         throw new RuntimeException(e);
+                    } catch (Exception e) {
+                        log.error("hello");
                     }
                 });
                 //  tbao den ng ban
@@ -579,7 +590,7 @@ public class SellerManagementController implements ResponseListener {
 
 
     @FXML
-    public void suaSp(ActionEvent event) throws IOException, IllegalStateException{  // Xử lý nuts Sửa
+    public void suaSp(ActionEvent event) throws Exception {  // Xử lý nuts Sửa
         selectedAuction = productList.getSelectionModel().getSelectedItem();
         if (selectedAuction == null) {
             showAlert("Lỗi", "Vui lòng chọn sản phẩm cần sửa!", "Wait.gif");
