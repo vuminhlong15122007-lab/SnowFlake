@@ -6,7 +6,6 @@ import com.javfxtutorial.hethongdaugia.common.network.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -15,34 +14,47 @@ import java.net.Socket;
 public class ServerConnection {
   private static final Logger log = LoggerFactory.getLogger(ServerConnection.class);
 
-  public String IP = "localhost";
-  public int PORT = 5000;
+  private static final String DEFAULT_IP = "localhost";
+  private static final int DEFAULT_PORT = 5000;
+
   private final Socket clientSocket;
   private final ObjectOutputStream out;
   private final ObjectInputStream in;
-  private static ServerConnection instance;
+
+  private static volatile ServerConnection instance;
 
   public static ServerConnection getInstance() throws IOException {
-    if (instance == null || !instance.isConnected()) {
-      instance = new ServerConnection();
+    ServerConnection local = instance;
+    if (local == null || !local.isConnected()) {
+      synchronized (ServerConnection.class) {
+        local = instance;
+        if (local == null || !local.isConnected()) {
+          if (local != null) {
+            local.close();
+          }
+          instance = local = new ServerConnection();
+        }
+      }
     }
-    return instance;
+    return local;
   }
 
   private ServerConnection() throws IOException {
-    //khởi tạo socket connect tới server và luông để truyền/ nhận dữ liệu
-    this.clientSocket = new Socket(IP, PORT);
+    String ip = System.getProperty("snowflake.server.host", DEFAULT_IP);
+    int port = Integer.getInteger("snowflake.server.port", DEFAULT_PORT);
+
+    this.clientSocket = new Socket(ip, port);
     this.out = new ObjectOutputStream(clientSocket.getOutputStream());
     this.in = new ObjectInputStream(clientSocket.getInputStream());
   }
 
-  // Gửi command và chờ response (đồng bộ)
   public synchronized void sendCommand(Command cmd) throws SendFailedException {
     try {
       out.writeObject(cmd);
       out.flush();
       out.reset();
     } catch (IOException e) {
+      close();
       log.error("Gửi command thất bại: {}", e.getMessage(), e);
       throw new SendFailedException(cmd.getClass().getSimpleName());
     }
@@ -54,7 +66,9 @@ public class ServerConnection {
 
   public void close() {
     try {
-      if (clientSocket != null) clientSocket.close();
+      if (clientSocket != null) {
+        clientSocket.close();
+      }
     } catch (IOException e) {
       log.error("Lỗi khi đóng socket: {}", e.getMessage());
     } finally {
@@ -63,8 +77,10 @@ public class ServerConnection {
   }
 
   public boolean isConnected() {
-    return clientSocket != null &&
-        clientSocket.isConnected() &&
-        !clientSocket.isClosed() &&
-        !clientSocket.isInputShutdown();  }
+    return clientSocket != null
+            && clientSocket.isConnected()
+            && !clientSocket.isClosed()
+            && !clientSocket.isInputShutdown()
+            && !clientSocket.isOutputShutdown();
+  }
 }
