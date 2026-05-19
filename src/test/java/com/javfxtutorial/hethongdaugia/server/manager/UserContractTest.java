@@ -253,31 +253,7 @@ class UserContractTest {
                 verify(userDAO, never()).update(any(User.class));
             }
         }
-
-//        @Test
-//        void authenticate_migratesLegacyPlainTextPasswordAndReturnedUserKeepsHash() throws Exception {
-//            User legacyUser = alice();
-//            UserDAO userDAO = mock(UserDAO.class);
-//            ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-//            when(userDAO.selectByUsername("alice")).thenReturn(legacyUser);
-//            when(userDAO.update(userCaptor.capture())).thenReturn(1);
-//
-//            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-//                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
-//
-//                User result = UserManager.getInstance().authenticate("alice", "pass123");
-//
-//                assertSame(legacyUser, result);
-//                assertTrue(PasswordHasher.isHashed(result.getPassWord()));
-//                assertTrue(PasswordHasher.matches("pass123", result.getPassWord()));
-//
-//                User sentToDao = userCaptor.getValue();
-//                assertSame(legacyUser, sentToDao);
-//                assertTrue(PasswordHasher.isHashed(sentToDao.getPassWord()));
-//                assertTrue(PasswordHasher.matches("pass123", sentToDao.getPassWord()));
-//            }
-//        }
-//    }
+    }
 
     @Nested
     @DisplayName("UserManager.updateUserProfile")
@@ -429,54 +405,6 @@ class UserContractTest {
     @Nested
     @DisplayName("UserManager.reset_password")
     class ResetPasswordManagerTest {
-//        @Test
-//        void resetPassword_changesOnlyPasswordAndReturnedUserKeepsHash() throws Exception {
-//            User oldUser = alice();
-//            UserDAO userDAO = mock(UserDAO.class);
-//            ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-//            when(userDAO.selectById(1)).thenReturn(oldUser);
-//            when(userDAO.update(userCaptor.capture())).thenReturn(1);
-//
-//            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-//                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
-//
-//                User reset = UserManager.getInstance().reset_password(1, "new-secret");
-//
-//                assertNotNull(reset);
-//                assertEquals(oldUser.getId(), reset.getId());
-//                assertEquals(oldUser.getName(), reset.getName());
-//                assertEquals(oldUser.getEmail(), reset.getEmail());
-//                assertEquals(oldUser.getSdt(), reset.getSdt());
-//                assertEquals(oldUser.getAccountType(), reset.getAccountType());
-//                assertEquals(oldUser.getImagePath(), reset.getImagePath());
-//
-//                assertTrue(PasswordHasher.isHashed(reset.getPassWord()));
-//                assertTrue(PasswordHasher.matches("new-secret", reset.getPassWord()));
-//
-//                User sentToDao = userCaptor.getValue();
-//                assertTrue(PasswordHasher.isHashed(sentToDao.getPassWord()));
-//                assertTrue(PasswordHasher.matches("new-secret", sentToDao.getPassWord()));
-//            }
-//        }
-
-//        @Test
-//        void resetPassword_allowsEmptyPasswordByCurrentContractButStoresHash() throws Exception {
-//            User oldUser = alice();
-//            UserDAO userDAO = mock(UserDAO.class);
-//            when(userDAO.selectById(1)).thenReturn(oldUser);
-//            when(userDAO.update(any(User.class))).thenReturn(1);
-//
-//            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-//                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
-//
-//                User reset = UserManager.getInstance().reset_password(1, "");
-//
-//                assertNotNull(reset);
-//                assertTrue(PasswordHasher.isHashed(reset.getPassWord()));
-//                assertTrue(PasswordHasher.matches("", reset.getPassWord()));
-//            }
-//        }
-
         @Test
         void resetPassword_returnsNullWhenDaoUpdateFails() throws Exception {
             User oldUser = alice();
@@ -527,4 +455,4 @@ class UserContractTest {
             }
         }
     }
-}}
+}
