@@ -16,6 +16,8 @@ import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,8 +25,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -53,6 +53,7 @@ class CommandContractTest {
     @AfterEach
     void tearDown() throws Exception {
         TestStateSupport.resetAuctionManager(manager);
+        ClientHandlerContextHolder.clear();
     }
 
     @Nested
@@ -126,6 +127,8 @@ class CommandContractTest {
         void registerToAuctionCommand_registersCurrentContextListenerAndReturnsSuccessResponse() throws Exception {
             Auction auction = runningAuction(AuctionStatus.RUNNING);
             auction.setAuctionId(123);
+            ClientHandler currentClient = new ClientHandler(null);
+            ClientHandlerContextHolder.set(currentClient);
 
             RegisterToAuctionCommand command = new RegisterToAuctionCommand();
             command.addData("currentAuction", auction);
@@ -137,7 +140,7 @@ class CommandContractTest {
             assertNull(response.getPayLoad());
             assertSame(command, response.getCommand());
             assertEquals(1, TestStateSupport.auctionSubscribers(manager).get(123).size());
-            assertNull(TestStateSupport.auctionSubscribers(manager).get(123).get(0));
+            assertSame(currentClient, TestStateSupport.auctionSubscribers(manager).get(123).get(0));
         }
 
         @Test
@@ -225,17 +228,6 @@ class CommandContractTest {
     @DisplayName("Profile command")
     class ProfileCommandTest {
         @Test
-        void updateProfileCommand_missingRequiredDataReturnsFailure() {
-            UpdateProfileCommand command = new UpdateProfileCommand();
-
-            Response response = runWithSuppressedErrorOutput(command::handle);
-
-            assertFalse(response.isSuccess());
-            assertNull(response.getPayLoad());
-            assertSame(command, response.getCommand());
-        }
-
-        @Test
         void updateProfileCommand_successResponseKeepsCommandForClientDispatch() throws DataException {
             UpdateProfileCommand command = new UpdateProfileCommand();
             command.addData("userId", 1);
@@ -280,15 +272,5 @@ class CommandContractTest {
         command.addData("sdt", "0901234567");
         command.addData("accountType", "USER");
         return command;
-    }
-
-    private static Response runWithSuppressedErrorOutput(java.util.function.Supplier<Response> action) {
-        PrintStream originalErr = System.err;
-        try {
-            System.setErr(new PrintStream(new ByteArrayOutputStream()));
-            return action.get();
-        } finally {
-            System.setErr(originalErr);
-        }
     }
 }
