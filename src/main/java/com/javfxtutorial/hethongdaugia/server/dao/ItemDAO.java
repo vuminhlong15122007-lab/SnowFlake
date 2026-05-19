@@ -33,38 +33,52 @@ public class ItemDAO implements DAOInterface<Item> {
   }
 
   public int insert(Item item) throws DataInsertException {
-    String sql = "INSERT INTO Item (idseller, name, description, imagePath, sellerName, category) VALUES (?, ?, ?, ?, ?, ?)";
-    int result = 0;
-    try (Connection conn = JDBCUtil.getConnection();
-         PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        String sql = "INSERT INTO Item (idseller, name, description, imagePath, sellerName, category) VALUES (?, ?, ?, ?, ?, ?)";
 
-      pst.setInt(1, item.getSellerId());
-      pst.setString(2, item.getName());
-      pst.setString(3, item.getDescription());
-      pst.setString(4, item.getImage());
-      pst.setString(5, item.getSellerName());
-      pst.setString(6, item.getCategory().name());
+        try (Connection conn = JDBCUtil.getConnection()) {
+            conn.setAutoCommit(false);
 
-      result = pst.executeUpdate();
-      if (result > 0) {
-        try (ResultSet rs = pst.getGeneratedKeys()) {
-          if (rs.next()) {
-            item.setItemId(rs.getInt(1));
-          }
+            try (PreparedStatement pst = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                pst.setInt(1, item.getSellerId());
+                pst.setString(2, item.getName());
+                pst.setString(3, item.getDescription());
+                pst.setString(4, item.getImage());
+                pst.setString(5, item.getSellerName());
+                pst.setString(6, item.getCategory().name());
+
+                int result = pst.executeUpdate();
+                if (result != 1) throw new SQLException("Insert Item failed");
+
+                try (ResultSet rs = pst.getGeneratedKeys()) {
+                    if (!rs.next()) throw new SQLException("Cannot get generated itemId");
+                    item.setItemId(rs.getInt(1));
+                }
+
+                insertSubType(conn, item);
+
+                conn.commit();
+                return result;
+
+            } catch (Exception e) {
+                try {
+                    conn.rollback();
+                } catch (SQLException rollbackEx) {
+                    log.error("Rollback insert Item thất bại", rollbackEx);
+                }
+                throw new DataInsertException("Item");
+
+            } finally {
+                try {
+                    conn.setAutoCommit(true);
+                } catch (SQLException autoCommitEx) {
+                    log.error("Không thể bật lại autoCommit", autoCommitEx);
+                }
+            }
+
+        } catch (SQLException | DatabaseConnectionException e) {
+            log.error("Lỗi SQL khi insert Item", e);
+            throw new DataInsertException("Item");
         }
-        log.info("Tạo Item thành công, ID: {}", item.getItemId());
-        try{
-          insertSubType(conn, item);}catch (DataDeleteException e) {
-            log.error("Insert subtype thất bại, rollback item: {}", e.getMessage(), e);}
-      } else {
-        log.warn("Tạo Item thất bại (no rows affected)");
-        throw new DataInsertException("Item");
-      }
-    } catch (SQLException | DatabaseConnectionException e) {
-      log.error("Lỗi SQL khi insert Item: {}", e.getMessage(), e);
-      throw new DataInsertException("Item");
-    }
-    return result;
   }
 
   @Override
@@ -189,64 +203,55 @@ public class ItemDAO implements DAOInterface<Item> {
       return result;
   }
 
-  public void insertSubType(Connection conn, Item item) throws SQLException, DataDeleteException {
-    switch (item.getCategory()) {
-      case ItemCategory.ART -> {
-        Art item1 = (Art) item;
-        String sql1 = "INSERT INTO art (item_id, artist, year_created, title) VALUES (?, ?, ?, ?)";
-        int result1 = 0;
-        try (PreparedStatement pst = conn.prepareStatement(sql1)) {
-          pst.setInt(1, item1.getItemId());
-          pst.setString(2, item1.getArtist());
-          pst.setInt(3, item1.getYearCreated());
-          pst.setString(4, item1.getTitle());
-          result1 = pst.executeUpdate();
-          if (result1 > 0) {
-            log.info("Thêm bảng phụ ART cho thành công cho itemId: {}", item.getItemId());
-          } else {
-            log.info("Thêm bảng phụ ART cho thất bại cho itemId: {}", item.getItemId());
-            delete(item);
-          }
+  public void insertSubType(Connection conn, Item item) throws SQLException {
+        if (item == null || item.getCategory() == null) {
+            throw new SQLException("Item/category null");
         }
-      }
-      case ItemCategory.ELECTRONICS -> {
-        Electronics item2 = (Electronics) item;
-        String sql2 = "INSERT INTO electronics (item_id, brand, model) VALUES (?, ?, ?)";
-        int result2 = 0;
-        try (PreparedStatement pst = conn.prepareStatement(sql2)) {
-          pst.setInt(1, item2.getItemId());
-          pst.setString(2, item2.getBrand());
-          pst.setString(3, item2.getModel());
-          result2 = pst.executeUpdate();
-          if (result2 > 0) {
-            log.info("Thêm bảng phụ ELECTRONICS cho thành công cho itemId: {}", item.getItemId());
-          } else {
-            log.info("Thêm bảng phụ ELECTRONICS cho thất bại cho itemId: {}", item.getItemId());
-            delete(item);
-          }
+
+        switch (item.getCategory()) {
+            case ART -> {
+                if (!(item instanceof Art art)) throw new SQLException("ART nhưng object không phải Art");
+
+                String sql = "INSERT INTO art (item_id, artist, year_created, title) VALUES (?, ?, ?, ?)";
+                try (PreparedStatement pst = conn.prepareStatement(sql)) {
+                    pst.setInt(1, art.getItemId());
+                    pst.setString(2, art.getArtist());
+                    pst.setInt(3, art.getYearCreated());
+                    pst.setString(4, art.getTitle());
+                    if (pst.executeUpdate() != 1) throw new SQLException("Insert ART subtype failed");
+                }
+            }
+
+            case ELECTRONICS -> {
+                if (!(item instanceof Electronics electronics)) throw new SQLException("ELECTRONICS nhưng object không phải Electronics");
+
+                String sql = "INSERT INTO electronics (item_id, brand, model) VALUES (?, ?, ?)";
+                try (PreparedStatement pst = conn.prepareStatement(sql)) {
+                    pst.setInt(1, electronics.getItemId());
+                    pst.setString(2, electronics.getBrand());
+                    pst.setString(3, electronics.getModel());
+                    if (pst.executeUpdate() != 1) throw new SQLException("Insert ELECTRONICS subtype failed");
+                }
+            }
+
+            case VEHICLE -> {
+                if (!(item instanceof Vehicle vehicle)) throw new SQLException("VEHICLE nhưng object không phải Vehicle");
+
+                String sql = "INSERT INTO vehicle (item_id, license_plate, year, brand, color) VALUES (?, ?, ?, ?, ?)";
+                try (PreparedStatement pst = conn.prepareStatement(sql)) {
+                    pst.setInt(1, vehicle.getItemId());
+                    pst.setString(2, vehicle.getLicensePlate());
+                    pst.setInt(3, vehicle.getYear());
+                    pst.setString(4, vehicle.getBrand());
+                    pst.setString(5, vehicle.getColor());
+                    if (pst.executeUpdate() != 1) throw new SQLException("Insert VEHICLE subtype failed");
+                }
+            }
+
+            case OTHER -> {
+                // Nếu OTHER không có bảng phụ thì cho qua.
+            }
         }
-      }
-      case ItemCategory.VEHICLE -> {
-        Vehicle item3 = (Vehicle) item;
-        String sql3 = "INSERT INTO vehicle (item_id, license_plate, year, brand, color) VALUES (?, ?, ?, ?, ?)";
-        int result3 = 0;
-        try (PreparedStatement pst = conn.prepareStatement(sql3)) {
-          pst.setInt(1, item3.getItemId());
-          pst.setString(2, item3.getLicensePlate());
-          pst.setInt(3, item3.getYear());
-          pst.setString(4, item3.getBrand());
-          pst.setString(5, item3.getColor());
-          result3 = pst.executeUpdate();
-          if (result3 > 0) {
-            log.info("Thêm bảng phụ VEHICLE cho thành công cho itemId: {}", item.getItemId());
-          } else {
-            log.info("Thêm bảng phụ VEHICLE cho thất bại cho itemId: {}", item.getItemId());
-            delete(item);
-          }
-        }
-      }
-      default -> log.warn("Category không xác định: {}", item.getCategory());
-    }
   }
   public void updateSubType(Connection conn, Item item) throws SQLException {
     switch (item.getCategory()) {
