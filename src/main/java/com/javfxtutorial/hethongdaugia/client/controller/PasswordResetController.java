@@ -65,14 +65,12 @@ public class PasswordResetController implements ResponseListener {
         //tao command gui len server
         new Thread(() -> {
             try {
-                ServerConnection connection = NetworkManager.getConnection();
                 ResetPassWordCommand cmd = new ResetPassWordCommand();
                 cmd.addData("userId", currentUser.getId());
                 cmd.addData("passWord", newPW);
 
-                connection.sendCommand(cmd);
                 NetworkManager networkManager = NetworkManager.getInstance();
-                networkManager.register(ResetPassWordCommand.class, this);} catch (ConnectionFailedException e) {
+                networkManager.sendRequest(cmd, this);} catch (ConnectionFailedException e) {
                 log.error("Lỗi kết nối: {}", e.getMessage());
                 Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối đến server", "Wait.gif"));
             } catch (SendFailedException e) {

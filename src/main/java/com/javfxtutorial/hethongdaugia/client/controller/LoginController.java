@@ -4,7 +4,6 @@ import com.javfxtutorial.hethongdaugia.client.model.AuctionModificationManager;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
-import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Command.LoginCommand;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
@@ -47,12 +46,10 @@ public class LoginController implements ResponseListener, Initializable {
         String password = Password.getText();
         new Thread(() -> {
             try {
-                ServerConnection connection = NetworkManager.getConnection();
                 Command cmd = new LoginCommand();
                 cmd.addData("username", username);
                 cmd.addData("password", password);
-                NetworkManager.getInstance().register(cmd.getClass(), this);
-                connection.sendCommand(cmd);
+                NetworkManager.getInstance().sendRequest(cmd, this);
             } catch (Exception e) {
                 log.error("Lỗi khi gửi login request: {}", e.getMessage(), e);
                 Platform.runLater(() -> message.setText("Lỗi kết nối: " + e.getMessage()));
@@ -73,6 +70,8 @@ public class LoginController implements ResponseListener, Initializable {
         if (rp.isSuccess()){
             User user = (User) rp.getPayLoad();
             ClientModel.getInstance().setCurrentUser(user);
+            // Load trạng thái đã đọc của user này từ disk ngay sau khi đăng nhập
+            ClientModel.getInstance().loadReadNotificationIds(user.getId());
             Platform.runLater(() -> {
                 if (user.getAccountType() == AccountType.USER) {
                     log.info(rp.getMessage());

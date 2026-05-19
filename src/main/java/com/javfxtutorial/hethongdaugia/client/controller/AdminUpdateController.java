@@ -65,16 +65,14 @@ public class AdminUpdateController implements ResponseListener {
         }
 
         //tao command gui len server
-        ServerConnection connection = NetworkManager.getConnection();
         UpdateProfileCommand cmd = new UpdateProfileCommand();
         cmd.addData("userId", currentUser.getId());
         cmd.addData("username", newName);
         cmd.addData("email", newEmail);
         cmd.addData("phone", newPhone);
 
-        connection.sendCommand(cmd);
         NetworkManager networkManager = NetworkManager.getInstance();
-        networkManager.register(UpdateProfileCommand.class, this);
+        networkManager.sendRequest(cmd, this);
 
     }
 
@@ -92,6 +90,6 @@ public class AdminUpdateController implements ResponseListener {
             showAlert("Thất bại", rp.getMessage() , "WrongCat.gif");
         }
         NetworkManager networkManager = NetworkManager.getInstance();
-        networkManager.unregister(GetAllAuctionsCommand.class, this);
+        networkManager.unregister(UpdateProfileCommand.class, this);
     }
 }

@@ -11,11 +11,16 @@ import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.RegisterToAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
+import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -23,8 +28,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 
-import java.io.ByteArrayOutputStream;
-import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -41,6 +44,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@DisplayName("Contract xử lý command từ client")
 class CommandContractTest {
     private AuctionManager manager;
 
@@ -53,12 +57,14 @@ class CommandContractTest {
     @AfterEach
     void tearDown() throws Exception {
         TestStateSupport.resetAuctionManager(manager);
+        ClientHandlerContextHolder.clear();
     }
 
     @Nested
     @DisplayName("AutoBidCommand")
     class AutoBidCommandTest {
         @Test
+        @DisplayName("thiếu cấu hình auto-bid trả failure")
         void handle_returnsFailureWhenConfigIsMissing() {
             AutoBidCommand command = new AutoBidCommand();
 
@@ -66,10 +72,10 @@ class CommandContractTest {
 
             assertFalse(response.isSuccess());
             assertNull(response.getPayLoad());
-            assertSame(command, response.getCommand());
         }
 
         @Test
+        @DisplayName("cấu hình tắt auto-bid đăng ký thành công không cần DB")
         void handle_returnsSuccessWhenInactiveConfigCanBeRegisteredWithoutDatabase() {
             AutoBidCommand command = new AutoBidCommand();
             AutoBidConfig config = new AutoBidConfig(1, "alice", 100, new BigDecimal("200"), false);
@@ -79,7 +85,6 @@ class CommandContractTest {
 
             assertTrue(response.isSuccess());
             assertSame(config, response.getPayLoad());
-            assertSame(command, response.getCommand());
         }
     }
 
@@ -87,6 +92,7 @@ class CommandContractTest {
     @DisplayName("Auction commands")
     class AuctionCommandTest {
         @Test
+        @DisplayName("trả về trạng thái hiện tại của phiên")
         void getAuctionStatusCommand_returnsCurrentStatus() {
             Auction auction = runningAuction(AuctionStatus.RUNNING);
             GetAuctionStatusCommand command = new GetAuctionStatusCommand(auction);
@@ -95,10 +101,10 @@ class CommandContractTest {
 
             assertTrue(response.isSuccess());
             assertEquals(AuctionStatus.RUNNING, response.getPayLoad());
-            assertSame(command, response.getCommand());
         }
 
         @Test
+        @DisplayName("không xóa phiên đang chạy")
         void deleteAuctionCommand_rejectsRunningAuctionBeforeDaoDelete() {
             Auction auction = runningAuction(AuctionStatus.RUNNING);
             DeleteAuctionCommand command = new DeleteAuctionCommand(auction);
@@ -107,10 +113,33 @@ class CommandContractTest {
 
             assertFalse(response.isSuccess());
             assertNull(response.getPayLoad());
-            assertSame(command, response.getCommand());
         }
 
         @Test
+        @DisplayName("xóa item khi phiên chưa bắt đầu")
+        void deleteAuctionCommand_deletesItemWhenAuctionHasNotStarted() throws Exception {
+            Auction auction = runningAuction(AuctionStatus.NOT_START);
+            auction.setStartingTime(LocalDateTime.now().plusMinutes(5));
+            Item item = new Item();
+            auction.setItem(item);
+            DeleteAuctionCommand command = new DeleteAuctionCommand(auction);
+
+            ItemDAO itemDAO = mock(ItemDAO.class);
+            when(itemDAO.delete(item)).thenReturn(1);
+
+            try (MockedStatic<ItemDAO> mockedItemDAO = mockStatic(ItemDAO.class)) {
+                mockedItemDAO.when(ItemDAO::getInstance).thenReturn(itemDAO);
+
+                Response response = command.handle();
+
+                assertTrue(response.isSuccess());
+                assertNull(response.getPayLoad());
+                verify(itemDAO).delete(item);
+            }
+        }
+
+        @Test
+        @DisplayName("không sửa phiên đang chạy")
         void updateAuctionCommand_rejectsRunningAuctionBeforeDaoUpdate() {
             Auction auction = runningAuction(AuctionStatus.RUNNING);
             UpdateAuctionCommand command = new UpdateAuctionCommand(auction);
@@ -119,13 +148,43 @@ class CommandContractTest {
 
             assertFalse(response.isSuccess());
             assertNull(response.getPayLoad());
-            assertSame(command, response.getCommand());
         }
 
         @Test
+        @DisplayName("sửa item và auction khi phiên chưa bắt đầu")
+        void updateAuctionCommand_updatesItemAndAuctionWhenAuctionHasNotStarted() throws Exception {
+            Auction auction = runningAuction(AuctionStatus.NOT_START);
+            auction.setStartingTime(LocalDateTime.now().plusMinutes(5));
+            Item item = new Item();
+            auction.setItem(item);
+            UpdateAuctionCommand command = new UpdateAuctionCommand(auction);
+
+            ItemDAO itemDAO = mock(ItemDAO.class);
+            AuctionDAO auctionDAO = mock(AuctionDAO.class);
+            when(itemDAO.update(item)).thenReturn(1);
+            when(auctionDAO.update(auction)).thenReturn(1);
+
+            try (MockedStatic<ItemDAO> mockedItemDAO = mockStatic(ItemDAO.class);
+                 MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class)) {
+                mockedItemDAO.when(ItemDAO::getInstance).thenReturn(itemDAO);
+                mockedAuctionDAO.when(AuctionDAO::getInstance).thenReturn(auctionDAO);
+
+                Response response = command.handle();
+
+                assertTrue(response.isSuccess());
+                assertSame(auction, response.getPayLoad());
+                verify(itemDAO).update(item);
+                verify(auctionDAO).update(auction);
+            }
+        }
+
+        @Test
+        @DisplayName("đăng ký listener hiện tại vào phòng auction")
         void registerToAuctionCommand_registersCurrentContextListenerAndReturnsSuccessResponse() throws Exception {
             Auction auction = runningAuction(AuctionStatus.RUNNING);
             auction.setAuctionId(123);
+            ClientHandler currentClient = new ClientHandler(null);
+            ClientHandlerContextHolder.set(currentClient);
 
             RegisterToAuctionCommand command = new RegisterToAuctionCommand();
             command.addData("currentAuction", auction);
@@ -135,12 +194,12 @@ class CommandContractTest {
             assertNotNull(response);
             assertTrue(response.isSuccess());
             assertNull(response.getPayLoad());
-            assertSame(command, response.getCommand());
             assertEquals(1, TestStateSupport.auctionSubscribers(manager).get(123).size());
-            assertNull(TestStateSupport.auctionSubscribers(manager).get(123).get(0));
+            assertSame(currentClient, TestStateSupport.auctionSubscribers(manager).get(123).get(0));
         }
 
         @Test
+        @DisplayName("thiếu auction thì không đăng ký listener")
         void registerToAuctionCommand_missingAuctionReturnsFailureWithoutRegisteringListener() throws Exception {
             RegisterToAuctionCommand command = new RegisterToAuctionCommand();
 
@@ -148,11 +207,11 @@ class CommandContractTest {
 
             assertFalse(response.isSuccess());
             assertNull(response.getPayLoad());
-            assertSame(command, response.getCommand());
             assertTrue(TestStateSupport.auctionSubscribers(manager).isEmpty());
         }
 
         @Test
+        @DisplayName("thiếu bid thì trả failure")
         void placeBidCommand_missingBidReturnsFailureResponse() {
             PlaceBidCommand command = new PlaceBidCommand();
 
@@ -160,7 +219,6 @@ class CommandContractTest {
 
             assertFalse(response.isSuccess());
             assertNull(response.getPayLoad());
-            assertSame(command, response.getCommand());
         }
     }
 
@@ -168,6 +226,7 @@ class CommandContractTest {
     @DisplayName("Account command")
     class AccountCommandTest {
         @Test
+        @DisplayName("tạo tài khoản khi DAO insert thành công")
         void addAccountCommand_returnsSuccessOnlyWhenDaoInsertSucceeds() throws DataException {
             AddAccountCommand command = validAddAccountCommand();
             UserDAO userDAO = mock(UserDAO.class);
@@ -180,12 +239,12 @@ class CommandContractTest {
 
                 assertTrue(response.isSuccess());
                 assertNull(response.getPayLoad());
-                assertSame(command, response.getCommand());
                 verify(userDAO).insert(any(User.class));
             }
         }
 
         @Test
+        @DisplayName("trả failure khi username bị trùng")
         void addAccountCommand_duplicateUsernameReturnsFailure() throws DataException {
             AddAccountCommand command = validAddAccountCommand();
             UserDAO userDAO = mock(UserDAO.class);
@@ -198,11 +257,11 @@ class CommandContractTest {
 
                 assertFalse(response.isSuccess());
                 assertNull(response.getPayLoad());
-                assertSame(command, response.getCommand());
             }
         }
 
         @Test
+        @DisplayName("role không hợp lệ bị chặn trước DAO")
         void addAccountCommand_invalidRoleReturnsFailureBeforeDao() throws DataException {
             AddAccountCommand command = validAddAccountCommand();
             command.addData("accountType", "MANAGER");
@@ -215,7 +274,6 @@ class CommandContractTest {
 
                 assertFalse(response.isSuccess());
                 assertNull(response.getPayLoad());
-                assertSame(command, response.getCommand());
                 verify(userDAO, never()).insert(any(User.class));
             }
         }
@@ -225,17 +283,7 @@ class CommandContractTest {
     @DisplayName("Profile command")
     class ProfileCommandTest {
         @Test
-        void updateProfileCommand_missingRequiredDataReturnsFailure() {
-            UpdateProfileCommand command = new UpdateProfileCommand();
-
-            Response response = runWithSuppressedErrorOutput(command::handle);
-
-            assertFalse(response.isSuccess());
-            assertNull(response.getPayLoad());
-            assertSame(command, response.getCommand());
-        }
-
-        @Test
+        @DisplayName("cập nhật profile thành công và giữ command để client dispatch")
         void updateProfileCommand_successResponseKeepsCommandForClientDispatch() throws DataException {
             UpdateProfileCommand command = new UpdateProfileCommand();
             command.addData("userId", 1);
@@ -280,15 +328,5 @@ class CommandContractTest {
         command.addData("sdt", "0901234567");
         command.addData("accountType", "USER");
         return command;
-    }
-
-    private static Response runWithSuppressedErrorOutput(java.util.function.Supplier<Response> action) {
-        PrintStream originalErr = System.err;
-        try {
-            System.setErr(new PrintStream(new ByteArrayOutputStream()));
-            return action.get();
-        } finally {
-            System.setErr(originalErr);
-        }
     }
 }

@@ -1,4 +1,4 @@
-package com.javfxtutorial.hethongdaugia.client.controller;
+package com.javfxtutorial.hethongdaugia.client.Util;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -42,9 +42,11 @@ public class TimeLeft {       // Class tái sd — truyền vào Label và end l
 
         if (second <= 0) {
             label.setText("00:00:00");
-            label.setStyle("-fx-text-fill: -sf-danger; -fx-font-weight: bold; -fx-font-size: px;");
+            label.setStyle("-fx-text-fill: -sf-danger; -fx-font-weight: bold; -fx-font-size: 20px;");
             stop();
             if (onFinished != null) onFinished.run();    //nếu co hd can sau khi het gio, thi no se chay
+        } else if (second <= 3) {
+            label.setStyle("-fx-text-fill: red; -fx-font-weight: bold; -fx-font-size: 20px;");
         } else {
             label.setStyle("-fx-text-fill: -sf-success; -fx-font-weight: bold; -fx-font-size: 20px;");
         }

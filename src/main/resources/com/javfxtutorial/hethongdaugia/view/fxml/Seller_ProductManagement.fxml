@@ -27,12 +27,8 @@
 
             <!-- Thêm vào HBox top, trước nút Trang chủ -->
             <StackPane onMouseClicked="#openNotifications" style="-fx-cursor: hand;">
-                <Label text="🔔" style="-fx-font-size: 26px;" />
-                <Label fx:id="badgeLabel" text="0"
-                       style="-fx-background-color: -sf-danger; -fx-text-fill: -sf-on-accent;
-                  -fx-background-radius: 10; -fx-font-size: 10px;
-                  -fx-padding: 1 5; -fx-font-weight: bold;"
-                       StackPane.alignment="TOP_RIGHT" translateX="8" translateY="-4"/>
+                <Label style="-fx-font-size: 26px;" text="🔔" />
+                <Label fx:id="badgeLabel" style="-fx-background-color: -sf-danger; -fx-text-fill: -sf-on-accent;                   -fx-background-radius: 10; -fx-font-size: 10px;                   -fx-padding: 1 5; -fx-font-weight: bold;" text="0" translateX="8" translateY="-4" StackPane.alignment="TOP_RIGHT" />
             </StackPane>
 
             <Button fx:id="goMenu" onAction="#goMenu" prefHeight="34.0" prefWidth="105.0" styleClass="sf-btn-primary" text="Trang chủ" />
@@ -54,6 +50,9 @@
                     </VBox>
                     <Region HBox.hgrow="ALWAYS" />
                 </HBox>
+
+                <!-- Lọc theo trạng thái sản phẩm -->
+                <ComboBox fx:id="filterComboBox" maxWidth="Infinity" prefHeight="32.0" promptText="Trạng thái" style="-fx-background-color: -sf-surface; -fx-background-radius: 10; -fx-border-color: -sf-border-soft; -fx-border-radius: 10; -fx-font-size: 12px;" />
 
                 <ListView fx:id="productList" prefHeight="500.0" prefWidth="306.0" styleClass="sf-transparent-list" VBox.vgrow="ALWAYS" />
 

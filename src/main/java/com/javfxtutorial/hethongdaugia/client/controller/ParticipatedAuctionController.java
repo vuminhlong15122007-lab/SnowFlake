@@ -106,6 +106,7 @@ public class ParticipatedAuctionController implements  ResponseListener {
       setActiveButton(btnDaThamGia);
       applyFilters();
     });
+    setActiveButton(btnAll);
     loadData();
   }
 
@@ -142,40 +143,33 @@ public class ParticipatedAuctionController implements  ResponseListener {
 
 
 
-  // Đổi màu nút đang active
+  // Đổi nút đang active bằng CSS class để không phá theme khi đổi màu
   private void setActiveButton(Button active) {
     Button[] buttons = {btnAll, btnCTToan, btnDTGia, btnDTToan, btnDaHuy, btnDaThamGia};
-    String activeStyle = "-fx-background-color: linear-gradient(to right, #56ccf2, #2f80ed); -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15;";
-    String inactiveStyle = "-fx-background-color: white; -fx-text-fill: #7f8c8d; -fx-font-weight: bold; -fx-background-radius: 8; -fx-alignment: CENTER_LEFT; -fx-padding: 0 0 0 15; -fx-border-color: #dcdde1; -fx-border-radius: 8;";
     for (Button b : buttons) {
-      b.setStyle(b == active ? activeStyle : inactiveStyle);
+      if (b == null) continue;
+      b.setStyle("");
+      b.getStyleClass().removeAll("sf-filter-button", "sf-filter-button-active");
+      b.getStyleClass().add(b == active ? "sf-filter-button-active" : "sf-filter-button");
     }
   }
 
   public void loadData() {
-    try {
-      Command cmd = new GetParticipatedAuctionsByBidderCommand();
-      cmd.addData("currentUserId", ClientModel.getInstance().getCurrentUser().getId());
-      ServerConnection connection = NetworkManager.getConnection();
-      // Đăng ký TRƯỚC khi gửi để không bỏ lỡ response
-      NetworkManager.getInstance().register(GetParticipatedAuctionsByBidderCommand.class, this);
-      new Thread(() -> {
-        try {
-          connection.sendCommand(cmd);
-        } catch (SendFailedException e) {
-          log.error("Lỗi gửi: {}", e.getMessage());
-          NetworkManager.getInstance().unregister(GetParticipatedAuctionsByBidderCommand.class, this);
-          Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "Loading.gif"));
-        } catch (Exception e) {
-          log.error("Lỗi load data: {}", e.getMessage(), e);
-          NetworkManager.getInstance().unregister(GetParticipatedAuctionsByBidderCommand.class, this);
-          Platform.runLater(() -> showAlert("Lỗi", "Tải dữ liệu thất bại", "Loading.gif"));
-        }
-      }).start();
-    } catch (ConnectionFailedException e) {
-      log.error("Lỗi kết nối khi load phiên đấu giá: {}", e.getMessage());
-      showAlert("Lỗi kết nối", "Không thể kết nối đến server", "Loading.gif");
-    }
+    Command cmd = new GetParticipatedAuctionsByBidderCommand();
+    cmd.addData("currentUserId", ClientModel.getInstance().getCurrentUser().getId());
+    new Thread(() -> {
+      try {
+        NetworkManager.getInstance().sendRequest(cmd, this);
+      } catch (SendFailedException e) {
+        log.error("Lỗi gửi: {}", e.getMessage());
+        NetworkManager.getInstance().unregister(GetParticipatedAuctionsByBidderCommand.class, this);
+        Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "Loading.gif"));
+      } catch (Exception e) {
+        log.error("Lỗi load data: {}", e.getMessage(), e);
+        NetworkManager.getInstance().unregister(GetParticipatedAuctionsByBidderCommand.class, this);
+        Platform.runLater(() -> showAlert("Lỗi", "Tải dữ liệu thất bại", "Loading.gif"));
+      }
+    }).start();
   }
 
 
@@ -184,7 +178,7 @@ public class ParticipatedAuctionController implements  ResponseListener {
     if (rp.getCommand().getClass() == GetParticipatedAuctionsByBidderCommand.class) {
       Platform.runLater(() -> {
         if (!rp.isSuccess()) {
-          showAlert("Loi tai du lieu", rp.getMessage(), "Loading.gif");
+          showAlert("Loi tai du lieu", "Không thể tải dữ liệu", "Loading.gif");
           return;
         }
         if (rp.getPayLoad() == null) {

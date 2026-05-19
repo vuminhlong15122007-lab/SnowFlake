@@ -5,7 +5,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public class SellerNotification implements Serializable {
-
+    private static int idCounter = 0;
     public enum Type { CLOSED, PAID, CANCELLED }
 
     private int           notificationId;
@@ -20,6 +20,7 @@ public class SellerNotification implements Serializable {
     public SellerNotification() {}
 
     public SellerNotification(int auctionId, Type type, String productName, String winnerName, BigDecimal winningPrice) {
+        idCounter += 1;
         this.auctionId      = auctionId;
         this.type           = type;
         this.productName    = productName;
@@ -27,7 +28,7 @@ public class SellerNotification implements Serializable {
         this.winningPrice   = winningPrice;
         this.createdAt      = LocalDateTime.now();
         this.read           = false;
-        this.notificationId = (int)(System.currentTimeMillis() % Integer.MAX_VALUE);
+        this.notificationId = idCounter ;
     }
 
     public int getNotificationId()            { return notificationId; }
@@ -55,8 +56,7 @@ public class SellerNotification implements Serializable {
     public void setRead(boolean read)         { this.read = read; }
 
     public String getMessage() {
-        String price = winningPrice != null
-                ? String.format("%,.0f", winningPrice) : "N/A";
+        String price = String.format("%,.0f", winningPrice);
         return switch (type) {
             case CLOSED -> String.format(
                     "🏆 Phiên \"%s\" kết thúc!\nNgười thắng: %s — Giá: %s VND\nĐang chờ họ thanh toán.",

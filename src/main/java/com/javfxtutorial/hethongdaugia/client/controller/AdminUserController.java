@@ -58,11 +58,9 @@ public class AdminUserController implements Initializable, ResponseListener {
     private void loadUserData() {
         new Thread(() -> {
             try{
-                ServerConnection connection = NetworkManager.getConnection();
                 Command cmd = new GetAllUsersCommand();
-                connection.sendCommand(cmd);
                 NetworkManager networkManager = NetworkManager.getInstance();
-                networkManager.register(GetAllUsersCommand.class, this);} catch (ConnectionFailedException e) {
+                networkManager.sendRequest(cmd, this);} catch (ConnectionFailedException e) {
                 log.error("Lỗi kết nối: {}", e.getMessage());
                 Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối đến server"));
             } catch (SendFailedException e) {
@@ -85,7 +83,6 @@ public class AdminUserController implements Initializable, ResponseListener {
 
     @FXML
     public void clickToDeleteUser() throws ConnectionFailedException, SendFailedException {
-        ServerConnection connection =NetworkManager.getConnection();
         selectUser = userTable.getSelectionModel().getSelectedItem();
         if (selectUser == null){
             showAlert("Lỗi", "Vui lòng chọn người dùng cần xóa" , "WrongCat.gif");
@@ -110,9 +107,8 @@ public class AdminUserController implements Initializable, ResponseListener {
             cmd.addData("email", selectUser.getEmail());
             cmd.addData("phone", selectUser.getSdt());
 
-            connection.sendCommand(cmd);
             NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.register(DeleteUserCommand.class, this);
+            networkManager.sendRequest(cmd, this);
         }
 }
     @FXML

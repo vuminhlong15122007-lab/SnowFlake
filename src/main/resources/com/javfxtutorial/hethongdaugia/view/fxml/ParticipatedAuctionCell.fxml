@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.String?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.image.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.shape.*?>
 
-<AnchorPane prefHeight="152.0" prefWidth="896.0" styleClass="sf-card" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.ParticipatedAuctionCellController">
+<AnchorPane prefHeight="152.0" prefWidth="896.0" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.ParticipatedAuctionCellController">
+    <styleClass>
+        <String fx:value="sf-card" />
+        <String fx:value="sf-participated-auction-cell" />
+    </styleClass>
 
     <HBox alignment="CENTER_LEFT" spacing="20.0" AnchorPane.bottomAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0" AnchorPane.topAnchor="15.0">
 
@@ -37,7 +42,7 @@
             <HBox alignment="CENTER" spacing="8">
                 <Label fx:id="lbCurrentPrice" alignment="CENTER" prefHeight="26.0" prefWidth="128.0" style="-fx-font-size: 17px; -fx-font-weight: bold; -fx-text-fill: -sf-danger;" text="5,000,000 VND" />
             </HBox>
-            <Button fx:id="actionButton" disable="true" onAction="#goPayment" prefHeight="42.0" prefWidth="150.0" style="-fx-background-color: -sf-neutral; -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-font-size: 13px; -fx-background-radius: 25; -fx-cursor: hand;" text="TRẠNG THÁI" />
+            <Button fx:id="actionButton" disable="true" onAction="#goPayment" prefHeight="42.0" prefWidth="150.0" style="-fx-font-size: 13px;" styleClass="sf-auction-action-neutral" text="TRẠNG THÁI" />
 
             <!-- Countdown badge — chỉ hiện khi có thời gian đếm ngược -->
             <StackPane fx:id="countdownBadge" managed="false" visible="false">

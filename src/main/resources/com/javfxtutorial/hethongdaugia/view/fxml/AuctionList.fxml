@@ -36,7 +36,7 @@
 
             <VBox alignment="CENTER" spacing="8.0" styleClass="sf-card-soft">
                 <Label alignment="CENTER" prefHeight="16.0" prefWidth="153.0" style="-fx-font-size: 11px; -fx-text-fill: -sf-muted; -fx-font-weight: bold;" text="LOẠI SẢN PHẨM" />
-                <ComboBox fx:id="categoryFilter" prefHeight="40.0" prefWidth="210.0" promptText="Tất cả loại" style="-fx-background-color: -sf-surface; -fx-border-color: -sf-border-soft; -fx-border-radius: 14; -fx-background-radius: 14; -fx-padding: 2 8 2 8;">
+                <ComboBox fx:id="categoryFilter" prefHeight="40.0" prefWidth="210.0" promptText="Tất cả loại" styleClass="sf-category-filter">
                <cursor>
                   <Cursor fx:constant="DEFAULT" />
                </cursor></ComboBox>

@@ -105,16 +105,14 @@ public class RegisterController implements ResponseListener {
         String finalPassword = password;
         new Thread(() -> {
             try {
-                ServerConnection connection = NetworkManager.getConnection();
                 Command cmd = new AddAccountCommand();
                 cmd.addData("username", name);
                 cmd.addData("password", finalPassword);
                 cmd.addData("email", email);
                 cmd.addData("sdt", sdt);
                 cmd.addData("accountType", "USER");
-                connection.sendCommand(cmd);
                 NetworkManager networkManager = NetworkManager.getInstance();
-                networkManager.register(AddAccountCommand.class, this);
+                networkManager.sendRequest(cmd, this);
             } catch (ConnectionFailedException e) {
                 log.error("Lỗi kết nối: {}", e.getMessage());
                 Platform.runLater(() -> message.setText("Lỗi kết nối server"));

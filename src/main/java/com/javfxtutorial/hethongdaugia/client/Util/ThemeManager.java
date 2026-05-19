@@ -19,19 +19,25 @@ import java.util.List;
 
 public final class ThemeManager {
     private static final String GLOBAL_CSS = "/com/javfxtutorial/hethongdaugia/view/css/global.css";
-    private static final String DARK_CSS = "/com/javfxtutorial/hethongdaugia/view/css/darkmode.css";
-    private static final String AURORA_CSS = "/com/javfxtutorial/hethongdaugia/view/css/auroramode.css";
-    private static final String ROYAL_CSS = "/com/javfxtutorial/hethongdaugia/view/css/royalmode.css";
-    private static final String FROST_CSS = "/com/javfxtutorial/hethongdaugia/view/css/frostmode.css";
+    private static final String SWISS_RED_CSS = "/com/javfxtutorial/hethongdaugia/view/css/swissredmode.css";
     private static final String MINT_CSS = "/com/javfxtutorial/hethongdaugia/view/css/mintmode.css";
-    private static final String EMBER_CSS = "/com/javfxtutorial/hethongdaugia/view/css/embermode.css";
-    private static final String OCEAN_CSS = "/com/javfxtutorial/hethongdaugia/view/css/oceanmode.css";
-    private static final String GRAPHITE_CSS = "/com/javfxtutorial/hethongdaugia/view/css/graphitemode.css";
-    private static final String LAVENDER_CSS = "/com/javfxtutorial/hethongdaugia/view/css/lavendermode.css";
-    private static final String FOREST_CSS = "/com/javfxtutorial/hethongdaugia/view/css/forestmode.css";
-    private static final String SUNSET_CSS = "/com/javfxtutorial/hethongdaugia/view/css/sunsetmode.css";
-    private static final String BLOSSOM_CSS = "/com/javfxtutorial/hethongdaugia/view/css/blossommode.css";
-    private static final String CYBER_CSS = "/com/javfxtutorial/hethongdaugia/view/css/cybermode.css";
+    private static final String AUTUMN_CSS = "/com/javfxtutorial/hethongdaugia/view/css/autumnmode.css";
+    private static final String DARK_CSS = "/com/javfxtutorial/hethongdaugia/view/css/darkmode.css";
+
+    // Old theme paths are kept only to remove stale stylesheets from already-open scenes.
+    private static final List<String> LEGACY_THEME_CSS = List.of(
+            "/com/javfxtutorial/hethongdaugia/view/css/auroramode.css",
+            "/com/javfxtutorial/hethongdaugia/view/css/royalmode.css",
+            "/com/javfxtutorial/hethongdaugia/view/css/frostmode.css",
+            "/com/javfxtutorial/hethongdaugia/view/css/embermode.css",
+            "/com/javfxtutorial/hethongdaugia/view/css/oceanmode.css",
+            "/com/javfxtutorial/hethongdaugia/view/css/graphitemode.css",
+            "/com/javfxtutorial/hethongdaugia/view/css/lavendermode.css",
+            "/com/javfxtutorial/hethongdaugia/view/css/forestmode.css",
+            "/com/javfxtutorial/hethongdaugia/view/css/sunsetmode.css",
+            "/com/javfxtutorial/hethongdaugia/view/css/blossommode.css",
+            "/com/javfxtutorial/hethongdaugia/view/css/cybermode.css"
+    );
     private static final String THEME_PROPERTY = "snowfox.theme";
     private static final String THEME_ENV = "SNOWFOX_THEME";
     private static final String SWITCHER_ID = "themeModeSwitcher";
@@ -69,19 +75,13 @@ public final class ThemeManager {
     }
 
     private static void removeThemeStyles(List<String> stylesheets) {
-        removeIfPresent(stylesheets, DARK_CSS);
-        removeIfPresent(stylesheets, AURORA_CSS);
-        removeIfPresent(stylesheets, ROYAL_CSS);
-        removeIfPresent(stylesheets, FROST_CSS);
+        removeIfPresent(stylesheets, SWISS_RED_CSS);
         removeIfPresent(stylesheets, MINT_CSS);
-        removeIfPresent(stylesheets, EMBER_CSS);
-        removeIfPresent(stylesheets, OCEAN_CSS);
-        removeIfPresent(stylesheets, GRAPHITE_CSS);
-        removeIfPresent(stylesheets, LAVENDER_CSS);
-        removeIfPresent(stylesheets, FOREST_CSS);
-        removeIfPresent(stylesheets, SUNSET_CSS);
-        removeIfPresent(stylesheets, BLOSSOM_CSS);
-        removeIfPresent(stylesheets, CYBER_CSS);
+        removeIfPresent(stylesheets, AUTUMN_CSS);
+        removeIfPresent(stylesheets, DARK_CSS);
+        for (String legacyCss : LEGACY_THEME_CSS) {
+            removeIfPresent(stylesheets, legacyCss);
+        }
     }
 
     private static void removeIfPresent(List<String> stylesheets, String resourcePath) {
@@ -167,7 +167,7 @@ public final class ThemeManager {
         switcher.setPrefHeight(28);
         switcher.setMaxHeight(28);
         switcher.getStyleClass().add("theme-switcher");
-        switcher.setTooltip(new Tooltip("Change color mode: Light, Frost, Ocean, Mint, Aurora, Royal, Lavender, Blossom, Sunset, Ember, Forest, Graphite, Cyber, Dark"));
+        switcher.setTooltip(new Tooltip("Change color mode: Xanh nguyên bản, Đỏ Thụy Sĩ, Xanh lá mint, Mùa thu lá vàng, Darkmode"));
         switcher.setOnAction(_ -> {
             currentMode = currentMode.next();
             System.setProperty(THEME_PROPERTY, currentMode.id());
@@ -230,20 +230,11 @@ public final class ThemeManager {
     }
 
     private enum ColorMode {
-        LIGHT("light", "Light", null, "theme-light"),
-        FROST("frost", "Frost", FROST_CSS, "theme-frost"),
-        OCEAN("ocean", "Ocean", OCEAN_CSS, "theme-ocean"),
-        MINT("mint", "Mint", MINT_CSS, "theme-mint"),
-        AURORA("aurora", "Aurora", AURORA_CSS, "theme-aurora"),
-        ROYAL("royal", "Royal", ROYAL_CSS, "theme-royal"),
-        LAVENDER("lavender", "Lavender", LAVENDER_CSS, "theme-lavender"),
-        BLOSSOM("blossom", "Blossom", BLOSSOM_CSS, "theme-blossom"),
-        SUNSET("sunset", "Sunset", SUNSET_CSS, "theme-sunset"),
-        EMBER("ember", "Ember", EMBER_CSS, "theme-ember"),
-        FOREST("forest", "Forest", FOREST_CSS, "theme-forest"),
-        GRAPHITE("graphite", "Graphite", GRAPHITE_CSS, "theme-graphite"),
-        CYBER("cyber", "Cyber", CYBER_CSS, "theme-cyber"),
-        DARK("dark", "Dark", DARK_CSS, "theme-dark");
+        BLUE("blue", "Xanh nguyên bản", null, "theme-blue"),
+        SWISS_RED("swiss-red", "Đỏ Thụy Sĩ", SWISS_RED_CSS, "theme-swiss-red"),
+        MINT("mint", "Xanh lá mint", MINT_CSS, "theme-mint"),
+        AUTUMN("autumn", "Mùa thu lá vàng", AUTUMN_CSS, "theme-autumn"),
+        DARK("dark", "Darkmode", DARK_CSS, "theme-dark");
 
         private final String id;
         private final String label;
@@ -280,35 +271,51 @@ public final class ThemeManager {
 
         private static ColorMode from(String raw) {
             if (raw == null || raw.isBlank()) {
-                return LIGHT;
+                return BLUE;
             }
             if ("true".equalsIgnoreCase(raw)) {
                 return DARK;
+            }
+            String normalized = raw.trim().toLowerCase();
+            if (normalized.equals("light") || normalized.equals("blue") || normalized.equals("ocean") || normalized.equals("frost")) {
+                return BLUE;
+            }
+            if (normalized.equals("red") || normalized.equals("swiss") || normalized.equals("swissred") || normalized.equals("blossom")) {
+                return SWISS_RED;
+            }
+            if (normalized.equals("green") || normalized.equals("forest")) {
+                return MINT;
+            }
+            if (normalized.equals("yellow") || normalized.equals("ember") || normalized.equals("sunset")) {
+                return AUTUMN;
             }
             for (ColorMode mode : values()) {
                 if (mode.id.equalsIgnoreCase(raw) || mode.label.equalsIgnoreCase(raw)) {
                     return mode;
                 }
             }
-            return LIGHT;
+            return BLUE;
         }
 
         private static List<String> styleClasses() {
             return List.of(
-                    LIGHT.styleClass,
-                    FROST.styleClass,
-                    OCEAN.styleClass,
+                    BLUE.styleClass,
+                    SWISS_RED.styleClass,
                     MINT.styleClass,
-                    AURORA.styleClass,
-                    ROYAL.styleClass,
-                    LAVENDER.styleClass,
-                    BLOSSOM.styleClass,
-                    SUNSET.styleClass,
-                    EMBER.styleClass,
-                    FOREST.styleClass,
-                    GRAPHITE.styleClass,
-                    CYBER.styleClass,
-                    DARK.styleClass
+                    AUTUMN.styleClass,
+                    DARK.styleClass,
+                    "theme-light",
+                    "theme-frost",
+                    "theme-ocean",
+                    "theme-aurora",
+                    "theme-royal",
+                    "theme-lavender",
+                    "theme-blossom",
+                    "theme-sunset",
+                    "theme-ember",
+                    "theme-forest",
+                    "theme-graphite",
+                    "theme-cyber"
             );
         }
     }

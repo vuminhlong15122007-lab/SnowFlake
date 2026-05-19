@@ -1,39 +1,50 @@
 .root {
-    -sf-page-start: #18314A;
-    -sf-page-end: #243D5A;
-    -sf-page-soft: #1F3A57;
-    -sf-surface: #263F5C;
-    -sf-surface-soft: #2E4B6A;
-    -sf-surface-raised: #365B7E;
-    -sf-surface-muted: #487299;
-    -sf-border: #6FA4C8;
-    -sf-border-soft: #557FA2;
-    -sf-border-muted: #416A8C;
-    -sf-text: #EAF7FF;
+    -sf-page-start: #101827;
+    -sf-page-end: #172033;
+    -sf-page-soft: #121C2D;
+    -sf-surface: #1B2638;
+    -sf-surface-soft: #233149;
+    -sf-surface-raised: #2B3E5B;
+    -sf-surface-muted: #355477;
+    -sf-border: #5C82AD;
+    -sf-border-soft: #456989;
+    -sf-border-muted: #334F6A;
+    -sf-text: #EAF4FF;
     -sf-heading: #FFFFFF;
-    -sf-muted: #C6DAEA;
-    -sf-subtle: #A9C3D8;
-    -sf-on-accent: #08243A;
-    -sf-accent: #7DE3FF;
-    -sf-accent-2: #B9D7FF;
-    -sf-accent-soft: #315E82;
-    -sf-purple: #C6B8FF;
-    -sf-purple-soft: #3A4774;
-    -sf-success: #75E6B0;
-    -sf-success-2: #A6F2CA;
-    -sf-success-soft: #315F50;
-    -sf-danger: #FF9BAD;
-    -sf-danger-2: #FFC1CB;
-    -sf-danger-soft: #6B3B4A;
-    -sf-warning: #FFD36C;
-    -sf-warning-soft: #665333;
-    -sf-neutral: #A9C3D8;
-    -sf-panel-strong: rgba(38,63,92,0.98);
-    -sf-panel: rgba(38,63,92,0.94);
-    -sf-panel-soft: rgba(54,91,126,0.82);
-    -sf-shadow: rgba(125,227,255,0.20);
-    -sf-shadow-soft: rgba(185,215,255,0.14);
-    -sf-shadow-neutral: rgba(0,0,0,0.18);
+    -sf-muted: #C2D3E5;
+    -sf-subtle: #9FB5CB;
+    -sf-on-accent: #FFFFFF;
+    -sf-accent: #2563EB;
+    -sf-accent-2: #0EA5E9;
+    -sf-accent-soft: #1E3A5F;
+    -sf-brand-start: #FFFFFF;
+    -sf-brand-mid: #7DD3FC;
+    -sf-brand-end: #C4B5FD;
+    -sf-brand-glow: rgba(125,211,252,0.32);
+    -sf-button-text: #FFFFFF;
+    -sf-button-muted-start: #38BDF8;
+    -sf-button-muted-end: #2563EB;
+    -sf-purple: #8B5CF6;
+    -sf-purple-soft: #343257;
+    -sf-success: #16A34A;
+    -sf-success-2: #22C55E;
+    -sf-success-soft: #244C3A;
+    -sf-danger: #E11D48;
+    -sf-danger-2: #F43F5E;
+    -sf-danger-soft: #613442;
+    -sf-warning: #D97706;
+    -sf-warning-soft: #6B5525;
+    -sf-role-bg-start: #FFE8A3;
+    -sf-role-bg-end: #FBBF24;
+    -sf-role-text: #3A2600;
+    -sf-role-border: #FCD34D;
+    -sf-neutral: #A7BCD2;
+    -sf-panel-strong: rgba(27,38,56,0.98);
+    -sf-panel: rgba(27,38,56,0.94);
+    -sf-panel-soft: rgba(43,62,91,0.82);
+    -sf-shadow: rgba(125,211,252,0.20);
+    -sf-shadow-soft: rgba(186,230,253,0.12);
+    -sf-shadow-neutral: rgba(0,0,0,0.25);
 }
 
 .root {
@@ -45,7 +56,7 @@
 }
 
 .button {
-    -fx-text-fill: -sf-text;
+    -fx-text-fill: -sf-button-text;
 }
 
 .button:hover {
@@ -56,9 +67,13 @@
 .password-field,
 .text-area,
 .combo-box,
-.choice-box {
+.choice-box,
+.date-picker,
+.spinner {
     -fx-background-color: -sf-surface;
     -fx-border-color: -sf-border-soft;
+    -fx-border-radius: 10;
+    -fx-background-radius: 10;
     -fx-control-inner-background: -sf-surface;
     -fx-control-inner-background-alt: -sf-surface-soft;
     -fx-text-fill: -sf-text;
@@ -69,27 +84,38 @@
 .password-field:focused,
 .text-area:focused,
 .combo-box:focused,
-.choice-box:focused {
+.choice-box:focused,
+.date-picker:focused,
+.spinner:focused {
     -fx-border-color: -sf-accent;
     -fx-effect: dropshadow(three-pass-box, -sf-shadow, 10, 0, 0, 0);
 }
 
+.combo-box > .list-cell,
 .combo-box .list-cell,
-.choice-box .label {
+.choice-box .label,
+.date-picker .text-field,
+.spinner .text-field {
     -fx-text-fill: -sf-text;
 }
 
-.combo-box-popup .list-view {
+.combo-box-popup .list-view,
+.choice-box .context-menu {
     -fx-background-color: -sf-surface-raised;
+    -fx-background-radius: 10;
     -fx-border-color: -sf-border;
+    -fx-border-radius: 10;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-neutral, 12, 0.16, 0, 4);
 }
 
-.combo-box-popup .list-cell {
+.combo-box-popup .list-cell,
+.choice-box .menu-item {
     -fx-background-color: -sf-surface-raised;
     -fx-text-fill: -sf-text;
 }
 
-.combo-box-popup .list-cell:hover {
+.combo-box-popup .list-cell:hover,
+.choice-box .menu-item:focused {
     -fx-background-color: -sf-accent-soft;
     -fx-text-fill: -sf-heading;
 }
@@ -167,7 +193,7 @@
 
 .theme-switcher {
     -fx-background-color: linear-gradient(to right, -sf-accent-2, -sf-accent);
-    -fx-text-fill: -sf-on-accent;
+    -fx-text-fill: transparent;
     -fx-border-color: -sf-border-soft;
     -fx-effect: dropshadow(gaussian, -sf-shadow, 10, 0.18, 0, 2);
 }
@@ -177,7 +203,6 @@
     -fx-border-color: -sf-surface;
 }
 
-/* Repair: keep shared SnowFox component colors after this theme overrides .label/.button. */
 .label.sf-title,
 .label.sf-screen-title,
 .label.sf-section-title,
@@ -197,19 +222,843 @@
     -fx-text-fill: -sf-muted;
 }
 
-.button.sf-filter-button-active {
-    -fx-text-fill: -sf-on-accent;
-}
-
 .button.sf-btn-danger {
     -fx-text-fill: -sf-on-accent;
 }
 
-/* Theme-only contrast tuning: keep the SnowFox gradient visible on Dark backgrounds. */
 .label.sf-title,
 .label.sf-screen-title,
 .label.sf-section-title,
 .label.sf-hero-title {
-    -fx-text-fill: linear-gradient(to right, #FFFFFF, #92ECFF);
+    -fx-text-fill: linear-gradient(to right, #FFFFFF, #8DEBFF);
     -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.42), 9, 0.30, 0, 2);
+}
+
+.sf-card,
+.sf-card-soft,
+.sf-panel-card,
+.sf-content-shell,
+.sf-auth-panel,
+.sf-popup {
+    -fx-border-color: -sf-border-soft;
+}
+
+/* ==================== Final contrast/brand optimization ==================== */
+.label.sf-title,
+.label.sf-screen-title,
+.label.sf-section-title,
+.label.sf-hero-title {
+    -fx-text-fill: linear-gradient(to right, -sf-brand-start, -sf-brand-mid, -sf-brand-end);
+    -fx-effect: dropshadow(gaussian, -sf-brand-glow, 9, 0.22, 0, 2);
+}
+
+.sf-header .label.sf-title,
+.sf-header-soft .label.sf-title,
+.sf-auth-brand .label.sf-hero-title,
+.sf-home-hero .label.sf-hero-title {
+    -fx-text-fill: linear-gradient(to right, -sf-brand-start, -sf-brand-mid, -sf-brand-end);
+    -fx-effect: dropshadow(gaussian, -sf-brand-glow, 12, 0.26, 0, 2);
+}
+
+.button.sf-btn-primary,
+.button.sf-btn-secondary,
+.button.sf-btn-success,
+.button.sf-btn-danger,
+.button.sf-filter-button,
+.button.sf-filter-button-active {
+    -fx-text-fill: -sf-button-text;
+    -fx-font-weight: bold;
+}
+
+.sf-btn-primary,
+.sf-filter-button-active {
+    -fx-background-color: linear-gradient(to right, -sf-accent-2, -sf-accent);
+    -fx-text-fill: -sf-button-text;
+    -fx-border-color: transparent;
+}
+
+.sf-btn-secondary,
+.sf-filter-button {
+    -fx-background-color: linear-gradient(to right, -sf-button-muted-start, -sf-button-muted-end);
+    -fx-text-fill: -sf-button-text;
+    -fx-border-color: transparent;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-neutral, 8, 0.10, 0, 2);
+}
+
+.sf-btn-success {
+    -fx-background-color: linear-gradient(to right, -sf-success-2, -sf-success);
+    -fx-text-fill: -sf-button-text;
+    -fx-border-color: transparent;
+}
+
+.sf-btn-danger {
+    -fx-background-color: linear-gradient(to right, -sf-danger-2, -sf-danger);
+    -fx-text-fill: -sf-button-text;
+    -fx-border-color: transparent;
+}
+
+.sf-btn-primary:hover,
+.sf-filter-button-active:hover {
+    -fx-background-color: linear-gradient(to right, derive(-sf-accent-2, -10%), derive(-sf-accent, -10%));
+    -fx-text-fill: -sf-button-text;
+}
+
+.sf-btn-secondary:hover,
+.sf-filter-button:hover {
+    -fx-background-color: linear-gradient(to right, derive(-sf-button-muted-start, -8%), derive(-sf-button-muted-end, -10%));
+    -fx-text-fill: -sf-button-text;
+}
+
+.sf-btn-success:hover {
+    -fx-background-color: linear-gradient(to right, derive(-sf-success-2, -10%), derive(-sf-success, -10%));
+    -fx-text-fill: -sf-button-text;
+}
+
+.sf-btn-danger:hover {
+    -fx-background-color: linear-gradient(to right, derive(-sf-danger-2, -10%), derive(-sf-danger, -10%));
+    -fx-text-fill: -sf-button-text;
+}
+
+.sf-icon-button,
+.sf-link-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: -sf-accent;
+    -fx-effect: none;
+}
+
+.sf-icon-button:hover,
+.sf-link-button:hover {
+    -fx-background-color: -sf-accent-soft;
+    -fx-text-fill: -sf-heading;
+    -fx-background-radius: 999;
+}
+
+.button:disabled {
+    -fx-opacity: 0.62;
+}
+
+/* ==================== Focused view fixes: brighter buttons + stable active states ==================== */
+.button.sf-btn-primary,
+.button.sf-btn-secondary,
+.button.sf-btn-success,
+.button.sf-btn-danger,
+.button.sf-filter-button,
+.button.sf-filter-button-active,
+.button.sf-auction-action-primary,
+.button.sf-auction-action-warning,
+.button.sf-auction-action-neutral,
+.button.sf-auction-action-success,
+.button.sf-auction-action-danger {
+    -fx-text-fill: -sf-button-text;
+    -fx-font-weight: bold;
+    -fx-font-size: 13px;
+}
+
+.sf-btn-secondary,
+.sf-filter-button {
+    -fx-background-color: linear-gradient(to right, -sf-button-muted-start, -sf-button-muted-end);
+    -fx-text-fill: -sf-button-text;
+    -fx-border-color: rgba(255,255,255,0.34);
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-soft, 11, 0.18, 0, 2);
+}
+
+.sf-filter-button {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 16;
+}
+
+.sf-btn-primary,
+.sf-filter-button-active,
+.button.sf-filter-button.sf-filter-button-active {
+    -fx-background-color: linear-gradient(to right, derive(-sf-accent-2, 10%), derive(-sf-accent, 4%));
+    -fx-text-fill: -sf-button-text;
+    -fx-border-color: rgba(255,255,255,0.42);
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-effect: dropshadow(gaussian, -sf-shadow, 13, 0.22, 0, 3);
+}
+
+.sf-filter-button-active,
+.button.sf-filter-button.sf-filter-button-active {
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 16;
+}
+
+.sf-btn-secondary:hover,
+.sf-filter-button:hover {
+    -fx-background-color: linear-gradient(to right, derive(-sf-button-muted-start, 12%), derive(-sf-button-muted-end, 8%));
+    -fx-text-fill: -sf-button-text;
+}
+
+.sf-btn-primary:hover,
+.sf-filter-button-active:hover,
+.button.sf-filter-button.sf-filter-button-active:hover {
+    -fx-background-color: linear-gradient(to right, derive(-sf-accent-2, 16%), derive(-sf-accent, 10%));
+    -fx-text-fill: -sf-button-text;
+}
+
+.sf-role-badge {
+    -fx-background-color: linear-gradient(to right, -sf-role-bg-start, -sf-role-bg-end);
+    -fx-text-fill: -sf-role-text;
+    -fx-font-weight: bold;
+    -fx-padding: 8 14 8 14;
+    -fx-background-radius: 999;
+    -fx-border-color: -sf-role-border;
+    -fx-border-radius: 999;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-soft, 8, 0.12, 0, 1);
+}
+
+.sf-auction-action-primary {
+    -fx-background-color: linear-gradient(to right, derive(-sf-accent-2, 10%), derive(-sf-accent, 4%));
+    -fx-background-radius: 25;
+    -fx-border-radius: 25;
+    -fx-border-color: rgba(255,255,255,0.38);
+    -fx-cursor: hand;
+}
+
+.sf-auction-action-warning {
+    -fx-background-color: linear-gradient(to right, derive(-sf-warning, 24%), -sf-warning);
+    -fx-background-radius: 25;
+    -fx-border-radius: 25;
+    -fx-border-color: rgba(255,255,255,0.38);
+    -fx-cursor: hand;
+}
+
+.sf-auction-action-neutral {
+    -fx-background-color: linear-gradient(to right, -sf-button-muted-start, -sf-button-muted-end);
+    -fx-background-radius: 25;
+    -fx-border-radius: 25;
+    -fx-border-color: rgba(255,255,255,0.32);
+}
+
+.sf-auction-action-success {
+    -fx-background-color: linear-gradient(to right, derive(-sf-success-2, 10%), -sf-success);
+    -fx-background-radius: 25;
+    -fx-border-radius: 25;
+    -fx-border-color: rgba(255,255,255,0.34);
+}
+
+.sf-auction-action-danger {
+    -fx-background-color: linear-gradient(to right, derive(-sf-danger-2, 10%), -sf-danger);
+    -fx-background-radius: 25;
+    -fx-border-radius: 25;
+    -fx-border-color: rgba(255,255,255,0.34);
+}
+
+.sf-status-badge {
+    -fx-text-fill: -sf-button-text;
+    -fx-font-size: 10px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 10;
+    -fx-background-radius: 8;
+}
+
+.sf-status-running {
+    -fx-background-color: linear-gradient(to right, derive(-sf-success-2, 8%), -sf-success);
+}
+
+.sf-status-upcoming {
+    -fx-background-color: linear-gradient(to right, derive(-sf-warning, 18%), -sf-warning);
+}
+
+.sf-status-ended {
+    -fx-background-color: linear-gradient(to right, derive(-sf-danger-2, 6%), -sf-danger);
+}
+.button.sf-auction-action-neutral:disabled,
+.button.sf-auction-action-success:disabled,
+.button.sf-auction-action-danger:disabled,
+.button.sf-auction-action-warning:disabled {
+    -fx-opacity: 0.86;
+}
+
+/* ==================== Restore AuctionList/History filter states ====================
+   Darkmode: inactive stays lighter/clearer; active is brighter blue.
+   Keep this block near the end so it overrides older button rules. */
+.button.sf-filter-button {
+    -fx-background-color: linear-gradient(to right, derive(-sf-surface-raised, 13%) 0%, derive(-sf-surface-soft, 9%) 46%, derive(-sf-accent-soft, 18%) 100%);
+    -fx-text-fill: -sf-heading;
+    -fx-font-weight: bold;
+    -fx-background-radius: 14;
+    -fx-border-color: derive(-sf-border-soft, 16%);
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.28), 8, 0.16, 0, 2);
+}
+
+.button.sf-filter-button:hover {
+    -fx-background-color: linear-gradient(to right, derive(-sf-surface-raised, 20%) 0%, derive(-sf-surface-soft, 16%) 44%, derive(-sf-accent-soft, 28%) 100%);
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: -sf-border;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-soft, 11, 0.18, 0, 2);
+}
+
+.button.sf-filter-button-active,
+.button.sf-filter-button.sf-filter-button-active {
+    -fx-background-color: linear-gradient(to right, derive(-sf-accent-2, 20%) 0%, derive(-sf-accent, 12%) 100%);
+    -fx-text-fill: -sf-on-accent;
+    -fx-font-weight: bold;
+    -fx-background-radius: 14;
+    -fx-border-color: rgba(255,255,255,0.58);
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 16;
+    -fx-effect: dropshadow(gaussian, -sf-shadow, 14, 0.28, 0, 3);
+}
+
+.button.sf-filter-button-active:hover,
+.button.sf-filter-button.sf-filter-button-active:hover {
+    -fx-background-color: linear-gradient(to right, derive(-sf-accent-2, 27%) 0%, derive(-sf-accent, 18%) 100%);
+    -fx-text-fill: -sf-on-accent;
+    -fx-border-color: rgba(255,255,255,0.72);
+}
+
+/* ==================== AuctionList darkmode tune: align with History screen ====================
+   CSS-only fix: keep AuctionList structure/FXML unchanged, but make its dark palette
+   closer to UserParticipatedAuction panels. */
+.root {
+    -sf-page-start: #111B2C;
+    -sf-page-end: #18263A;
+    -sf-page-soft: #1A2840;
+    -sf-surface: #22324A;
+    -sf-surface-soft: #2A3D59;
+    -sf-surface-raised: #314866;
+    -sf-surface-muted: #3D5B7C;
+    -sf-border-soft: #587A9E;
+    -sf-panel-strong: rgba(36,51,74,0.98);
+    -sf-panel: rgba(34,49,72,0.96);
+    -sf-panel-soft: rgba(47,68,96,0.88);
+    -sf-accent-soft: #244C76;
+    -sf-shadow-soft: rgba(186,230,253,0.16);
+    -sf-shadow-neutral: rgba(0,0,0,0.22);
+}
+
+/* AuctionList dùng .sf-sidebar; cho darkmode nhìn giống sidebar của lịch sử đấu giá hơn. */
+.sf-sidebar {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-padding: 22 16 18 22;
+}
+
+.sf-sidebar .sf-card-soft {
+    -fx-background-color: linear-gradient(to bottom right, -sf-panel, -sf-panel-soft);
+    -fx-background-radius: 26;
+    -fx-border-color: rgba(186,230,253,0.22);
+    -fx-border-radius: 26;
+    -fx-border-width: 1;
+    -fx-padding: 16;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-soft, 18, 0.14, 0, 5);
+}
+
+/* Khung danh sách của AuctionList mềm và sáng hơn, gần với khung bên History. */
+.sf-card {
+    -fx-background-color: linear-gradient(to bottom, -sf-surface, -sf-surface-soft);
+    -fx-background-radius: 26;
+    -fx-border-color: rgba(186,230,253,0.22);
+    -fx-border-radius: 26;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-soft, 22, 0.16, 0, 7);
+}
+
+.sf-transparent-list,
+.sf-transparent-list .viewport {
+    -fx-background-color: transparent;
+    -fx-control-inner-background: transparent;
+}
+
+.sf-transparent-list .list-cell {
+    -fx-background-color: transparent;
+    -fx-background-radius: 18;
+    -fx-padding: 7 5;
+}
+
+.sf-transparent-list .list-cell:filled:hover {
+    -fx-background-color: rgba(186,230,253,0.10);
+    -fx-background-radius: 18;
+}
+
+/* Filter buttons: ép inactive giống màn Lịch sử đấu giá.
+   Inactive = trắng pha xanh nhẹ, không phát sáng; Active = xanh sáng rõ. */
+.button.sf-filter-button {
+    -fx-background-color: linear-gradient(to right, rgba(255,255,255,0.96) 0%, rgba(239,248,255,0.93) 48%, rgba(219,234,254,0.90) 100%);
+    -fx-text-fill: #64748B;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-border-color: #DCDDE1;
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 15;
+    -fx-effect: none;
+}
+
+.button.sf-filter-button:hover {
+    -fx-background-color: linear-gradient(to right, rgba(255,255,255,1.0) 0%, rgba(232,245,255,0.98) 50%, rgba(191,219,254,0.96) 100%);
+    -fx-text-fill: #334155;
+    -fx-border-color: rgba(125,211,252,0.62);
+    -fx-effect: dropshadow(gaussian, rgba(56,189,248,0.16), 8, 0.16, 0, 2);
+}
+
+.button.sf-filter-button-active,
+.button.sf-filter-button.sf-filter-button-active {
+    -fx-background-color: linear-gradient(to right, #56CCF2 0%, #2F80ED 100%);
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-background-radius: 8;
+    -fx-border-color: rgba(255,255,255,0.58);
+    -fx-border-radius: 8;
+    -fx-border-width: 1;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 15;
+    -fx-effect: dropshadow(gaussian, rgba(47,128,237,0.34), 14, 0.28, 0, 3);
+}
+
+.button.sf-filter-button-active:hover,
+.button.sf-filter-button.sf-filter-button-active:hover {
+    -fx-background-color: linear-gradient(to right, derive(#56CCF2, 8%) 0%, derive(#2F80ED, 6%) 100%);
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: rgba(255,255,255,0.72);
+}
+
+/* Nút điều hướng trong sidebar AuctionList đỡ chìm hơn ở darkmode. */
+.button.sf-btn-secondary {
+    -fx-background-color: linear-gradient(to right, rgba(235,248,255,0.16), rgba(125,211,252,0.16));
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: rgba(186,230,253,0.28);
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+}
+
+.button.sf-btn-secondary:hover {
+    -fx-background-color: linear-gradient(to right, rgba(235,248,255,0.24), rgba(125,211,252,0.24));
+    -fx-border-color: rgba(186,230,253,0.44);
+}
+
+/* ComboBox trong bộ lọc loại sản phẩm sáng hơn, không còn tối bệt. */
+#categoryFilter {
+    -fx-background-color: rgba(235,248,255,0.14);
+    -fx-border-color: rgba(186,230,253,0.30);
+    -fx-background-radius: 16;
+    -fx-border-radius: 16;
+    -fx-text-fill: #FFFFFF;
+}
+
+#categoryFilter > .list-cell {
+    -fx-text-fill: #F4FAFF;
+}
+/* Secondary buttons: softer same-tone surface for actions like Create account. */
+.button.sf-btn-secondary {
+    -fx-background-color: linear-gradient(to right, derive(-sf-accent-soft, 8%) 0%, derive(-sf-surface-soft, 2%) 58%, derive(-sf-accent-soft, 2%) 100%);
+    -fx-text-fill: -sf-accent;
+    -fx-font-weight: bold;
+    -fx-background-radius: 14;
+    -fx-border-color: -sf-border-soft;
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-neutral, 7, 0.10, 0, 1);
+}
+
+.button.sf-btn-secondary:hover {
+    -fx-background-color: linear-gradient(to right, derive(-sf-accent-soft, 2%) 0%, -sf-surface-soft 50%, derive(-sf-accent-soft, -4%) 100%);
+    -fx-text-fill: -sf-heading;
+    -fx-border-color: -sf-border;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-soft, 9, 0.13, 0, 2);
+}
+
+/* Final dark auction tuning: navy filters instead of the old bright white pills. */
+.sf-sidebar,
+.sf-history-sidebar {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+}
+
+.sf-sidebar .sf-card-soft,
+.sf-history-panel,
+.sf-history-note,
+.sf-history-content {
+    -fx-background-color: linear-gradient(to bottom right, derive(-sf-surface, 5%), derive(-sf-surface-soft, 4%));
+    -fx-border-color: derive(-sf-border-soft, 8%);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.24), 18, 0.14, 0, 5);
+}
+
+.sf-history-list-shell,
+.sf-card {
+    -fx-background-color: linear-gradient(to bottom, derive(-sf-surface, 3%), derive(-sf-surface-soft, 2%));
+    -fx-border-color: derive(-sf-border-soft, 8%);
+}
+
+.button.sf-filter-button {
+    -fx-background-color: linear-gradient(to right, derive(-sf-surface-raised, 5%) 0%, derive(-sf-surface-soft, 4%) 58%, derive(-sf-accent-soft, 8%) 100%);
+    -fx-text-fill: -sf-muted;
+    -fx-font-weight: bold;
+    -fx-background-radius: 14;
+    -fx-border-color: derive(-sf-border-soft, 6%);
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 16;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 8, 0.12, 0, 2);
+}
+
+.button.sf-filter-button:hover {
+    -fx-background-color: linear-gradient(to right, derive(-sf-surface-raised, 11%) 0%, derive(-sf-surface-soft, 9%) 52%, derive(-sf-accent-soft, 16%) 100%);
+    -fx-text-fill: -sf-heading;
+    -fx-border-color: -sf-border;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-soft, 10, 0.18, 0, 2);
+}
+
+.button.sf-filter-button-active,
+.button.sf-filter-button.sf-filter-button-active {
+    -fx-background-color: linear-gradient(to right, derive(-sf-accent-2, 8%) 0%, derive(-sf-accent, 4%) 100%);
+    -fx-text-fill: -sf-on-accent;
+    -fx-font-weight: bold;
+    -fx-background-radius: 14;
+    -fx-border-color: rgba(255,255,255,0.42);
+    -fx-border-radius: 14;
+    -fx-border-width: 1;
+    -fx-alignment: CENTER_LEFT;
+    -fx-padding: 0 0 0 16;
+    -fx-effect: dropshadow(gaussian, -sf-shadow, 14, 0.24, 0, 3);
+}
+
+.button.sf-filter-button-active:hover,
+.button.sf-filter-button.sf-filter-button-active:hover {
+    -fx-background-color: linear-gradient(to right, derive(-sf-accent-2, 14%) 0%, derive(-sf-accent, 9%) 100%);
+    -fx-text-fill: -sf-on-accent;
+    -fx-border-color: rgba(255,255,255,0.58);
+}
+
+/* Final dark isolation: override Light polish from global.css. */
+.root,
+.sf-page {
+    -fx-background-color: linear-gradient(to bottom right, -sf-page-start 0%, -sf-page-soft 48%, -sf-surface 100%);
+}
+
+.sf-header,
+.sf-footer,
+.sf-header-soft {
+    -fx-background-color: linear-gradient(to right, derive(-sf-surface-raised, -4%) 0%, -sf-surface 52%, -sf-page-soft 100%);
+    -fx-border-color: -sf-border-muted;
+    -fx-effect: dropshadow(gaussian, -sf-shadow-neutral, 14, 0.22, 0, 2);
+}
+
+.sf-sidebar {
+    -fx-background-color: linear-gradient(to bottom, -sf-page-soft 0%, derive(-sf-surface, -4%) 100%);
+    -fx-border-color: -sf-border-muted;
+}
+
+.sf-content {
+    -fx-background-color: linear-gradient(to bottom right, -sf-page-start 0%, -sf-page-soft 54%, -sf-surface 100%);
+}
+
+.sf-card,
+.sf-card-soft,
+.sf-history-panel,
+.sf-history-note,
+.sf-history-content,
+.sf-history-list-shell,
+.sf-note,
+.sf-auth-panel,
+.sf-popup {
+    -fx-background-color: linear-gradient(to bottom right, derive(-sf-surface, 3%) 0%, derive(-sf-surface-soft, 2%) 100%);
+    -fx-border-color: -sf-border-soft;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.28), 18, 0.18, 0, 5);
+}
+
+.label.sf-title,
+.label.sf-screen-title,
+.label.sf-section-title,
+.label.sf-hero-title {
+    -fx-text-fill: linear-gradient(to right, -sf-brand-start 0%, -sf-brand-mid 48%, -sf-brand-end 100%);
+    -fx-effect: dropshadow(gaussian, -sf-brand-glow, 11, 0.24, 0, 2);
+}
+
+.button.sf-btn-primary,
+.button.sf-filter-button-active,
+.button.sf-filter-button.sf-filter-button-active {
+    -fx-background-color: linear-gradient(to right, derive(-sf-accent-2, 8%) 0%, derive(-sf-accent, 4%) 100%);
+    -fx-text-fill: -sf-on-accent;
+    -fx-border-color: rgba(255,255,255,0.38);
+    -fx-effect: dropshadow(gaussian, -sf-shadow, 13, 0.22, 0, 3);
+}
+
+.button.sf-btn-secondary {
+    -fx-background-color: linear-gradient(to right, derive(-sf-accent-soft, 6%) 0%, derive(-sf-surface-soft, 3%) 100%);
+    -fx-text-fill: -sf-muted;
+    -fx-border-color: -sf-border-soft;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 8, 0.12, 0, 2);
+}
+
+.button.sf-btn-secondary:hover {
+    -fx-background-color: linear-gradient(to right, derive(-sf-accent-soft, 14%) 0%, derive(-sf-surface-soft, 9%) 100%);
+    -fx-text-fill: -sf-heading;
+    -fx-border-color: -sf-border;
+}
+
+.button.sf-filter-button {
+    -fx-background-color: linear-gradient(to right, derive(-sf-surface-raised, 5%) 0%, derive(-sf-surface-soft, 4%) 58%, derive(-sf-accent-soft, 8%) 100%);
+    -fx-text-fill: -sf-muted;
+    -fx-border-color: derive(-sf-border-soft, 6%);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 8, 0.12, 0, 2);
+}
+
+.button.sf-filter-button:hover {
+    -fx-background-color: linear-gradient(to right, derive(-sf-surface-raised, 11%) 0%, derive(-sf-surface-soft, 9%) 52%, derive(-sf-accent-soft, 16%) 100%);
+    -fx-text-fill: -sf-heading;
+    -fx-border-color: -sf-border;
+}
+
+/* Dark AuctionList category picker: no pale transparent selection, no low-contrast text. */
+#categoryFilter,
+.combo-box.sf-category-filter {
+    -fx-background-color: linear-gradient(to bottom, derive(-sf-surface-raised, 7%), derive(-sf-surface-soft, 5%));
+    -fx-border-color: derive(-sf-border-soft, 8%);
+    -fx-border-radius: 14;
+    -fx-background-radius: 14;
+    -fx-padding: 2 8 2 8;
+    -fx-mark-color: -sf-accent-2;
+}
+
+#categoryFilter > .list-cell,
+.combo-box.sf-category-filter > .list-cell {
+    -fx-text-fill: -sf-heading;
+    -fx-font-weight: bold;
+    -fx-background-color: transparent;
+}
+
+.combo-box-popup .list-cell:filled:selected,
+.combo-box-popup .list-cell:filled:focused:selected {
+    -fx-background-color: linear-gradient(to right, derive(-sf-accent-soft, 10%), derive(-sf-surface-muted, 7%));
+    -fx-text-fill: -sf-heading;
+}
+
+/* Final interaction color lock for Dark. */
+.button.sf-filter-button {
+    -fx-text-fill: #9AAABD;
+}
+
+.button.sf-filter-button:hover {
+    -fx-text-fill: #EAF4FF;
+}
+
+.button.sf-filter-button-active,
+.button.sf-filter-button.sf-filter-button-active,
+.button.sf-filter-button-active:hover,
+.button.sf-filter-button.sf-filter-button-active:hover {
+    -fx-text-fill: #FFFFFF;
+}
+
+#categoryFilter,
+.combo-box.sf-category-filter {
+    -fx-background-color: linear-gradient(to bottom, derive(-sf-surface-raised, 9%), derive(-sf-surface-soft, 7%));
+    -fx-border-color: derive(-sf-border-soft, 14%);
+    -fx-mark-color: -sf-accent-2;
+}
+
+#categoryFilter > .list-cell,
+.combo-box.sf-category-filter > .list-cell,
+.combo-box-popup .list-cell {
+    -fx-text-fill: #EAF4FF;
+}
+
+.combo-box-popup .list-cell {
+    -fx-background-color: derive(-sf-surface-raised, 5%);
+}
+
+.combo-box-popup .list-cell:hover {
+    -fx-background-color: derive(-sf-accent-soft, 16%);
+    -fx-text-fill: #FFFFFF;
+}
+
+.combo-box-popup .list-cell:filled:selected,
+.combo-box-popup .list-cell:filled:focused:selected {
+    -fx-background-color: linear-gradient(to right, derive(-sf-accent-soft, 18%), derive(-sf-surface-muted, 10%));
+    -fx-text-fill: #FFFFFF;
+}
+
+.label.sf-status-badge {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-opacity: 1.0;
+}
+
+.label.sf-status-badge.sf-status-running,
+.sf-status-badge.sf-status-running {
+    -fx-background-color: linear-gradient(to right, #34D399, #059669);
+}
+
+.label.sf-status-badge.sf-status-upcoming,
+.sf-status-badge.sf-status-upcoming {
+    -fx-background-color: linear-gradient(to right, #FBBF24, #D97706);
+}
+
+.label.sf-status-badge.sf-status-ended,
+.sf-status-badge.sf-status-ended {
+    -fx-background-color: linear-gradient(to right, #FB7185, #E11D48);
+}
+
+.button.sf-btn-danger,
+.button.sf-btn-danger:hover {
+    -fx-background-color: linear-gradient(to right, #FB7185, #E11D48);
+    -fx-text-fill: #FFFFFF;
+    -fx-border-color: rgba(255,255,255,0.42);
+}
+
+/* AuctionCell-only state forms. Scoped to avoid changing history/payment action buttons. */
+.sf-auction-cell .button.sf-auction-action-primary {
+    -fx-background-color: linear-gradient(to right, #38BDF8, #2563EB);
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: rgba(255,255,255,0.42);
+    -fx-effect: dropshadow(gaussian, rgba(56,189,248,0.28), 12, 0.24, 0, 3);
+    -fx-cursor: hand;
+    -fx-opacity: 1.0;
+}
+
+.sf-auction-cell .button.sf-auction-action-warning {
+    -fx-background-color: linear-gradient(to right, #FCD34D, #F59E0B);
+    -fx-text-fill: #3A2600;
+    -fx-font-weight: bold;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: rgba(255,255,255,0.46);
+    -fx-effect: dropshadow(gaussian, rgba(245,158,11,0.24), 11, 0.20, 0, 3);
+    -fx-opacity: 1.0;
+}
+
+.sf-auction-cell .button.sf-auction-action-neutral {
+    -fx-background-color: linear-gradient(to right, #94A3B8, #475569);
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: rgba(255,255,255,0.34);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.26), 10, 0.18, 0, 2);
+    -fx-opacity: 1.0;
+}
+
+.sf-auction-cell .label.sf-status-badge {
+    -fx-text-fill: #FFFFFF;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: rgba(255,255,255,0.42);
+    -fx-border-width: 1;
+    -fx-opacity: 1.0;
+}
+
+.sf-auction-cell .label.sf-status-badge.sf-status-running {
+    -fx-background-color: linear-gradient(to right, #34D399, #059669);
+}
+
+.sf-auction-cell .label.sf-status-badge.sf-status-upcoming {
+    -fx-background-color: linear-gradient(to right, #FCD34D, #F59E0B);
+    -fx-text-fill: #3A2600;
+}
+
+.sf-auction-cell .label.sf-status-badge.sf-status-ended {
+    -fx-background-color: linear-gradient(to right, #FB7185, #E11D48);
+}
+
+/* Final AuctionList picker + AuctionCell action tone. */
+#categoryFilter > .list-cell,
+.combo-box.sf-category-filter > .list-cell {
+    -fx-text-fill: #9AAABD;
+}
+
+.sf-auction-cell .button.sf-auction-action-primary {
+    -fx-background-color: linear-gradient(to right, derive(-sf-accent-2, 8%), -sf-accent);
+    -fx-text-fill: -sf-on-accent;
+}
+
+.sf-auction-cell .button.sf-auction-action-warning {
+    -fx-background-color: linear-gradient(to right, derive(-sf-warning, 16%), -sf-warning);
+    -fx-text-fill: #3A2600;
+}
+
+.sf-auction-cell .button.sf-auction-action-neutral {
+    -fx-background-color: linear-gradient(to right, -sf-surface-muted, -sf-neutral);
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Fixed AuctionCell state colors across all modes. */
+.sf-auction-cell .button.sf-auction-action-primary {
+    -fx-background-color: linear-gradient(to right, #38BDF8, #2563EB);
+    -fx-text-fill: #FFFFFF;
+}
+
+.sf-auction-cell .button.sf-auction-action-warning {
+    -fx-background-color: linear-gradient(to right, #FBBF24, #D97706);
+    -fx-text-fill: #FFFFFF;
+}
+
+.sf-auction-cell .button.sf-auction-action-neutral {
+    -fx-background-color: linear-gradient(to right, #94A3B8, #475569);
+    -fx-text-fill: #FFFFFF;
+}
+
+.sf-auction-cell .label.sf-status-badge.sf-status-upcoming {
+    -fx-text-fill: #FFFFFF;
+}
+
+/* Final hover text lock: buttons may lift on hover, but text keeps its original role color. */
+.button.sf-btn-primary:hover,
+.button.sf-btn-success:hover,
+.button.sf-btn-danger:hover,
+.button.sf-btn-secondary:hover,
+.button.sf-filter-button-active:hover,
+.button.sf-filter-button.sf-filter-button-active:hover,
+.sf-auction-cell .button.sf-auction-action-primary:hover,
+.sf-auction-cell .button.sf-auction-action-warning:hover,
+.sf-auction-cell .button.sf-auction-action-neutral:hover {
+    -fx-text-fill: #FFFFFF;
+}
+
+.button.sf-filter-button:hover {
+    -fx-text-fill: #9AAABD;
+}
+
+/* ParticipatedAuctionCell fixed action colors across all modes. */
+.sf-participated-auction-cell .button.sf-auction-action-primary,
+.sf-participated-auction-cell .button.sf-auction-action-primary:hover {
+    -fx-background-color: linear-gradient(to right, #38BDF8, #2563EB);
+    -fx-text-fill: #FFFFFF;
+}
+
+.sf-participated-auction-cell .button.sf-auction-action-warning,
+.sf-participated-auction-cell .button.sf-auction-action-warning:hover {
+    -fx-background-color: linear-gradient(to right, #FBBF24, #D97706);
+    -fx-text-fill: #FFFFFF;
+}
+
+.sf-participated-auction-cell .button.sf-auction-action-neutral,
+.sf-participated-auction-cell .button.sf-auction-action-neutral:hover {
+    -fx-background-color: linear-gradient(to right, #94A3B8, #475569);
+    -fx-text-fill: #FFFFFF;
+}
+
+.sf-participated-auction-cell .button.sf-auction-action-success,
+.sf-participated-auction-cell .button.sf-auction-action-success:hover {
+    -fx-background-color: linear-gradient(to right, #34D399, #059669);
+    -fx-text-fill: #FFFFFF;
+}
+
+.sf-participated-auction-cell .button.sf-auction-action-danger,
+.sf-participated-auction-cell .button.sf-auction-action-danger:hover {
+    -fx-background-color: linear-gradient(to right, #FB7185, #E11D48);
+    -fx-text-fill: #FFFFFF;
+}
+
+.sf-participated-auction-cell .button.sf-auction-action-success:disabled,
+.sf-participated-auction-cell .button.sf-auction-action-danger:disabled,
+.sf-participated-auction-cell .button.sf-auction-action-neutral:disabled {
+    -fx-opacity: 0.58;
 }

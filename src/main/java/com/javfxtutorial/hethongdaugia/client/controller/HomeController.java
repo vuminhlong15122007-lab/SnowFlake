@@ -42,6 +42,8 @@ public class HomeController implements ResponseListener {
 
     @FXML
     public void goLogin(ActionEvent event){
+        // Xóa toàn bộ dữ liệu phiên cũ — tài khoản mới sẽ bắt đầu sạch
+        ClientModel.getInstance().logout();
         changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
     }
 
@@ -116,8 +118,7 @@ public class HomeController implements ResponseListener {
         new Thread(() -> {
             try {
                 GetUnpaidAuctionCommand cmd = new GetUnpaidAuctionCommand(userId);
-                NetworkManager.getInstance().register(GetUnpaidAuctionCommand.class, this);
-                NetworkManager.getConnection().sendCommand(cmd);
+                NetworkManager.getInstance().sendRequest(cmd, this);
             } catch (Exception e) {
                 log.error("Lỗi check unpaid: {}", e.getMessage());
             }

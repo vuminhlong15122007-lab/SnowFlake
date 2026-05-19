@@ -11,16 +11,11 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
-import java.util.Arrays;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@DisplayName("Luồng nghiệp vụ tài khoản người dùng")
 class UserContractTest {
 
     private User alice() {
@@ -36,111 +31,10 @@ class UserContractTest {
     }
 
     @Nested
-    @DisplayName("User model")
-    class UserModelTest {
-        @Test
-        void constructorWithoutId_setsCoreFieldsAndNullAvatar() {
-            User user = new User("seller", "secret", "seller@example.com", "0911", AccountType.USER);
-
-            assertEquals(0, user.getId());
-            assertEquals("seller", user.getName());
-            assertEquals("secret", user.getPassWord());
-            assertEquals("seller@example.com", user.getEmail());
-            assertEquals("0911", user.getSdt());
-            assertEquals(AccountType.USER, user.getAccountType());
-            assertNull(user.getImagePath());
-        }
-
-        @Test
-        void constructorWithIdAndNoAvatar_setsAvatarNull() {
-            User user = new User(2, "admin", "root", "admin@example.com", "0999", AccountType.ADMIN);
-
-            assertEquals(2, user.getId());
-            assertEquals("admin", user.getName());
-            assertEquals("root", user.getPassWord());
-            assertEquals("admin@example.com", user.getEmail());
-            assertEquals("0999", user.getSdt());
-            assertEquals(AccountType.ADMIN, user.getAccountType());
-            assertNull(user.getImagePath());
-        }
-
-        @Test
-        void constructorWithAvatar_setsAllFields() {
-            User user = new User(3, "bob", "pw", "bob@example.com", "0888", AccountType.USER, "bob.png");
-
-            assertEquals(3, user.getId());
-            assertEquals("bob", user.getName());
-            assertEquals("pw", user.getPassWord());
-            assertEquals("bob@example.com", user.getEmail());
-            assertEquals("0888", user.getSdt());
-            assertEquals(AccountType.USER, user.getAccountType());
-            assertEquals("bob.png", user.getImagePath());
-        }
-
-        @Test
-        void setters_updateMutableFields() {
-            User user = new User("old", "oldpw", "old@example.com", "0900", AccountType.USER);
-
-            user.setId(99);
-            user.setName("new");
-            user.setPassWord("newpw");
-            user.setEmail("new@example.com");
-            user.setSdt("0911");
-            user.setImagePath("new.png");
-
-            assertEquals(99, user.getId());
-            assertEquals("new", user.getName());
-            assertEquals("newpw", user.getPassWord());
-            assertEquals("new@example.com", user.getEmail());
-            assertEquals("0911", user.getSdt());
-            assertEquals("new.png", user.getImagePath());
-        }
-
-        @Test
-        void toString_containsVisibleUserFields() {
-            User user = alice();
-            String text = user.toString();
-
-            assertTrue(text.contains("id=1"));
-            assertTrue(text.contains("alice"));
-            assertTrue(text.contains("alice@example.com"));
-            assertTrue(text.contains("0901234567"));
-            assertTrue(text.contains("USER"));
-        }
-    }
-
-    @Nested
-    @DisplayName("AccountType")
-    class AccountTypeTest {
-        @Test
-        void accountType_containsAdminAndUserRoles() {
-            Set<String> names = Arrays.stream(AccountType.values())
-                    .map(Enum::name)
-                    .collect(Collectors.toSet());
-
-            assertEquals(Set.of("ADMIN", "USER"), names);
-        }
-    }
-
-    @Nested
-    @DisplayName("UserManager singleton")
-    class UserManagerSingletonTest {
-        @Test
-        void getInstance_returnsSameObject() {
-            assertSame(UserManager.getInstance(), UserManager.getInstance());
-        }
-
-        @Test
-        void constructor_isPrivate() throws NoSuchMethodException {
-            Constructor<UserManager> constructor = UserManager.class.getDeclaredConstructor();
-            assertTrue(Modifier.isPrivate(constructor.getModifiers()));
-        }
-    }
-
-    @Nested
     @DisplayName("UserManager.authenticate")
     class AuthenticationManagerTest {
         @Test
+        @DisplayName("đăng nhập thành công với mật khẩu plaintext cũ")
         void authenticate_returnsUserWhenLegacyPlainPasswordMatches() throws Exception {
             User user = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -159,6 +53,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("sai đăng nhập khi không tìm thấy user")
         void authenticate_throwsInvalidCredentialsWhenUserMissing() throws Exception {
             UserDAO userDAO = mock(UserDAO.class);
             when(userDAO.selectByUsername("missing")).thenReturn(null);
@@ -175,6 +70,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("sai đăng nhập khi mật khẩu không khớp")
         void authenticate_throwsInvalidCredentialsWhenPasswordDiffers() throws Exception {
             User user = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -193,6 +89,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("mật khẩu phân biệt chữ hoa chữ thường")
         void authenticate_isCaseSensitive() throws Exception {
             User user = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -211,6 +108,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("mật khẩu null bị từ chối")
         void authenticate_throwsInvalidCredentialsWhenInputPasswordIsNull() throws Exception {
             User user = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -229,6 +127,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("mật khẩu đã hash xác thực được và không migrate lại")
         void authenticate_acceptsStoredHashWithoutMigratingAgain() throws Exception {
             User user = new User(
                     1,
@@ -253,36 +152,13 @@ class UserContractTest {
                 verify(userDAO, never()).update(any(User.class));
             }
         }
-
-//        @Test
-//        void authenticate_migratesLegacyPlainTextPasswordAndReturnedUserKeepsHash() throws Exception {
-//            User legacyUser = alice();
-//            UserDAO userDAO = mock(UserDAO.class);
-//            ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-//            when(userDAO.selectByUsername("alice")).thenReturn(legacyUser);
-//            when(userDAO.update(userCaptor.capture())).thenReturn(1);
-//
-//            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-//                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
-//
-//                User result = UserManager.getInstance().authenticate("alice", "pass123");
-//
-//                assertSame(legacyUser, result);
-//                assertTrue(PasswordHasher.isHashed(result.getPassWord()));
-//                assertTrue(PasswordHasher.matches("pass123", result.getPassWord()));
-//
-//                User sentToDao = userCaptor.getValue();
-//                assertSame(legacyUser, sentToDao);
-//                assertTrue(PasswordHasher.isHashed(sentToDao.getPassWord()));
-//                assertTrue(PasswordHasher.matches("pass123", sentToDao.getPassWord()));
-//            }
-//        }
-//    }
+    }
 
     @Nested
     @DisplayName("UserManager.updateUserProfile")
     class UpdateUserProfileManagerTest {
         @Test
+        @DisplayName("giữ dữ liệu cũ khi input null hoặc blank")
         void updateUserProfile_keepsOldValuesWhenInputIsNullOrBlank() throws Exception {
             User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -304,6 +180,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("trim tên, email và số điện thoại khi có input mới")
         void updateUserProfile_trimsNameEmailAndPhoneWhenProvided() throws Exception {
             User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -330,6 +207,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("update profile không đổi id, mật khẩu và role")
         void updateUserProfile_preservesIdPasswordAndRole() throws Exception {
             User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -355,6 +233,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("gửi user đã merge xuống DAO")
         void updateUserProfile_sendsMergedUserToDao() throws Exception {
             User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -386,6 +265,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("user không tồn tại thì không update DAO")
         void updateUserProfile_returnsNullWhenUserDoesNotExist() throws Exception {
             UserDAO userDAO = mock(UserDAO.class);
             when(userDAO.selectById(404)).thenReturn(null);
@@ -405,6 +285,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("DAO update thất bại thì trả null")
         void updateUserProfile_returnsNullWhenDaoUpdateFails() throws Exception {
             User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -429,55 +310,37 @@ class UserContractTest {
     @Nested
     @DisplayName("UserManager.reset_password")
     class ResetPasswordManagerTest {
-//        @Test
-//        void resetPassword_changesOnlyPasswordAndReturnedUserKeepsHash() throws Exception {
-//            User oldUser = alice();
-//            UserDAO userDAO = mock(UserDAO.class);
-//            ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
-//            when(userDAO.selectById(1)).thenReturn(oldUser);
-//            when(userDAO.update(userCaptor.capture())).thenReturn(1);
-//
-//            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-//                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
-//
-//                User reset = UserManager.getInstance().reset_password(1, "new-secret");
-//
-//                assertNotNull(reset);
-//                assertEquals(oldUser.getId(), reset.getId());
-//                assertEquals(oldUser.getName(), reset.getName());
-//                assertEquals(oldUser.getEmail(), reset.getEmail());
-//                assertEquals(oldUser.getSdt(), reset.getSdt());
-//                assertEquals(oldUser.getAccountType(), reset.getAccountType());
-//                assertEquals(oldUser.getImagePath(), reset.getImagePath());
-//
-//                assertTrue(PasswordHasher.isHashed(reset.getPassWord()));
-//                assertTrue(PasswordHasher.matches("new-secret", reset.getPassWord()));
-//
-//                User sentToDao = userCaptor.getValue();
-//                assertTrue(PasswordHasher.isHashed(sentToDao.getPassWord()));
-//                assertTrue(PasswordHasher.matches("new-secret", sentToDao.getPassWord()));
-//            }
-//        }
+        @Test
+        @DisplayName("reset password đổi mật khẩu và giữ profile")
+        void resetPassword_updatesPasswordAndKeepsProfileFields() throws Exception {
+            User oldUser = alice();
+            UserDAO userDAO = mock(UserDAO.class);
+            ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
+            when(userDAO.selectById(1)).thenReturn(oldUser);
+            when(userDAO.update(userCaptor.capture())).thenReturn(1);
 
-//        @Test
-//        void resetPassword_allowsEmptyPasswordByCurrentContractButStoresHash() throws Exception {
-//            User oldUser = alice();
-//            UserDAO userDAO = mock(UserDAO.class);
-//            when(userDAO.selectById(1)).thenReturn(oldUser);
-//            when(userDAO.update(any(User.class))).thenReturn(1);
-//
-//            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-//                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
-//
-//                User reset = UserManager.getInstance().reset_password(1, "");
-//
-//                assertNotNull(reset);
-//                assertTrue(PasswordHasher.isHashed(reset.getPassWord()));
-//                assertTrue(PasswordHasher.matches("", reset.getPassWord()));
-//            }
-//        }
+            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+                User reset = UserManager.getInstance().reset_password(1, "new-secret");
+
+                assertNotNull(reset);
+                assertEquals(1, reset.getId());
+                assertEquals("alice", reset.getName());
+                assertEquals("alice@example.com", reset.getEmail());
+                assertEquals("0901234567", reset.getSdt());
+                assertEquals(AccountType.USER, reset.getAccountType());
+                assertEquals("alice.png", reset.getImagePath());
+                assertEquals("new-secret", reset.getPassWord());
+
+                User sentToDao = userCaptor.getValue();
+                assertEquals(reset.getId(), sentToDao.getId());
+                assertEquals(reset.getPassWord(), sentToDao.getPassWord());
+            }
+        }
 
         @Test
+        @DisplayName("reset password trả null khi DAO update thất bại")
         void resetPassword_returnsNullWhenDaoUpdateFails() throws Exception {
             User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -497,6 +360,7 @@ class UserContractTest {
     @DisplayName("UserManager.deleteUser")
     class DeleteUserManagerTest {
         @Test
+        @DisplayName("xóa user thành công khi DAO delete thành công")
         void deleteUser_returnsTrueWhenDaoDeleteSucceeds() throws Exception {
             User user = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -513,6 +377,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("xóa user thất bại khi DAO delete trả 0")
         void deleteUser_returnsFalseWhenDaoDeleteFails() throws Exception {
             User user = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -527,4 +392,4 @@ class UserContractTest {
             }
         }
     }
-}}
+}

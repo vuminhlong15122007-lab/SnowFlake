@@ -99,7 +99,7 @@
     <VBox alignment="CENTER" spacing="10" style="-fx-padding: 14 24; -fx-background-color: -sf-surface-muted; -fx-border-color: -sf-border-muted; -fx-border-width: 1 0 0 0;">
         <Label style="-fx-font-size: 12px; -fx-text-fill: -sf-subtle; -fx-font-style: italic;" text="Bằng cách bấm 'Đồng ý', bạn xác nhận đã đọc và chấp nhận toàn bộ điều khoản." wrapText="true" />
         <HBox alignment="CENTER" spacing="12">
-            <Button onAction="#onDecline" prefHeight="38.0" prefWidth="140.0" style="-fx-background-color: linear-gradient(to right, -sf-button-muted-start, -sf-button-muted-end); -fx-border-color: transparent; -fx-border-radius: 20; -fx-background-radius: 20; -fx-text-fill: -sf-button-text; -fx-font-weight: bold; -fx-cursor: hand;" text="Từ chối" />
+            <Button onAction="#onDecline" prefHeight="38.0" prefWidth="140.0" style="-fx-background-color: -sf-surface; -fx-border-color: -sf-border-soft; -fx-border-radius: 20; -fx-background-radius: 20; -fx-text-fill: -sf-muted; -fx-font-weight: bold; -fx-cursor: hand;" text="Từ chối" />
             <Button onAction="#onAgree" prefHeight="38.0" prefWidth="140.0" style="-fx-background-color: linear-gradient(to right, -sf-purple, -sf-accent); -fx-background-radius: 20; -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-cursor: hand;" text="✔  Đồng ý" />
         </HBox>
     </VBox>

@@ -11,9 +11,9 @@
 
         <AnchorPane maxHeight="532.0" maxWidth="943.0" prefHeight="532.0" prefWidth="943.0">
             <children>
-                <VBox alignment="CENTER" layoutX="50.0" layoutY="112.0" prefHeight="172.0" prefWidth="355.0" spacing="14.0" styleClass="sf-auth-brand">
+                <VBox alignment="CENTER" layoutX="24.0" layoutY="90.0" prefHeight="214.0" prefWidth="408.0" spacing="14.0" styleClass="sf-auth-brand">
                     <children>
-                        <HBox alignment="CENTER" prefHeight="108.0" prefWidth="286.0">
+                        <HBox alignment="CENTER" prefHeight="102.0" prefWidth="391.0">
                             <children>
                                 <ImageView fitHeight="108.0" fitWidth="108.0" pickOnBounds="true" preserveRatio="true">
                                     <image>
@@ -23,7 +23,7 @@
                                 <Label prefHeight="100.0" prefWidth="176.0" style="-fx-font-size: 36px;" styleClass="sf-title" text="SnowFox" />
                             </children>
                         </HBox>
-                        <Label maxWidth="419.0" prefHeight="50.0" prefWidth="419.0" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: -sf-accent;" text="Kỷ nguyên vươn mình cùng SnowFox" wrapText="true" />
+                        <Label alignment="CENTER" maxWidth="419.0" prefHeight="50.0" prefWidth="419.0" style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: -sf-accent;" text="Kỷ nguyên vươn mình cùng SnowFox" wrapText="true" />
                     </children>
                 </VBox>
 

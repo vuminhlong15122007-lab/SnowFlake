@@ -1,6 +1,8 @@
 package com.javfxtutorial.hethongdaugia.client.network;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
+import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,12 +17,14 @@ import static java.lang.Thread.sleep;
 
 public class NetworkManager {
   private static final Logger log = LoggerFactory.getLogger(NetworkManager.class);
-  Map<Class<?>, List<ResponseListener>> listeners;
+  private final Map<Class<?>, List<ResponseListener>> listeners;
+  private final Map<String, ResponseListener> pendingRequests;
   private static NetworkManager instance;
   private volatile boolean started;
 
   private NetworkManager() {
     listeners = new ConcurrentHashMap<>();
+    pendingRequests = new ConcurrentHashMap<>();
   }
 
   public static NetworkManager getInstance() {
@@ -94,8 +98,20 @@ public class NetworkManager {
           continue;
         }
 
+        String requestId = rp.getRequestId();
+        if (requestId != null) {
+          ResponseListener listener = pendingRequests.remove(requestId);
+          if (listener != null) {
+            listener.onResponse(rp);
+          } else {
+            log.warn("Khong co pending listener cho requestId: {}", requestId);
+          }
+          continue;
+        }
+
         Class<?> commandType = rp.getCommand().getClass();
         List<ResponseListener> list = listeners.get(commandType);
+
         if (list != null) {
           for (ResponseListener listener : list) {
             if (listener != null) {
@@ -110,5 +126,21 @@ public class NetworkManager {
     thread.setDaemon(true);
     thread.setName("client-network-response-reader");
     thread.start();
+  }
+
+  public void sendRequest(Command cmd, ResponseListener listener)
+          throws ConnectionFailedException, SendFailedException {
+    String requestId = java.util.UUID.randomUUID().toString();
+    cmd.setRequestId(requestId);
+    if (listener != null) {
+      pendingRequests.put(requestId, listener);
+    }
+
+    try {
+      getConnection().sendCommand(cmd);
+    } catch (ConnectionFailedException | SendFailedException | RuntimeException e) {
+      pendingRequests.remove(requestId);
+      throw e;
+    }
   }
 }

@@ -47,12 +47,12 @@ public class AuctionSessionController {
         switch (auction.getStatus()) {
             case RUNNING:
                 statusBadge.setText("ĐANG DIỄN RA");
-                if (statusBadge != null) statusBadge.setStyle("-fx-background-color: -sf-success; -fx-text-fill: -sf-on-accent; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 2 8; -fx-background-radius: 8;");
+                setStatusBadgeClass("sf-status-running");
                 lbPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
                 if (actionButton != null) {
                     actionButton.setDisable(false);
                     actionButton.setText("THAM GIA");
-                    actionButton.setStyle("-fx-background-color: linear-gradient(to right, -sf-accent-2, -sf-accent); -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-background-radius: 20; -fx-cursor: hand;");
+                    setActionButtonClass(actionButton, "sf-auction-action-primary");
 
                 }
                 if (nguoidandau != null) nguoidandau.setText("ID dẫn đầu : ");
@@ -62,11 +62,11 @@ public class AuctionSessionController {
 
             case NOT_START:
                 statusBadge.setText("SẮP DIỄN RA");
-                if (statusBadge != null) statusBadge.setStyle("-fx-background-color: -sf-warning; -fx-text-fill: -sf-on-accent; -fx-font-size: 10px; -fx-font-weight: bold; -fx-padding: 2 8; -fx-background-radius: 8;");
+                setStatusBadgeClass("sf-status-upcoming");
                 lbPrice.setText(String.format("%,.0f VND", auction.getInitPrice()));
                 if (actionButton != null) {
                     actionButton.setText("CHƯA BẮT ĐẦU");
-                    actionButton.setStyle("-fx-background-color: linear-gradient(to right, -sf-danger, -sf-warning); -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-background-radius: 20;");
+                    setActionButtonClass(actionButton, "sf-auction-action-warning");
                 }
                 gia.setText("Giá khởi điểm : ");
                 if (nguoidandau != null) nguoidandau.setText("ID dẫn đầu : ");
@@ -74,13 +74,43 @@ public class AuctionSessionController {
                 break;
 
             case CLOSED:
+                statusBadge.setText("ĐÃ KẾT THÚC");
+                setStatusBadgeClass("sf-status-ended");
                 lbPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
                 lbCategory.setText(""+(auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
                 if (lbWinner != null) lbWinner.setText(""+auction.getWinnerId());
+                if (actionButton != null) {
+                    actionButton.setText("ĐÃ KẾT THÚC");
+                    setActionButtonClass(actionButton, "sf-auction-action-neutral");
+                }
                 break;
         }
     }
 
+    private void setActionButtonClass(Button button, String styleClass) {
+        if (button == null) return;
+        button.setStyle("");
+        button.getStyleClass().removeAll(
+                "sf-auction-action-primary",
+                "sf-auction-action-warning",
+                "sf-auction-action-neutral",
+                "sf-auction-action-success",
+                "sf-auction-action-danger"
+        );
+        button.getStyleClass().add(styleClass);
+    }
+
+    private void setStatusBadgeClass(String styleClass) {
+        if (statusBadge == null) return;
+        statusBadge.setStyle("");
+        statusBadge.getStyleClass().removeAll(
+                "sf-status-badge",
+                "sf-status-running",
+                "sf-status-upcoming",
+                "sf-status-ended"
+        );
+        statusBadge.getStyleClass().addAll("sf-status-badge", styleClass);
+    }
 
 
     @FXML

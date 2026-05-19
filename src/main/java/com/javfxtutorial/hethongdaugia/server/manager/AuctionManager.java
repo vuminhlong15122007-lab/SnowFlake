@@ -74,6 +74,10 @@ public class AuctionManager {
     // ─────────────────────────────────────────────────
 
     public void registerToAuction(BidListener listener, int auctionId) {
+        if (listener == null) {
+            log.warn("Không thể đăng ký auction {} vì listener null", auctionId);
+            return;
+        }
         auctionSubscribers.computeIfAbsent(
                 auctionId,
                 k -> new CopyOnWriteArrayList<>()

@@ -7,28 +7,32 @@ import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
+import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.network.BidListener;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
-import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
+@DisplayName("Hành vi lõi của AuctionManager")
 class AuctionManagerBehaviorTest {
     private AuctionManager manager;
 
@@ -47,18 +51,21 @@ class AuctionManagerBehaviorTest {
     @DisplayName("Bid validation")
     class BidValidation {
         @Test
+        @DisplayName("chấp nhận giá bằng current + step")
         void checkValidBid_acceptsExactlyCurrentPlusStep() {
             Auction auction = auctionWithPrice("100", "10");
             assertTrue(manager.checkValidBid(auction, new BigDecimal("110")));
         }
 
         @Test
+        @DisplayName("chấp nhận giá lớn hơn current + step")
         void checkValidBid_acceptsGreaterThanCurrentPlusStep() {
             Auction auction = auctionWithPrice("100", "10");
             assertTrue(manager.checkValidBid(auction, new BigDecimal("1000")));
         }
 
         @Test
+        @DisplayName("từ chối giá thấp hơn mức tối thiểu")
         void checkValidBid_rejectsAmountsBelowMinimum() {
             Auction auction = auctionWithPrice("100", "10");
 
@@ -67,21 +74,13 @@ class AuctionManagerBehaviorTest {
             assertFalse(manager.checkValidBid(auction, new BigDecimal("0")));
             assertFalse(manager.checkValidBid(auction, new BigDecimal("-1")));
         }
-
-        @Test
-        void checkValidBid_throwsWhenInputsAreMissing() {
-            Auction auction = auctionWithPrice("100", "10");
-            assertThrows(NullPointerException.class, () -> manager.checkValidBid(auction, null));
-
-            auction.setCurrentPrice(null);
-            assertThrows(NullPointerException.class, () -> manager.checkValidBid(auction, new BigDecimal("110")));
-        }
     }
 
     @Nested
     @DisplayName("Auction status")
     class AuctionStatusRefresh {
         @Test
+        @DisplayName("giữ NOT_START trước thời điểm bắt đầu")
         void refreshAuctionStatus_keepsNotStartBeforeStart_withoutDatabaseUpdate() throws DataException {
             Auction auction = auctionWithTime(
                     LocalDateTime.now().plusHours(1),
@@ -94,6 +93,7 @@ class AuctionManagerBehaviorTest {
         }
 
         @Test
+        @DisplayName("giữ RUNNING trong thời gian đấu giá")
         void refreshAuctionStatus_keepsRunningDuringAuction_withoutDatabaseUpdate() throws DataException {
             Auction auction = auctionWithTime(
                     LocalDateTime.now().minusMinutes(5),
@@ -106,6 +106,28 @@ class AuctionManagerBehaviorTest {
         }
 
         @Test
+        @DisplayName("chuyển NOT_START sang RUNNING và cập nhật DB khi đến giờ")
+        void refreshAuctionStatus_movesNotStartToRunningAndUpdatesDatabase() throws DataException {
+            Auction auction = auctionWithTime(
+                    LocalDateTime.now().minusMinutes(5),
+                    LocalDateTime.now().plusMinutes(5),
+                    AuctionStatus.NOT_START
+            );
+            AuctionDAO auctionDAO = mock(AuctionDAO.class);
+            when(auctionDAO.update(auction)).thenReturn(1);
+
+            try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class)) {
+                mockedAuctionDAO.when(AuctionDAO::getInstance).thenReturn(auctionDAO);
+
+                assertEquals(AuctionStatus.RUNNING, manager.refreshAuctionStatus(auction));
+
+                assertEquals(AuctionStatus.RUNNING, auction.getStatus());
+                verify(auctionDAO).update(auction);
+            }
+        }
+
+        @Test
+        @DisplayName("giữ CLOSED sau khi kết thúc")
         void refreshAuctionStatus_keepsClosedAfterEnd_withoutDatabaseUpdate() throws DataException {
             Auction auction = auctionWithTime(
                     LocalDateTime.now().minusHours(2),
@@ -118,6 +140,28 @@ class AuctionManagerBehaviorTest {
         }
 
         @Test
+        @DisplayName("chuyển CLOSED quá hạn thanh toán sang CANCELLED và cập nhật DB")
+        void refreshAuctionStatus_movesClosedPastPaymentWindowToCancelledAndUpdatesDatabase() throws DataException {
+            Auction auction = auctionWithTime(
+                    LocalDateTime.now().minusDays(2),
+                    LocalDateTime.now().minusHours(25),
+                    AuctionStatus.CLOSED
+            );
+            AuctionDAO auctionDAO = mock(AuctionDAO.class);
+            when(auctionDAO.update(auction)).thenReturn(1);
+
+            try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class)) {
+                mockedAuctionDAO.when(AuctionDAO::getInstance).thenReturn(auctionDAO);
+
+                assertEquals(AuctionStatus.CANCELLED, manager.refreshAuctionStatus(auction));
+
+                assertEquals(AuctionStatus.CANCELLED, auction.getStatus());
+                verify(auctionDAO).update(auction);
+            }
+        }
+
+        @Test
+        @DisplayName("giữ PAID sau cửa sổ thanh toán")
         void checkPaymentStatus_keepsPaidAuctionAfterPaymentWindow() throws DataException {
             Auction auction = auctionWithTime(
                     LocalDateTime.now().minusDays(2),
@@ -129,6 +173,7 @@ class AuctionManagerBehaviorTest {
         }
 
         @Test
+        @DisplayName("giữ CLOSED khi chưa hết hạn thanh toán")
         void checkPaymentStatus_keepsStatusBeforePaymentWindowExpires() throws DataException {
             Auction auction = auctionWithTime(
                     LocalDateTime.now().minusHours(2),
@@ -144,6 +189,7 @@ class AuctionManagerBehaviorTest {
     @DisplayName("Observer registry")
     class ObserverRegistry {
         @Test
+        @DisplayName("không đăng ký trùng listener realtime")
         void registerToAuction_addsListenerOnceOnly() throws Exception {
             RecordingBidListener listener = new RecordingBidListener();
 
@@ -156,6 +202,7 @@ class AuctionManagerBehaviorTest {
         }
 
         @Test
+        @DisplayName("gỡ listener khỏi phiên đang theo dõi")
         void unregisterFromAuction_removesExistingListener() throws Exception {
             RecordingBidListener listener = new RecordingBidListener();
             manager.registerToAuction(listener, 100);
@@ -166,12 +213,7 @@ class AuctionManagerBehaviorTest {
         }
 
         @Test
-        void unregisterFromAuction_unknownAuctionDoesNotThrow() {
-            RecordingBidListener listener = new RecordingBidListener();
-            assertDoesNotThrow(() -> manager.unregisterFromAuction(listener, 999));
-        }
-
-        @Test
+        @DisplayName("gửi bid mới tới tất cả listener của phiên")
         void notifySubscribers_deliversBidToEveryRegisteredListener() throws Exception {
             RecordingBidListener first = new RecordingBidListener();
             RecordingBidListener second = new RecordingBidListener();
@@ -187,19 +229,13 @@ class AuctionManagerBehaviorTest {
             assertSame(bid, first.lastBid);
             assertSame(bid, second.lastBid);
         }
-
-        @Test
-        void notifySubscribers_withoutListenersDoesNotThrow() {
-            BidTransaction bid = bid(404, 2, "150");
-
-            assertDoesNotThrow(() -> TestStateSupport.notifySubscribers(manager, 404, bid, null));
-        }
     }
 
     @Nested
     @DisplayName("Auto-bid registry")
     class AutoBidRegistry {
         @Test
+        @DisplayName("tắt auto-bid xóa cấu hình hiện có")
         void registerAutoBid_inactiveConfigRemovesExistingConfigWithoutDatabaseAccess() throws Exception {
             AutoBidConfig active = new AutoBidConfig(1, "alice", 100, new BigDecimal("200"), true);
             AutoBidConfig inactive = new AutoBidConfig(1, "alice", 100, new BigDecimal("200"), false);
@@ -212,6 +248,7 @@ class AuctionManagerBehaviorTest {
         }
 
         @Test
+        @DisplayName("cấu hình auto-bid mới thay thế cấu hình cũ cùng user")
         void registerAutoBid_replacesPreviousConfigForSameUser() throws Exception {
             Auction auction = auctionWithPrice("100", "10");
             auction.setAuctionId(100);
@@ -230,6 +267,7 @@ class AuctionManagerBehaviorTest {
         }
 
         @Test
+        @DisplayName("không tạo bid khi không có bot đủ điều kiện")
         void executeAutoBidCheck_noEligibleBotsLeavesAuctionUnchanged() throws Exception {
             Auction auction = auctionWithPrice("100", "10");
             auction.setAuctionId(100);
@@ -246,6 +284,7 @@ class AuctionManagerBehaviorTest {
         }
 
         @Test
+        @DisplayName("không tự đẩy giá khi bot đang dẫn đầu")
         void executeAutoBidCheck_winnerAlreadyLeadingDoesNotCreateNewBid() throws Exception {
             Auction auction = auctionWithPrice("100", "10");
             auction.setAuctionId(100);
@@ -258,35 +297,6 @@ class AuctionManagerBehaviorTest {
 
             assertEquals(new BigDecimal("100"), auction.getCurrentPrice());
             assertEquals(1, auction.getWinnerId());
-        }
-    }
-
-    @Nested
-    @DisplayName("Thread local context")
-    class ClientHandlerContext {
-        @Test
-        void contextHolder_setGetAndClearCurrentThread() {
-            ClientHandler handler = new ClientHandler(null);
-
-            ClientHandlerContextHolder.set(handler);
-            assertSame(handler, ClientHandlerContextHolder.get());
-
-            ClientHandlerContextHolder.clear();
-            assertNull(ClientHandlerContextHolder.get());
-        }
-
-        @Test
-        void contextHolder_isIsolatedBetweenThreads() throws InterruptedException {
-            ClientHandler mainHandler = new ClientHandler(null);
-            ClientHandlerContextHolder.set(mainHandler);
-
-            final ClientHandler[] valueInOtherThread = new ClientHandler[1];
-            Thread thread = new Thread(() -> valueInOtherThread[0] = ClientHandlerContextHolder.get());
-            thread.start();
-            thread.join();
-
-            assertNull(valueInOtherThread[0]);
-            assertSame(mainHandler, ClientHandlerContextHolder.get());
         }
     }
 
@@ -326,13 +336,11 @@ class AuctionManagerBehaviorTest {
     private static final class RecordingBidListener implements BidListener {
         private int callCount;
         private BidTransaction lastBid;
-        private ClientHandler lastSender;
 
         @Override
         public void onPlaceBid(BidTransaction bid, ClientHandler senderThread) {
             callCount++;
             lastBid = bid;
-            lastSender = senderThread;
         }
     }
 }

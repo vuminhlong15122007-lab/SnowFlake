@@ -159,25 +159,20 @@ public class AuctionListController implements ResponseListener {
     Button[] buttons = {btnAll, btnUpcoming, btnRunning, btnEnded};
     for (Button b : buttons) {
       if (b == null) continue;
-      b.getStyleClass().remove("sf-filter-button-active");
-      if (!b.getStyleClass().contains("sf-filter-button")) {
-        b.getStyleClass().add("sf-filter-button");
-      }
-      if (b == active) {
-        b.getStyleClass().add("sf-filter-button-active");
-      }
+            b.setStyle("");
+            b.getStyleClass().removeAll("sf-filter-button", "sf-filter-button-active");
+            b.getStyleClass().add(b == active ? "sf-filter-button-active" : "sf-filter-button");
     }
   }
 
 
   public void loadData() throws ConnectionFailedException {
     Command cmd = new GetAllAuctionsCommand();
-    ServerConnection connection = NetworkManager.getConnection();
     new Thread(() -> {
       try {
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.register(GetAllAuctionsCommand.class, this);
-        connection.sendCommand(cmd);
+        networkManager.sendRequest(cmd, this);
       } catch (SendFailedException e) {
         log.error("Lỗi gửi: {}", e.getMessage());
         Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "Loading.gif"));
@@ -211,19 +206,19 @@ public class AuctionListController implements ResponseListener {
     changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/UserInformation.fxml");
   }
 
-    @Override
-    public void onResponse(Response rp) {
-        if (rp.getCommand().getClass() == GetAllAuctionsCommand.class) {
-            Platform.runLater(() -> {
-                if (!rp.isSuccess()) {
-                    showAlert("Loi tai du lieu", rp.getMessage(), "Loading.gif");
-                    return;
-                }
-                ArrayList<Auction> auctions = (ArrayList<Auction>) rp.getPayLoad();
-                ClientModel.getInstance().getAllAuctions().setAll(auctions);
-            });
-            NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.unregister(GetAllAuctionsCommand.class, this);
+  @Override
+  public void onResponse(Response rp) {
+    if (rp.getCommand().getClass() == GetAllAuctionsCommand.class) {
+      Platform.runLater(() -> {
+        if (!rp.isSuccess()) {
+          showAlert("Loi tai du lieu", rp.getMessage(), "Loading.gif");
+          return;
         }
+        ArrayList<Auction> auctions = (ArrayList<Auction>) rp.getPayLoad();
+        ClientModel.getInstance().getAllAuctions().setAll(auctions);
+      });
+      NetworkManager networkManager = NetworkManager.getInstance();
+      networkManager.unregister(GetAllAuctionsCommand.class, this);
     }
+  }
 }

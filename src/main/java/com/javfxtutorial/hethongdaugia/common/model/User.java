@@ -86,17 +86,6 @@ public class User implements Serializable {
     public void setImagePath(String avt){this.avt = avt;}
 
     public String getImagePath(){return this.avt;}
-    @Override
-    public String toString() {
-        return "User{" +
-                ", id=" + id + '\'' +
-                ", name='" + name + '\'' +
-                ", passWord='" + passWord + '\'' +
-                ", email='" + email + '\'' +
-                ", sdt='" + sdt + '\'' +
-                ", accountType=" + accountType +
-                '}';
-    }
 
     public AccountType getAccountType() {
         return accountType;
