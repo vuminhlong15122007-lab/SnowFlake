@@ -55,8 +55,7 @@ public class SellerNotification implements Serializable {
     public void setRead(boolean read)         { this.read = read; }
 
     public String getMessage() {
-        String price = winningPrice != null
-                ? String.format("%,.0f", winningPrice) : "N/A";
+        String price = String.format("%,.0f", winningPrice);
         return switch (type) {
             case CLOSED -> String.format(
                     "🏆 Phiên \"%s\" kết thúc!\nNgười thắng: %s — Giá: %s VND\nĐang chờ họ thanh toán.",

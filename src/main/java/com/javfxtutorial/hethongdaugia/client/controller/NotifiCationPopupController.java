@@ -40,13 +40,9 @@ public class NotifiCationPopupController {
         }
     }
 
-    /**
-     * Được gọi từ SellerManagementController sau khi FXML load xong.
-     * Truyền thẳng ObservableList — ListView sẽ tự cập nhật khi list thay đổi.
-     */
+
     public void loadNotifications(ObservableList<SellerNotification> notifications) {
         if (notificationListView == null) return;
-
         notificationListView.setItems(notifications);
 
         boolean empty = (notifications == null || notifications.isEmpty());
