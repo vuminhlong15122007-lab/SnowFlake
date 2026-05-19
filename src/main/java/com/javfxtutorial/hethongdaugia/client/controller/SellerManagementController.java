@@ -4,6 +4,7 @@ import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
+import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.*;
@@ -336,10 +337,11 @@ public class SellerManagementController implements ResponseListener {
 
       new Thread(() -> {
         try {
-          NetworkManager networkManager = NetworkManager.getInstance();
+          ServerConnection connection = NetworkManager.getConnection();
+          NetworkManager.getInstance().register(AddAuctionCommand.class, this);
           AddAuctionCommand cm = new AddAuctionCommand();
           cm.addData("Auction", auction);
-          networkManager.sendRequest(cm, this);  // Doc 5: sendRequest
+          connection.sendCommand(cm);
         } catch (ConnectionFailedException e) {
           log.error("Lỗi kết nối: {}", e.getMessage());
           Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối server"));
@@ -376,9 +378,10 @@ public class SellerManagementController implements ResponseListener {
 
     new Thread(() -> {
       try {
-        NetworkManager networkManager = NetworkManager.getInstance();
+        ServerConnection connection = NetworkManager.getConnection();
+        NetworkManager.getInstance().register(UpdateAuctionCommand.class, this);
         UpdateAuctionCommand cmd = new UpdateAuctionCommand(toUpdate);
-        networkManager.sendRequest(cmd, this);  // Doc 5: sendRequest
+        connection.sendCommand(cmd);
       } catch (ConnectionFailedException e) {
         log.error("Lỗi kết nối: {}", e.getMessage());
         Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối server"));
@@ -401,9 +404,10 @@ public class SellerManagementController implements ResponseListener {
     }
     new Thread(() -> {
       try {
-        NetworkManager networkManager = NetworkManager.getInstance();
+        ServerConnection connection = NetworkManager.getConnection();
+        NetworkManager.getInstance().register(DeleteAuctionCommand.class, this);
         DeleteAuctionCommand cmd = new DeleteAuctionCommand(selectedAuction);
-        networkManager.sendRequest(cmd, this);  // Doc 5: sendRequest
+        connection.sendCommand(cmd);
       } catch (ConnectionFailedException e) {
         log.error("Lỗi kết nối: {}", e.getMessage());
         Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối server"));
