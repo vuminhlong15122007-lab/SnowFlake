@@ -16,6 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 @DisplayName("Mã lỗi nghiệp vụ trả về cho client")
 class ExceptionContractTest {
     @Test
+    @DisplayName("tra mã lỗi đúng và fallback về lỗi hệ thống")
     void fromCode_returnsKnownErrorCodeAndFallsBackToSystemError() {
         assertSame(ErrorCode.AUTH_INVALID_CREDENTIALS, ErrorCode.fromCode("AUTH-001"));
         assertSame(ErrorCode.BID_SELF_BID, ErrorCode.fromCode("BID-002"));
@@ -23,6 +24,7 @@ class ExceptionContractTest {
     }
 
     @Test
+    @DisplayName("lỗi xác thực và dữ liệu giữ mã trả về cho client")
     void authenticationAndDataExceptions_keepClientFacingCodes() {
         InvalidCredentialsException invalidLogin = new InvalidCredentialsException("bad login");
         DuplicateKeyException duplicateEmail = new DuplicateKeyException("User", "email", "a@example.com");
@@ -34,6 +36,7 @@ class ExceptionContractTest {
     }
 
     @Test
+    @DisplayName("lỗi đấu giá và đặt giá giữ mã trả về cho client")
     void auctionAndBidExceptions_keepClientFacingCodes() {
         AuctionNotFoundException missingAuction = new AuctionNotFoundException(123);
         LowerThanCurrentBidException lowerBid = new LowerThanCurrentBidException(200.0, 150.0);

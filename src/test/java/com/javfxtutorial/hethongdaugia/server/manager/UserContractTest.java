@@ -15,6 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+@DisplayName("Luồng nghiệp vụ tài khoản người dùng")
 class UserContractTest {
 
     private User alice() {
@@ -33,6 +34,7 @@ class UserContractTest {
     @DisplayName("UserManager.authenticate")
     class AuthenticationManagerTest {
         @Test
+        @DisplayName("đăng nhập thành công với mật khẩu plaintext cũ")
         void authenticate_returnsUserWhenLegacyPlainPasswordMatches() throws Exception {
             User user = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -51,6 +53,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("sai đăng nhập khi không tìm thấy user")
         void authenticate_throwsInvalidCredentialsWhenUserMissing() throws Exception {
             UserDAO userDAO = mock(UserDAO.class);
             when(userDAO.selectByUsername("missing")).thenReturn(null);
@@ -67,6 +70,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("sai đăng nhập khi mật khẩu không khớp")
         void authenticate_throwsInvalidCredentialsWhenPasswordDiffers() throws Exception {
             User user = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -85,6 +89,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("mật khẩu phân biệt chữ hoa chữ thường")
         void authenticate_isCaseSensitive() throws Exception {
             User user = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -103,6 +108,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("mật khẩu null bị từ chối")
         void authenticate_throwsInvalidCredentialsWhenInputPasswordIsNull() throws Exception {
             User user = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -121,6 +127,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("mật khẩu đã hash xác thực được và không migrate lại")
         void authenticate_acceptsStoredHashWithoutMigratingAgain() throws Exception {
             User user = new User(
                     1,
@@ -151,6 +158,7 @@ class UserContractTest {
     @DisplayName("UserManager.updateUserProfile")
     class UpdateUserProfileManagerTest {
         @Test
+        @DisplayName("giữ dữ liệu cũ khi input null hoặc blank")
         void updateUserProfile_keepsOldValuesWhenInputIsNullOrBlank() throws Exception {
             User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -172,6 +180,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("trim tên, email và số điện thoại khi có input mới")
         void updateUserProfile_trimsNameEmailAndPhoneWhenProvided() throws Exception {
             User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -198,6 +207,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("update profile không đổi id, mật khẩu và role")
         void updateUserProfile_preservesIdPasswordAndRole() throws Exception {
             User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -223,6 +233,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("gửi user đã merge xuống DAO")
         void updateUserProfile_sendsMergedUserToDao() throws Exception {
             User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -254,6 +265,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("user không tồn tại thì không update DAO")
         void updateUserProfile_returnsNullWhenUserDoesNotExist() throws Exception {
             UserDAO userDAO = mock(UserDAO.class);
             when(userDAO.selectById(404)).thenReturn(null);
@@ -273,6 +285,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("DAO update thất bại thì trả null")
         void updateUserProfile_returnsNullWhenDaoUpdateFails() throws Exception {
             User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -298,6 +311,7 @@ class UserContractTest {
     @DisplayName("UserManager.reset_password")
     class ResetPasswordManagerTest {
         @Test
+        @DisplayName("reset password đổi mật khẩu và giữ profile")
         void resetPassword_updatesPasswordAndKeepsProfileFields() throws Exception {
             User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -326,6 +340,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("reset password trả null khi DAO update thất bại")
         void resetPassword_returnsNullWhenDaoUpdateFails() throws Exception {
             User oldUser = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -345,6 +360,7 @@ class UserContractTest {
     @DisplayName("UserManager.deleteUser")
     class DeleteUserManagerTest {
         @Test
+        @DisplayName("xóa user thành công khi DAO delete thành công")
         void deleteUser_returnsTrueWhenDaoDeleteSucceeds() throws Exception {
             User user = alice();
             UserDAO userDAO = mock(UserDAO.class);
@@ -361,6 +377,7 @@ class UserContractTest {
         }
 
         @Test
+        @DisplayName("xóa user thất bại khi DAO delete trả 0")
         void deleteUser_returnsFalseWhenDaoDeleteFails() throws Exception {
             User user = alice();
             UserDAO userDAO = mock(UserDAO.class);

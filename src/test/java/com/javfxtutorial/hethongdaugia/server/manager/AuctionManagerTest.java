@@ -1,8 +1,11 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionAlreadyEndedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotFoundException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotStartedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.InsufficientIncrementException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.SelfBidException;
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DuplicateKeyException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
@@ -24,6 +27,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
@@ -47,6 +51,7 @@ public class AuctionManagerTest {
     }
 
     @Test
+    @DisplayName("đặt giá hợp lệ lưu DB, thông báo realtime và gia hạn anti-snipe")
     void placeBid_acceptsValidBid_persistsBid_notifiesSubscribersAndExtendsNearEndAuction() throws Exception {
         Auction auction = runningAuction(100, "100", "10");
         LocalDateTime originalEnd = LocalDateTime.now().plusSeconds(30);
@@ -86,6 +91,7 @@ public class AuctionManagerTest {
     }
 
     @Test
+    @DisplayName("không cho đặt giá khi phiên chưa bắt đầu và không ghi DB")
     void placeBid_rejectsAuctionBeforeStartAndDoesNotPersistBid() throws Exception {
         Auction auction = runningAuction(101, "100", "10");
         auction.setStartingTime(LocalDateTime.now().plusMinutes(5));
@@ -110,6 +116,101 @@ public class AuctionManagerTest {
     }
 
     @Test
+    @DisplayName("load auction từ DB khi cache chưa có và đặt giá thành công")
+    void placeBid_loadsAuctionFromDaoWhenCacheMiss() throws Exception {
+        Auction auction = runningAuction(104, "100", "10");
+        BidTransaction bid = bid(auction.getAuctionId(), 20, "alice", "150");
+        AuctionDAO auctionDAO = mock(AuctionDAO.class);
+        BidDAO bidDAO = mock(BidDAO.class);
+        ParticipatedAuctionDAO participatedAuctionDAO = mock(ParticipatedAuctionDAO.class);
+        when(auctionDAO.selectById(auction.getAuctionId())).thenReturn(auction);
+        when(auctionDAO.update(auction)).thenReturn(1);
+        when(bidDAO.insertBid(bid)).thenReturn(true);
+        when(participatedAuctionDAO.insert(bid)).thenReturn(1);
+
+        try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
+             MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+             MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                     mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+            assertTrue(auctionManager.placeBid(bid, null));
+
+            assertSame(auction, TestStateSupport.activeAuctions(auctionManager).get(auction.getAuctionId()));
+            assertEquals(new BigDecimal("150"), auction.getCurrentPrice());
+            verify(auctionDAO).selectById(auction.getAuctionId());
+            verify(auctionDAO).update(auction);
+            verify(bidDAO).insertBid(bid);
+        }
+    }
+
+    @Test
+    @DisplayName("báo lỗi khi cache và DB đều không có auction")
+    void placeBid_throwsAuctionNotFoundWhenDaoCannotFindAuction() throws Exception {
+        BidTransaction bid = bid(404, 20, "alice", "150");
+        AuctionDAO auctionDAO = mock(AuctionDAO.class);
+        when(auctionDAO.selectById(404)).thenReturn(null);
+
+        try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO)) {
+            assertThrows(AuctionNotFoundException.class, () -> auctionManager.placeBid(bid, null));
+
+            verify(auctionDAO).selectById(404);
+        }
+    }
+
+    @Test
+    @DisplayName("không cho đặt giá khi phiên đã kết thúc")
+    void placeBid_rejectsEndedAuctionAndDoesNotPersistBid() throws Exception {
+        Auction auction = runningAuction(105, "100", "10");
+        auction.setEndingTime(LocalDateTime.now().minusMinutes(5));
+        auction.setStatus(AuctionStatus.CLOSED);
+        TestStateSupport.activeAuctions(auctionManager).put(auction.getAuctionId(), auction);
+
+        BidTransaction bid = bid(auction.getAuctionId(), 20, "alice", "150");
+        AuctionDAO auctionDAO = mock(AuctionDAO.class);
+        BidDAO bidDAO = mock(BidDAO.class);
+        ParticipatedAuctionDAO participatedAuctionDAO = mock(ParticipatedAuctionDAO.class);
+
+        try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
+             MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+             MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                     mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+            assertThrows(AuctionAlreadyEndedException.class, () -> auctionManager.placeBid(bid, null));
+
+            verify(bidDAO, never()).insertBid(any(BidTransaction.class));
+            verify(participatedAuctionDAO, never()).insert(any(BidTransaction.class));
+        }
+    }
+
+    @Test
+    @DisplayName("vẫn đặt giá thành công khi bản ghi tham gia đã tồn tại")
+    void placeBid_ignoresDuplicateParticipatedAuctionRecord() throws Exception {
+        Auction auction = runningAuction(106, "100", "10");
+        TestStateSupport.activeAuctions(auctionManager).put(auction.getAuctionId(), auction);
+
+        BidTransaction bid = bid(auction.getAuctionId(), 20, "alice", "150");
+        AuctionDAO auctionDAO = mock(AuctionDAO.class);
+        BidDAO bidDAO = mock(BidDAO.class);
+        ParticipatedAuctionDAO participatedAuctionDAO = mock(ParticipatedAuctionDAO.class);
+        when(auctionDAO.update(auction)).thenReturn(1);
+        when(bidDAO.insertBid(bid)).thenReturn(true);
+        when(participatedAuctionDAO.insert(bid)).thenThrow(
+                new DuplicateKeyException("ParticipatedAuction", "auctionId/userId", auction.getAuctionId())
+        );
+
+        try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
+             MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+             MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                     mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+            assertTrue(auctionManager.placeBid(bid, null));
+
+            assertEquals(new BigDecimal("150"), auction.getCurrentPrice());
+            verify(auctionDAO).update(auction);
+            verify(bidDAO).insertBid(bid);
+            verify(participatedAuctionDAO).insert(bid);
+        }
+    }
+
+    @Test
+    @DisplayName("không cho người bán tự đặt giá sản phẩm của mình")
     void placeBid_rejectsBidFromSellerAndDoesNotPersistBid() throws Exception {
         Auction auction = runningAuction(102, "100", "10");
         TestStateSupport.activeAuctions(auctionManager).put(auction.getAuctionId(), auction);
@@ -131,6 +232,7 @@ public class AuctionManagerTest {
     }
 
     @Test
+    @DisplayName("không lưu bid khi giá chưa đủ bước nhảy tối thiểu")
     void placeBid_rejectsBidBelowStepAndDoesNotPersistBid() throws Exception {
         Auction auction = runningAuction(103, "100", "10");
         TestStateSupport.activeAuctions(auctionManager).put(auction.getAuctionId(), auction);

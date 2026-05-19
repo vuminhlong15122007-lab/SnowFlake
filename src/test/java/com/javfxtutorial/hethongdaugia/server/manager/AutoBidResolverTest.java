@@ -31,6 +31,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@DisplayName("Luật chọn người thắng auto-bid")
 class AutoBidResolverTest {
     private static final LocalDateTime EARLY = LocalDateTime.of(2026, 1, 1, 10, 0);
     private static final LocalDateTime LATE = LocalDateTime.of(2026, 1, 1, 10, 1);
@@ -52,6 +53,7 @@ class AutoBidResolverTest {
     @DisplayName("Auto-bid decision table")
     class AutoBidDecisionTable {
         @Test
+        @DisplayName("một bot đủ điều kiện đặt giá tối thiểu")
         void singleEligibleBot_bidsMinimumRequired() throws Exception {
             Auction auction = auction("100", "10", 2);
             AutoBidResult result = runAutoBid(auction, List.of(bot(1, "alice", "200", true, EARLY)));
@@ -62,6 +64,7 @@ class AutoBidResolverTest {
         }
 
         @Test
+        @DisplayName("bỏ qua bot đã tắt")
         void inactiveBot_isIgnored() throws Exception {
             Auction auction = auction("100", "10", 2);
             AutoBidResult result = runAutoBid(auction, List.of(bot(1, "alice", "200", false, EARLY)));
@@ -72,6 +75,7 @@ class AutoBidResolverTest {
         }
 
         @Test
+        @DisplayName("bỏ qua bot có maxBid dưới giá tối thiểu")
         void botBelowMinimumRequired_isIgnored() throws Exception {
             Auction auction = auction("100", "10", 2);
             AutoBidResult result = runAutoBid(auction, List.of(bot(1, "alice", "109", true, EARLY)));
@@ -82,6 +86,7 @@ class AutoBidResolverTest {
         }
 
         @Test
+        @DisplayName("bot maxBid cao nhất thắng với giá vừa đủ hơn bot thứ hai")
         void highestMaxBidWinsAndPaysSecondMaxPlusStep() throws Exception {
             Auction auction = auction("100", "10", 9);
             AutoBidConfig lower = bot(1, "alice", "200", true, EARLY);
@@ -95,6 +100,7 @@ class AutoBidResolverTest {
         }
 
         @Test
+        @DisplayName("cùng maxBid thì bot đăng ký sớm thắng")
         void sameMaxBidEarlierRegistrationWinsAndPaysMaxBid() throws Exception {
             Auction auction = auction("100", "10", 9);
             AutoBidConfig early = bot(1, "alice", "300", true, EARLY);
@@ -108,6 +114,7 @@ class AutoBidResolverTest {
         }
 
         @Test
+        @DisplayName("người đang dẫn đầu giữ lợi thế khi cùng maxBid")
         void sameMaxBidCurrentWinnerKeepsLeadAndPriceMovesToMaxBid() throws Exception {
             Auction auction = auction("100", "10", 1);
             AutoBidConfig currentWinner = bot(1, "alice", "300", true, EARLY);
@@ -121,6 +128,7 @@ class AutoBidResolverTest {
         }
 
         @Test
+        @DisplayName("giá auto-bid không vượt maxBid của bot thắng")
         void finalAmountIsClampedToWinnerMaxBid() throws Exception {
             Auction auction = auction("100", "10", 9);
             AutoBidConfig winner = bot(1, "alice", "205", true, EARLY);
@@ -134,6 +142,7 @@ class AutoBidResolverTest {
         }
 
         @Test
+        @DisplayName("bot đang dẫn đầu không tự đấu với chính mình")
         void currentWinnerDoesNotBidAgainstThemself() throws Exception {
             Auction auction = auction("100", "10", 1);
             AutoBidResult result = runAutoBid(auction, List.of(bot(1, "alice", "500", true, EARLY)));
@@ -144,6 +153,7 @@ class AutoBidResolverTest {
         }
 
         @Test
+        @DisplayName("bot thấp hơn vẫn thắng khi bot cao hơn bị tắt")
         void lowerMaxBotCanWinWhenHigherBotIsInactive() throws Exception {
             Auction auction = auction("100", "10", 9);
             AutoBidConfig inactiveHigher = bot(1, "alice", "500", false, EARLY);
