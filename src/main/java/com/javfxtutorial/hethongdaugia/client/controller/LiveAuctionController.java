@@ -86,8 +86,16 @@ public class LiveAuctionController implements ResponseListener {
 
         try {
             // 1. Lấy text và loại bỏ các dấu phẩy, khoảng trắng (nếu người dùng có nhập)
-            String rawInput = priceInput_tf.getText().replace(",", "").replace(".", "").trim();
-            BigDecimal inputAmount = BigDecimal.valueOf(Double.parseDouble(rawInput)) ;
+            String rawInput = priceInput_tf.getText().trim();
+
+            if (rawInput.isEmpty()) {
+                UIUtils.showAlert("Lỗi đặt giá", "Vui lòng nhập số tiền");
+                return;
+            }
+
+            rawInput = rawInput.replace(",", ".");
+
+            BigDecimal inputAmount = new BigDecimal(rawInput);
 
             // 2. Validate sớm ngay tại Client (Giảm tải cho Server)
             BigDecimal minRequired = currentAuction.getStepPrice().add(currentAuction.getCurrentPrice() );

@@ -13,24 +13,24 @@ public class DeleteUserCommand extends Command {
 
     @Override
     public Response handle() {
-        int userId = (int) this.getData("userId");
-        String username = (String) this.getData("username");
-        String email = (String) this.getData("email");
-        String phone = (String) this.getData("phone");
-        try{
-            boolean success = UserManager.getInstance().deleteUser(userId, username, email, phone);
+        try {
+            int userId = (int) this.getData("userId");
+            String username = (String) this.getData("username");
+            String email = (String) this.getData("email");
+            String phone = (String) this.getData("phone");
 
-            if(success){
+            boolean success = UserManager.getInstance().deleteUser(userId, username, email, phone);
+            if (success) {
                 return new Response(true, "Xóa user thành công", null, this);
             }
-            return new Response(false, "Xóa thất bại", null, this); } catch (UserNotFoundException e) {
-            log.warn("Không tìm thấy user để xóa: id={}", userId);
+            return new Response(false, "Xóa thất bại", null, this);
+        } catch (ClassCastException | NullPointerException e) {
+            return new Response(false, "Dữ liệu đầu vào không hợp lệ", null, this);
+        } catch (UserNotFoundException e) {
             return new Response(false, "Không tìm thấy người dùng", null, this);
         } catch (DataException e) {
-            log.error("Lỗi database khi xóa user: {}", e.getMessage(), e);
             return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);
         } catch (Exception e) {
-            log.error("Lỗi không xác định: {}", e.getMessage(), e);
             return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);
         }
     }

@@ -4,6 +4,7 @@ import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
 
 public class RegisterToAuctionCommand extends Command {
@@ -14,8 +15,14 @@ public class RegisterToAuctionCommand extends Command {
             return new Response(false, "Auction không hợp lệ", null, this);
         }
 
+        ClientHandler listener = ClientHandlerContextHolder.get();
+
+        if (listener == null) {
+            return new Response(false, "Không xác định được client listener", null, this);
+        }
+
         AuctionManager.getInstance().registerToAuction(
-                ClientHandlerContextHolder.get(),
+                listener,
                 currentAuction.getAuctionId()
         );
         return new Response(true, "Đăng ký tham gia thành công", null, this);
