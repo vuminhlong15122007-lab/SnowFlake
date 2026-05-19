@@ -7,6 +7,7 @@ import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
 import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +25,9 @@ public class DeleteAuctionCommand extends Command {
                 if (result1  <= 0) {
                     return new Response(false, "Không thể xóa phiên đấu giá", null, this);
                 }
-                return new Response(true, "xóa phiên đấu giá thành công", null, this);
+                Response rp = new Response(true, "xóa phiên đấu giá thành công", auction, this);
+                ClientHandler.broadcast(rp);
+                return rp;
             }
             // Phiên đã bắt đầu hoặc kết thúc
             if (status == AuctionStatus.RUNNING) {

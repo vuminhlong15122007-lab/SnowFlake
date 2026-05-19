@@ -36,7 +36,7 @@ public class ProductDisplayController {
     @FXML private Label detailTitle;
 
 
-    private final Item item = ClientModel.getInstance().getCurrentItem();
+    private final Item item = ClientModel.getInstance().getCurrentAuction().getItem();
     private final Auction auction = ClientModel.getInstance().getCurrentAuction();
 
     public void setData() { // nhan du lieu tu man Item..

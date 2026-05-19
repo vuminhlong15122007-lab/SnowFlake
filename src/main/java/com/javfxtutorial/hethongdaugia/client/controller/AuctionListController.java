@@ -1,11 +1,13 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.Command.AddAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
@@ -28,178 +30,186 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 public class AuctionListController implements ResponseListener {
-    private static final Logger log = LoggerFactory.getLogger(AuctionListController.class);
+  private static final Logger log = LoggerFactory.getLogger(AuctionListController.class);
 
-    @FXML private ListView<Auction> featuredProductList;
-    @FXML private TextField searchField;
-    @FXML private Label sectionTitle;
-    @FXML private Button btnAll, btnUpcoming, btnRunning, btnEnded;
-    @FXML private ComboBox<String> categoryFilter;
+  @FXML
+  private ListView<Auction> featuredProductList;
+  @FXML
+  private TextField searchField;
+  @FXML
+  private Label sectionTitle;
+  @FXML
+  private Button btnAll, btnUpcoming, btnRunning, btnEnded;
+  @FXML
+  private ComboBox<String> categoryFilter;
 
-    private final ObservableList<Auction> observable = FXCollections.observableArrayList();
-    private FilteredList<Auction> filterData;
-    private AuctionStatus currentStatus = null;   // null = Tất cả
+  private FilteredList<Auction> filterData;
+  private AuctionStatus currentStatus = null;   // null = Tất cả
 
-    @FXML
-    public void initialize() throws ConnectionFailedException {
-        VBox.setVgrow(featuredProductList, Priority.ALWAYS);
-        featuredProductList.setMaxWidth(Double.MAX_VALUE);
-        featuredProductList.setCellFactory(_ -> new ProductCell());
-        // Tạo FilteredList
-        filterData = new FilteredList<>(observable, _ -> true);
-        featuredProductList.setItems(filterData);
-        // tim kiem
-        searchField.textProperty().addListener((_, _, _) -> applyFilters());
+  private static boolean isLoaded = false;
 
-        // combox loai sp
-        categoryFilter.getItems().addAll("All Products Type", "Art", "Vehicle", "Electronics", "Orther");
-        categoryFilter.setValue("All Products Type");
-        categoryFilter.valueProperty().addListener((_, _, _) -> applyFilters());
+  @FXML
+  public void initialize() throws ConnectionFailedException {
+    ObservableList<Auction> observable = ClientModel.getInstance().getAllAuctions();
 
-        //loc trang thai
-        btnAll.setOnAction(_ -> {
-            currentStatus = null;
-            sectionTitle.setText("📋  " + "TẤT CẢ PHIÊN ĐẤU GIÁ");
-            setActiveButton(btnAll);
-            applyFilters();
-        });
-        btnUpcoming.setOnAction(_ -> {
-            currentStatus = AuctionStatus.NOT_START;
-            sectionTitle.setText("📋  " + "PHIÊN SẮP DIỄN RA");
-            setActiveButton(btnUpcoming);
-            applyFilters();
-        });
-        btnRunning.setOnAction(_ -> {
-            currentStatus = AuctionStatus.RUNNING;
-            sectionTitle.setText("📋  " + "PHIÊN ĐANG DIỄN RA");
-            setActiveButton(btnRunning);
-            applyFilters();
-        });
-        btnEnded.setOnAction(_ -> {
-            currentStatus = AuctionStatus.CLOSED;
-            sectionTitle.setText("📋  " + "PHIÊN ĐÃ KẾT THÚC");
-            setActiveButton(btnEnded);
-            applyFilters();
-        });
+    VBox.setVgrow(featuredProductList, Priority.ALWAYS);
+    featuredProductList.setMaxWidth(Double.MAX_VALUE);
+    featuredProductList.setCellFactory(_ -> new ProductCell());
+    // Tạo FilteredList
+    filterData = new FilteredList<>(observable, _ -> true);
+    featuredProductList.setItems(filterData);
+    // tim kiem
+    searchField.textProperty().addListener((_, _, _) -> applyFilters());
 
-        setActiveButton(btnAll);
-        loadData();
+    // combox loai sp
+    categoryFilter.getItems().addAll("All Products Type", "Art", "Vehicle", "Electronics", "Orther");
+    categoryFilter.setValue("All Products Type");
+    categoryFilter.valueProperty().addListener((_, _, _) -> applyFilters());
+
+    //loc trang thai
+    btnAll.setOnAction(_ -> {
+      currentStatus = null;
+      sectionTitle.setText("📋  " + "TẤT CẢ PHIÊN ĐẤU GIÁ");
+      setActiveButton(btnAll);
+      applyFilters();
+    });
+    btnUpcoming.setOnAction(_ -> {
+      currentStatus = AuctionStatus.NOT_START;
+      sectionTitle.setText("📋  " + "PHIÊN SẮP DIỄN RA");
+      setActiveButton(btnUpcoming);
+      applyFilters();
+    });
+    btnRunning.setOnAction(_ -> {
+      currentStatus = AuctionStatus.RUNNING;
+      sectionTitle.setText("📋  " + "PHIÊN ĐANG DIỄN RA");
+      setActiveButton(btnRunning);
+      applyFilters();
+    });
+    btnEnded.setOnAction(_ -> {
+      currentStatus = AuctionStatus.CLOSED;
+      sectionTitle.setText("📋  " + "PHIÊN ĐÃ KẾT THÚC");
+      setActiveButton(btnEnded);
+      applyFilters();
+    });
+
+    setActiveButton(btnAll);
+
+    if (!isLoaded) {
+      loadData();
+      isLoaded = true;
     }
 
-    //  Hàm áp dụng tất cả bộ lọc
-    private void applyFilters() {
-        filterData.setPredicate(auction -> {
-            if (auction == null || auction.getItem() == null) return false;
+  }
 
-            // 1. Tìm kiếm theo tên
-            String search = searchField.getText();
-            if (search != null && !search.isBlank()) {
-                String name = auction.getItem().getName();
-                if (name == null || !name.toLowerCase().contains(search.toLowerCase())) {
-                    return false;
-                }
-            }
+  //  Hàm áp dụng tất cả bộ lọc
+  private void applyFilters() {
+    filterData.setPredicate(auction -> {
+      if (auction == null || auction.getItem() == null) return false;
 
-            // 2. Lọc theo trạng thái
-            if (currentStatus != null && auction.getStatus() != currentStatus) {
-                return false;
-            }
-
-            // 3. Lọc theo loại sản phẩm
-            String selectedCategory = categoryFilter.getValue();
-            if (selectedCategory != null && !selectedCategory.equals("All Products Type")) {
-                String auctionCategory = getCategoryName(auction);
-                return selectedCategory.equals(auctionCategory);
-            }else if (selectedCategory.equals("Electronics")) {
-                String auctionCategory = getCategoryName(auction);
-                return selectedCategory.equals(auctionCategory);
-            }else if (selectedCategory.equals("Art")) {
-                String auctionCategory = getCategoryName(auction);
-                return selectedCategory.equals(auctionCategory);
-            }else if (selectedCategory.equals("Vehicle")) {
-                String auctionCategory = getCategoryName(auction);
-                return selectedCategory.equals(auctionCategory);
-            }else if (selectedCategory.equals("Orther")) {
-                String auctionCategory = getCategoryName(auction);
-                return selectedCategory.equals(auctionCategory);
-            }
-            return true;
-        });
-    }
-
-    //   Lấy tên loại từ class của Item
-    private String getCategoryName(Auction auction) {
-        if (auction.getItem() == null || auction.getItem().getCategory() == null)
-            return "Orther";
-        return switch (auction.getItem().getCategory()) {
-            case ART -> "Art";
-            case VEHICLE -> "Vehicle";
-            case ELECTRONICS -> "Electronics";
-            default -> "Orther";
-        };
-    }
-
-    // Method đổi class CSS cho nút đang active
-    private void setActiveButton(Button active) {
-        Button[] buttons = {btnAll, btnUpcoming, btnRunning, btnEnded};
-        for (Button b : buttons) {
-            if (b == null) continue;
-            b.getStyleClass().remove("sf-filter-button-active");
-            if (!b.getStyleClass().contains("sf-filter-button")) {
-                b.getStyleClass().add("sf-filter-button");
-            }
-            if (b == active) {
-                b.getStyleClass().add("sf-filter-button-active");
-            }
+      // 1. Tìm kiếm theo tên
+      String search = searchField.getText();
+      if (search != null && !search.isBlank()) {
+        String name = auction.getItem().getName();
+        if (name == null || !name.toLowerCase().contains(search.toLowerCase())) {
+          return false;
         }
+      }
+
+      // 2. Lọc theo trạng thái
+      if (currentStatus != null && auction.getStatus() != currentStatus) {
+        return false;
+      }
+
+      // 3. Lọc theo loại sản phẩm
+      String selectedCategory = categoryFilter.getValue();
+      if (selectedCategory != null && !selectedCategory.equals("All Products Type")) {
+        String auctionCategory = getCategoryName(auction);
+        return selectedCategory.equals(auctionCategory);
+      } else if (selectedCategory.equals("Electronics")) {
+        String auctionCategory = getCategoryName(auction);
+        return selectedCategory.equals(auctionCategory);
+      } else if (selectedCategory.equals("Art")) {
+        String auctionCategory = getCategoryName(auction);
+        return selectedCategory.equals(auctionCategory);
+      } else if (selectedCategory.equals("Vehicle")) {
+        String auctionCategory = getCategoryName(auction);
+        return selectedCategory.equals(auctionCategory);
+      } else if (selectedCategory.equals("Orther")) {
+        String auctionCategory = getCategoryName(auction);
+        return selectedCategory.equals(auctionCategory);
+      }
+      return true;
+    });
+  }
+
+  //   Lấy tên loại từ class của Item
+  private String getCategoryName(Auction auction) {
+    if (auction.getItem() == null || auction.getItem().getCategory() == null)
+      return "Orther";
+    return switch (auction.getItem().getCategory()) {
+      case ART -> "Art";
+      case VEHICLE -> "Vehicle";
+      case ELECTRONICS -> "Electronics";
+      default -> "Orther";
+    };
+  }
+
+  // Method đổi class CSS cho nút đang active
+  private void setActiveButton(Button active) {
+    Button[] buttons = {btnAll, btnUpcoming, btnRunning, btnEnded};
+    for (Button b : buttons) {
+      if (b == null) continue;
+      b.getStyleClass().remove("sf-filter-button-active");
+      if (!b.getStyleClass().contains("sf-filter-button")) {
+        b.getStyleClass().add("sf-filter-button");
+      }
+      if (b == active) {
+        b.getStyleClass().add("sf-filter-button-active");
+      }
     }
+  }
 
 
+  public void loadData() throws ConnectionFailedException {
+    Command cmd = new GetAllAuctionsCommand();
+    ServerConnection connection = NetworkManager.getConnection();
+    new Thread(() -> {
+      try {
+        NetworkManager networkManager = NetworkManager.getInstance();
+        networkManager.register(GetAllAuctionsCommand.class, this);
+        connection.sendCommand(cmd);
+      } catch (SendFailedException e) {
+        log.error("Lỗi gửi: {}", e.getMessage());
+        Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "Loading.gif"));
+      } catch (Exception e) {
+        log.error("Lỗi load data: {}", e.getMessage(), e);
+        Platform.runLater(() -> showAlert("Lỗi", "Tải dữ liệu thất bại", "Loading.gif"));
+      }
 
+    }).start();
+  }
 
+  public void logOut1(ActionEvent event) {
+    changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
+  }
 
+  public void manageProducts(ActionEvent event) {
+    changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Seller_ProductManagement.fxml");
+  }
 
-
-
-    public void loadData() throws ConnectionFailedException {
-        Command cmd = new GetAllAuctionsCommand();
-        ServerConnection connection = NetworkManager.getConnection();
-        new Thread(() -> {
-            try{
-                NetworkManager networkManager = NetworkManager.getInstance();
-                networkManager.register(GetAllAuctionsCommand.class, this);
-                connection.sendCommand(cmd); } catch (SendFailedException e) {
-                log.error("Lỗi gửi: {}", e.getMessage());
-                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "Loading.gif"));
-            } catch (Exception e) {
-                log.error("Lỗi load data: {}", e.getMessage(), e);
-                Platform.runLater(() -> showAlert("Lỗi", "Tải dữ liệu thất bại", "Loading.gif"));
-            }
-
-        }).start();
+  @FXML
+  public void btnHome(ActionEvent event) {
+    try {
+      changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
+    } catch (Exception e) {
+      e.printStackTrace();
     }
+  }
 
-    public void logOut1(ActionEvent event) {
-        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
-    }
-
-    public void manageProducts(ActionEvent event) {
-            changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Seller_ProductManagement.fxml");
-    }
-
-    @FXML
-    public void btnHome(ActionEvent event) {
-        try {
-            changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @FXML
-    public void goToProfile(ActionEvent event) {
-            changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/UserInformation.fxml");
-    }
+  @FXML
+  public void goToProfile(ActionEvent event) {
+    changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/UserInformation.fxml");
+  }
 
     @Override
     public void onResponse(Response rp) {
@@ -209,9 +219,8 @@ public class AuctionListController implements ResponseListener {
                     showAlert("Loi tai du lieu", rp.getMessage(), "Loading.gif");
                     return;
                 }
-
                 ArrayList<Auction> auctions = (ArrayList<Auction>) rp.getPayLoad();
-                observable.setAll(auctions);
+                ClientModel.getInstance().getAllAuctions().setAll(auctions);
             });
             NetworkManager networkManager = NetworkManager.getInstance();
             networkManager.unregister(GetAllAuctionsCommand.class, this);

@@ -9,6 +9,7 @@ import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
 import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +34,10 @@ public class AddAuctionCommand extends Command{
                 log.info("Thêm auction không thành công vào DB");
             return new Response(false, "Lỗi! Không thể thêm Item vào DB", null, this);
             }
-            return new Response(true, "Thêm auction vào DB thành công", auction, this); } catch (DataInsertException e) {
+            Response rp = new Response(true, "Thêm auction vào DB thành công", auction, this);
+            ClientHandler.broadcast(rp);
+            return rp;
+        } catch (DataInsertException e) {
             log.error("Lỗi insert dữ liệu: {}", e.getMessage(), e);
             return new Response(false, "Lỗi lưu dữ liệu: " + e.getMessage(), null, this);
         } catch (Exception e) {

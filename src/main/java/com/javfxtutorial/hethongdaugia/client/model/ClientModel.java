@@ -7,6 +7,8 @@ import com.javfxtutorial.hethongdaugia.common.model.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.ArrayList;
+
 public class ClientModel {
     private static ClientModel instance;
     private ClientModel() {}
@@ -26,10 +28,21 @@ public class ClientModel {
     public Auction getCurrentAuction() { return currentAuction; }
     public void setCurrentAuction(Auction currentAuction) { this.currentAuction = currentAuction; }
 
-    private Item currentItem;
-    public Item getCurrentItem() { return currentItem; }
-    public void setCurrentItem(Item currentItem) { this.currentItem = currentItem; }
-
+    private final ObservableList<Auction> allAuctions =
+        FXCollections.observableArrayList();
+    public ObservableList<Auction> getAllAuctions(){
+        return allAuctions;
+    }
+    private final ObservableList<Auction> joinedAuctions =
+        FXCollections.observableArrayList();
+    public ObservableList<Auction> getJoinedAuctions(){
+        return joinedAuctions;
+    }
+    private final ObservableList<Auction> myAuctions =
+        FXCollections.observableArrayList();
+    public ObservableList<Auction> getMyAuctions(){
+        return myAuctions;
+    }
     // ── Seller notifications — tồn tại suốt phiên đăng nhập ──────────────────
     // Dùng ObservableList để các controller có thể lắng nghe thay đổi
     private final ObservableList<SellerNotification> sellerNotifications =
