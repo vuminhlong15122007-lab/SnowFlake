@@ -42,6 +42,8 @@ public class HomeController implements ResponseListener {
 
     @FXML
     public void goLogin(ActionEvent event){
+        // Xóa toàn bộ dữ liệu phiên cũ — tài khoản mới sẽ bắt đầu sạch
+        ClientModel.getInstance().logout();
         changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
     }
 

@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.common.model.SellerNotification;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -36,11 +37,12 @@ public class NotificationCellController {
 
         // Màu nền nhạt theo loại (khi chưa đọc), trắng khi đã đọc
         String bgColor = notif.isRead() ? "white" : switch (notif.getType()) {
-            case CLOSED    -> "#f0fdf8";  // xanh lá nhạt
-            case PAID      -> "#eff6ff";  // xanh dương nhạt
-            case CANCELLED -> "#fff5f5";  // đỏ nhạt
+            case CLOSED    -> "#f0fdf8";
+            case PAID      -> "#eff6ff";
+            case CANCELLED -> "#fff5f5";
         };
 
+        // Apply style màu cho cả row
         if (rootHBox != null) {
             rootHBox.setStyle(
                     "-fx-background-color: " + bgColor + ";" +
@@ -77,7 +79,6 @@ public class NotificationCellController {
         if (timeLabel != null) {
             timeLabel.setText(notif.getCreatedAt() != null
                     ? notif.getCreatedAt().format(TIME_FMT) : "");
-            // Thời gian cùng màu với viền loại khi chưa đọc
             timeLabel.setStyle("-fx-font-size: 10px; -fx-text-fill: " +
                     (notif.isRead() ? "#cccccc" : borderColor) + ";");
         }
@@ -97,6 +98,7 @@ public class NotificationCellController {
     private void markRead(SellerNotification notif) {
         if (!notif.isRead()) {
             notif.setRead(true);
+            ClientModel.getInstance().markNotificationReadByAuction(notif.getAuctionId());
             if (onMarkRead != null) onMarkRead.accept(notif);
             setData(notif);
         }
