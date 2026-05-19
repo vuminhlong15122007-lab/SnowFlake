@@ -29,7 +29,7 @@ public class PlaceBidCommand extends Command {
             return new Response(false, "Cần đặt giá lớn hơn giá hiện tại + bước giá", bid, this);} catch (
                 AuctionNotFoundException e) {
             log.warn("Không tìm thấy auction: {}", e.getMessage());
-            return new Response(false, e.getMessage(), null, this);
+            return new Response(false, "AUCTION_CANCELLED", null, this);
         } catch (AuctionNotStartedException e) {
             log.warn("Auction chưa bắt đầu: {}", e.getMessage());
             return new Response(false, e.getMessage(), null, this);

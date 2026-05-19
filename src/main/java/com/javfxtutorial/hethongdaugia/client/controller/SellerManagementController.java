@@ -292,6 +292,19 @@ public class SellerManagementController implements ResponseListener {
         // Lắng nghe sự kiện khi người dùng chọn sp
         productList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null) {
+                //thong bao nguo chien thang
+                if (newVal.getStatus() == AuctionStatus.CLOSED) {
+                    if (newVal.getWinnerId() <= 0) {
+                        showAlert("Kết quả đấu giá",
+                                "Sản phẩm \"" + newVal.getItem().getName() + "\" không có ai đặt giá.", "Wait.gif");
+                    } else {
+                        showAlert("Kết quả đấu giá",
+                                "Sản phẩm \"" + newVal.getItem().getName() + "\" đã có người thắng!\n"
+                                        + "Người thắng: " + newVal.getWinnerName() + "\n"
+                                        , "Happy.gif");
+                    }
+                }
+
                 hienThiChiTietSanPham(newVal);      // LUÔN hiển thị thông tin
                 saveButton.setStyle("-fx-background-color: #E67E22; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 5 0; -fx-font-size: 12px;");
                 saveButton.setOnAction( event -> {

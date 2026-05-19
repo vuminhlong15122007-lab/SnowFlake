@@ -178,7 +178,7 @@ public class ParticipatedAuctionController implements  ResponseListener {
     if (rp.getCommand().getClass() == GetParticipatedAuctionsByBidderCommand.class) {
       Platform.runLater(() -> {
         if (!rp.isSuccess()) {
-          showAlert("Loi tai du lieu", rp.getMessage(), "Loading.gif");
+          showAlert("Loi tai du lieu", "Không thể tải dữ liệu", "Loading.gif");
           return;
         }
         if (rp.getPayLoad() == null) {
