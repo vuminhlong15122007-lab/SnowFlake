@@ -11,6 +11,7 @@ import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.DAOInterface;
 import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
 import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,12 +31,14 @@ public class UpdateAuctionCommand extends Command {
                 int result2 = ItemDAO.getInstance().update(item);
                 int result1 = AuctionDAO.getInstance().update(auction);
                 if (result1 > 0 || result2 > 0) {
-                    return new Response(true, "Sửa sản phẩm  thành công", auction, this);
+                    Response rp = new Response(true, "Sửa sản phẩm  thành công", auction, this);
+                    ClientHandler.broadcast(rp);
+                    return rp;
                 }
                 return new Response(false, "Lỗi!!! Sửa thất bại", null, this);
             }
             return new Response(false, "Lỗi!!! Sửa thất bại, phiên đấu giá đã bắt đầu hoặc kết thúc", null, this); } catch (
-                EntityNotFoundException e) {
+            EntityNotFoundException e) {
             log.error("Không tìm thấy auction: auctionId={}", auction.getAuctionId(), e);
             return new Response(false, "Không tìm thấy phiên đấu giá", null, this);
         } catch (DataException e) {
