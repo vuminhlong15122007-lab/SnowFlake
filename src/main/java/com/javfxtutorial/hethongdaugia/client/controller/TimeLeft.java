@@ -45,6 +45,8 @@ public class TimeLeft {       // Class tái sd — truyền vào Label và end l
             label.setStyle("-fx-text-fill: -sf-danger; -fx-font-weight: bold; -fx-font-size: 20px;");
             stop();
             if (onFinished != null) onFinished.run();    //nếu co hd can sau khi het gio, thi no se chay
+        } else if (second <= 3) {
+            label.setStyle("-fx-text-fill: red; -fx-font-weight: bold; -fx-font-size: 20px;");
         } else {
             label.setStyle("-fx-text-fill: -sf-success; -fx-font-weight: bold; -fx-font-size: 20px;");
         }
