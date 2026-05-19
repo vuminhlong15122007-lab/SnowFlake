@@ -99,8 +99,6 @@ public class UserProfileController implements ResponseListener {
         }
         new Thread(() -> {
             try {
-                ServerConnection connection = NetworkManager.getConnection();
-
                 UpdateProfileCommand cmd = new UpdateProfileCommand();
                 cmd.addData("userId", currentUser.getId());
                 cmd.addData("username", newName);
@@ -109,8 +107,7 @@ public class UserProfileController implements ResponseListener {
                 cmd.addData("avt", currentUser.getImagePath());
 
                 NetworkManager networkManager = NetworkManager.getInstance();
-                networkManager.register(UpdateProfileCommand.class, this);
-                connection.sendCommand(cmd); } catch (ConnectionFailedException e) {
+                networkManager.sendRequest(cmd, this); } catch (ConnectionFailedException e) {
                 log.error("Lỗi kết nối: {}", e.getMessage());
                 Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối đến server"));
             } catch (SendFailedException e) {

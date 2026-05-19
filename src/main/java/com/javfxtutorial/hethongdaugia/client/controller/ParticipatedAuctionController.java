@@ -155,29 +155,21 @@ public class ParticipatedAuctionController implements  ResponseListener {
   }
 
   public void loadData() {
-    try {
-      Command cmd = new GetParticipatedAuctionsByBidderCommand();
-      cmd.addData("currentUserId", ClientModel.getInstance().getCurrentUser().getId());
-      ServerConnection connection = NetworkManager.getConnection();
-      // Đăng ký TRƯỚC khi gửi để không bỏ lỡ response
-      NetworkManager.getInstance().register(GetParticipatedAuctionsByBidderCommand.class, this);
-      new Thread(() -> {
-        try {
-          connection.sendCommand(cmd);
-        } catch (SendFailedException e) {
-          log.error("Lỗi gửi: {}", e.getMessage());
-          NetworkManager.getInstance().unregister(GetParticipatedAuctionsByBidderCommand.class, this);
-          Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "Loading.gif"));
-        } catch (Exception e) {
-          log.error("Lỗi load data: {}", e.getMessage(), e);
-          NetworkManager.getInstance().unregister(GetParticipatedAuctionsByBidderCommand.class, this);
-          Platform.runLater(() -> showAlert("Lỗi", "Tải dữ liệu thất bại", "Loading.gif"));
-        }
-      }).start();
-    } catch (ConnectionFailedException e) {
-      log.error("Lỗi kết nối khi load phiên đấu giá: {}", e.getMessage());
-      showAlert("Lỗi kết nối", "Không thể kết nối đến server", "Loading.gif");
-    }
+    Command cmd = new GetParticipatedAuctionsByBidderCommand();
+    cmd.addData("currentUserId", ClientModel.getInstance().getCurrentUser().getId());
+    new Thread(() -> {
+      try {
+        NetworkManager.getInstance().sendRequest(cmd, this);
+      } catch (SendFailedException e) {
+        log.error("Lỗi gửi: {}", e.getMessage());
+        NetworkManager.getInstance().unregister(GetParticipatedAuctionsByBidderCommand.class, this);
+        Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "Loading.gif"));
+      } catch (Exception e) {
+        log.error("Lỗi load data: {}", e.getMessage(), e);
+        NetworkManager.getInstance().unregister(GetParticipatedAuctionsByBidderCommand.class, this);
+        Platform.runLater(() -> showAlert("Lỗi", "Tải dữ liệu thất bại", "Loading.gif"));
+      }
+    }).start();
   }
 
 

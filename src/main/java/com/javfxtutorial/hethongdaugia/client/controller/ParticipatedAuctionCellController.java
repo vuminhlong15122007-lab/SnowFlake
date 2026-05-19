@@ -59,12 +59,10 @@ public class ParticipatedAuctionCellController implements ResponseListener {
                 }
                 if (auction.getStatus() == AuctionStatus.RUNNING) { //hết countdown running → chuyển CLOSED
                     auction.setStatus(AuctionStatus.CLOSED);
-                    NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
                     Platform.runLater(() -> {
                         try {
-                            ServerConnection connection = NetworkManager.getConnection();
                             Command cmd = new UpdateAuctionStatusCommand(auction);
-                            connection.sendCommand(cmd);
+                            NetworkManager.getInstance().sendRequest(cmd, this);
                         } catch (ConnectionFailedException e) {
                             log.error("Không kết nối được server");
                             showAlert("Lỗi", e.getMessage());
@@ -75,12 +73,10 @@ public class ParticipatedAuctionCellController implements ResponseListener {
                     });
                 } else if (auction.getStatus() == AuctionStatus.CLOSED) { //hết countdown chờ thanh toán → CANCELLED
                     auction.setStatus(AuctionStatus.CANCELLED);
-                    NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
                     Platform.runLater(() -> {
                         try {
-                            ServerConnection connection = NetworkManager.getConnection();
                             Command cmd = new UpdateAuctionStatusCommand(auction);
-                            connection.sendCommand(cmd);
+                            NetworkManager.getInstance().sendRequest(cmd, this);
                         } catch (ConnectionFailedException e) {
                             log.error("Không kết nối được server");
                             showAlert("Lỗi", e.getMessage());
@@ -150,9 +146,8 @@ public class ParticipatedAuctionCellController implements ResponseListener {
 
             popupController.setOnConfirmed(() -> {
                 auction.setStatus(AuctionStatus.PAID);
-                NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
                 try {
-                    NetworkManager.getConnection().sendCommand(new UpdateAuctionStatusCommand(auction));
+                    NetworkManager.getInstance().sendRequest(new UpdateAuctionStatusCommand(auction), this);
                 } catch (SendFailedException | ConnectionFailedException e) {
                     throw new RuntimeException(e);
                 }

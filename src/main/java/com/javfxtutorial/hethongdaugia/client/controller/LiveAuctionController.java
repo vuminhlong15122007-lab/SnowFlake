@@ -106,7 +106,7 @@ public class LiveAuctionController implements ResponseListener {
 
             Command cmd = new PlaceBidCommand();
             cmd.addData("bid", bid);
-            connection.sendCommand(cmd);
+            NetworkManager.getInstance().sendRequest(cmd, this);
             System.out.println("Đã send bidcommand với giá: " + inputAmount);
 
         } catch (NumberFormatException e) {
@@ -119,12 +119,11 @@ public class LiveAuctionController implements ResponseListener {
         }
     }
 
-    public void setBidHistorytoScene() throws SendFailedException {
+    public void setBidHistorytoScene() throws SendFailedException, ConnectionFailedException {
         Command cmd = new GetBidHistoryCommand();
         cmd.addData("auctionId", currentAuction.getAuctionId());
-        connection.sendCommand(cmd);
         NetworkManager networkManager = NetworkManager.getInstance();
-        networkManager.register(GetBidHistoryCommand.class, this);
+        networkManager.sendRequest(cmd, this);
         bidHistory.setItems(observable);
         bidHistory.setCellFactory((ListView<BidTransaction> _) -> new BidTransactionCell());
     }
@@ -144,7 +143,7 @@ public class LiveAuctionController implements ResponseListener {
 
 
     @FXML
-    public void initialize() throws SendFailedException {
+    public void initialize() throws SendFailedException, ConnectionFailedException {
         // register để nhận command của người khác nữa
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.register(PlaceBidCommand.class, this);
@@ -215,7 +214,7 @@ public class LiveAuctionController implements ResponseListener {
     }
 
     @FXML
-    public void onAutoBidToggle() throws SendFailedException {
+    public void onAutoBidToggle() throws SendFailedException, ConnectionFailedException {
         if (autoBidToggle.isSelected()) {
             try {
                 // Lấy giá tối đa từ giao diện
@@ -228,8 +227,7 @@ public class LiveAuctionController implements ResponseListener {
                 Command cmd = new AutoBidCommand();
                 cmd.addData("autoBidConfig", config);
                 NetworkManager networkManager = NetworkManager.getInstance();
-                networkManager.register(AutoBidCommand.class, this);
-                connection.sendCommand(cmd);
+                networkManager.sendRequest(cmd, this);
 
                 // Tạm thời khóa ô nhập giá để tránh thay đổi khi bot đang chạy
                 autoMaxPrice_tf.setDisable(true);
@@ -238,6 +236,8 @@ public class LiveAuctionController implements ResponseListener {
                 UIUtils.showAlert("Lỗi nhập liệu", "Vui lòng nhập một số tiền hợp lệ!");
                 autoBidToggle.setSelected(false);
             } catch (SendFailedException e) {
+                log.error(e.getMessage());
+            } catch (ConnectionFailedException e) {
                 log.error(e.getMessage());
             }
         } else {
@@ -248,7 +248,7 @@ public class LiveAuctionController implements ResponseListener {
             stopAutoBid();
         }
     }
-    private void stopAutoBid() throws SendFailedException {
+    private void stopAutoBid() throws SendFailedException, ConnectionFailedException {
         AutoBidConfig config = new AutoBidConfig();
         config.setUserId(ClientModel.getInstance().getCurrentUser().getId());
         config.setAuctionId(currentAuction.getAuctionId());
@@ -256,7 +256,7 @@ public class LiveAuctionController implements ResponseListener {
 
         Command cmd = new AutoBidCommand();
         cmd.addData("autoBidConfig", config);
-        connection.sendCommand(cmd);
+        NetworkManager.getInstance().sendRequest(cmd, this);
     }
 
 

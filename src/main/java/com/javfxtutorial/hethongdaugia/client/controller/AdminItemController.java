@@ -55,10 +55,8 @@ public class AdminItemController implements  Initializable, ResponseListener {
 
     private void loadItemData() throws IOException, ClassNotFoundException, SendFailedException, ConnectionFailedException {
         Command cmd = new GetAllAuctionsCommand();
-        ServerConnection connection = NetworkManager.getConnection();
-        connection.sendCommand(cmd);
         NetworkManager networkManager = NetworkManager.getInstance();
-        networkManager.register(GetAllAuctionsCommand.class, this);
+        networkManager.sendRequest(cmd, this);
 
     }
 
@@ -70,7 +68,6 @@ public class AdminItemController implements  Initializable, ResponseListener {
     }
     @FXML
     public void clickToDeleteItem() throws SendFailedException, ConnectionFailedException {
-        ServerConnection connection = NetworkManager.getConnection();
         Auction selectItem = itemTable.getSelectionModel().getSelectedItem();
         if (selectItem == null) {
             showAlert("Lỗi", "Vui lòng chọn sản phẩm cần xóa");
@@ -91,9 +88,8 @@ public class AdminItemController implements  Initializable, ResponseListener {
         //neu co
         if (result == yes) {
             DeleteAuctionCommand cmd = new DeleteAuctionCommand(selectItem);
-            connection.sendCommand(cmd);
             NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.register(DeleteAuctionCommand.class, this);
+            networkManager.sendRequest(cmd, this);
     }
 
 
@@ -121,7 +117,7 @@ public class AdminItemController implements  Initializable, ResponseListener {
             ObservableList<Auction> danhSach = FXCollections.observableArrayList(auctionlist);
             itemTable.setItems(danhSach);
             NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.register(GetAllAuctionsCommand.class, this);
+            networkManager.unregister(GetAllAuctionsCommand.class, this);
         }
     }
 }

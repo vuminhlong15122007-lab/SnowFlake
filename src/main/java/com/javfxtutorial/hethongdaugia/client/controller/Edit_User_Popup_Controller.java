@@ -81,16 +81,14 @@ public class Edit_User_Popup_Controller implements ResponseListener {
             message.setText(" Email phải có đuôi @gmail.com!");
             return;
         }
-        ServerConnection connection = NetworkManager.getConnection();
         Command cmd = new AddAccountCommand();
         cmd.addData("username", name);
         cmd.addData("password", password);
         cmd.addData("email", email);
         cmd.addData("sdt", sdt);
         cmd.addData("accountType", selectRole);
-        connection.sendCommand(cmd);
         NetworkManager networkManager = NetworkManager.getInstance();
-        networkManager.register(AddAccountCommand.class, this);
+        networkManager.sendRequest(cmd, this);
     }
 
     @Override

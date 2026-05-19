@@ -226,12 +226,10 @@ public class SellerManagementController implements ResponseListener {
             //thêm auction vào DAO và hiện ra list bên trái
             new Thread(() -> {
                 try {
-                    ServerConnection connection =NetworkManager.getConnection();
                     NetworkManager networkManager = NetworkManager.getInstance();
-                    networkManager.register(AddAuctionCommand.class, this);
                     AddAuctionCommand cm = new AddAuctionCommand();
                     cm.addData("Auction", auction);
-                    connection.sendCommand(cm);} catch (ConnectionFailedException e) {
+                    networkManager.sendRequest(cm, this);} catch (ConnectionFailedException e) {
                     log.error("Lỗi kết nối: {}", e.getMessage());
                     Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối server"));
                 } catch (SendFailedException e) {
@@ -444,11 +442,9 @@ public class SellerManagementController implements ResponseListener {
         new Thread(() -> {
             try {
                 NetworkManager networkManager = NetworkManager.getInstance();
-                networkManager.register(GetAuctionsBySellerIdCommand.class, this);
-                ServerConnection connection = NetworkManager.getConnection(); // mở đường dây liên lạc với server
                 Command cmd = new GetAuctionsBySellerIdCommand();
                 cmd.addData("sellerId", sellerId);
-                connection.sendCommand(cmd); } catch (ConnectionFailedException e) {
+                networkManager.sendRequest(cmd, this); } catch (ConnectionFailedException e) {
                 log.error("Lỗi kết nối khi load sản phẩm: {}", e.getMessage());
                 Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối đến server"));
             } catch (SendFailedException e) {
@@ -470,12 +466,10 @@ public class SellerManagementController implements ResponseListener {
         }
         new Thread(() -> {
             try {
-                ServerConnection connection = NetworkManager.getConnection();
                 NetworkManager networkManager = NetworkManager.getInstance();
-                networkManager.register(DeleteAuctionCommand.class, this);
 
                 DeleteAuctionCommand cmd = new DeleteAuctionCommand(selectedAuction);  // tạo yêu cầu xóa sp cso ID ..
-                connection.sendCommand(cmd);
+                networkManager.sendRequest(cmd, this);
             } catch (ConnectionFailedException e) {
                 log.error("Lỗi kết nối: {}", e.getMessage());
                 Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối server"));
@@ -603,11 +597,9 @@ public class SellerManagementController implements ResponseListener {
         new Thread(() -> {
             try {
                 NetworkManager networkManager = NetworkManager.getInstance();
-                networkManager.register(UpdateAuctionCommand.class, this);
-                ServerConnection connection = NetworkManager.getConnection();
                 // 1. Lấy dữ liệu từ form NGAY BÂY GIỜ (trên UI Thread)
                 UpdateAuctionCommand cmd = new UpdateAuctionCommand(auction);
-                connection.sendCommand(cmd);} catch (ConnectionFailedException e) {
+                networkManager.sendRequest(cmd, this);} catch (ConnectionFailedException e) {
                 log.error("Lỗi kết nối: {}", e.getMessage());
                 Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối server"));
             } catch (SendFailedException e) {

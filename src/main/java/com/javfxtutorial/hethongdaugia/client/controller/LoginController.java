@@ -45,12 +45,10 @@ public class LoginController implements ResponseListener, Initializable {
         String password = Password.getText();
         new Thread(() -> {
             try {
-                ServerConnection connection = NetworkManager.getConnection();
                 Command cmd = new LoginCommand();
                 cmd.addData("username", username);
                 cmd.addData("password", password);
-                NetworkManager.getInstance().register(cmd.getClass(), this);
-                connection.sendCommand(cmd);
+                NetworkManager.getInstance().sendRequest(cmd, this);
             } catch (Exception e) {
                 log.error("Lỗi khi gửi login request: {}", e.getMessage(), e);
                 Platform.runLater(() -> message.setText("Lỗi kết nối: " + e.getMessage()));

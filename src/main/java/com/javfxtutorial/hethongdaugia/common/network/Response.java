@@ -48,4 +48,8 @@ public class Response implements Serializable {
     public void setPayLoad(Object payLoad) {
         this.payLoad = payLoad;
     }
+
+    public String getRequestId() {
+        return command == null ? null : command.getRequestId();
+    }
 }

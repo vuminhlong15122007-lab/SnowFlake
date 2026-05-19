@@ -159,12 +159,10 @@ public class AuctionListController implements ResponseListener {
 
     public void loadData() throws ConnectionFailedException {
         Command cmd = new GetAllAuctionsCommand();
-        ServerConnection connection = NetworkManager.getConnection();
         new Thread(() -> {
             try{
                 NetworkManager networkManager = NetworkManager.getInstance();
-                networkManager.register(GetAllAuctionsCommand.class, this);
-                connection.sendCommand(cmd); } catch (SendFailedException e) {
+                networkManager.sendRequest(cmd, this); } catch (SendFailedException e) {
                 log.error("Lỗi gửi: {}", e.getMessage());
                 Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "Loading.gif"));
             } catch (Exception e) {
