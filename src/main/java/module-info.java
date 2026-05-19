@@ -4,6 +4,7 @@ module com.javfxtutorial.hethongdaugia {
     requires javafx.fxml;
     requires java.sql;
     requires mysql.connector.j;
+    requires com.zaxxer.hikari;
     requires jdk.jdi;
     requires org.json;
     requires java.desktop;
