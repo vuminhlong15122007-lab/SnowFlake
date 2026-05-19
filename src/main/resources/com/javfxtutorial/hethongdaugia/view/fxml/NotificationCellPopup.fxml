@@ -4,14 +4,18 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Circle?>
 
-<HBox alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-width: 0 0 0 4; -fx-border-radius: 0 12 12 0;" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.NotificationCellController">
+<HBox fx:id="rootHBox"
+      alignment="CENTER_LEFT" spacing="10.0"
+      style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-width: 0 0 0 4; -fx-border-radius: 0 12 12 0; -fx-cursor: hand;"
+      xmlns="http://javafx.com/javafx/17"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.javfxtutorial.hethongdaugia.client.controller.NotificationCellController">
 
     <padding><Insets bottom="10.0" left="12.0" right="12.0" top="10.0" /></padding>
 
-    <!-- Chấm trạng thái chưa đọc -->
-    <Circle fx:id="statusDot" fill="transparent" radius="5.0" />
+    <!-- Icon loại thông báo -->
+    <Label fx:id="iconLabel" style="-fx-font-size: 18px;" text="🔔" />
 
     <!-- Nội dung chính -->
     <VBox spacing="3.0" HBox.hgrow="ALWAYS">
@@ -19,7 +23,7 @@
         <Label fx:id="timeLabel" style="-fx-font-size: 10px; -fx-text-fill: #9b9b9b;" text="HH:mm dd/MM/yyyy" />
     </VBox>
 
-    <!-- Nút đánh dấu đã đọc — ẩn mặc định, controller sẽ show khi chưa đọc -->
-    <Label fx:id="readBtn" managed="false" style="-fx-font-size: 10px; -fx-text-fill: #7b2ff7; -fx-cursor: hand;                   -fx-padding: 3 8 3 8; -fx-background-color: white;                   -fx-background-radius: 8; -fx-border-color: #7b2ff7; -fx-border-radius: 8;" text="Đã đọc" visible="false" />
+    <!-- Nút đánh dấu đã đọc — ẩn mặc định -->
+    <Label fx:id="readBtn" managed="false" style="-fx-font-size: 10px; -fx-text-fill: #7b2ff7; -fx-cursor: hand; -fx-padding: 3 8 3 8; -fx-background-color: white; -fx-background-radius: 8; -fx-border-color: #7b2ff7; -fx-border-radius: 8;" text="Đã đọc" visible="false" />
 
 </HBox>

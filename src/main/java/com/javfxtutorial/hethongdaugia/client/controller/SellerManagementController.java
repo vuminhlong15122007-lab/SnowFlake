@@ -20,7 +20,6 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
@@ -32,10 +31,9 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
-import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -82,7 +80,7 @@ public class SellerManagementController implements ResponseListener {
 
 
 
-    /** Danh sách thông báo — lấy từ ClientModel để tồn tại khi thoát vào lại màn hình */
+
     private ObservableList<SellerNotification> notifications;
 
     private Popup notificationPopup;
@@ -298,6 +296,7 @@ public class SellerManagementController implements ResponseListener {
         notifications = ClientModel.getInstance().getSellerNotifications();
         buildNotificationPopup();
         loadMyProducts();  // Tải danh sách ban đùa của server ứng với IDserver ng dùng đăng nhập và đổ vào obs
+
         updateBadge();
 
         // Lắng nghe thông báo mới đẩy từ server (CLOSED/PAID/CANCELLED)
@@ -321,14 +320,21 @@ public class SellerManagementController implements ResponseListener {
         }
 
         if (existing == null) {
+            // Restore trạng thái đã đọc trước khi add vào list
+            if (ClientModel.getInstance().isNotificationRead(notif.getNotificationId())) {
+                notif.setRead(true);
+            }
             notifications.add(0, notif);
         } else if (priority(notif.getType()) > priority(existing.getType())) {
+            if (ClientModel.getInstance().isNotificationRead(notif.getNotificationId())) {
+                notif.setRead(true);
+            }
             notifications.remove(existing);
             notifications.add(0, notif);
         }
     }
 
-  // thuws tu uu tien
+    // thuws tu uu tien
     private static int priority(SellerNotification.Type type) {
         return switch (type) {
             case PAID      -> 2;
@@ -378,13 +384,17 @@ public class SellerManagementController implements ResponseListener {
     @FXML
     public void openNotifications(MouseEvent event) {
         try {
-            Node source = (Node) event.getSource();
-            Stage stage = (Stage) source.getScene().getWindow();
-            FXMLLoader loader = new FXMLLoader(getClass().getResource(
-                    "/com/javfxtutorial/hethongdaugia/view/fxml/NotificationCellPopup.fxml"));
-            Parent root = loader.load();
-            stage.getScene().setRoot(root);
-        } catch (IOException e) {
+            if (notificationPopup == null || popupController == null) return;
+            popupController.loadNotifications(notifications);
+            if (notificationPopup.isShowing()) {
+                notificationPopup.hide();
+            } else {
+                Node source = (Node) event.getSource();
+                Stage stage = (Stage) source.getScene().getWindow();
+                javafx.geometry.Bounds bounds = source.localToScreen(source.getBoundsInLocal());
+                notificationPopup.show(stage, bounds.getMaxX() - 400, bounds.getMaxY() + 8);
+            }
+        } catch (Exception e) {
             log.error("Không mở được màn thông báo: {}", e.getMessage());
         }
     }
@@ -707,11 +717,8 @@ public class SellerManagementController implements ResponseListener {
                 default     -> SellerNotification.Type.CANCELLED;
             };
 
-            String productName = auction.getItem() != null
-                    ? auction.getItem().getName()
-                    : String.valueOf(auction.getAuctionId());
-            String winnerName = auction.getWinnerName() != null
-                    ? auction.getWinnerName() : "N/A";
+            String productName =  auction.getItem().getName();
+            String winnerName = auction.getWinnerName() ;
 
             SellerNotification notif = new SellerNotification(
                     auction.getAuctionId(), type, productName, winnerName, auction.getWinningPrice());

@@ -7,6 +7,9 @@ import com.javfxtutorial.hethongdaugia.common.model.User;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class ClientModel {
     private static ClientModel instance;
     private ClientModel() {}
@@ -30,18 +33,28 @@ public class ClientModel {
     public Item getCurrentItem() { return currentItem; }
     public void setCurrentItem(Item currentItem) { this.currentItem = currentItem; }
 
-    // ── Seller notifications — tồn tại suốt phiên đăng nhập ──────────────────
+    // ── Seller notifications — tồn tại suốt phiên đăng nhập
     // Dùng ObservableList để các controller có thể lắng nghe thay đổi
     private final ObservableList<SellerNotification> sellerNotifications =
             FXCollections.observableArrayList();
 
-    /** Trả về list thông báo seller — dùng chung cho mọi lần vào màn hình seller */
     public ObservableList<SellerNotification> getSellerNotifications() {
         return sellerNotifications;
     }
 
-    /** Xóa hết thông báo khi user logout */
     public void clearSellerNotifications() {
         sellerNotifications.clear();
     }
+
+    // Lưu id của các thông báo đã đọc trong phiên đăng nhập
+    private final Set<Integer> readNotificationIds = new HashSet<>();
+
+    public void markNotificationRead(int notificationId) {
+        readNotificationIds.add(notificationId);
+    }
+
+    public boolean isNotificationRead(int notificationId) {
+        return readNotificationIds.contains(notificationId);
+    }
+
 }
