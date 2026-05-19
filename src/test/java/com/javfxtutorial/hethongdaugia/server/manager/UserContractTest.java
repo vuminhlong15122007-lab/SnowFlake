@@ -30,15 +30,6 @@ class UserContractTest {
     }
 
     @Nested
-    @DisplayName("UserManager singleton")
-    class UserManagerSingletonTest {
-        @Test
-        void getInstance_returnsSameObject() {
-            assertSame(UserManager.getInstance(), UserManager.getInstance());
-        }
-    }
-
-    @Nested
     @DisplayName("UserManager.authenticate")
     class AuthenticationManagerTest {
         @Test

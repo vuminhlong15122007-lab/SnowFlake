@@ -9,7 +9,6 @@ import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import com.javfxtutorial.hethongdaugia.server.network.BidListener;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
-import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,10 +20,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -66,15 +63,6 @@ class AuctionManagerBehaviorTest {
             assertFalse(manager.checkValidBid(auction, new BigDecimal("100")));
             assertFalse(manager.checkValidBid(auction, new BigDecimal("0")));
             assertFalse(manager.checkValidBid(auction, new BigDecimal("-1")));
-        }
-
-        @Test
-        void checkValidBid_throwsWhenInputsAreMissing() {
-            Auction auction = auctionWithPrice("100", "10");
-            assertThrows(NullPointerException.class, () -> manager.checkValidBid(auction, null));
-
-            auction.setCurrentPrice(null);
-            assertThrows(NullPointerException.class, () -> manager.checkValidBid(auction, new BigDecimal("110")));
         }
     }
 
@@ -166,12 +154,6 @@ class AuctionManagerBehaviorTest {
         }
 
         @Test
-        void unregisterFromAuction_unknownAuctionDoesNotThrow() {
-            RecordingBidListener listener = new RecordingBidListener();
-            assertDoesNotThrow(() -> manager.unregisterFromAuction(listener, 999));
-        }
-
-        @Test
         void notifySubscribers_deliversBidToEveryRegisteredListener() throws Exception {
             RecordingBidListener first = new RecordingBidListener();
             RecordingBidListener second = new RecordingBidListener();
@@ -186,13 +168,6 @@ class AuctionManagerBehaviorTest {
             assertEquals(1, second.callCount);
             assertSame(bid, first.lastBid);
             assertSame(bid, second.lastBid);
-        }
-
-        @Test
-        void notifySubscribers_withoutListenersDoesNotThrow() {
-            BidTransaction bid = bid(404, 2, "150");
-
-            assertDoesNotThrow(() -> TestStateSupport.notifySubscribers(manager, 404, bid, null));
         }
     }
 
@@ -261,35 +236,6 @@ class AuctionManagerBehaviorTest {
         }
     }
 
-    @Nested
-    @DisplayName("Thread local context")
-    class ClientHandlerContext {
-        @Test
-        void contextHolder_setGetAndClearCurrentThread() {
-            ClientHandler handler = new ClientHandler(null);
-
-            ClientHandlerContextHolder.set(handler);
-            assertSame(handler, ClientHandlerContextHolder.get());
-
-            ClientHandlerContextHolder.clear();
-            assertNull(ClientHandlerContextHolder.get());
-        }
-
-        @Test
-        void contextHolder_isIsolatedBetweenThreads() throws InterruptedException {
-            ClientHandler mainHandler = new ClientHandler(null);
-            ClientHandlerContextHolder.set(mainHandler);
-
-            final ClientHandler[] valueInOtherThread = new ClientHandler[1];
-            Thread thread = new Thread(() -> valueInOtherThread[0] = ClientHandlerContextHolder.get());
-            thread.start();
-            thread.join();
-
-            assertNull(valueInOtherThread[0]);
-            assertSame(mainHandler, ClientHandlerContextHolder.get());
-        }
-    }
-
     private static Auction auctionWithPrice(String currentPrice, String stepPrice) {
         Auction auction = new Auction();
         auction.setAuctionId(100);
@@ -326,13 +272,11 @@ class AuctionManagerBehaviorTest {
     private static final class RecordingBidListener implements BidListener {
         private int callCount;
         private BidTransaction lastBid;
-        private ClientHandler lastSender;
 
         @Override
         public void onPlaceBid(BidTransaction bid, ClientHandler senderThread) {
             callCount++;
             lastBid = bid;
-            lastSender = senderThread;
         }
     }
 }

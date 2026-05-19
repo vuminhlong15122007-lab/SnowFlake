@@ -1,6 +1,8 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotStartedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.bid.InsufficientIncrementException;
+import com.javfxtutorial.hethongdaugia.common.Exception.bid.SelfBidException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
@@ -101,6 +103,48 @@ public class AuctionManagerTest {
              MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
                      mockParticipatedAuctionDAO(participatedAuctionDAO)) {
             assertThrows(AuctionNotStartedException.class, () -> auctionManager.placeBid(bid, null));
+
+            verify(bidDAO, never()).insertBid(any(BidTransaction.class));
+            verify(participatedAuctionDAO, never()).insert(any(BidTransaction.class));
+        }
+    }
+
+    @Test
+    void placeBid_rejectsBidFromSellerAndDoesNotPersistBid() throws Exception {
+        Auction auction = runningAuction(102, "100", "10");
+        TestStateSupport.activeAuctions(auctionManager).put(auction.getAuctionId(), auction);
+
+        BidTransaction bid = bid(auction.getAuctionId(), auction.getSellerId(), "seller", "150");
+        AuctionDAO auctionDAO = mock(AuctionDAO.class);
+        BidDAO bidDAO = mock(BidDAO.class);
+        ParticipatedAuctionDAO participatedAuctionDAO = mock(ParticipatedAuctionDAO.class);
+
+        try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
+             MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+             MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                     mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+            assertThrows(SelfBidException.class, () -> auctionManager.placeBid(bid, null));
+
+            verify(bidDAO, never()).insertBid(any(BidTransaction.class));
+            verify(participatedAuctionDAO, never()).insert(any(BidTransaction.class));
+        }
+    }
+
+    @Test
+    void placeBid_rejectsBidBelowStepAndDoesNotPersistBid() throws Exception {
+        Auction auction = runningAuction(103, "100", "10");
+        TestStateSupport.activeAuctions(auctionManager).put(auction.getAuctionId(), auction);
+
+        BidTransaction bid = bid(auction.getAuctionId(), 20, "alice", "105");
+        AuctionDAO auctionDAO = mock(AuctionDAO.class);
+        BidDAO bidDAO = mock(BidDAO.class);
+        ParticipatedAuctionDAO participatedAuctionDAO = mock(ParticipatedAuctionDAO.class);
+
+        try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
+             MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+             MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                     mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+            assertThrows(InsufficientIncrementException.class, () -> auctionManager.placeBid(bid, null));
 
             verify(bidDAO, never()).insertBid(any(BidTransaction.class));
             verify(participatedAuctionDAO, never()).insert(any(BidTransaction.class));
