@@ -1,4 +1,4 @@
-package com.javfxtutorial.hethongdaugia.client.controller;
+package com.javfxtutorial.hethongdaugia.client.Util;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
