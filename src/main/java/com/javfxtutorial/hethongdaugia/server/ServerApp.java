@@ -1,6 +1,8 @@
-package com.javfxtutorial.hethongdaugia.server.network;
+package com.javfxtutorial.hethongdaugia.server;
 
 import com.javfxtutorial.hethongdaugia.server.handler.GlobalExceptionHandler;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
