@@ -35,6 +35,8 @@ public class Auction implements Serializable {
     // ID của người chiến thắng (sau khi phiên kết thúc)
     private int winnerId;
     private String winnerName = "";
+    private String winnerEmail = "";
+    private String winnerSdt = "";
 
     public Auction() {}
 
@@ -55,18 +57,10 @@ public class Auction implements Serializable {
     }
 
     public Auction(
-            int auctionId,
-            Item item,
-            int sellerId,
-            int winnerId,
+            int auctionId, Item item, int sellerId, int winnerId,
             String winnerName,
-            BigDecimal initPrice,
-            BigDecimal currentPrice,
-            BigDecimal stepPrice,
-            BigDecimal winningPrice,
-            LocalDateTime startingTime,
-            LocalDateTime endingTime,
-            AuctionStatus status) {
+            BigDecimal initPrice, BigDecimal currentPrice, BigDecimal stepPrice, BigDecimal winningPrice,
+            LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
         this.auctionId = auctionId;
         this.item = item;
         this.sellerId = sellerId;
@@ -81,14 +75,8 @@ public class Auction implements Serializable {
         this.winnerName = winnerName;
     }
 
-    public Auction(
-            Item item,
-            int sellerId,
-            BigDecimal initPrice,
-            BigDecimal stepPrice,
-            LocalDateTime startingTime,
-            LocalDateTime endingTime,
-            AuctionStatus status) {
+    public Auction(Item item, int sellerId, BigDecimal initPrice, BigDecimal stepPrice,
+                   LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
         this.item = item;
         this.sellerId = sellerId;
         this.initPrice = initPrice;
@@ -122,90 +110,71 @@ public class Auction implements Serializable {
     public int getAuctionId() {
         return auctionId;
     }
-
     public void setAuctionId(int auctionId) {
         this.auctionId = auctionId;
     }
-
     public Item getItem() {
         return item;
     }
-
     public void setItem(Item item) {
         this.item = item;
     }
-
     public int getSellerId() {
         return sellerId;
     }
-
     public void setSellerId(int sellerId) {
         this.sellerId = sellerId;
     }
-
     public BigDecimal getInitPrice() {
         return initPrice;
     }
-
     public void setInitPrice(BigDecimal initPrice) {
         this.initPrice = initPrice;
     }
-
     public BigDecimal getCurrentPrice() {
         return currentPrice;
     }
-
     public void setCurrentPrice(BigDecimal currentPrice) {
         this.currentPrice = currentPrice;
     }
-
     public BigDecimal getStepPrice() {
         return stepPrice;
     }
-
     public void setStepPrice(BigDecimal stepPrice) {
         this.stepPrice = stepPrice;
     }
-
     public BigDecimal getWinningPrice() {
         return winningPrice;
     }
-
     public void setWinningPrice(BigDecimal winningPrice) {
         this.winningPrice = winningPrice;
     }
-
     public LocalDateTime getStartingTime() {
         return startingTime;
     }
-
     public void setStartingTime(LocalDateTime startingTime) {
         this.startingTime = startingTime;
     }
-
     public LocalDateTime getEndingTime() {
         return endingTime;
     }
-
     public void setEndingTime(LocalDateTime endingTime) {
         this.endingTime = endingTime;
     }
-
     public int getWinnerId() {
         return winnerId;
     }
-
     public void setWinnerId(int winnerId) {
         this.winnerId = winnerId;
     }
-
     public String getWinnerName() {
         return winnerName;
     }
-
-    public void setWinnerName(String winnerName) {
-        this.winnerName = winnerName;
-    }
+    public void setWinnerName(String winnerName) {this.winnerName = winnerName;}
+    public String getWinnerEmail() { return winnerEmail; }
+    public void setWinnerEmail(String winnerEmail) { this.winnerEmail = winnerEmail; }
+    public String getWinnerSdt() { return winnerSdt; }
+    public void setWinnerSdt(String winnerSdt) { this.winnerSdt = winnerSdt; }
 
     @Override
     public String toString() {

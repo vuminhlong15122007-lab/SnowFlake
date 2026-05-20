@@ -23,6 +23,8 @@ public class AuctionDAO implements DAOInterface<Auction> {
                     + "    i.idseller AS seller_id, \n"
                     + "    i.sellerName, \n"
                     + "    u.name AS winner_name,\n"
+                    + "    u.email AS winner_email,\n"
+                    + "    u.sdt AS winner_sdt,\n"
                     + "    i.category,\n"
                     + "    \n"
                     + "    -- Dữ liệu từ bảng 1 (brand, model - ví dụ: đồ điện tử/đồng hồ)\n"
@@ -69,8 +71,8 @@ public class AuctionDAO implements DAOInterface<Auction> {
                 "INSERT INTO Auction(item_id, seller_id, init_price, step_price, current_price, winning_price, starting_time, ending_time, auctionStatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = JDBCUtil.getConnection();
-                PreparedStatement pst =
-                        connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pst =
+                     connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             pst.setInt(1, auction.getItem().getItemId());
             pst.setInt(2, auction.getSellerId());
@@ -105,11 +107,10 @@ public class AuctionDAO implements DAOInterface<Auction> {
     @Override
     public int update(Auction auction) throws DataException {
         int result = 0;
-        String sql =
-                "UPDATE Auction SET winner_id = ?,init_price = ?, step_price = ?, current_price = ?, winning_price = ?, starting_time = ?, ending_time = ?, auctionStatus =? WHERE auction_id = ?";
+        String sql = "UPDATE Auction SET winner_id = ?,init_price = ?, step_price = ?, current_price = ?, winning_price = ?, starting_time = ?, ending_time = ?, auctionStatus =? WHERE auction_id = ?";
 
         try (Connection connection = JDBCUtil.getConnection();
-                PreparedStatement pst = connection.prepareStatement(sql)) {
+             PreparedStatement pst = connection.prepareStatement(sql)) {
             pst.setInt(1, auction.getWinnerId());
             pst.setBigDecimal(2, auction.getInitPrice());
             pst.setBigDecimal(3, auction.getStepPrice());
@@ -145,7 +146,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
         String sql = "DELETE FROM Auction WHERE auction_id = ?";
 
         try (Connection connection = JDBCUtil.getConnection();
-                PreparedStatement pst = connection.prepareStatement(sql)) {
+             PreparedStatement pst = connection.prepareStatement(sql)) {
 
             pst.setInt(1, auction.getAuctionId());
             log.info("Bạn đang thực thi xóa Auction có ID: {}", auction.getAuctionId());
@@ -183,7 +184,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
         // Map AuctionStatus
         AuctionStatus status = AuctionStatus.valueOf(rs.getString("auctionStatus"));
 
-        return new Auction(
+        Auction auction = new Auction(
                 rs.getInt("auction_id"),
                 item,
                 rs.getInt("seller_id"),
@@ -196,6 +197,9 @@ public class AuctionDAO implements DAOInterface<Auction> {
                 startingTime,
                 endingTime,
                 status);
+        auction.setWinnerEmail(rs.getString("winner_email") != null ? rs.getString("winner_email") : "");
+        auction.setWinnerSdt(rs.getString("winner_sdt") != null ? rs.getString("winner_sdt") : "");
+        return auction;
     }
 
     @Override
@@ -204,8 +208,8 @@ public class AuctionDAO implements DAOInterface<Auction> {
         String sql = BASE_QUERY;
 
         try (Connection conn = JDBCUtil.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery()) {
+             PreparedStatement ps = conn.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
                 list.add(mapResultSet(rs));
@@ -223,7 +227,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
         String sql = BASE_QUERY + " WHERE a.auction_id = ?";
 
         try (Connection conn = JDBCUtil.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, auctionId);
 
@@ -246,7 +250,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
         String sql = BASE_QUERY + " WHERE a.item_id = ?";
 
         try (Connection connection = JDBCUtil.getConnection();
-                PreparedStatement pst = connection.prepareStatement(sql)) {
+             PreparedStatement pst = connection.prepareStatement(sql)) {
 
             pst.setInt(1, id);
 
@@ -272,7 +276,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
         String sql = BASE_QUERY + " WHERE i.idseller = ?";
 
         try (Connection conn = JDBCUtil.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
 
@@ -342,7 +346,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
         String sql = BASE_QUERY + " WHERE a.winner_id = ? AND a.auctionStatus = 'CLOSED'";
 
         try (Connection conn = JDBCUtil.getConnection();
-                PreparedStatement ps = conn.prepareStatement(sql)) {
+             PreparedStatement ps = conn.prepareStatement(sql)) {
             ps.setInt(1, winnerId);
 
             try (ResultSet rs = ps.executeQuery()) {

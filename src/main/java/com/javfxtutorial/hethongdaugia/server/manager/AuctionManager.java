@@ -104,17 +104,11 @@ public class AuctionManager {
     }
 
     public boolean placeBid(BidTransaction bid, ClientHandler senderThread)
-            throws AuctionNotFoundException,
-                    AuctionNotStartedException,
-                    AuctionAlreadyEndedException,
-                    LowerThanCurrentBidException,
-                    SelfBidException,
-                    InsufficientIncrementException,
-                    DataException,
-                    BidAmountExceedsLimitException {
-        if (bid == null || bid.getAmount() == null) {
-            return false;
-        }
+            throws AuctionNotFoundException, AuctionNotStartedException,
+                    AuctionAlreadyEndedException, LowerThanCurrentBidException, SelfBidException,
+                    InsufficientIncrementException, DataException, BidAmountExceedsLimitException {
+
+        if (bid == null || bid.getAmount() == null) {return false;}
         ReentrantLock lock = getAuctionLock(bid.getAuctionId());
         lock.lock();
         BidTransaction acceptedBid;
@@ -170,6 +164,8 @@ public class AuctionManager {
             auction.setWinnerId(bid.getBidderId());
             auction.setWinningPrice(bid.getAmount());
             auction.setWinnerName(bid.getBidderName());
+            auction.setWinnerEmail(bid.getBidderEmail());
+            auction.setWinnerSdt(bid.getBidderSdt());
 
             System.out.println("Đã cập nhật lại auction");
 

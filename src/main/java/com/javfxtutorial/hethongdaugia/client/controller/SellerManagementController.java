@@ -28,6 +28,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
 import javafx.application.Platform;
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
 import javafx.event.ActionEvent;
@@ -76,7 +77,18 @@ public class SellerManagementController implements ResponseListener {
     @FXML private Label badgeLabel;
     @FXML private ComboBox<String> filterComboBox; // lọc trạng thái (Doc 5)
 
-    // ── State ─────────────────────────────────────────────────────────────────
+
+    @FXML private VBox winnerInfoBox;
+    @FXML private VBox detailFormBox;
+    @FXML private Label winnerProductName;
+    @FXML private Label winnerFinalPrice;
+    @FXML private Label winnerName;
+    @FXML private Label winnerId;
+    @FXML private Label winnerBidPrice;
+    @FXML private Label winnerEmail;
+    @FXML private Label winnerSdt;
+
+
     private ObservableList<Auction> observable;
     private FilteredList<Auction> filteredList;
 
@@ -99,18 +111,20 @@ public class SellerManagementController implements ResponseListener {
     // ── Initialize ────────────────────────────────────────────────────────────
     @FXML
     public void initialize() {
+        // Ẩn panel người thắng khi khởi động
+        if (winnerInfoBox != null) {
+            winnerInfoBox.setVisible(false);
+            winnerInfoBox.setManaged(false);
+        }
+
         // Dùng shared observable từ ClientModel (Doc 5)
         observable = ClientModel.getInstance().getMyAuctions();
 
         // Spinner
-        startHourSpinner.setValueFactory(
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0));
-        startMinuteSpinner.setValueFactory(
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
-        endHourSpinner.setValueFactory(
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0));
-        endMinuteSpinner.setValueFactory(
-                new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
+        startHourSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0));
+        startMinuteSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
+        endHourSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 23, 0));
+        endMinuteSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 59, 0));
         startHourSpinner.setEditable(true);
         startMinuteSpinner.setEditable(true);
         endHourSpinner.setEditable(true);
@@ -123,100 +137,58 @@ public class SellerManagementController implements ResponseListener {
 
         // ComboBox danh mục
         categoryComboBox.getItems().addAll("ART", "VEHICLE", "ELECTRONICS", "OTHER");
-        categoryComboBox
-                .valueProperty()
-                .addListener(
-                        (obs, oldVal, newVal) -> {
-                            if (newVal != null) showCategoryFields(newVal);
-                        });
+        categoryComboBox.valueProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal != null) showCategoryFields(newVal);});
 
         // ComboBox lọc trạng thái (Doc 5)
         if (filterComboBox != null) {
-            filterComboBox
-                    .getItems()
-                    .addAll(
-                            "Tất cả",
-                            "Chưa bắt đầu",
-                            "Đang diễn ra",
-                            "Chờ thanh toán",
-                            "Thành toán thành công",
-                            "Sản phẩm đã hủy",
-                            "Không ai đấu giá");
+            filterComboBox.getItems().addAll("Tất cả", "Chưa bắt đầu", "Đang diễn ra", "Chờ thanh toán", "Thành toán thành công", "Sản phẩm đã hủy", "Không ai đấu giá");
             filterComboBox.setValue("Tất cả");
-            filterComboBox
-                    .valueProperty()
-                    .addListener((obs, oldVal, newVal) -> applyFilter(newVal));
+            filterComboBox.valueProperty().addListener((obs, oldVal, newVal) -> applyFilter(newVal));
         }
 
         // Listener chọn sản phẩm
-        productList
-                .getSelectionModel()
-                .selectedItemProperty()
-                .addListener(
-                        (obs, oldVal, newVal) -> {
-                            if (newVal == null) return;
+        productList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            if (newVal == null) return;
+            if (newVal.getStatus() == AuctionStatus.CLOSED || newVal.getStatus() == AuctionStatus.CANCELLED || newVal.getStatus() == AuctionStatus.PAID) {
+                if (newVal.getWinnerId() <= 0) {
+                    Platform.runLater(() -> {
+                        showAlert("Kết quả đấu giá", "Sản phẩm \"" + newVal.getItem().getName() + "\" không có ai đặt giá.", "Wait.gif");});
+                } else {
+                    // Hiện panel thông tin người thắng bên phải
+                    showWinnerInfo(newVal);
+                    selectedAuction = newVal;
+                    return;
+                }
+            }
 
-                            // Thông báo kết quả đấu giá (Doc 5)
-                            if (newVal.getStatus() == AuctionStatus.CLOSED) {
-                                if (newVal.getWinnerId() <= 0) {
-                                    showAlert(
-                                            "Kết quả đấu giá",
-                                            "Sản phẩm \""
-                                                    + newVal.getItem().getName()
-                                                    + "\" không có ai đặt giá.",
-                                            "Wait.gif");
-                                } else {
-                                    showAlert(
-                                            "Kết quả đấu giá",
-                                            "Sản phẩm \""
-                                                    + newVal.getItem().getName()
-                                                    + "\" đã có người thắng!\n"
-                                                    + "Người thắng: "
-                                                    + newVal.getWinnerName(),
-                                            "Happy.gif");
-                                }
-                            }
+            hienThiChiTietSanPham(newVal);
+            // Đảm bảo hiện form, ẩn winner panel
+            if (winnerInfoBox != null) { winnerInfoBox.setVisible(false); winnerInfoBox.setManaged(false); }
+            if (detailFormBox != null) { detailFormBox.setVisible(true); detailFormBox.setManaged(true); }
+            selectedAuction = newVal;
+            saveButton.setStyle("-fx-background-color: #E67E22; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5; -fx-padding: 5 0; -fx-font-size: 12px;");
+            saveButton.setText("Sửa");
+            saveButton.setOnAction(event -> {
+                try {
+                    suaSp(event);
+                } catch (Exception e) {
+                    log.error("Lỗi sửa sp: {}", e.getMessage(), e);
+                }});
 
-                            hienThiChiTietSanPham(newVal);
-                            selectedAuction =
-                                    newVal; // BUG FIX (Doc 5): set selectedAuction ngay tại đây
-
-                            saveButton.setStyle(
-                                    "-fx-background-color: #E67E22; -fx-text-fill: white; -fx-font-weight: bold;"
-                                            + " -fx-background-radius: 5; -fx-padding: 5 0; -fx-font-size: 12px;");
-                            saveButton.setText("Sửa");
-                            saveButton.setOnAction(
-                                    event -> {
-                                        try {
-                                            suaSp(event);
-                                        } catch (Exception e) {
-                                            log.error("Lỗi sửa sp: {}", e.getMessage(), e);
-                                        }
-                                    });
-
-                            // Sinh thông báo cho seller (Doc 5 + Doc 6)
-                            AuctionStatus st = newVal.getStatus();
-                            if (st == AuctionStatus.CLOSED
-                                    || st == AuctionStatus.PAID
-                                    || st == AuctionStatus.CANCELLED) {
-                                SellerNotification.Type type =
-                                        switch (st) {
-                                            case CLOSED -> SellerNotification.Type.CLOSED;
-                                            case PAID -> SellerNotification.Type.PAID;
-                                            default -> SellerNotification.Type.CANCELLED;
-                                        };
-                                String pName = String.valueOf(newVal.getAuctionId());
-                                String wName = newVal.getWinnerName();
-                                SellerNotification notif =
-                                        new SellerNotification(
-                                                newVal.getAuctionId(),
-                                                type,
-                                                pName,
-                                                wName,
-                                                newVal.getWinningPrice());
-                                addOrReplaceNotification(notif);
-                            }
-                        });
+            // Sinh thông báo cho seller
+            AuctionStatus st = newVal.getStatus();
+            if (st == AuctionStatus.CLOSED || st == AuctionStatus.PAID || st == AuctionStatus.CANCELLED) {
+                SellerNotification.Type type =
+                        switch (st) {
+                            case CLOSED -> SellerNotification.Type.CLOSED;
+                            case PAID -> SellerNotification.Type.PAID;
+                            default -> SellerNotification.Type.CANCELLED;
+                        };
+                String pName = String.valueOf(newVal.getAuctionId());
+                String wName = newVal.getWinnerName();
+                SellerNotification notif = new SellerNotification(newVal.getAuctionId(), type, pName, wName, newVal.getWinningPrice());addOrReplaceNotification(notif);}
+        });
 
         notifications = ClientModel.getInstance().getSellerNotifications();
         buildNotificationPopup();
@@ -226,20 +198,13 @@ public class SellerManagementController implements ResponseListener {
             loadMyProducts();
             isLoaded = true;
         }
-
         updateBadge();
 
-        // Lắng nghe server push (Doc 5 + Doc 6)
         NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
-
-        notifications.addListener(
-                (javafx.collections.ListChangeListener<SellerNotification>)
-                        change -> Platform.runLater(this::updateBadge));
+        notifications.addListener((ListChangeListener<SellerNotification>) change -> Platform.runLater(this::updateBadge));
     }
 
-    // ── Form helpers ──────────────────────────────────────────────────────────
 
-    /** Xóa sạch form — tách riêng thành method (Doc 5) */
     private void clearForm() {
         nameField.clear();
         descriptionField.clear();
@@ -381,37 +346,23 @@ public class SellerManagementController implements ResponseListener {
             Auction auction = getInfo();
             if (auction == null) return;
 
-            new Thread(
-                            () -> {
-                                try {
-                                    ServerConnection connection = NetworkManager.getConnection();
-                                    NetworkManager.getInstance()
-                                            .register(AddAuctionCommand.class, this);
-                                    AddAuctionCommand cm = new AddAuctionCommand();
-                                    cm.addData("Auction", auction);
-                                    connection.sendCommand(cm);
-                                } catch (ConnectionFailedException e) {
-                                    log.error("Lỗi kết nối: {}", e.getMessage());
-                                    Platform.runLater(
-                                            () ->
-                                                    showAlert(
-                                                            "Lỗi kết nối",
-                                                            "Không thể kết nối server"));
-                                } catch (SendFailedException e) {
-                                    log.error("Lỗi gửi: {}", e.getMessage());
-                                    Platform.runLater(
-                                            () -> showAlert("Lỗi", "Không thể gửi yêu cầu"));
-                                } catch (Exception e) {
-                                    log.error("Lỗi: {}", e.getMessage(), e);
-                                    Platform.runLater(
-                                            () ->
-                                                    showAlert(
-                                                            "Lỗi",
-                                                            "Thêm sản phẩm thất bại: "
-                                                                    + e.getMessage()));
-                                }
-                            })
-                    .start();
+            new Thread(() -> {
+                try {ServerConnection connection = NetworkManager.getConnection();
+                    NetworkManager.getInstance().register(AddAuctionCommand.class, this);
+                    AddAuctionCommand cm = new AddAuctionCommand();
+                    cm.addData("Auction", auction);
+                    connection.sendCommand(cm);
+                } catch (ConnectionFailedException e) {
+                    log.error("Lỗi kết nối: {}", e.getMessage());
+                    Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối server"));
+                } catch (SendFailedException e) {
+                    log.error("Lỗi gửi: {}", e.getMessage());
+                    Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu"));
+                } catch (Exception e) {
+                    log.error("Lỗi: {}", e.getMessage(), e);
+                    Platform.runLater(() -> showAlert("Lỗi", "Thêm sản phẩm thất bại: " + e.getMessage()));
+                }
+            }).start();
 
         } catch (NumberFormatException e) {
             showAlert("Lỗi định dạng", "Vui lòng nhập số hợp lệ");
@@ -435,29 +386,23 @@ public class SellerManagementController implements ResponseListener {
 
         final Auction toUpdate = auction;
 
-        new Thread(
-                        () -> {
-                            try {
-                                ServerConnection connection = NetworkManager.getConnection();
-                                NetworkManager.getInstance()
-                                        .register(UpdateAuctionCommand.class, this);
-                                UpdateAuctionCommand cmd = new UpdateAuctionCommand(toUpdate);
-                                connection.sendCommand(cmd);
-                            } catch (ConnectionFailedException e) {
-                                log.error("Lỗi kết nối: {}", e.getMessage());
-                                Platform.runLater(
-                                        () -> showAlert("Lỗi kết nối", "Không thể kết nối server"));
-                            } catch (SendFailedException e) {
-                                log.error("Lỗi gửi: {}", e.getMessage());
-                                Platform.runLater(
-                                        () -> showAlert("Lỗi", "Không thể gửi yêu cầu sửa"));
-                            } catch (Exception e) {
-                                log.error("Lỗi sửa auction: {}", e.getMessage(), e);
-                                Platform.runLater(
-                                        () -> showAlert("Lỗi", "Sửa thất bại: " + e.getMessage()));
-                            }
-                        })
-                .start();
+        new Thread(() -> {
+            try {
+                ServerConnection connection = NetworkManager.getConnection();
+                NetworkManager.getInstance().register(UpdateAuctionCommand.class, this);
+                UpdateAuctionCommand cmd = new UpdateAuctionCommand(toUpdate);
+                connection.sendCommand(cmd);
+            } catch (ConnectionFailedException e) {
+                log.error("Lỗi kết nối: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối server"));
+            } catch (SendFailedException e) {
+                log.error("Lỗi gửi: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu sửa"));
+            } catch (Exception e) {
+                log.error("Lỗi sửa auction: {}", e.getMessage(), e);
+                Platform.runLater(() -> showAlert("Lỗi", "Sửa thất bại: " + e.getMessage()));
+            }
+        }).start();
     }
 
     @FXML
@@ -467,68 +412,43 @@ public class SellerManagementController implements ResponseListener {
             showAlert("Lỗi", "Vui lòng chọn sản phẩm cần xóa!", "Wait.gif");
             return;
         }
-        new Thread(
-                        () -> {
-                            try {
-                                ServerConnection connection = NetworkManager.getConnection();
-                                NetworkManager.getInstance()
-                                        .register(DeleteAuctionCommand.class, this);
-                                DeleteAuctionCommand cmd =
-                                        new DeleteAuctionCommand(selectedAuction);
-                                connection.sendCommand(cmd);
-                            } catch (ConnectionFailedException e) {
-                                log.error("Lỗi kết nối: {}", e.getMessage());
-                                Platform.runLater(
-                                        () -> showAlert("Lỗi kết nối", "Không thể kết nối server"));
-                            } catch (SendFailedException e) {
-                                log.error("Lỗi gửi: {}", e.getMessage());
-                                Platform.runLater(
-                                        () -> showAlert("Lỗi", "Không thể gửi yêu cầu xóa"));
-                            } catch (Exception e) {
-                                log.error("Lỗi xóa auction: {}", e.getMessage());
-                                Platform.runLater(() -> showAlert("Lỗi", "Không thể xóa"));
-                            }
-                        })
-                .start();
+        new Thread(() -> {
+            try {
+                ServerConnection connection = NetworkManager.getConnection();
+                NetworkManager.getInstance().register(DeleteAuctionCommand.class, this);
+                DeleteAuctionCommand cmd = new DeleteAuctionCommand(selectedAuction);
+                connection.sendCommand(cmd);
+            }catch (ConnectionFailedException e) {
+                log.error("Lỗi kết nối: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối server"));
+            } catch (SendFailedException e) {
+                log.error("Lỗi gửi: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu xóa"));
+            } catch (Exception e) {
+                log.error("Lỗi xóa auction: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi", "Không thể xóa"));}
+        }).start();
     }
 
     private void loadMyProducts() {
         int sellerId = ClientModel.getInstance().getCurrentUser().getId();
-        new Thread(
-                        () -> {
-                            try {
-                                NetworkManager networkManager = NetworkManager.getInstance();
-                                Command cmd = new GetAuctionsBySellerIdCommand();
-                                cmd.addData("sellerId", sellerId);
-                                networkManager.sendRequest(cmd, this); // Doc 5: sendRequest
-                            } catch (ConnectionFailedException e) {
-                                log.error("Lỗi kết nối khi load sản phẩm: {}", e.getMessage());
-                                Platform.runLater(
-                                        () ->
-                                                showAlert(
-                                                        "Lỗi kết nối",
-                                                        "Không thể kết nối đến server"));
-                            } catch (SendFailedException e) {
-                                log.error("Lỗi gửi command load sản phẩm: {}", e.getMessage());
-                                Platform.runLater(
-                                        () ->
-                                                showAlert(
-                                                        "Lỗi",
-                                                        "Không thể gửi yêu cầu tải dữ liệu"));
-                            } catch (Exception e) {
-                                log.error(
-                                        "Lỗi không xác định khi load sản phẩm: {}",
-                                        e.getMessage(),
-                                        e);
-                                Platform.runLater(
-                                        () ->
-                                                showAlert(
-                                                        "Lỗi",
-                                                        "Tải sản phẩm thất bại: "
-                                                                + e.getMessage()));
-                            }
-                        })
-                .start();
+        new Thread(() -> {
+            try {
+                NetworkManager networkManager = NetworkManager.getInstance();
+                Command cmd = new GetAuctionsBySellerIdCommand();
+                cmd.addData("sellerId", sellerId);
+                networkManager.sendRequest(cmd, this); // Doc 5: sendRequest
+            } catch (ConnectionFailedException e) {
+                log.error("Lỗi kết nối khi load sản phẩm: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối đến server"));
+            } catch (SendFailedException e) {
+                log.error("Lỗi gửi command load sản phẩm: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu tải dữ liệu"));
+            } catch (Exception e) {
+                log.error("Lỗi không xác định khi load sản phẩm: {}", e.getMessage(), e);
+                Platform.runLater(() -> showAlert("Lỗi", "Tải sản phẩm thất bại: " + e.getMessage()));
+            }
+        }).start();
     }
 
     // ── Image ─────────────────────────────────────────────────────────────────
@@ -537,11 +457,7 @@ public class SellerManagementController implements ResponseListener {
     public void clickToChooseImage(ActionEvent event) {
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Chon anh dai dien");
-        fileChooser
-                .getExtensionFilters()
-                .add(
-                        new FileChooser.ExtensionFilter(
-                                "Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif"));
+        fileChooser.getExtensionFilters().add(new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg", "*.gif"));
 
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         File selectedFile = fileChooser.showOpenDialog(stage);
@@ -557,6 +473,50 @@ public class SellerManagementController implements ResponseListener {
             e.printStackTrace();
             showAlert("Lỗi", "Không thể tải ảnh lên!", "False.gif");
         }
+    }
+
+    // hiển thị form ẩn chi tiết của người thắng
+    private void showWinnerInfo(Auction auction) {
+        winnerProductName.setText(auction.getItem() != null ? auction.getItem().getName() : "—");
+
+        BigDecimal wPrice = auction.getWinningPrice();
+        String priceStr = (wPrice != null) ? String.format("%,.0f VNĐ", wPrice) : String.format("%,.0f VNĐ", auction.getCurrentPrice());
+        winnerFinalPrice.setText(priceStr);
+        winnerBidPrice.setText(priceStr);
+
+        winnerName.setText(auction.getWinnerName());
+        winnerId.setText("ID: " + auction.getWinnerId());
+
+        String email = (auction.getWinnerEmail() != null && !auction.getWinnerEmail().isEmpty())
+                ? auction.getWinnerEmail() : "—";
+        String sdt = (auction.getWinnerSdt() != null && !auction.getWinnerSdt().isEmpty())
+                ? auction.getWinnerSdt() : "—";
+        if (winnerEmail != null) winnerEmail.setText(email);
+        if (winnerSdt != null) winnerSdt.setText(sdt);
+
+        if (detailFormBox != null) {
+            detailFormBox.setVisible(false);
+            detailFormBox.setManaged(false);
+        }
+        if (winnerInfoBox != null) {
+            winnerInfoBox.setVisible(true);
+            winnerInfoBox.setManaged(true);
+        }
+    }
+
+    // dẫn đến màn ẩn
+    @FXML
+    public void onBackToForm() {
+        if (winnerInfoBox != null) {
+            winnerInfoBox.setVisible(false);
+            winnerInfoBox.setManaged(false);
+        }
+        if (detailFormBox != null) {
+            detailFormBox.setVisible(true);
+            detailFormBox.setManaged(true);
+        }
+        productList.getSelectionModel().clearSelection();
+        selectedAuction = null;
     }
 
     // ── Display ───────────────────────────────────────────────────────────────
@@ -638,9 +598,8 @@ public class SellerManagementController implements ResponseListener {
                         case "Đang diễn ra" -> st == AuctionStatus.RUNNING;
                         case "Chờ thanh toán" -> st == AuctionStatus.CLOSED && a.getWinnerId() != 0;
                         case "Thành toán thành công" -> st == AuctionStatus.PAID;
-                        case "Sản phẩm đã hủy" -> st == AuctionStatus.CANCELLED;
-                        case "Không ai đấu giá" ->
-                                st == AuctionStatus.CLOSED && a.getWinnerId() == 0;
+                        case "Sản phẩm đã hủy" -> st == AuctionStatus.CANCELLED && a.getWinnerId() != 0;
+                        case "Không ai đấu giá" -> (st == AuctionStatus.CLOSED || st == AuctionStatus.CANCELLED) && a.getWinnerId() == 0;
                         default -> true;
                     };
                 });
@@ -705,11 +664,7 @@ public class SellerManagementController implements ResponseListener {
 
     private void buildNotificationPopup() {
         try {
-            FXMLLoader loader =
-                    new FXMLLoader(
-                            getClass()
-                                    .getResource(
-                                            "/com/javfxtutorial/hethongdaugia/view/fxml/NotifiCationPopup.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/NotifiCationPopup.fxml"));
             VBox popupRoot = loader.load();
             popupController = loader.getController();
             popupController.setOnMarkRead(notif -> Platform.runLater(this::updateBadge));
@@ -733,7 +688,7 @@ public class SellerManagementController implements ResponseListener {
         if (badgePane != null) badgePane.setVisible(count > 0);
     }
 
-    /** Doc 5: dùng Popup thay vì chuyển scene (Doc 6 dùng chuyển scene — sai) */
+
     @FXML
     public void openNotifications(MouseEvent event) {
         if (notificationPopup == null || popupController == null) return;
@@ -748,7 +703,7 @@ public class SellerManagementController implements ResponseListener {
         }
     }
 
-    // ── onResponse ────────────────────────────────────────────────────────────
+    // ── onResponse
 
     @Override
     public void onResponse(Response rp) {
@@ -756,132 +711,104 @@ public class SellerManagementController implements ResponseListener {
         // Thêm mới
         if (rp.getCommand().getClass() == AddAuctionCommand.class) {
             NetworkManager.getInstance().unregister(AddAuctionCommand.class, this);
-            Platform.runLater(
-                    () -> {
-                        if (rp.isSuccess()) {
-                            Auction auction = (Auction) rp.getPayLoad();
-                            observable.add(auction);
-                            showAlert("Thành công", "Thêm sản phẩm thành công!", "Happy.gif");
-                        } else {
-                            log.warn("Thêm thất bại: {}", rp.getMessage());
-                            showAlert("Thất bại", rp.getMessage(), "Wait.gif");
-                        }
-                    });
+            Platform.runLater(() -> {
+                if (rp.isSuccess()) {
+                    Auction auction = (Auction) rp.getPayLoad();
+                    observable.add(auction);
+                    showAlert("Thành công", "Thêm sản phẩm thành công!", "Happy.gif");
+                } else {
+                    log.warn("Thêm thất bại: {}", rp.getMessage());
+                    showAlert("Thất bại", rp.getMessage(), "Wait.gif");
+                }
+            });
         }
 
         // Load danh sách
         if (rp.getCommand().getClass() == GetAuctionsBySellerIdCommand.class) {
             NetworkManager.getInstance().unregister(GetAuctionsBySellerIdCommand.class, this);
-            Platform.runLater(
-                    () -> {
-                        if (!rp.isSuccess()) return;
-                        ArrayList<Auction> auctions = (ArrayList<Auction>) rp.getPayLoad();
-                        observable.setAll(auctions);
+            Platform.runLater(() -> {
+                if (!rp.isSuccess()) return;
+                ArrayList<Auction> auctions = (ArrayList<Auction>) rp.getPayLoad();
+                observable.setAll(auctions);
 
-                        // Sinh thông báo cho các phiên đã kết thúc (Doc 5)
-                        for (Auction a : auctions) {
-                            AuctionStatus st = a.getStatus();
-                            if (st != AuctionStatus.CLOSED
-                                    && st != AuctionStatus.PAID
-                                    && st != AuctionStatus.CANCELLED) continue;
+                // Sinh thông báo cho các phiên đã kết thúc (Doc 5)
+                for (Auction a : auctions) {
+                    AuctionStatus st = a.getStatus();
+                    if (st != AuctionStatus.CLOSED && st != AuctionStatus.PAID && st != AuctionStatus.CANCELLED)
+                        continue;
+                    SellerNotification.Type type = switch (st) {
+                        case CLOSED -> SellerNotification.Type.CLOSED;
+                        case PAID -> SellerNotification.Type.PAID;
+                        default -> SellerNotification.Type.CANCELLED;
+                    };
+                    String pName = (a.getItem() != null) ? a.getItem().getName() : String.valueOf(a.getAuctionId());
+                    String wName = (a.getWinnerName() != null) ? a.getWinnerName() : "N/A";
+                    SellerNotification newNotif = new SellerNotification(a.getAuctionId(), type, pName, wName, a.getWinningPrice());
+                    if (a.getEndingTime() != null) newNotif.setCreatedAt(a.getEndingTime());
 
-                            SellerNotification.Type type =
-                                    switch (st) {
-                                        case CLOSED -> SellerNotification.Type.CLOSED;
-                                        case PAID -> SellerNotification.Type.PAID;
-                                        default -> SellerNotification.Type.CANCELLED;
-                                    };
-                            String pName =
-                                    (a.getItem() != null)
-                                            ? a.getItem().getName()
-                                            : String.valueOf(a.getAuctionId());
-                            String wName = (a.getWinnerName() != null) ? a.getWinnerName() : "N/A";
-                            SellerNotification newNotif =
-                                    new SellerNotification(
-                                            a.getAuctionId(),
-                                            type,
-                                            pName,
-                                            wName,
-                                            a.getWinningPrice());
-                            if (a.getEndingTime() != null) newNotif.setCreatedAt(a.getEndingTime());
+                    // Restore trạng thái đọc (Doc 5)
+                    if (ClientModel.getInstance().isNotificationReadByAuction(a.getAuctionId())) {
+                        newNotif.setRead(true);
+                    }
 
-                            // Restore trạng thái đọc (Doc 5)
-                            if (ClientModel.getInstance()
-                                    .isNotificationReadByAuction(a.getAuctionId())) {
-                                newNotif.setRead(true);
-                            }
-
-                            Optional<SellerNotification> existing =
-                                    notifications.stream()
-                                            .filter(n -> n.getAuctionId() == a.getAuctionId())
-                                            .findFirst();
-                            if (existing.isPresent()) {
-                                if (priority(newNotif.getType())
-                                        > priority(existing.get().getType())) {
-                                    newNotif.setRead(false);
-                                    ClientModel.getInstance()
-                                            .markNotificationUnread(a.getAuctionId());
-                                    notifications.remove(existing.get());
-                                    notifications.add(newNotif);
-                                }
-                            } else {
-                                notifications.add(newNotif);
-                            }
+                    Optional<SellerNotification> existing = notifications.stream().filter(n -> n.getAuctionId() == a.getAuctionId()).findFirst();
+                    if (existing.isPresent()) {
+                        if (priority(newNotif.getType()) > priority(existing.get().getType())) {
+                            newNotif.setRead(false);
+                            ClientModel.getInstance().markNotificationUnread(a.getAuctionId());notifications.remove(existing.get());
+                            notifications.add(newNotif);
                         }
+                    } else {
+                        notifications.add(newNotif);
+                    }
+                }
 
-                        notifications.sort(
-                                (n1, n2) -> {
-                                    if (n1.isRead() != n2.isRead()) return n1.isRead() ? 1 : -1;
-                                    if (n1.getCreatedAt() != null && n2.getCreatedAt() != null)
-                                        return n2.getCreatedAt().compareTo(n1.getCreatedAt());
-                                    return 0;
-                                });
-                        updateBadge();
-                    });
+                notifications.sort((n1, n2) -> {
+                    if (n1.isRead() != n2.isRead()) return n1.isRead() ? 1 : -1;
+
+                    if (n1.getCreatedAt() != null && n2.getCreatedAt() != null)
+                        return n2.getCreatedAt().compareTo(n1.getCreatedAt());
+                    return 0;
+                });
+                updateBadge();
+            });
         }
 
         // Xóa
         if (rp.getCommand().getClass() == DeleteAuctionCommand.class) {
             NetworkManager.getInstance().unregister(DeleteAuctionCommand.class, this);
-            Platform.runLater(
-                    () -> {
-                        if (rp.isSuccess()) {
-                            // BUG FIX (Doc 5): dùng payload từ server khi có thể
-                            Auction deleted =
-                                    (rp.getPayLoad() instanceof Auction)
-                                            ? (Auction) rp.getPayLoad()
-                                            : selectedAuction;
-                            observable.remove(deleted);
-                            selectedAuction = null;
-                            showAlert("Thành công", "Xóa sản phẩm thành công!", "Happy.gif");
-                        } else {
-                            showAlert("Thất bại", rp.getMessage(), "Wait.gif");
-                        }
-                    });
+            Platform.runLater(() -> {
+                if (rp.isSuccess()) {
+                    Auction deleted = (rp.getPayLoad() instanceof Auction) ? (Auction) rp.getPayLoad() : selectedAuction;
+                    observable.remove(deleted);
+                    selectedAuction = null;
+                    showAlert("Thành công", "Xóa sản phẩm thành công!", "Happy.gif");
+                } else {
+                    showAlert("Thất bại", rp.getMessage(), "Wait.gif");
+                }
+            });
         }
 
         // Sửa
         if (rp.getCommand().getClass() == UpdateAuctionCommand.class) {
             NetworkManager.getInstance().unregister(UpdateAuctionCommand.class, this);
-            Platform.runLater(
-                    () -> {
-                        if (rp.isSuccess()) {
-                            Auction updated = (Auction) rp.getPayLoad();
-                            int index = observable.indexOf(selectedAuction);
-                            if (index >= 0) observable.set(index, updated);
-                            selectedAuction = updated; // BUG FIX (Doc 5): cập nhật reference
-                            productList.refresh();
-                            showAlert("Thành công", "Sửa sản phẩm thành công", "Happy.gif");
-                        } else {
-                            showAlert("Thất bại", rp.getMessage(), "Wait.gif");
-                        }
-                    });
+            Platform.runLater(() -> {
+                if (rp.isSuccess()) {
+                    Auction updated = (Auction) rp.getPayLoad();
+                    int index = observable.indexOf(selectedAuction);
+                    if (index >= 0) observable.set(index, updated);
+                    selectedAuction = updated; // BUG FIX (Doc 5): cập nhật reference
+                    productList.refresh();
+                    showAlert("Thành công", "Sửa sản phẩm thành công", "Happy.gif");
+                } else {
+                    showAlert("Thất bại", rp.getMessage(), "Wait.gif");
+                }
+            });
         }
 
         // Server push: cập nhật trạng thái phiên (Doc 5 + Doc 6)
         if (rp.getCommand().getClass().equals(UpdateAuctionStatusCommand.class)
                 && rp.getPayLoad() instanceof Auction auction) {
-
             AuctionStatus status = auction.getStatus();
             if (status != AuctionStatus.CLOSED
                     && status != AuctionStatus.PAID
@@ -893,31 +820,21 @@ public class SellerManagementController implements ResponseListener {
                         case PAID -> SellerNotification.Type.PAID;
                         default -> SellerNotification.Type.CANCELLED;
                     };
-            String productName =
-                    (auction.getItem() != null)
-                            ? auction.getItem().getName()
-                            : String.valueOf(auction.getAuctionId());
+            String productName = (auction.getItem() != null) ? auction.getItem().getName() : String.valueOf(auction.getAuctionId());
             String winnerName = (auction.getWinnerName() != null) ? auction.getWinnerName() : "N/A";
 
-            SellerNotification notif =
-                    new SellerNotification(
-                            auction.getAuctionId(),
-                            type,
-                            productName,
-                            winnerName,
-                            auction.getWinningPrice());
+            SellerNotification notif = new SellerNotification(auction.getAuctionId(), type, productName, winnerName, auction.getWinningPrice());
 
-            Platform.runLater(
-                    () -> {
-                        addOrReplaceNotification(notif);
-                        // Cập nhật trạng thái auction trong danh sách (Doc 5)
-                        for (int i = 0; i < observable.size(); i++) {
-                            if (observable.get(i).getAuctionId() == auction.getAuctionId()) {
-                                observable.set(i, auction);
-                                break;
-                            }
-                        }
-                    });
+            Platform.runLater(() -> {
+                addOrReplaceNotification(notif);
+                // Cập nhật trạng thái auction trong danh sách (Doc 5)
+                for (int i = 0; i < observable.size(); i++) {
+                    if (observable.get(i).getAuctionId() == auction.getAuctionId()) {
+                        observable.set(i, auction);
+                        break;
+                    }
+                }
+            });
         }
     }
 }
