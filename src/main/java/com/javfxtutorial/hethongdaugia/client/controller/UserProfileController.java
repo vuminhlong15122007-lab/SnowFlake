@@ -11,7 +11,7 @@ import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand;
-import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import java.io.File;
 import java.nio.file.Files;

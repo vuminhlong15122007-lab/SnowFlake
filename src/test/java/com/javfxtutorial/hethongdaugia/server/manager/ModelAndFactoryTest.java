@@ -4,10 +4,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import com.javfxtutorial.hethongdaugia.common.model.Art;
-import com.javfxtutorial.hethongdaugia.common.model.Electronics;
-import com.javfxtutorial.hethongdaugia.common.model.Item;
-import com.javfxtutorial.hethongdaugia.common.model.Vehicle;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Art;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Electronics;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Item;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Vehicle;
 import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import com.javfxtutorial.hethongdaugia.common.model.factory.ArtFactory;
 import com.javfxtutorial.hethongdaugia.common.model.factory.ElectronicsFactory;

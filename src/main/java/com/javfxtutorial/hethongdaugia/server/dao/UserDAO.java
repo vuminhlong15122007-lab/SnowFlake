@@ -1,7 +1,7 @@
 package com.javfxtutorial.hethongdaugia.server.dao;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.data.*;
-import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.server.security.PasswordHasher;
 import java.sql.*;

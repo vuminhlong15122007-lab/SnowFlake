@@ -1,7 +1,7 @@
 package com.javfxtutorial.hethongdaugia.common.model.factory;
 
-import com.javfxtutorial.hethongdaugia.common.model.Item;
-import com.javfxtutorial.hethongdaugia.common.model.Vehicle;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Item;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Vehicle;
 import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import java.util.Map;
 

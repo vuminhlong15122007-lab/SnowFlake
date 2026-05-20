@@ -1,6 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import java.util.HashMap;
 import java.util.Map;
 import javafx.fxml.FXMLLoader;

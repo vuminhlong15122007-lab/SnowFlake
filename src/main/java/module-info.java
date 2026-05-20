@@ -17,13 +17,13 @@ module com.javfxtutorial.hethongdaugia {
             javafx.fxml;
     opens com.javfxtutorial.hethongdaugia.view.fxml to
             javafx.fxml;
-    opens com.javfxtutorial.hethongdaugia.common.model to
+    opens com.javfxtutorial.hethongdaugia.common.model.domain to
             javafx.base;
-    opens com.javfxtutorial.hethongdaugia.client.model to
-            javafx.base;
+
 
     exports com.javfxtutorial.hethongdaugia.client;
 
     opens com.javfxtutorial.hethongdaugia.client.Util to
             javafx.fxml;
+
 }

@@ -5,7 +5,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.auth.InvalidCredentialsException;
-import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
 import com.javfxtutorial.hethongdaugia.server.security.PasswordHasher;

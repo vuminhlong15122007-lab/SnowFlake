@@ -1,6 +1,6 @@
 package com.javfxtutorial.hethongdaugia.server.network;
 
-import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;

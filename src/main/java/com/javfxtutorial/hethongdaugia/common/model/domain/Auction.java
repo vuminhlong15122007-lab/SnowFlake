@@ -1,4 +1,4 @@
-package com.javfxtutorial.hethongdaugia.common.model;
+package com.javfxtutorial.hethongdaugia.common.model.domain;
 
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import java.io.Serializable;

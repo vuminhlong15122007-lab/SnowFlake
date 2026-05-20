@@ -1,4 +1,4 @@
-package com.javfxtutorial.hethongdaugia.common.model;
+package com.javfxtutorial.hethongdaugia.common.model.domain;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

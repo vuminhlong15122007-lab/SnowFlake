@@ -1,7 +1,7 @@
 package com.javfxtutorial.hethongdaugia.server.dao;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.data.*;
-import com.javfxtutorial.hethongdaugia.common.model.*;
+import com.javfxtutorial.hethongdaugia.common.model.domain.*;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import java.sql.*;

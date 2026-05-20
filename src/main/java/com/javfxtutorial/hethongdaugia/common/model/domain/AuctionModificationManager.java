@@ -1,8 +1,8 @@
-package com.javfxtutorial.hethongdaugia.client.model;
+package com.javfxtutorial.hethongdaugia.common.model.domain;
 
+import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AddAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionCommand;

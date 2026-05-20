@@ -2,12 +2,12 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 
-import com.javfxtutorial.hethongdaugia.client.model.AuctionModificationManager;
+import com.javfxtutorial.hethongdaugia.common.model.domain.AuctionModificationManager;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.common.model.Command.LoginCommand;
-import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;

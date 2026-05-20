@@ -2,7 +2,7 @@ package com.javfxtutorial.hethongdaugia.common.model.Command;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataInsertException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DuplicateKeyException;
-import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;

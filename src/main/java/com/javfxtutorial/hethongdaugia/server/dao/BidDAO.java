@@ -2,7 +2,7 @@ package com.javfxtutorial.hethongdaugia.server.dao;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DatabaseConnectionException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.QueryExecutionException;
-import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
 import java.sql.*;
 import java.util.ArrayList;
 

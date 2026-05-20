@@ -9,7 +9,7 @@ import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedExce
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteUserCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllUsersCommand;
-import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import java.net.URL;
