@@ -43,7 +43,12 @@ public class LoginController implements ResponseListener, Initializable {
     public void clickLogin(ActionEvent event) {
         loginEvent = event;
         String username = Username.getText();
-        String password = Password.getText();
+        String password;
+        if (passwordShown){
+            password = PasswordVisible.getText();
+        } else {
+            password = Password.getText();
+        }
         new Thread(() -> {
             try {
                 Command cmd = new LoginCommand();
