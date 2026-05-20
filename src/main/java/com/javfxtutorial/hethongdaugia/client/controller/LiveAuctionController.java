@@ -17,6 +17,8 @@ import com.javfxtutorial.hethongdaugia.common.model.domain.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.*;
 import com.javfxtutorial.hethongdaugia.common.model.domain.User;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import java.math.BigDecimal;
@@ -58,6 +60,10 @@ public class LiveAuctionController implements ResponseListener {
     @FXML private ListView<BidTransaction> bidHistory;
     @FXML private TextField autoMaxPrice_tf; // Ô nhập giá trần
     @FXML private ToggleButton autoBidToggle; // Nút bật/tắt chế độ tự động
+    @FXML private Label auctionStatusLabel;   // Nhãn trạng thái phiên (chỉ hiện cho admin)
+    @FXML private Button backToAdminButton;   // Nút quay lại trang admin
+
+    private boolean isAdmin = false;
 
     private final ObservableList<BidTransaction> observable = FXCollections.observableArrayList();
     private TimeLeft timer;
@@ -68,9 +74,13 @@ public class LiveAuctionController implements ResponseListener {
     public void goMenu(ActionEvent event) {
         timer.stop();
         running = false;
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.unregister(PlaceBidCommand.class, this);
+        if (isAdmin) {
+            changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_ProductManagement.fxml");
+        } else {
+            changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
+        }
     }
 
     @FXML
@@ -155,6 +165,9 @@ public class LiveAuctionController implements ResponseListener {
 
     @FXML
     public void initialize() throws SendFailedException, ConnectionFailedException {
+        // Xác định xem người dùng hiện tại có phải admin không
+        isAdmin = ClientModel.getInstance().getCurrentUser().getAccountType() == AccountType.ADMIN;
+
         // register để nhận command của người khác nữa
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.register(PlaceBidCommand.class, this);
@@ -169,6 +182,9 @@ public class LiveAuctionController implements ResponseListener {
         initializePriceChart();
         running = true;
 
+        // Cài đặt giao diện dành cho admin
+        setupAdminView();
+
         // thời gian còn lại
         timer = new TimeLeft(lbTimeLeft, currentAuction.getEndingTime());
         timer.setOnFinished(() -> {
@@ -179,6 +195,57 @@ public class LiveAuctionController implements ResponseListener {
             autoMaxPrice_tf.setDisable(true);
         });
         timer.start();
+    }
+
+    /**
+      Thiết lập giao diện theo vai trò: Admin: CHỈ XEM — ko đc
+     đặt giá.Lý do: nếu admin thắng,  thanh toán thế nào cho admin
+     , phiên sẽ bị hủy sau 24h,seller mất trắng. Admin vào để giám sát lịch sử + đồ thị,
+
+     */
+
+    private void setupAdminView() {
+        if (!isAdmin) return;
+
+        AuctionStatus status = currentAuction.getStatus();
+
+        // Hiện nhãn trạng thái phiên
+        if (auctionStatusLabel != null) {
+            auctionStatusLabel.setVisible(true);
+            String statusText;
+            String statusStyle;
+            switch (status) {
+                case RUNNING -> {
+                    statusText = "ĐANG DIỄN RA";
+                    statusStyle = "-fx-text-fill: #27ae60; -fx-font-weight: bold; -fx-font-size: 13px;";
+                }
+                case NOT_START -> {
+                    statusText = "CHƯA BẮT ĐẦU";
+                    statusStyle = "-fx-text-fill: -sf-accent; -fx-font-weight: bold; -fx-font-size: 13px;";
+                }
+                case CLOSED -> {
+                    statusText = "ĐÃ KẾT THÚC";
+                    statusStyle = "-fx-text-fill: -sf-text; -fx-font-weight: bold; -fx-font-size: 13px;";
+                }
+                case CANCELLED -> {
+                    statusText = "ĐÃ BỊ HỦY";
+                    statusStyle = "-fx-text-fill: -sf-danger; -fx-font-weight: bold; -fx-font-size: 13px;";
+                }
+                default -> {
+                    statusText = "ĐÃ THÀNH CÔNG";
+                    statusStyle = "-fx-text-fill: -sf-text; -fx-font-weight: bold; -fx-font-size: 13px;";
+                }
+            }
+            auctionStatusLabel.setText(statusText);
+            auctionStatusLabel.setStyle(statusStyle);
+        }
+
+
+        placeBidButton.setDisable(true);
+        placeBidButton.setText("Không được đặt");
+        autoBidToggle.setDisable(true);
+        priceInput_tf.setDisable(true);
+        autoMaxPrice_tf.setDisable(true);
     }
 
     private void initializePriceChart() {
@@ -197,24 +264,24 @@ public class LiveAuctionController implements ResponseListener {
         xAxis.setTickLabelFormatter(new StringConverter<>() {
             @Override
             public String toString(Number number) {
-                        return String.format("%.0f", number.doubleValue());
-                    }
+                return String.format("%.0f", number.doubleValue());
+            }
 
             @Override
             public Number fromString(String string) {
-                        return Integer.parseInt(string);
-                    }
+                return Integer.parseInt(string);
+            }
         });
         yAxis.setTickLabelFormatter(new StringConverter<>() {
-             @Override
-             public String toString(Number number) {
-                        return String.format("%,.0f", number.doubleValue());
-                    }
+            @Override
+            public String toString(Number number) {
+                return String.format("%,.0f", number.doubleValue());
+            }
 
-             @Override
-             public Number fromString(String string) {
-                        return new BigDecimal(string.replace(",", ""));
-                    }
+            @Override
+            public Number fromString(String string) {
+                return new BigDecimal(string.replace(",", ""));
+            }
         });
     }
 
@@ -281,7 +348,7 @@ public class LiveAuctionController implements ResponseListener {
                 if ("AUCTION_CANCELLED".equals(rp.getMessage())) {
                     Platform.runLater(() -> {
                         showAlert("Thông báo", "Phiên đấu giá đã bị hủy.");
-                                // Thoát ra màn hình trước
+                        // Thoát ra màn hình trước
                         Stage stage = (Stage) placeBidButton.getScene().getWindow();
                         stage.close();
                     });
@@ -305,41 +372,41 @@ public class LiveAuctionController implements ResponseListener {
                 int bidderId = bid.getBidderId();
 
                 Platform.runLater(() -> {
-                            // 1. Xử lý lịch sử (ListView):
+                    // 1. Xử lý lịch sử (ListView):
                     int insertIndex = 0;
                     while (insertIndex < observable.size() &&
                             observable.get(insertIndex).getAmount().compareTo(bid.getAmount()) > 0) {insertIndex++;}
-                            observable.add(insertIndex, bid);
+                    observable.add(insertIndex, bid);
                     if (observable.size() > 1000) { // giới hạn chỉ 1000 lịch sử gần nhất
                         observable.remove(1000, observable.size());
                     }
 
-                            // dòng này sẽ dùng để sort lại bảng
-                            // FXCollections.sort(observable, (b1, b2) ->
-                            // Double.compare(b2.getAmount(), b1.getAmount()));
+                    // dòng này sẽ dùng để sort lại bảng
+                    // FXCollections.sort(observable, (b1, b2) ->
+                    // Double.compare(b2.getAmount(), b1.getAmount()));
 
-                            // 2. CHỐNG ẢO GIÁC ĐI LÙI (Bảo vệ giao diện chính)
-                            // Chỉ cho phép cập nhật thông tin chung khi giá nhận được LỚN HƠN giá
-                            // đang hiển thị
+                    // 2. CHỐNG ẢO GIÁC ĐI LÙI (Bảo vệ giao diện chính)
+                    // Chỉ cho phép cập nhật thông tin chung khi giá nhận được LỚN HƠN giá
+                    // đang hiển thị
                     if (newPrice.compareTo(currentAuction.getCurrentPrice()) > 0) {
 
-                                // Cập nhật lại Model đang lưu trong RAM
+                        // Cập nhật lại Model đang lưu trong RAM
                         currentAuction.setCurrentPrice(newPrice);
                         currentAuction.setWinnerId(bidderId);
                         currentAuction.setWinningPrice(newPrice);
 
-                                // Cập nhật các Label hiển thị bên trái màn hình
+                        // Cập nhật các Label hiển thị bên trái màn hình
                         currentPrice_tf.setText(String.format("%,.0f VND", newPrice));
                         highestPayer_tf.setText(bidderName);
 
-                                // Cập nhật Biểu đồ đường (LineChart)
+                        // Cập nhật Biểu đồ đường (LineChart)
                         int bidSequenceNumber = priceSeries.getData().size() + 1;
                         XYChart.Data<Number, Number> newDataPoint = new XYChart.Data<>(bidSequenceNumber, newPrice);
                         priceSeries.getData().add(newDataPoint);
                         updatePriceChartXAxis();
 
-                                // Cập nhật lại đồng hồ đếm ngược nếu có gia hạn (Anti-snipe)
-                                // Lưu ý: Dùng .equals() để so sánh thời gian thay vì !=
+                        // Cập nhật lại đồng hồ đếm ngược nếu có gia hạn (Anti-snipe)
+                        // Lưu ý: Dùng .equals() để so sánh thời gian thay vì !=
                         if (bid.getNewEndingTime() != null
                                 && !bid.getNewEndingTime().equals(bid.getTimestamp())) {
                             LocalDateTime newEnd = bid.getNewEndingTime();
@@ -372,19 +439,19 @@ public class LiveAuctionController implements ResponseListener {
                 Platform.runLater(() -> {
                     if (priceSeries.getData().isEmpty()) {
 
-                                // LẬT NGƯỢC HIỂN THỊ Ở ĐÂY:
-                                // Sắp xếp danh sách lịch sử theo Giá.
-                                // - Dùng b2 so sánh b1: Giá cao nhất (mới nhất) nằm TRÊN CÙNG.
-                                // - Nếu bạn muốn Giá cao nhất nằm DƯỚI CÙNG, đổi thành:
-                                // Double.compare(b1.getAmount(), b2.getAmount())
+                        // LẬT NGƯỢC HIỂN THỊ Ở ĐÂY:
+                        // Sắp xếp danh sách lịch sử theo Giá.
+                        // - Dùng b2 so sánh b1: Giá cao nhất (mới nhất) nằm TRÊN CÙNG.
+                        // - Nếu bạn muốn Giá cao nhất nằm DƯỚI CÙNG, đổi thành:
+                        // Double.compare(b1.getAmount(), b2.getAmount())
                         bidList.sort((b1, b2) -> b2.getAmount().compareTo(b1.getAmount()));
 
                         observable.setAll(bidList);
 
-                                // VẼ BIỂU ĐỒ:
-                                // Vì danh sách observable đang xếp Giá Cao -> Giá Thấp (Mới -> Cũ)
-                                // Để biểu đồ vẽ đúng chiều thời gian đi tới (Cũ -> Mới), ta phải
-                                // duyệt mảng ngược từ dưới lên trên.
+                        // VẼ BIỂU ĐỒ:
+                        // Vì danh sách observable đang xếp Giá Cao -> Giá Thấp (Mới -> Cũ)
+                        // Để biểu đồ vẽ đúng chiều thời gian đi tới (Cũ -> Mới), ta phải
+                        // duyệt mảng ngược từ dưới lên trên.
                         int soThuTuLuotBid = 1;
                         for (int i = observable.size() - 1; i >= 0; i--) {
                             BidTransaction historicalBid = observable.get(i);

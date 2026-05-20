@@ -75,9 +75,9 @@ public class AdminItemController implements ResponseListener {
 
     private void loadItemData()
             throws IOException,
-                    ClassNotFoundException,
-                    SendFailedException,
-                    ConnectionFailedException {
+            ClassNotFoundException,
+            SendFailedException,
+            ConnectionFailedException {
         Command cmd = new GetAllAuctionsCommand();
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.sendRequest(cmd, this);
@@ -135,7 +135,7 @@ public class AdminItemController implements ResponseListener {
             return;
         }
         ClientModel.getInstance().setCurrentAuction(selected);
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionInformation.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/LiveAuction.fxml");
     }
     @FXML
     public void clickToCancelAuction(ActionEvent event) {
@@ -182,9 +182,9 @@ public class AdminItemController implements ResponseListener {
                 try {
                     loadItemData(); // load lai bang
                 } catch (IOException
-                        | ClassNotFoundException
-                        | SendFailedException
-                        | ConnectionFailedException ex) {
+                         | ClassNotFoundException
+                         | SendFailedException
+                         | ConnectionFailedException ex) {
                     throw new RuntimeException(ex);
                 }
             } else {
