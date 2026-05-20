@@ -48,7 +48,10 @@ public class AuctionModificationManager implements ResponseListener {
     //delete
     if (rp.getCommand().getClass() == DeleteAuctionCommand.class) {
       if (rp.isSuccess()) {
-        Auction selectedAuction = (Auction) rp.getPayLoad();
+        DeleteAuctionCommand command = (DeleteAuctionCommand) rp.getCommand();
+        Auction selectedAuction = (rp.getPayLoad() instanceof Auction)
+            ? (Auction) rp.getPayLoad()
+            : command.getAuction();
         Platform.runLater(() -> {
           ClientModel.getInstance().getAllAuctions().removeIf(auction -> auction.getAuctionId() == selectedAuction.getAuctionId());
         });
