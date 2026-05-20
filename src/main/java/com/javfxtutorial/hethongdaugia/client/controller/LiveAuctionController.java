@@ -197,12 +197,11 @@ public class LiveAuctionController implements ResponseListener {
         timer.start();
     }
 
-    /**
-      Thiết lập giao diện theo vai trò: Admin: CHỈ XEM — ko đc
-     đặt giá.Lý do: nếu admin thắng,  thanh toán thế nào cho admin
-     , phiên sẽ bị hủy sau 24h,seller mất trắng. Admin vào để giám sát lịch sử + đồ thị,
 
-     */
+    //  Thiết lập giao diện theo vai trò: Admin: CHỈ XEM — ko đc
+     //đặt giá.Lý do: nếu admin thắng,  thanh toán thế nào cho admin
+    //phiên sẽ bị hủy sau 24h,seller mất trắng. Admin vào để giám sát lịch sử + đồ thị,
+
 
     private void setupAdminView() {
         if (!isAdmin) return;
