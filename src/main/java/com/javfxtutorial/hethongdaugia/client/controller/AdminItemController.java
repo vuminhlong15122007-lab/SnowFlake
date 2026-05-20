@@ -8,6 +8,7 @@ import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -98,14 +99,18 @@ public class AdminItemController implements   ResponseListener {
     public void onResponse(Response rp) {
         if (rp.getCommand().getClass() == DeleteAuctionCommand.class) {
             if (rp.isSuccess()) {
-                showAlert("Xóa thành công", rp.getMessage(), "FunnyCat.gif");
+                Platform.runLater(() -> {
+                    showAlert("Xóa thành công", rp.getMessage(), "FunnyCat.gif");
+                });
                 try {
                     loadItemData();//load lai bang
                 } catch (IOException | ClassNotFoundException | SendFailedException | ConnectionFailedException ex) {
                     throw new RuntimeException(ex);
                 }
             } else {
+                Platform.runLater(() -> {
                 showAlert("Lỗi", rp.getMessage(), "Wrong.gif");
+                });
             }
             NetworkManager networkManager = NetworkManager.getInstance();
             networkManager.unregister(DeleteAuctionCommand.class, this);
