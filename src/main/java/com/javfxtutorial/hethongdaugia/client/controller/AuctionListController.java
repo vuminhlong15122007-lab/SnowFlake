@@ -3,6 +3,7 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
+import com.javfxtutorial.hethongdaugia.client.model.AuctionModificationManager;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
@@ -39,8 +40,6 @@ public class AuctionListController implements ResponseListener {
     private FilteredList<Auction> filterData;
     private AuctionStatus currentStatus = null; // null = Tất cả
 
-    // Tránh gọi server nhiều lần khi navigate qua lại (Doc 1)
-    private static boolean isLoaded = false;
 
     @FXML
     public void initialize() throws ConnectionFailedException {
@@ -94,10 +93,8 @@ public class AuctionListController implements ResponseListener {
                 });
 
         setActiveButton(btnAll);
-
-        if (!isLoaded) {
+        if (!AuctionModificationManager.getInstance().isAllAuctionsLoaded) {
             loadData();
-            isLoaded = true;
         }
     }
 
@@ -220,6 +217,7 @@ public class AuctionListController implements ResponseListener {
                         }
                         ArrayList<Auction> auctions = (ArrayList<Auction>) rp.getPayLoad();
                         observable.setAll(auctions);
+                        AuctionModificationManager.getInstance().isAllAuctionsLoaded = true;
                     });
             NetworkManager networkManager = NetworkManager.getInstance();
             networkManager.unregister(GetAllAuctionsCommand.class, this);

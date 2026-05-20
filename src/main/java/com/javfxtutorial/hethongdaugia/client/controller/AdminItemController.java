@@ -3,8 +3,11 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
+import com.javfxtutorial.hethongdaugia.client.model.AuctionModificationManager;
+import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
+import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
@@ -32,9 +35,13 @@ public class AdminItemController implements ResponseListener {
     @FXML private TableColumn<Auction, String> colCategory;
     @FXML private TableColumn<Auction, String> colOwner;
     @FXML private TableColumn<Auction, String> colStatus;
+    private ObservableList<Auction> observableList;
 
     @FXML
     public void initialize() {
+        observableList = ClientModel.getInstance().getAllAuctions();
+        itemTable.setItems(observableList);
+
         colId.setCellValueFactory(new PropertyValueFactory<>("auctionId"));
         colItemName.setCellValueFactory(
                 cellData -> new SimpleStringProperty(cellData.getValue().getItem().getName()));
@@ -55,7 +62,9 @@ public class AdminItemController implements ResponseListener {
                                 cellData.getValue().getItem().getCategory().name()));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         try {
-            loadItemData();
+            if (!AuctionModificationManager.getInstance().isAllAuctionsLoaded) {
+                loadItemData();
+            }
         } catch (IOException
                 | ClassNotFoundException
                 | SendFailedException
@@ -109,7 +118,9 @@ public class AdminItemController implements ResponseListener {
         if (result == yes) {
             DeleteAuctionCommand cmd = new DeleteAuctionCommand(selectItem);
             NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.sendRequest(cmd, this);
+            networkManager.register(DeleteAuctionCommand.class, this);
+            ServerConnection connection = NetworkManager.getConnection();
+            connection.sendCommand(cmd);
         }
     }
 
@@ -139,9 +150,11 @@ public class AdminItemController implements ResponseListener {
             networkManager.unregister(DeleteAuctionCommand.class, this);
         }
         if (rp.getCommand().getClass() == GetAllAuctionsCommand.class) {
-            ArrayList<Auction> auctionlist = (ArrayList<Auction>) rp.getPayLoad();
-            ObservableList<Auction> danhSach = FXCollections.observableArrayList(auctionlist);
-            itemTable.setItems(danhSach);
+            if (rp.isSuccess()) {
+                ArrayList<Auction> auctionlist = (ArrayList<Auction>) rp.getPayLoad();
+                AuctionModificationManager.getInstance().isAllAuctionsLoaded = true;
+                observableList.setAll(auctionlist);
+            }
             NetworkManager networkManager = NetworkManager.getInstance();
             networkManager.unregister(GetAllAuctionsCommand.class, this);
         }

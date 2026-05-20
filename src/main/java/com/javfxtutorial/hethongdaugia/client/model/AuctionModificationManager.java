@@ -12,9 +12,10 @@ import javafx.application.Platform;
 
 public class AuctionModificationManager implements ResponseListener {
     private static AuctionModificationManager instance;
+    public boolean isAllAuctionsLoaded = false;
 
-    private AuctionModificationManager() {}
-
+    private AuctionModificationManager() {
+    }
     public static AuctionModificationManager getInstance() {
         if (instance == null) {
             instance = new AuctionModificationManager();
