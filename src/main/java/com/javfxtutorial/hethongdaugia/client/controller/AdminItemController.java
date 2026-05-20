@@ -1,7 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
-import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
@@ -14,19 +13,14 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
-
 import java.io.IOException;
-import java.net.URL;
 import java.util.ArrayList;
-import java.util.ResourceBundle;
-
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
-public class AdminItemController implements  Initializable, ResponseListener {
+public class AdminItemController implements   ResponseListener {
     @FXML private TableView<Auction> itemTable;
     @FXML private TableColumn<Auction,Integer> colId ;
     @FXML private TableColumn<Auction,String> colItemName;
@@ -36,15 +30,19 @@ public class AdminItemController implements  Initializable, ResponseListener {
     @FXML private TableColumn<Auction,String> colOwner;
     @FXML private TableColumn<Auction,String> colStatus;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    @FXML
+    public void initialize() {
         colId.setCellValueFactory(new PropertyValueFactory<>("auctionId"));
         colItemName.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getItem().getName()));
         colCategory.setCellValueFactory(new PropertyValueFactory<>("status")); //truyền bừa
         colOwner.setCellValueFactory(new PropertyValueFactory<>("sellerId"));
-        colStartPrice.setCellValueFactory(new PropertyValueFactory<>("currentPrice"));
-        colStepPrice.setCellValueFactory(new PropertyValueFactory<>("stepPrice"));
-        colCategory.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getItem().getDescription()));
+        colStartPrice.setCellValueFactory(cellData ->
+                new SimpleStringProperty(String.format("%,.0f VND", cellData.getValue().getCurrentPrice())));
+
+        colStepPrice.setCellValueFactory(cellData ->
+                new SimpleStringProperty(String.format("%,.0f VND", cellData.getValue().getStepPrice())));
+        colCategory.setCellValueFactory(cellData ->
+                new SimpleStringProperty(cellData.getValue().getItem().getCategory().name()));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
         try {
             loadItemData();

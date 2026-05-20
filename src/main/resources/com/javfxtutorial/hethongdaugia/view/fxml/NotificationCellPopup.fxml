@@ -1,21 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
 
-<HBox fx:id="rootHBox"
-      alignment="CENTER_LEFT" spacing="10.0"
-      style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-width: 0 0 0 4; -fx-border-radius: 0 12 12 0; -fx-cursor: hand;"
-      xmlns="http://javafx.com/javafx/17"
-      xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="com.javfxtutorial.hethongdaugia.client.controller.NotificationCellController">
+<HBox fx:id="rootHBox" alignment="CENTER_LEFT" spacing="10.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-width: 0 0 0 4; -fx-border-radius: 0 12 12 0; -fx-cursor: hand;" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.NotificationCellController">
 
     <padding><Insets bottom="10.0" left="12.0" right="12.0" top="10.0" /></padding>
-
-    <!-- Icon loại thông báo -->
-    <Label fx:id="iconLabel" style="-fx-font-size: 18px;" text="🔔" />
 
     <!-- Nội dung chính -->
     <VBox spacing="3.0" HBox.hgrow="ALWAYS">
