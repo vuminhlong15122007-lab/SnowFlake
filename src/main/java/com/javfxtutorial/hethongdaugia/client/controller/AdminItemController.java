@@ -26,6 +26,8 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AdminItemController implements ResponseListener {
     @FXML private TableView<Auction> itemTable;
@@ -37,6 +39,8 @@ public class AdminItemController implements ResponseListener {
     @FXML private TableColumn<Auction, String> colOwner;
     @FXML private TableColumn<Auction, String> colStatus;
     private ObservableList<Auction> observableList;
+    private static final Logger log = LoggerFactory.getLogger(AdminItemController.class);
+
 
     @FXML
     public void initialize() {
@@ -46,31 +50,26 @@ public class AdminItemController implements ResponseListener {
         colId.setCellValueFactory(new PropertyValueFactory<>("auctionId"));
         colItemName.setCellValueFactory(
                 cellData -> new SimpleStringProperty(cellData.getValue().getItem().getName()));
-        colCategory.setCellValueFactory(new PropertyValueFactory<>("status")); // truyền bừa
-        colOwner.setCellValueFactory(new PropertyValueFactory<>("sellerId"));
         colStartPrice.setCellValueFactory(
-                cellData ->
-                        new SimpleStringProperty(
-                                String.format("%,.0f VND", cellData.getValue().getCurrentPrice())));
-
+                cellData -> new SimpleStringProperty(
+                        String.format("%,.0f VND", cellData.getValue().getCurrentPrice())));
         colStepPrice.setCellValueFactory(
-                cellData ->
-                        new SimpleStringProperty(
-                                String.format("%,.0f VND", cellData.getValue().getStepPrice())));
+                cellData -> new SimpleStringProperty(
+                        String.format("%,.0f VND", cellData.getValue().getStepPrice())));
         colCategory.setCellValueFactory(
-                cellData ->
-                        new SimpleStringProperty(
-                                cellData.getValue().getItem().getCategory().name()));
+                cellData -> new SimpleStringProperty(
+                        cellData.getValue().getItem().getCategory().name()));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
-        try {
-            if (!AuctionModificationManager.getInstance().isAllAuctionsLoaded) {
-                loadItemData();
-            }
-        } catch (IOException
-                | ClassNotFoundException
-                | SendFailedException
-                | ConnectionFailedException e) {
-            throw new RuntimeException(e);
+
+        if (!AuctionModificationManager.getInstance().isAllAuctionsLoaded) {
+            new Thread(() -> {
+                try {
+                    loadItemData();
+                } catch (Exception e) {
+                    log.error("Lỗi load data: {}", e.getMessage(), e);
+                    Platform.runLater(() -> showAlert("Lỗi", "Tải dữ liệu thất bại"));
+                }
+            }).start();
         }
     }
 
@@ -118,10 +117,14 @@ public class AdminItemController implements ResponseListener {
         // neu co
         if (result == yes) {
             DeleteAuctionCommand cmd = new DeleteAuctionCommand(selectItem);
-            NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.register(DeleteAuctionCommand.class, this);
-            ServerConnection connection = NetworkManager.getConnection();
-            connection.sendCommand(cmd);
+            new Thread(() -> {
+                try {
+                    NetworkManager.getInstance().sendRequest(cmd, this);
+                } catch (Exception e) {
+                    log.error("Lỗi xóa auction: {}", e.getMessage(), e);
+                    Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu"));
+                }
+            }).start();
         }
     }
     @FXML
@@ -173,10 +176,9 @@ public class AdminItemController implements ResponseListener {
     public void onResponse(Response rp) {
         if (rp.getCommand().getClass() == DeleteAuctionCommand.class) {
             if (rp.isSuccess()) {
-                Platform.runLater(
-                        () -> {
-                            showAlert("Xóa thành công", rp.getMessage(), "FunnyCat.gif");
-                        });
+                Platform.runLater(() -> {
+                    showAlert("Xóa thành công", rp.getMessage(), "FunnyCat.gif");
+                });
                 try {
                     loadItemData(); // load lai bang
                 } catch (IOException
@@ -186,10 +188,9 @@ public class AdminItemController implements ResponseListener {
                     throw new RuntimeException(ex);
                 }
             } else {
-                Platform.runLater(
-                        () -> {
-                            showAlert("Lỗi", rp.getMessage(), "Wrong.gif");
-                        });
+                Platform.runLater(() -> {
+                    showAlert("Lỗi", rp.getMessage(), "Wrong.gif");
+                });
             }
             NetworkManager networkManager = NetworkManager.getInstance();
             networkManager.unregister(DeleteAuctionCommand.class, this);
@@ -205,13 +206,14 @@ public class AdminItemController implements ResponseListener {
                 }
             });}
         if (rp.getCommand().getClass() == GetAllAuctionsCommand.class) {
-            if (rp.isSuccess()) {
-                ArrayList<Auction> auctionlist = (ArrayList<Auction>) rp.getPayLoad();
-                AuctionModificationManager.getInstance().isAllAuctionsLoaded = true;
-                observableList.setAll(auctionlist);
-            }
-            NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.unregister(GetAllAuctionsCommand.class, this);
+            Platform.runLater(() -> {
+                if (rp.isSuccess()) {
+                    ArrayList<Auction> auctionlist = (ArrayList<Auction>) rp.getPayLoad();
+                    AuctionModificationManager.getInstance().isAllAuctionsLoaded = true;
+                    observableList.setAll(auctionlist);
+                }
+            });
+            NetworkManager.getInstance().unregister(GetAllAuctionsCommand.class, this);
         }
     }
 }

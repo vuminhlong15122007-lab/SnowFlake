@@ -30,6 +30,7 @@ public class Edit_User_Popup_Controller implements ResponseListener {
     private static final Logger log = LoggerFactory.getLogger(Edit_User_Popup_Controller.class);
     @FXML private TextField txtName;
     @FXML private TextField txtEmail;
+    @FXML private PasswordField txtPassword;
     @FXML private TextField txtPhoneNumber;
     @FXML private ComboBox<String> cbRole;
     @FXML private Button btnCancel;
@@ -39,10 +40,10 @@ public class Edit_User_Popup_Controller implements ResponseListener {
     public void initialize() {
         // gan su kien dong cua so cho nut huy
         btnCancel.setOnAction(_ -> {
-                    // Llay va dong stage hien tai
-                    Stage stage = (Stage) btnCancel.getScene().getWindow();
-                    stage.close();
-                });
+            // Llay va dong stage hien tai
+            Stage stage = (Stage) btnCancel.getScene().getWindow();
+            stage.close();
+        });
         // them chon vai tro
         cbRole.setItems(FXCollections.observableArrayList("USER", "ADMIN"));
     }
@@ -55,12 +56,18 @@ public class Edit_User_Popup_Controller implements ResponseListener {
         saveEvent = event;
         String name = txtName.getText();
         String email = txtEmail.getText();
+        String password = txtPassword.getText();
         String sdt = txtPhoneNumber.getText();
         String selectRole = cbRole.getValue();
-        String password = "000000";
+
         // khong de o trong
-        if (name.isEmpty() || email.isEmpty() || sdt.isEmpty() || selectRole == null) {
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty() || sdt.isEmpty() || selectRole == null) {
             message.setText("Vui lòng điền đầy đủ thông tin!");
+            return;
+        }
+        // check mat khau
+        if (password.length() < 6) {
+            message.setText("Mật khẩu phải có ít nhất 6 ký tự!");
             return;
         }
         // check so dien thoai
