@@ -13,6 +13,8 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 
+import java.time.format.DateTimeFormatter;
+
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
@@ -39,11 +41,12 @@ public class ProductDisplayController {
 
     private final Item item = ClientModel.getInstance().getCurrentAuction().getItem();
     private final Auction auction = ClientModel.getInstance().getCurrentAuction();
+    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
 
     public void setData() { // nhan du lieu tu man Item..
         LbMotasp.setText(item.getDescription());
-        StartTimeLabel.setText(String.valueOf(auction.getStartingTime()));
-        EndingtimeLabel.setText(String.valueOf(auction.getEndingTime()));
+        StartTimeLabel.setText(auction.getStartingTime().format(TIME_FMT));
+        EndingtimeLabel.setText(auction.getEndingTime().format(TIME_FMT));
         lbTenngban.setText(item.getSellerName());
         ItemNameLabel.setText(item.getName());
         ItemPriceLabel.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
