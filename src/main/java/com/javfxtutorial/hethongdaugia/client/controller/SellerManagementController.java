@@ -8,6 +8,7 @@ import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.Exception.bus.InvalidInputException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.*;
@@ -313,11 +314,13 @@ public class SellerManagementController implements ResponseListener {
         // Validation thời gian (Doc 5 — Doc 6 thiếu)
         if (tGianBD.isAfter(tGianKT)) {
             showAlert("Lỗi", "Thời gian bắt đầu không được sau thời gian kết thúc");
-            throw new Exception("Invalid time range");
+            throw new InvalidInputException("startTime", String.valueOf(tGianBD),
+                    "Thời gian bắt đầu không được sau thời gian kết thúc");
         }
         if (tGianBD.isBefore(LocalDateTime.now())) {
             showAlert("Lỗi", "Thời gian bắt đầu phải sau thời gian bây giờ");
-            throw new Exception("Start time in the past");
+            throw new InvalidInputException("startTime", String.valueOf(tGianBD),
+                    "Thời gian bắt đầu phải sau thời gian hiện tại");
         }
 
         int sellerId = ClientModel.getInstance().getCurrentUser().getId();
