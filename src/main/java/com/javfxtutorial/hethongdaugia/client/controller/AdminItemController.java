@@ -13,6 +13,8 @@ import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import java.io.IOException;
@@ -123,6 +125,50 @@ public class AdminItemController implements ResponseListener {
             connection.sendCommand(cmd);
         }
     }
+    @FXML
+    public void clickToGoAuction(ActionEvent event) {
+        Auction selected = itemTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showAlert("Thông báo", "Vui lòng chọn một sản phẩm.");
+            return;
+        }
+        ClientModel.getInstance().setCurrentAuction(selected);
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionInformation.fxml");
+    }
+    @FXML
+    public void clickToCancelAuction(ActionEvent event) {
+        Auction selected = itemTable.getSelectionModel().getSelectedItem();
+        if (selected == null) {
+            showAlert("Thông báo", "Vui lòng chọn một phiên đấu giá.");
+            return;
+        }
+        if (selected.getStatus() == AuctionStatus.CLOSED
+                || selected.getStatus() == AuctionStatus.CANCELLED) {
+            showAlert("Thông báo", "Phiên này đã kết thúc hoặc đã bị hủy.");
+            return;
+        }
+
+        Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
+        confirm.setTitle("Xác nhận hủy");
+        confirm.setHeaderText("Hủy phiên đấu giá?");
+        confirm.setContentText("Sản phẩm: " + selected.getItem().getName());
+        ButtonType yes = new ButtonType("Hủy phiên", ButtonBar.ButtonData.YES);
+        ButtonType no = new ButtonType("Không", ButtonBar.ButtonData.NO);
+        confirm.getButtonTypes().setAll(yes, no);
+
+        confirm.showAndWait().ifPresent(result -> {
+            if (result == yes) {
+                try {
+                    selected.setStatus(AuctionStatus.CANCELLED);
+                    UpdateAuctionStatusCommand cmd = new UpdateAuctionStatusCommand(selected);
+                    NetworkManager.getConnection().sendCommand(cmd);
+                    NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
+                } catch (Exception e) {
+                    showAlert("Lỗi", "Không thể hủy phiên: " + e.getMessage());
+                }
+            }
+        });
+    }
 
     @Override
     public void onResponse(Response rp) {
@@ -149,6 +195,16 @@ public class AdminItemController implements ResponseListener {
             NetworkManager networkManager = NetworkManager.getInstance();
             networkManager.unregister(DeleteAuctionCommand.class, this);
         }
+        if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
+            NetworkManager.getInstance().unregister(UpdateAuctionStatusCommand.class, this);
+            Platform.runLater(() -> {
+                if (rp.isSuccess()) {
+                    showAlert("Thành công", "Đã hủy phiên đấu giá.", "FunnyCat.gif");
+                    try { loadItemData(); } catch (Exception e) { e.printStackTrace(); }
+                } else {
+                    showAlert("Lỗi", rp.getMessage(), "Wrong.gif");
+                }
+            });}
         if (rp.getCommand().getClass() == GetAllAuctionsCommand.class) {
             if (rp.isSuccess()) {
                 ArrayList<Auction> auctionlist = (ArrayList<Auction>) rp.getPayLoad();

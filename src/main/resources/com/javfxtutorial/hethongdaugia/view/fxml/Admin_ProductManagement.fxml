@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="720.0" prefWidth="1280.0" styleClass="sf-page" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminItemController">
+<BorderPane prefHeight="720.0" prefWidth="1280.0" styleClass="sf-page" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminItemController">
 
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="67.0" prefWidth="1280.0" spacing="16.0" style="-fx-background-color: linear-gradient(to right, -sf-surface-raised, -sf-surface, -sf-page-start);                      -fx-border-color: -sf-border;                      -fx-border-width: 0 0 1 0;                      -fx-effect: dropshadow(gaussian, -sf-shadow, 12, 0.2, 0, 3);">
@@ -64,6 +73,8 @@
             <Label styleClass="sf-section-title" text="Thao tác quản trị" />
 
             <Button fx:id="UserAdmin" maxWidth="Infinity" onAction="#clickToGoUserAdmin" prefHeight="44.0" styleClass="sf-btn-secondary" text="Quản lý người dùng" />
+         <Button fx:id="btnToAuction" maxWidth="Infinity" onAction="#clickToGoAuction" prefHeight="44.0" styleClass="sf-btn-secondary" text="Xem phiên đấu giá" />
+         <Button fx:id="btnCancelAuction" maxWidth="Infinity" onAction="#clickToCancelAuction" prefHeight="44.0" styleClass="sf-btn-danger" text="Hủy phiên đấu giá" />
 
             <Button fx:id="btnDeleteProduct" maxWidth="Infinity" onAction="#clickToDeleteItem" prefHeight="44.0" styleClass="sf-btn-danger" text="Xóa sản phẩm" />
 

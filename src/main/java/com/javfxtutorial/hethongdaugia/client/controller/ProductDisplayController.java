@@ -7,6 +7,7 @@ import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.Util.TimeLeft;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.common.model.*;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import java.time.format.DateTimeFormatter;
@@ -97,8 +98,12 @@ public class ProductDisplayController {
 
     @FXML
     public void QuaylaiMenu(ActionEvent event) {
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml");
-    }
+        AccountType type = ClientModel.getInstance().getCurrentUser().getAccountType();
+        if (type == AccountType.ADMIN) {
+            changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_ProductManagement.fxml");
+        } else {
+            changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml");
+        }    }
 
     @FXML
     public void goToManHinhDauGiaTrucTiep(ActionEvent event) {
