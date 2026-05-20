@@ -106,16 +106,27 @@ public class SellerNotification implements Serializable {
     }
 
     public String getMessage() {
-        String price = String.format("%,.0f", winningPrice);
         return switch (type) {
-            case CLOSED ->
-                    String.format(
+            case CLOSED -> {
+                // Không có người thắng: winnerName rỗng, null, "N/A", hoặc giá = 0
+                boolean noWinner = winnerName == null || winnerName.isBlank() || winnerName.equals("N/A") || winningPrice == null || winningPrice.compareTo(java.math.BigDecimal.ZERO) == 0;
+                if (noWinner) {
+                    yield String.format(
+                            "🏆 Phiên \"%s\" kết thúc!\nKhông có ai tham gia đấu giá.\nBạn có thể đăng lại phiên nếu muốn.",
+                            productName);
+                } else {
+                    String price = String.format("%,.0f", winningPrice);
+                    yield String.format(
                             "🏆 Phiên \"%s\" kết thúc!\nNgười thắng: %s — Giá: %s VND\nĐang chờ họ thanh toán.",
                             productName, winnerName, price);
-            case PAID ->
-                    String.format(
-                            "✅ Phiên \"%s\" đã được thanh toán!\n%s đã thanh toán thành công %s VND.\nChuẩn bị giao hàng cho họ nhé!",
-                            productName, winnerName, price);
+                }
+            }
+            case PAID -> {
+                String price = String.format("%,.0f", winningPrice);
+                yield String.format(
+                        "✅ Phiên \"%s\" đã được thanh toán!\n%s đã thanh toán thành công %s VND.\nChuẩn bị giao hàng cho họ nhé!",
+                        productName, winnerName, price);
+            }
             case CANCELLED ->
                     String.format(
                             "❌ Phiên \"%s\" bị hủy!\n%s không thanh toán trong 24h.\nBạn có thể kiện nếu cần.",

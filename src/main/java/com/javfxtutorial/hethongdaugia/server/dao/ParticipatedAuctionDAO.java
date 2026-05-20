@@ -90,6 +90,8 @@ public class ParticipatedAuctionDAO {
                         + "    i.sellerName, \n"
                         + "    i.category,\n"
                         + "    u.name AS winner_name,\n"
+                        + "    u.email AS winner_email,\n"  
+                        + "    u.sdt AS winner_sdt,\n"
                         + "\n"
                         + "    e.brand AS e_brand, \n"
                         + "    e.model,\n"
