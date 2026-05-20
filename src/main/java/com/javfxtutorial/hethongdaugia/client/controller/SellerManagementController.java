@@ -27,6 +27,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
@@ -44,6 +47,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Popup;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -97,7 +101,8 @@ public class SellerManagementController implements ResponseListener {
     private NotifiCationPopupController popupController;
 
     private Auction selectedAuction;
-    private static boolean isLoaded = false; // tránh load lại khi navigate (Doc 5)
+    private boolean isLoaded = false;
+    private Timeline autoRefreshTimeline;
 
     // Base64 ảnh mặc định
     private String image =
@@ -105,6 +110,7 @@ public class SellerManagementController implements ResponseListener {
 
     // ── Navigation ────────────────────────────────────────────────────────────
     public void goMenu(ActionEvent event) {
+        if (autoRefreshTimeline != null) autoRefreshTimeline.stop();
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
     }
 
@@ -202,6 +208,15 @@ public class SellerManagementController implements ResponseListener {
 
         NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
         notifications.addListener((ListChangeListener<SellerNotification>) change -> Platform.runLater(this::updateBadge));
+
+        // AUTO-REFRESH: tự reload thông báo mỗi 30 giây
+        autoRefreshTimeline = new Timeline(new KeyFrame(Duration.seconds(30), event -> {
+            if (ClientModel.getInstance().getCurrentUser() != null) {
+                loadMyProducts();
+            }
+        }));
+        autoRefreshTimeline.setCycleCount(Timeline.INDEFINITE);
+        autoRefreshTimeline.play();
     }
 
 

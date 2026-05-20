@@ -71,9 +71,6 @@ public class ClientModel {
         return sellerNotifications;
     }
 
-    public void clearSellerNotifications() {
-        sellerNotifications.clear();
-    }
 
     // ── Read notification IDs (persist qua Preferences) ───────────────────────
     private Set<Integer> readNotificationIds = new HashSet<>();
@@ -154,5 +151,6 @@ public class ClientModel {
         currentAuction = null;
         sellerNotifications.clear();
         readNotificationIds.clear();
+        myAuctions.clear();
     }
 }

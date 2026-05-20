@@ -38,8 +38,7 @@ public class Edit_User_Popup_Controller implements ResponseListener {
     @FXML
     public void initialize() {
         // gan su kien dong cua so cho nut huy
-        btnCancel.setOnAction(
-                _ -> {
+        btnCancel.setOnAction(_ -> {
                     // Llay va dong stage hien tai
                     Stage stage = (Stage) btnCancel.getScene().getWindow();
                     stage.close();
@@ -92,34 +91,29 @@ public class Edit_User_Popup_Controller implements ResponseListener {
 
     @Override
     public void onResponse(Response rp) {
-        Platform.runLater(
-                () -> {
-                    if (rp.isSuccess()) {
-                        Stage stage1 =
-                                (Stage) ((Node) saveEvent.getSource()).getScene().getWindow();
-                        stage1.close();
-                        Stage stage = new Stage();
-                        stage.setTitle("Tạo Tài Khoản Thành Công");
-                        FXMLLoader fxmlLoader =
-                                new FXMLLoader(
-                                        MainApplication.class.getResource(
-                                                "/com/javfxtutorial/hethongdaugia/view/fxml/SignUpSuccessPopup.fxml"));
-                        stage.initStyle(StageStyle.TRANSPARENT);
-                        Scene scene = null;
-                        try {
-                            scene = new Scene(fxmlLoader.load());
-                            ThemeManager.apply(scene);
-                        } catch (IOException e) {
-                            log.error("Lỗi load popup thành công: {}", e.getMessage(), e);
-                            showAlert("Thành công", "Tạo tài khoản thành công!");
-                        }
-                        scene.setFill(Color.TRANSPARENT);
-                        stage.setScene(scene);
-                        stage.show();
-                    } else {
-                        showAlert("Đăng ký không thành công", rp.getMessage(), "False.gif");
-                    }
-                });
+        Platform.runLater(() -> {
+            if (rp.isSuccess()) {
+                Stage stage1 = (Stage) ((Node) saveEvent.getSource()).getScene().getWindow();
+                stage1.close();
+                Stage stage = new Stage();
+                stage.setTitle("Tạo Tài Khoản Thành Công");
+                FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/fxml/SignUpSuccessPopup.fxml"));
+                stage.initStyle(StageStyle.TRANSPARENT);
+                Scene scene = null;
+                try {
+                    scene = new Scene(fxmlLoader.load());
+                    ThemeManager.apply(scene);
+                } catch (IOException e) {
+                    log.error("Lỗi load popup thành công: {}", e.getMessage(), e);
+                    showAlert("Thành công", "Tạo tài khoản thành công!");
+                }
+                scene.setFill(Color.TRANSPARENT);
+                stage.setScene(scene);
+                stage.show();
+            } else {
+                showAlert("Đăng ký không thành công", rp.getMessage(), "False.gif");
+            }
+        });
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.unregister(AddAccountCommand.class, this);
     }

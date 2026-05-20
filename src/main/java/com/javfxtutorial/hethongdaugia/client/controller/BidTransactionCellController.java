@@ -11,8 +11,7 @@ public class BidTransactionCellController {
     @FXML private Label bidderNameLabel;
     @FXML private Label timestampLabel;
 
-    private static final DateTimeFormatter TIME_FMT =
-            DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
+    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
 
     public void setData(BidTransaction bidTransaction) {
         amountLabel.setText(String.format("%,.0f VND", bidTransaction.getAmount()));
