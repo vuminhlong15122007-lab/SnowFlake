@@ -22,8 +22,8 @@
 
             <Region prefHeight="68.0" prefWidth="545.0" HBox.hgrow="ALWAYS" />
 
-            <Button mnemonicParsing="false" onAction="#clickToGoProductDisplayInfo" prefHeight="27.0" prefWidth="133.0" styleClass="sf-btn-secondary" text="Thông tin sản phẩm" />
-            <Button mnemonicParsing="false" onAction="#goMenu" prefHeight="27.0" prefWidth="106.0" styleClass="sf-btn-primary" text="Quay lại Menu" />
+            <Button mnemonicParsing="false" onAction="#clickToGoProductDisplayInfo" prefHeight="30.0" prefWidth="155.0" styleClass="sf-btn-secondary" text="Thông tin sản phẩm" />
+            <Button mnemonicParsing="false" onAction="#goMenu" prefHeight="30.0" prefWidth="118.0" styleClass="sf-btn-primary" text="Quay lại Menu" />
         </HBox>
     </top>
 

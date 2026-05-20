@@ -16,6 +16,10 @@ public class DeleteAuctionCommand extends Command {
     private final Auction auction;
     public DeleteAuctionCommand(Auction auction) {this.auction = auction;}
 
+    public Auction getAuction() {
+        return auction;
+    }
+
     @Override
     public Response handle() {
         try{
@@ -25,7 +29,7 @@ public class DeleteAuctionCommand extends Command {
                 if (result1  <= 0) {
                     return new Response(false, "Không thể xóa phiên đấu giá", null, this);
                 }
-                Response rp = new Response(true, "xóa phiên đấu giá thành công", auction, this);
+                Response rp = new Response(true, "xóa phiên đấu giá thành công", null, this);
                 ClientHandler.broadcast(rp);
                 return rp;
             }
