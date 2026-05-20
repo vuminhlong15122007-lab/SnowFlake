@@ -18,11 +18,8 @@ public class GetParticipatedAuctionsByBidderCommand extends Command {
     public Response handle() {
         int userId = (int) this.getData("currentUserId");
         try {
-            ArrayList<Auction> auctions = new ArrayList<>();
-            auctions =
-                    (ArrayList<Auction>)
-                            ParticipatedAuctionDAO.getInstance()
-                                    .getParticipatedAuctionsByBidder(userId);
+            ArrayList<Auction> auctions = new ArrayList<Auction>();
+            auctions = (ArrayList<Auction>) ParticipatedAuctionDAO.getInstance().getParticipatedAuctionsByBidder(userId);
             auctions.forEach(
                     auction -> {
                         try {
