@@ -15,7 +15,7 @@ public class AuctionSessionController {
     // ── Dùng chung cho tất cả cell ──
     @FXML private Label lbProductName;
     @FXML private Label lbSellerName;
-    @FXML private Label lbPrice;
+    @FXML private Label lbPrice, lbWinner;
     @FXML private Label lbCategory;
     @FXML private Label statusBadge;
     @FXML private ImageView productImage;
@@ -23,8 +23,6 @@ public class AuctionSessionController {
     @FXML private Label nguoidandau;
     @FXML private Label gia ;
 
-    // ── Riêng cho cell ENDED ──
-    @FXML private Label lbWinner;
 
     private Auction auction;
 
@@ -78,6 +76,7 @@ public class AuctionSessionController {
                 setStatusBadgeClass("sf-status-ended");
                 lbPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
                 lbCategory.setText(""+(auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
+                lbWinner.setText(auction.getWinnerName() != null ? auction.getWinnerName(): "Không có người tham gia đấu giá");
                 if (lbWinner != null) lbWinner.setText(""+auction.getWinnerId());
                 if (actionButton != null) {
                     actionButton.setText("ĐÃ KẾT THÚC");
