@@ -10,6 +10,7 @@ import com.javfxtutorial.hethongdaugia.common.Exception.bid.SelfBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DuplicateKeyException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.QueryExecutionException;
+import com.javfxtutorial.hethongdaugia.common.model.domain.AntiSnipeExtender;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.domain.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
@@ -35,9 +36,11 @@ import org.slf4j.LoggerFactory;
 public class AuctionManager {
     private static final Logger log = LoggerFactory.getLogger(AuctionManager.class);
 
-    // Néue có người đắtj giá X s cuối thì ra hạn thêm Y
     private static final long ANTI_SNIPE_X_SECONDS = 60;
     private static final long ANTI_SNIPE_Y_SECONDS = 60;
+    
+    private final AntiSnipeExtender antiSnipeExtender =
+            new AntiSnipeExtender(ANTI_SNIPE_X_SECONDS, ANTI_SNIPE_Y_SECONDS);
 
     // ── Singleton thread-safe ─────────────────────────
     private static volatile AuctionManager instance;
@@ -169,17 +172,9 @@ public class AuctionManager {
 
             System.out.println("Đã cập nhật lại auction");
 
+
             // Logic gia hạn phiên đấu giá
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime endingTime = auction.getEndingTime();
-            long secondsLeft = Duration.between(now, endingTime).toSeconds();
-            if (secondsLeft <= ANTI_SNIPE_X_SECONDS && secondsLeft > 0) {
-                endTimeNew = endingTime.plusSeconds(ANTI_SNIPE_Y_SECONDS);
-                auction.setEndingTime(endTimeNew);
-                System.out.println("GIA HẠN PHIÊN ĐẤU GIÁ THÀNH CÔNG");
-            } else {
-                endTimeNew = endingTime;
-            }
+            endTimeNew = antiSnipeExtender.applyIfNeeded(auction);
 
             // 5. Lưu DB
             AuctionDAO.getInstance().update(auction);
@@ -196,6 +191,7 @@ public class AuctionManager {
             System.out.println("Đã lưu vào database");
             acceptedBid = bid;
             acceptedBid.setNewEndingTime(endTimeNew);
+
         } finally {
             lock.unlock();
         }
@@ -210,7 +206,7 @@ public class AuctionManager {
 
     // ─────────────────────────────────────────────────
     // NOTIFY — thông báo cho tất cả subscriber
-    // ─────────────────────────────────────────────────
+
     private void notifySubscribers(int auctionId, BidTransaction bid, ClientHandler sender) {
         List<BidListener> list = auctionSubscribers.get(auctionId);
         if (list == null || list.isEmpty()) return;
@@ -224,9 +220,8 @@ public class AuctionManager {
         return amount.compareTo(auction.getCurrentPrice().add(auction.getStepPrice())) >= 0;
     }
 
-    // ─────────────────────────────────────────────────
     // AUCTION STATUS
-    // ─────────────────────────────────────────────────
+
     public AuctionStatus refreshAuctionStatus(Auction auction) throws DataException {
         AuctionStatus previousStatus = auction.getStatus();
 
@@ -250,9 +245,7 @@ public class AuctionManager {
         return auction.getStatus();
     }
 
-    // ─────────────────────────────────────────────────
-    // AUTO BID — giữ nguyên logic của người khác viết
-    // ─────────────────────────────────────────────────
+
     public synchronized boolean registerAutoBid(AutoBidConfig config)
             throws DataException,
                     LowerThanCurrentBidException,

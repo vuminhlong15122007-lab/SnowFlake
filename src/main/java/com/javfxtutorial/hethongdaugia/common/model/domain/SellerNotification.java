@@ -112,7 +112,7 @@ public class SellerNotification implements Serializable {
                 boolean noWinner = winnerName == null || winnerName.isBlank() || winnerName.equals("N/A") || winningPrice == null || winningPrice.compareTo(java.math.BigDecimal.ZERO) == 0;
                 if (noWinner) {
                     yield String.format(
-                            "🏆 Phiên \"%s\" kết thúc!\nKhông có ai tham gia đấu giá.\nBạn có thể đăng lại phiên nếu muốn.",
+                            "😞 Phiên \"%s\" kết thúc!\nKhông có ai tham gia đấu giá.\nBạn có thể đăng lại phiên nếu muốn.",
                             productName);
                 } else {
                     String price = String.format("%,.0f", winningPrice);
