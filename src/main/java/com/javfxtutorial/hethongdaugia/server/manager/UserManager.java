@@ -1,6 +1,5 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
-import com.javfxtutorial.hethongdaugia.common.Exception.ErrorCode;
 import com.javfxtutorial.hethongdaugia.common.Exception.auth.InvalidCredentialsException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auth.UserNotFoundException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
@@ -25,7 +24,8 @@ public class UserManager {
         return instance;
     }
 
-    public User authenticate(String username, String password)  throws InvalidCredentialsException, DataException{
+    public User authenticate(String username, String password)
+            throws InvalidCredentialsException, DataException {
         try {
             User user = UserDAO.getInstance().selectByUsername(username);
             if (user == null) {
@@ -41,79 +41,97 @@ public class UserManager {
                 if (!PasswordHasher.isHashed(user.getPassWord())) {
                     user.setPassWord(password);
                     UserDAO.getInstance().update(user);
-                }}
+                }
+            }
             log.info("Xác thực thành công: {}", username);
             return user;
-        }catch (EntityNotFoundException e) {
-                log.warn("Không tìm thấy user: {}", username);
-                throw new InvalidCredentialsException();
-            }
+        } catch (EntityNotFoundException e) {
+            log.warn("Không tìm thấy user: {}", username);
+            throw new InvalidCredentialsException();
+        }
     }
 
-    public User updateUserProfile(int userId, String username, String email, String phone, String avt) throws UserNotFoundException, DataException {
+    public User updateUserProfile(
+            int userId, String username, String email, String phone, String avt)
+            throws UserNotFoundException, DataException {
         log.info("Cập nhật profile: userId={}", userId);
-    try{
-        User oldUser = UserDAO.getInstance().selectById(userId);
-        if (oldUser == null) {
+        try {
+            User oldUser = UserDAO.getInstance().selectById(userId);
+            if (oldUser == null) {
+                return null;
+            }
+
+            String resolvedName =
+                    username == null || username.isBlank() ? oldUser.getName() : username.trim();
+            String resolvedEmail =
+                    email == null || email.isBlank() ? oldUser.getEmail() : email.trim();
+            String resolvedPhone =
+                    phone == null || phone.isBlank() ? oldUser.getSdt() : phone.trim();
+            String resolvedAvatar = avt == null ? oldUser.getImagePath() : avt;
+
+            User updateUser =
+                    new User(
+                            userId,
+                            resolvedName,
+                            oldUser.getPassWord(),
+                            resolvedEmail,
+                            resolvedPhone,
+                            oldUser.getAccountType(),
+                            resolvedAvatar);
+
+            int result = UserDAO.getInstance().update(updateUser);
+            if (result > 0) {
+                return updateUser;
+            }
             return null;
-        }
-
-        String resolvedName = username == null || username.isBlank() ? oldUser.getName() : username.trim();
-        String resolvedEmail = email == null || email.isBlank() ? oldUser.getEmail() : email.trim();
-        String resolvedPhone = phone == null || phone.isBlank() ? oldUser.getSdt() : phone.trim();
-        String resolvedAvatar = avt == null ? oldUser.getImagePath() : avt;
-
-        User updateUser = new User(userId, resolvedName, oldUser.getPassWord(), resolvedEmail, resolvedPhone, oldUser.getAccountType(), resolvedAvatar);
-
-        int result = UserDAO.getInstance().update(updateUser);
-        if (result > 0) {
-            return updateUser;
-        }
-        return null;} catch (EntityNotFoundException e){
-        throw new UserNotFoundException(userId);
+        } catch (EntityNotFoundException e) {
+            throw new UserNotFoundException(userId);
         }
     }
 
-    public boolean deleteUser(int userId, String username, String email, String phone) throws UserNotFoundException, DataException{
-        try{
+    public boolean deleteUser(int userId, String username, String email, String phone)
+            throws UserNotFoundException, DataException {
+        try {
             User deleteUser = UserDAO.getInstance().selectById(userId);
             int result = UserDAO.getInstance().delete(deleteUser);
             if (result > 0) {
                 System.out.println("Xoa user thanh cong");
                 return true;
             }
-            return false;} catch (EntityNotFoundException e){
+            return false;
+        } catch (EntityNotFoundException e) {
             throw new UserNotFoundException(userId);
         }
     }
 
-    public User reset_password(int userId, String passWord) throws UserNotFoundException, DataException {
+    public User reset_password(int userId, String passWord)
+            throws UserNotFoundException, DataException {
         log.info("Đang reset password cho user id={}", userId);
-        try{
+        try {
             User resetPW = UserDAO.getInstance().selectById(userId);
             if (resetPW == null) {
                 log.warn("Không tìm thấy user để reset password: id={}", userId);
                 throw new UserNotFoundException(userId);
             }
-            User newUser = new User(
-                    userId,
-                    resetPW.getName(),
-                    passWord,
-                    resetPW.getEmail(),
-                    resetPW.getSdt(),
-                    resetPW.getAccountType(),
-                    resetPW.getImagePath()
-            );
+            User newUser =
+                    new User(
+                            userId,
+                            resetPW.getName(),
+                            passWord,
+                            resetPW.getEmail(),
+                            resetPW.getSdt(),
+                            resetPW.getAccountType(),
+                            resetPW.getImagePath());
 
             int result = UserDAO.getInstance().update(newUser);
             if (result > 0) {
                 System.out.println("Doi mat khau thanh cong");
-                    return newUser;
+                return newUser;
             }
-            return null;}catch (EntityNotFoundException e) {
+            return null;
+        } catch (EntityNotFoundException e) {
             log.warn("Không tìm thấy user để reset password: id={}", userId);
             throw new UserNotFoundException(userId);
         }
     }
-
 }

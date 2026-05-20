@@ -1,9 +1,7 @@
 package com.javfxtutorial.hethongdaugia.common.model;
 
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
-
 import java.io.Serializable;
-import java.time.LocalDate;
 
 public class User implements Serializable {
     private String passWord;
@@ -14,33 +12,46 @@ public class User implements Serializable {
     private AccountType accountType;
     private String avt;
 
-
     public User(String name, String passWord, String email, String sdt, AccountType accountType) {
         this.name = name;
         this.passWord = passWord;
         this.email = email;
         this.sdt = sdt;
         this.accountType = accountType;
-        this.avt  = null ;
-    }
-    public User(int id, String name, String passWord, String email, String sdt, AccountType accountType , String avt) {
-        this.id = id;
-        this.name = name;
-        this.passWord = passWord;
-        this.email = email;
-        this.sdt = sdt;
-        this.accountType = accountType;
-        this.avt  = avt ;
+        this.avt = null;
     }
 
-    public User(int id, String name, String passWord, String email, String sdt, AccountType accountType) {
+    public User(
+            int id,
+            String name,
+            String passWord,
+            String email,
+            String sdt,
+            AccountType accountType,
+            String avt) {
         this.id = id;
         this.name = name;
         this.passWord = passWord;
         this.email = email;
         this.sdt = sdt;
         this.accountType = accountType;
-        this.avt = null ;
+        this.avt = avt;
+    }
+
+    public User(
+            int id,
+            String name,
+            String passWord,
+            String email,
+            String sdt,
+            AccountType accountType) {
+        this.id = id;
+        this.name = name;
+        this.passWord = passWord;
+        this.email = email;
+        this.sdt = sdt;
+        this.accountType = accountType;
+        this.avt = null;
     }
 
     public String getPassWord() {
@@ -83,9 +94,13 @@ public class User implements Serializable {
         this.id = id;
     }
 
-    public void setImagePath(String avt){this.avt = avt;}
+    public void setImagePath(String avt) {
+        this.avt = avt;
+    }
 
-    public String getImagePath(){return this.avt;}
+    public String getImagePath() {
+        return this.avt;
+    }
 
     public AccountType getAccountType() {
         return accountType;

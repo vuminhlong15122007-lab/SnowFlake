@@ -16,7 +16,7 @@ public class AutoBidCommand extends Command {
         if (config == null) {
             return new Response(false, "Cấu hình không hợp lệ", null, this);
         }
-        try{
+        try {
             boolean success = AuctionManager.getInstance().registerAutoBid(config);
             String message;
             if (!success) {
@@ -27,7 +27,8 @@ public class AutoBidCommand extends Command {
                 message = "đã tắt Bot thành công";
             }
 
-            return new Response(success, message, config, this);} catch (Exception e) {
+            return new Response(success, message, config, this);
+        } catch (Exception e) {
             log.error("Lỗi AutoBid: {}", e.getMessage(), e);
             return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);
         }

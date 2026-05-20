@@ -1,18 +1,17 @@
 package com.javfxtutorial.hethongdaugia.client.Util;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.scene.control.Label;
 import javafx.util.Duration;
 
-import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
-
-public class TimeLeft {       // Class tái sd — truyền vào Label và end là chạy .
-    private Timeline timeline;   // dong ho dem nguoc
+public class TimeLeft { // Class tái sd — truyền vào Label và end là chạy .
+    private Timeline timeline; // dong ho dem nguoc
     private final Label label;
     private final LocalDateTime end;
-    private Runnable onFinished;     // Hd se chay khi thoi gian ket thuc
+    private Runnable onFinished; // Hd se chay khi thoi gian ket thuc
 
     public TimeLeft(Label label, LocalDateTime end) {
         this.label = label;
@@ -21,7 +20,7 @@ public class TimeLeft {       // Class tái sd — truyền vào Label và end l
 
     public void start() {
         timeline = new Timeline(new KeyFrame(Duration.seconds(1), _ -> tick()));
-        timeline.setCycleCount(Timeline.INDEFINITE);  //tgian dong ho dem nguoc chua xd
+        timeline.setCycleCount(Timeline.INDEFINITE); // tgian dong ho dem nguoc chua xd
         tick();
         timeline.play();
     }
@@ -42,18 +41,20 @@ public class TimeLeft {       // Class tái sd — truyền vào Label và end l
 
         if (second <= 0) {
             label.setText("00:00:00");
-            label.setStyle("-fx-text-fill: -sf-danger; -fx-font-weight: bold; -fx-font-size: 20px;");
+            label.setStyle(
+                    "-fx-text-fill: -sf-danger; -fx-font-weight: bold; -fx-font-size: 20px;");
             stop();
-            if (onFinished != null) onFinished.run();    //nếu co hd can sau khi het gio, thi no se chay
+            if (onFinished != null)
+                onFinished.run(); // nếu co hd can sau khi het gio, thi no se chay
         } else if (second <= 3) {
             label.setStyle("-fx-text-fill: red; -fx-font-weight: bold; -fx-font-size: 20px;");
         } else {
-            label.setStyle("-fx-text-fill: -sf-success; -fx-font-weight: bold; -fx-font-size: 20px;");
+            label.setStyle(
+                    "-fx-text-fill: -sf-success; -fx-font-weight: bold; -fx-font-size: 20px;");
         }
     }
 
-    public void setOnFinished(Runnable onFinished) {   //CAN Chuyeen them  hdong sau khi het gio
+    public void setOnFinished(Runnable onFinished) { // CAN Chuyeen them  hdong sau khi het gio
         this.onFinished = onFinished;
     }
-
 }

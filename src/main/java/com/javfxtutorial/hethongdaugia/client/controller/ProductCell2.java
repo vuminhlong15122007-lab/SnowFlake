@@ -17,7 +17,11 @@ public class ProductCell2 extends ListCell<Auction> {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/Seller_ProductCell.fxml"));
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass()
+                                    .getResource(
+                                            "/com/javfxtutorial/hethongdaugia/view/fxml/Seller_ProductCell.fxml"));
             Parent root = loader.load();
 
             SellerProductController cellController = loader.getController();
@@ -28,7 +32,10 @@ public class ProductCell2 extends ListCell<Auction> {
         } catch (Exception e) {
             e.printStackTrace();
             setGraphic(null);
-            setText(auction.getItem() != null ? auction.getItem().getName() : "Khong the hien thi san pham");
+            setText(
+                    auction.getItem() != null
+                            ? auction.getItem().getName()
+                            : "Khong the hien thi san pham");
         }
     }
 }

@@ -7,7 +7,6 @@ import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
-import com.javfxtutorial.hethongdaugia.server.manager.UserManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +34,8 @@ public class AddAccountCommand extends Command {
         }
 
         try {
-            int result = UserDAO.getInstance().insert(new User(username, password, email, sdt, role));
+            int result =
+                    UserDAO.getInstance().insert(new User(username, password, email, sdt, role));
             if (result > 0) {
                 return new Response(true, "Tạo tài khoản thành công", null, this);
             }

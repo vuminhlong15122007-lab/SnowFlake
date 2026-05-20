@@ -1,4 +1,5 @@
 package com.javfxtutorial.hethongdaugia.server.network;
+
 import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
 
 public interface BidListener {

@@ -1,4 +1,3 @@
-
 module com.javfxtutorial.hethongdaugia {
     requires javafx.controls;
     requires javafx.fxml;
@@ -12,14 +11,19 @@ module com.javfxtutorial.hethongdaugia {
     requires org.slf4j;
     requires java.prefs;
 
-    opens com.javfxtutorial.hethongdaugia.client to javafx.fxml;
-    opens com.javfxtutorial.hethongdaugia.client.controller to javafx.fxml;
-    opens com.javfxtutorial.hethongdaugia.view.fxml to javafx.fxml;
-
-    opens com.javfxtutorial.hethongdaugia.common.model to javafx.base;
-    opens com.javfxtutorial.hethongdaugia.client.model to javafx.base;
-
+    opens com.javfxtutorial.hethongdaugia.client to
+            javafx.fxml;
+    opens com.javfxtutorial.hethongdaugia.client.controller to
+            javafx.fxml;
+    opens com.javfxtutorial.hethongdaugia.view.fxml to
+            javafx.fxml;
+    opens com.javfxtutorial.hethongdaugia.common.model to
+            javafx.base;
+    opens com.javfxtutorial.hethongdaugia.client.model to
+            javafx.base;
 
     exports com.javfxtutorial.hethongdaugia.client;
-    opens com.javfxtutorial.hethongdaugia.client.Util to javafx.fxml;
+
+    opens com.javfxtutorial.hethongdaugia.client.Util to
+            javafx.fxml;
 }

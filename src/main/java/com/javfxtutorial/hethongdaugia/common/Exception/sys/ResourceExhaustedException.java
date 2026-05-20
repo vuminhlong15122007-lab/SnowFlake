@@ -13,7 +13,8 @@ public class ResourceExhaustedException extends SystemException {
     }
 
     public ResourceExhaustedException(String resourceType) {
-        super(ErrorCode.SYS_RESOURCE_EXHAUSTED,
+        super(
+                ErrorCode.SYS_RESOURCE_EXHAUSTED,
                 String.format("Tài nguyên '%s' đã cạn kiệt, vui lòng thử lại sau", resourceType));
         this.resourceType = resourceType;
     }

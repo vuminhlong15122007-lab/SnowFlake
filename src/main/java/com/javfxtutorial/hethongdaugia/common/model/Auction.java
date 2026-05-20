@@ -1,12 +1,11 @@
 package com.javfxtutorial.hethongdaugia.common.model;
 
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
-import javafx.beans.property.ObjectProperty;
-import javafx.beans.property.SimpleObjectProperty;
-
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
 
 public class Auction implements Serializable {
     private int auctionId;
@@ -30,14 +29,22 @@ public class Auction implements Serializable {
 
     // Trạng thái của phiên đấu giá
     private AuctionStatus status;
-    private transient ObjectProperty<AuctionStatus> statusProperty; //dùng transient để bỏ qua khi serializable
+    private transient ObjectProperty<AuctionStatus>
+            statusProperty; // dùng transient để bỏ qua khi serializable
 
     // ID của người chiến thắng (sau khi phiên kết thúc)
     private int winnerId;
     private String winnerName = "";
-    public Auction(){}
 
-    public Auction(Item item, int sellerId, BigDecimal initPrice, BigDecimal stepPrice, LocalDateTime startingTime, LocalDateTime endingTime) {
+    public Auction() {}
+
+    public Auction(
+            Item item,
+            int sellerId,
+            BigDecimal initPrice,
+            BigDecimal stepPrice,
+            LocalDateTime startingTime,
+            LocalDateTime endingTime) {
         this.item = item;
         this.sellerId = sellerId;
         this.initPrice = initPrice;
@@ -47,8 +54,19 @@ public class Auction implements Serializable {
         this.endingTime = endingTime;
     }
 
-
-    public Auction(int auctionId, Item item, int sellerId, int winnerId, String winnerName, BigDecimal initPrice, BigDecimal currentPrice, BigDecimal stepPrice, BigDecimal winningPrice, LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
+    public Auction(
+            int auctionId,
+            Item item,
+            int sellerId,
+            int winnerId,
+            String winnerName,
+            BigDecimal initPrice,
+            BigDecimal currentPrice,
+            BigDecimal stepPrice,
+            BigDecimal winningPrice,
+            LocalDateTime startingTime,
+            LocalDateTime endingTime,
+            AuctionStatus status) {
         this.auctionId = auctionId;
         this.item = item;
         this.sellerId = sellerId;
@@ -63,7 +81,14 @@ public class Auction implements Serializable {
         this.winnerName = winnerName;
     }
 
-    public Auction(Item item, int sellerId, BigDecimal initPrice, BigDecimal stepPrice, LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
+    public Auction(
+            Item item,
+            int sellerId,
+            BigDecimal initPrice,
+            BigDecimal stepPrice,
+            LocalDateTime startingTime,
+            LocalDateTime endingTime,
+            AuctionStatus status) {
         this.item = item;
         this.sellerId = sellerId;
         this.initPrice = initPrice;
@@ -74,77 +99,102 @@ public class Auction implements Serializable {
         this.status = status;
     }
 
-
     public AuctionStatus getStatus() {
         return status;
     }
+
     public void setStatus(AuctionStatus status) {
         this.status = status; // Cập nhật biến thường để serialize
         if (this.statusProperty != null) {
             this.statusProperty.set(status); // Cập nhật property để đổi UI
         }
     }
+
     public ObjectProperty<AuctionStatus> statusProperty() {
-            if (statusProperty == null) {
-                // Nếu property bị null (do mới khởi tạo hoặc sau khi de-serialize)
-                // thì tạo mới và gán giá trị từ biến 'status' vào
-                statusProperty = new SimpleObjectProperty<>(status);
-            }
-            return statusProperty;
+        if (statusProperty == null) {
+            // Nếu property bị null (do mới khởi tạo hoặc sau khi de-serialize)
+            // thì tạo mới và gán giá trị từ biến 'status' vào
+            statusProperty = new SimpleObjectProperty<>(status);
         }
-      public int getAuctionId() {
+        return statusProperty;
+    }
+
+    public int getAuctionId() {
         return auctionId;
     }
+
     public void setAuctionId(int auctionId) {
         this.auctionId = auctionId;
     }
-    public Item getItem() {return item;}
-    public void setItem(Item item) {this.item = item;}
+
+    public Item getItem() {
+        return item;
+    }
+
+    public void setItem(Item item) {
+        this.item = item;
+    }
+
     public int getSellerId() {
         return sellerId;
     }
+
     public void setSellerId(int sellerId) {
         this.sellerId = sellerId;
     }
+
     public BigDecimal getInitPrice() {
         return initPrice;
     }
+
     public void setInitPrice(BigDecimal initPrice) {
         this.initPrice = initPrice;
     }
+
     public BigDecimal getCurrentPrice() {
         return currentPrice;
     }
+
     public void setCurrentPrice(BigDecimal currentPrice) {
         this.currentPrice = currentPrice;
     }
+
     public BigDecimal getStepPrice() {
         return stepPrice;
     }
+
     public void setStepPrice(BigDecimal stepPrice) {
         this.stepPrice = stepPrice;
     }
+
     public BigDecimal getWinningPrice() {
         return winningPrice;
     }
+
     public void setWinningPrice(BigDecimal winningPrice) {
         this.winningPrice = winningPrice;
     }
+
     public LocalDateTime getStartingTime() {
         return startingTime;
     }
+
     public void setStartingTime(LocalDateTime startingTime) {
         this.startingTime = startingTime;
     }
+
     public LocalDateTime getEndingTime() {
         return endingTime;
     }
+
     public void setEndingTime(LocalDateTime endingTime) {
         this.endingTime = endingTime;
     }
+
     public int getWinnerId() {
         return winnerId;
     }
+
     public void setWinnerId(int winnerId) {
         this.winnerId = winnerId;
     }
@@ -159,18 +209,31 @@ public class Auction implements Serializable {
 
     @Override
     public String toString() {
-        return "Auction{" +
-                "auctionId=" + auctionId +
-                ", itemId=" + (item == null ? null : item.getItemId()) +
-                ", sellerId=" + sellerId +
-                ", initPrice=" + initPrice +
-                ", currentPrice=" + currentPrice +
-                ", stepPrice=" + stepPrice +
-                ", winningPrice=" + winningPrice +
-                ", startingTime=" + startingTime +
-                ", endingTime=" + endingTime +
-                ", status=" + status +
-                ", winnerId=" + winnerId + ", winnerName=" + winnerName +
-                '}';
+        return "Auction{"
+                + "auctionId="
+                + auctionId
+                + ", itemId="
+                + (item == null ? null : item.getItemId())
+                + ", sellerId="
+                + sellerId
+                + ", initPrice="
+                + initPrice
+                + ", currentPrice="
+                + currentPrice
+                + ", stepPrice="
+                + stepPrice
+                + ", winningPrice="
+                + winningPrice
+                + ", startingTime="
+                + startingTime
+                + ", endingTime="
+                + endingTime
+                + ", status="
+                + status
+                + ", winnerId="
+                + winnerId
+                + ", winnerName="
+                + winnerName
+                + '}';
     }
 }

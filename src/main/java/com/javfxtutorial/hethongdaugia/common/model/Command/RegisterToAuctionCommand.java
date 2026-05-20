@@ -21,10 +21,7 @@ public class RegisterToAuctionCommand extends Command {
             return new Response(false, "Không xác định được client listener", null, this);
         }
 
-        AuctionManager.getInstance().registerToAuction(
-                listener,
-                currentAuction.getAuctionId()
-        );
+        AuctionManager.getInstance().registerToAuction(listener, currentAuction.getAuctionId());
         return new Response(true, "Đăng ký tham gia thành công", null, this);
     }
 }

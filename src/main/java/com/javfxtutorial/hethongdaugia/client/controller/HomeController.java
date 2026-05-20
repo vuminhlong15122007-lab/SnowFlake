@@ -1,62 +1,59 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
+
 import com.javfxtutorial.hethongdaugia.client.Util.UIUtils;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
-import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetUnpaidAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import java.io.IOException;
+import java.util.ArrayList;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
-
 
 public class HomeController implements ResponseListener {
     private static final Logger log = LoggerFactory.getLogger(HomeController.class);
 
     @FXML
-    public void goToProfile(ActionEvent event){
+    public void goToProfile(ActionEvent event) {
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/UserInformation.fxml");
     }
 
     @FXML
-    public void goAuction(ActionEvent event){
-        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml");
+    public void goAuction(ActionEvent event) {
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml");
     }
 
     @FXML
-    public void goLogin(ActionEvent event){
+    public void goLogin(ActionEvent event) {
         // Xóa toàn bộ dữ liệu phiên cũ — tài khoản mới sẽ bắt đầu sạch
         ClientModel.getInstance().logout();
-        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
     }
 
     @FXML
-    public void manageProducts(ActionEvent event){
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Seller_ProductManagement.fxml");
+    public void manageProducts(ActionEvent event) {
+        changeScene(
+                event, "/com/javfxtutorial/hethongdaugia/view/fxml/Seller_ProductManagement.fxml");
     }
 
     @FXML
-    public void goParticipatedAuction(ActionEvent event){
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/UserParticipatedAuction.fxml");
+    public void goParticipatedAuction(ActionEvent event) {
+        changeScene(
+                event, "/com/javfxtutorial/hethongdaugia/view/fxml/UserParticipatedAuction.fxml");
     }
-
 
     @Override
     public void onResponse(Response rp) {
@@ -66,11 +63,12 @@ public class HomeController implements ResponseListener {
 
         if (rp.isSuccess()) {
             ArrayList<Auction> unpaidList = (ArrayList<Auction>) rp.getPayLoad();
-            Platform.runLater(() -> {
-                if (unpaidList != null && !unpaidList.isEmpty()) {
-                    showPaymentPopupChain(unpaidList, 0);
-                }
-            });
+            Platform.runLater(
+                    () -> {
+                        if (unpaidList != null && !unpaidList.isEmpty()) {
+                            showPaymentPopupChain(unpaidList, 0);
+                        }
+                    });
         }
     }
 
@@ -79,8 +77,10 @@ public class HomeController implements ResponseListener {
 
         Auction auction = unpaidList.get(index);
         try {
-            FXMLLoader loader = new FXMLLoader(
-                    UIUtils.class.getResource("/com/javfxtutorial/hethongdaugia/view/fxml/PaymentPopup.fxml"));
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            UIUtils.class.getResource(
+                                    "/com/javfxtutorial/hethongdaugia/view/fxml/PaymentPopup.fxml"));
             Parent root = loader.load();
             PaymentPopupController ctrl = loader.getController();
             ctrl.setAuction(auction);
@@ -88,11 +88,12 @@ public class HomeController implements ResponseListener {
             Stage popup = new Stage();
             popup.setScene(new Scene(root));
 
-            ctrl.setOnConfirmed(() -> {
-                markAsPaid(auction);
-                popup.close();
-                showPaymentPopupChain(unpaidList, index + 1);
-            });
+            ctrl.setOnConfirmed(
+                    () -> {
+                        markAsPaid(auction);
+                        popup.close();
+                        showPaymentPopupChain(unpaidList, index + 1);
+                    });
 
             popup.show();
         } catch (IOException e) {
@@ -102,29 +103,31 @@ public class HomeController implements ResponseListener {
     }
 
     private void markAsPaid(Auction auction) {
-        new Thread(() -> {
-            try {
-                auction.setStatus(AuctionStatus.PAID);
-                UpdateAuctionStatusCommand cmd = new UpdateAuctionStatusCommand(auction);
-                NetworkManager.getConnection().sendCommand(cmd);
-            } catch (Exception e) {
-                log.error("Lỗi mark PAID: {}", e.getMessage());
-            }
-        }).start();
+        new Thread(
+                        () -> {
+                            try {
+                                auction.setStatus(AuctionStatus.PAID);
+                                UpdateAuctionStatusCommand cmd =
+                                        new UpdateAuctionStatusCommand(auction);
+                                NetworkManager.getConnection().sendCommand(cmd);
+                            } catch (Exception e) {
+                                log.error("Lỗi mark PAID: {}", e.getMessage());
+                            }
+                        })
+                .start();
     }
 
     public void checkUnpaidAuction() {
         int userId = ClientModel.getInstance().getCurrentUser().getId();
-        new Thread(() -> {
-            try {
-                GetUnpaidAuctionCommand cmd = new GetUnpaidAuctionCommand(userId);
-                NetworkManager.getInstance().sendRequest(cmd, this);
-            } catch (Exception e) {
-                log.error("Lỗi check unpaid: {}", e.getMessage());
-            }
-        }).start();
+        new Thread(
+                        () -> {
+                            try {
+                                GetUnpaidAuctionCommand cmd = new GetUnpaidAuctionCommand(userId);
+                                NetworkManager.getInstance().sendRequest(cmd, this);
+                            } catch (Exception e) {
+                                log.error("Lỗi check unpaid: {}", e.getMessage());
+                            }
+                        })
+                .start();
     }
-
-
-
 }

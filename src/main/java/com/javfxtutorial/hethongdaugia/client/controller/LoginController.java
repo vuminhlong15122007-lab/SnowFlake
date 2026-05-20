@@ -1,5 +1,7 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
+
 import com.javfxtutorial.hethongdaugia.client.model.AuctionModificationManager;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
@@ -9,6 +11,8 @@ import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import java.net.URL;
+import java.util.ResourceBundle;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -18,14 +22,11 @@ import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import java.net.URL;
-import java.util.ResourceBundle;
-import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 
 public class LoginController implements ResponseListener, Initializable {
     private static final Logger log = LoggerFactory.getLogger(LoginController.class);
-    @FXML private TextField Username ;
-    @FXML private PasswordField Password ;
+    @FXML private TextField Username;
+    @FXML private PasswordField Password;
     @FXML private Label message;
     ActionEvent loginEvent;
     @FXML private TextField PasswordVisible;
@@ -44,56 +45,64 @@ public class LoginController implements ResponseListener, Initializable {
         loginEvent = event;
         String username = Username.getText();
         String password;
-        if (passwordShown){
+        if (passwordShown) {
             password = PasswordVisible.getText();
         } else {
             password = Password.getText();
         }
-        new Thread(() -> {
-            try {
-                Command cmd = new LoginCommand();
-                cmd.addData("username", username);
-                cmd.addData("password", password);
-                NetworkManager.getInstance().sendRequest(cmd, this);
-            } catch (Exception e) {
-                log.error("Lỗi khi gửi login request: {}", e.getMessage(), e);
-                Platform.runLater(() -> message.setText("Lỗi kết nối: " + e.getMessage()));
-            }
-        }).start();
+        new Thread(
+                        () -> {
+                            try {
+                                Command cmd = new LoginCommand();
+                                cmd.addData("username", username);
+                                cmd.addData("password", password);
+                                NetworkManager.getInstance().sendRequest(cmd, this);
+                            } catch (Exception e) {
+                                log.error("Lỗi khi gửi login request: {}", e.getMessage(), e);
+                                Platform.runLater(
+                                        () -> message.setText("Lỗi kết nối: " + e.getMessage()));
+                            }
+                        })
+                .start();
     }
-
 
     public void clickCreateAccount(ActionEvent event) {
-        changeScene(event,"/com/javfxtutorial/hethongdaugia/view/fxml/SignUp.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/SignUp.fxml");
     }
-
 
     @Override
     public void onResponse(Response rp) {
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.unregister(rp.getCommand().getClass(), this);
-        if (rp.isSuccess()){
+        if (rp.isSuccess()) {
             User user = (User) rp.getPayLoad();
             ClientModel.getInstance().setCurrentUser(user);
             // Load trạng thái đã đọc của user này từ disk ngay sau khi đăng nhập
             ClientModel.getInstance().loadReadNotificationIds(user.getId());
-            Platform.runLater(() -> {
-                if (user.getAccountType() == AccountType.USER) {
-                    log.info(rp.getMessage());
-                    changeScene(loginEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
-                    new HomeController().checkUnpaidAuction();
-                } else if (user.getAccountType() == AccountType.ADMIN) {
-                    log.info(rp.getMessage());
-                    changeScene(loginEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UserManagement.fxml");
-                }
-            });
-        }else {
-            Platform.runLater(() -> {
-                message.setText("Sai tên hoặc mật khẩu!");
-                log.info(rp.getMessage());
-            });
+            Platform.runLater(
+                    () -> {
+                        if (user.getAccountType() == AccountType.USER) {
+                            log.info(rp.getMessage());
+                            changeScene(
+                                    loginEvent,
+                                    "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
+                            new HomeController().checkUnpaidAuction();
+                        } else if (user.getAccountType() == AccountType.ADMIN) {
+                            log.info(rp.getMessage());
+                            changeScene(
+                                    loginEvent,
+                                    "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UserManagement.fxml");
+                        }
+                    });
+        } else {
+            Platform.runLater(
+                    () -> {
+                        message.setText("Sai tên hoặc mật khẩu!");
+                        log.info(rp.getMessage());
+                    });
         }
     }
+
     // ẩn hiện mkh
     @FXML
     public void togglePasswordVisibility(ActionEvent event) {
@@ -108,6 +117,4 @@ public class LoginController implements ResponseListener, Initializable {
             PasswordVisible.setVisible(false);
         }
     }
-
-
 }

@@ -3,7 +3,7 @@ package com.javfxtutorial.hethongdaugia.common.Exception;
 import java.io.Serializable;
 
 public abstract class BaseException extends Exception implements Serializable {
-    private static final long serialVersionUID  = 1L;
+    private static final long serialVersionUID = 1L;
 
     private final String errorCode;
     private final int httpStatusCode;
@@ -11,10 +11,10 @@ public abstract class BaseException extends Exception implements Serializable {
     public BaseException(String message, String errorCode) {
         super(message);
         this.errorCode = errorCode;
-        this.httpStatusCode = 400; //mac dinh loi client(sai du lieu)
+        this.httpStatusCode = 400; // mac dinh loi client(sai du lieu)
     }
 
-    public BaseException(String errorCode,String message, int httpStatusCode) {
+    public BaseException(String errorCode, String message, int httpStatusCode) {
         super(message);
         this.errorCode = errorCode;
         this.httpStatusCode = httpStatusCode;
@@ -40,7 +40,13 @@ public abstract class BaseException extends Exception implements Serializable {
         return httpStatusCode;
     }
 
-    public String toString(){
-        return "[ " + this.errorCode + " ] " + this.getMessage() + " (HTTP: " + this.httpStatusCode + " )";
+    public String toString() {
+        return "[ "
+                + this.errorCode
+                + " ] "
+                + this.getMessage()
+                + " (HTTP: "
+                + this.httpStatusCode
+                + " )";
     }
 }

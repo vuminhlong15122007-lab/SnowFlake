@@ -3,10 +3,9 @@ package com.javfxtutorial.hethongdaugia.common.model.factory;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.Vehicle;
 import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
-
 import java.util.Map;
 
-public class VehicleFactory extends ItemFactory{
+public class VehicleFactory extends ItemFactory {
     @Override
     public Item createItem(Map<String, String> data) {
         Vehicle v = new Vehicle();

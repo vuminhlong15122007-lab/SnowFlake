@@ -4,31 +4,33 @@ import com.javfxtutorial.hethongdaugia.common.Exception.data.*;
 import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.server.security.PasswordHasher;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.sql.*;
 import java.util.ArrayList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UserDAO implements DAOInterface<User> {
     private static final Logger log = LoggerFactory.getLogger(UserDAO.class);
     private static UserDAO instance;
-    private UserDAO(){}
-    public static UserDAO getInstance(){
-        if (instance == null){
+
+    private UserDAO() {}
+
+    public static UserDAO getInstance() {
+        if (instance == null) {
             instance = new UserDAO();
         }
         return instance;
     }
 
-
     @Override
     public int insert(User user) throws DataException {
         int result = 0;
-        String sql = "INSERT INTO User (name, passWord, email, sdt, accountType, avt) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql =
+                "INSERT INTO User (name, passWord, email, sdt, accountType, avt) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection connection = JDBCUtil.getConnection();
-             PreparedStatement pst = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+                PreparedStatement pst =
+                        connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             pst.setString(1, user.getName());
             pst.setString(2, PasswordHasher.hash(user.getPassWord()));
             pst.setString(3, user.getEmail());
@@ -45,17 +47,17 @@ public class UserDAO implements DAOInterface<User> {
                     }
                 }
                 return result;
+            } else {
+                throw new DataInsertException("User");
             }
-            else {
-                throw new DataInsertException("User");}
         } catch (SQLIntegrityConstraintViolationException e) {
             if (e.getErrorCode() == 1062) {
                 log.error("Lỗi: Dữ liệu bị trùng lặp!");
-                if(e.getMessage().contains("user.unique_username")){
+                if (e.getMessage().contains("user.unique_username")) {
                     return -1;
-                } else if(e.getMessage().contains("user.unique_sdt")){
+                } else if (e.getMessage().contains("user.unique_sdt")) {
                     return -2;
-                } else if(e.getMessage().contains("user.unique_email")){
+                } else if (e.getMessage().contains("user.unique_email")) {
                     return -3;
                 }
             }
@@ -63,7 +65,7 @@ public class UserDAO implements DAOInterface<User> {
         } catch (SQLException e) {
             log.error("Lỗi tạo user: {}", e.getMessage(), e);
             if (e.getSQLState().equals("23505")) {
-                throw new DuplicateKeyException("User", "user name",user.getName());
+                throw new DuplicateKeyException("User", "user name", user.getName());
             }
             throw new DataInsertException("User");
         }
@@ -72,10 +74,11 @@ public class UserDAO implements DAOInterface<User> {
     @Override
     public int update(User user) throws DataException {
         int result = 0;
-        String sql = "UPDATE User SET name = ?, passWord = ?, email = ?, sdt = ?, accountType = ?, avt = ? WHERE id = ?";
+        String sql =
+                "UPDATE User SET name = ?, passWord = ?, email = ?, sdt = ?, accountType = ?, avt = ? WHERE id = ?";
 
         try (Connection connection = JDBCUtil.getConnection();
-             PreparedStatement pst = connection.prepareStatement(sql)) {
+                PreparedStatement pst = connection.prepareStatement(sql)) {
             pst.setString(1, user.getName());
             pst.setString(2, PasswordHasher.hash(user.getPassWord()));
             pst.setString(3, user.getEmail());
@@ -92,17 +95,17 @@ public class UserDAO implements DAOInterface<User> {
             throw new EntityNotFoundException("User", user.getId());
         } catch (SQLException e) {
             log.error("Lỗi cập nhật user: {}", e.getMessage(), e);
-            throw new DataUpdateException(user.getId(), user.getName(), "info");        }
-
+            throw new DataUpdateException(user.getId(), user.getName(), "info");
+        }
     }
 
     @Override
-    public int delete(User user) throws DataException{
+    public int delete(User user) throws DataException {
         int result = 0;
         String sql = "DELETE FROM User WHERE id = ?";
 
         try (Connection connection = JDBCUtil.getConnection();
-             PreparedStatement pst = connection.prepareStatement(sql)) {
+                PreparedStatement pst = connection.prepareStatement(sql)) {
             pst.setInt(1, user.getId());
             result = pst.executeUpdate();
             if (result > 0) {
@@ -123,8 +126,8 @@ public class UserDAO implements DAOInterface<User> {
         String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user";
 
         try (Connection connection = JDBCUtil.getConnection();
-             PreparedStatement pst = connection.prepareStatement(sql);
-             ResultSet resultSet = pst.executeQuery()) {
+                PreparedStatement pst = connection.prepareStatement(sql);
+                ResultSet resultSet = pst.executeQuery()) {
             while (resultSet.next()) {
                 result.add(mapUser(resultSet));
             }
@@ -137,11 +140,12 @@ public class UserDAO implements DAOInterface<User> {
     }
 
     @Override
-    public User selectById(int userId) throws DataException{
-        String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE id = ?";
+    public User selectById(int userId) throws DataException {
+        String sql =
+                "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE id = ?";
 
         try (Connection connection = JDBCUtil.getConnection();
-             PreparedStatement pst = connection.prepareStatement(sql)) {
+                PreparedStatement pst = connection.prepareStatement(sql)) {
             pst.setInt(1, userId);
             try (ResultSet resultSet = pst.executeQuery()) {
                 if (resultSet.next()) {
@@ -154,14 +158,14 @@ public class UserDAO implements DAOInterface<User> {
             log.error("Lỗi lấy user theo id: {}", e.getMessage(), e);
             throw new QueryExecutionException(sql);
         }
-
     }
 
-    public User selectByUsername(String username) throws DataException{
-        String sql = "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE name = ?";
+    public User selectByUsername(String username) throws DataException {
+        String sql =
+                "SELECT id, name, email, passWord, sdt, accountType, avt FROM user WHERE name = ?";
 
         try (Connection connection = JDBCUtil.getConnection();
-             PreparedStatement pst = connection.prepareStatement(sql)) {
+                PreparedStatement pst = connection.prepareStatement(sql)) {
             pst.setString(1, username);
             try (ResultSet resultSet = pst.executeQuery()) {
                 if (resultSet.next()) {
@@ -180,8 +184,8 @@ public class UserDAO implements DAOInterface<User> {
         String sql = "SELECT COUNT(*) FROM User";
 
         try (Connection connection = JDBCUtil.getConnection();
-             PreparedStatement pstmt = connection.prepareStatement(sql);
-             ResultSet rs = pstmt.executeQuery()) {
+                PreparedStatement pstmt = connection.prepareStatement(sql);
+                ResultSet rs = pstmt.executeQuery()) {
             if (rs.next()) {
                 return rs.getInt(1);
             }
@@ -201,12 +205,9 @@ public class UserDAO implements DAOInterface<User> {
         String sdt = resultSet.getString("sdt");
         String avatar = resultSet.getString("avt");
         String typeString = resultSet.getString("accountType");
-        AccountType accountType = typeString == null || typeString.isBlank()
-                ? null
-                : AccountType.valueOf(typeString);
+        AccountType accountType =
+                typeString == null || typeString.isBlank() ? null : AccountType.valueOf(typeString);
 
         return new User(id, name, passWord, email, sdt, accountType, avatar);
     }
-
-
 }

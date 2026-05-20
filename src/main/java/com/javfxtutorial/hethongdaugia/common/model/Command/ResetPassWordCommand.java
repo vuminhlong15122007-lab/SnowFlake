@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 public class ResetPassWordCommand extends Command {
     private static final Logger log = LoggerFactory.getLogger(ResetPassWordCommand.class);
+
     @Override
     public Response handle() {
         try {

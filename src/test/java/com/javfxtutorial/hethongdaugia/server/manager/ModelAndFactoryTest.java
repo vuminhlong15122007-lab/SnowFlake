@@ -1,5 +1,9 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import com.javfxtutorial.hethongdaugia.common.model.Art;
 import com.javfxtutorial.hethongdaugia.common.model.Electronics;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
@@ -10,15 +14,10 @@ import com.javfxtutorial.hethongdaugia.common.model.factory.ElectronicsFactory;
 import com.javfxtutorial.hethongdaugia.common.model.factory.ItemFactory;
 import com.javfxtutorial.hethongdaugia.common.model.factory.OtherItemFactory;
 import com.javfxtutorial.hethongdaugia.common.model.factory.VehicleFactory;
+import java.util.Map;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-
-import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertInstanceOf;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @DisplayName("Factory tạo sản phẩm đấu giá")
 class ModelAndFactoryTest {
@@ -30,7 +29,8 @@ class ModelAndFactoryTest {
         void getFactory_returnsCorrectFactoryForEachCategory() {
             assertInstanceOf(VehicleFactory.class, ItemFactory.getFactory(ItemCategory.VEHICLE));
             assertInstanceOf(ArtFactory.class, ItemFactory.getFactory(ItemCategory.ART));
-            assertInstanceOf(ElectronicsFactory.class, ItemFactory.getFactory(ItemCategory.ELECTRONICS));
+            assertInstanceOf(
+                    ElectronicsFactory.class, ItemFactory.getFactory(ItemCategory.ELECTRONICS));
             assertInstanceOf(OtherItemFactory.class, ItemFactory.getFactory(ItemCategory.OTHER));
             assertInstanceOf(OtherItemFactory.class, ItemFactory.getFactory(null));
         }
@@ -38,10 +38,12 @@ class ModelAndFactoryTest {
         @Test
         @DisplayName("ElectronicsFactory tạo item điện tử kèm trường riêng")
         void electronicsFactory_createsElectronicsWithBaseAndSpecificFields() {
-            Item item = ItemFactory.getFactory(ItemCategory.ELECTRONICS).createItem(baseData(
-                    "brand", "Sony",
-                    "model", "A7"
-            ));
+            Item item =
+                    ItemFactory.getFactory(ItemCategory.ELECTRONICS)
+                            .createItem(
+                                    baseData(
+                                            "brand", "Sony",
+                                            "model", "A7"));
 
             Electronics electronics = assertInstanceOf(Electronics.class, item);
             assertCommonItemFields(electronics, ItemCategory.ELECTRONICS);
@@ -52,11 +54,13 @@ class ModelAndFactoryTest {
         @Test
         @DisplayName("ArtFactory tạo item nghệ thuật kèm trường riêng")
         void artFactory_createsArtWithBaseAndSpecificFields() {
-            Item item = ItemFactory.getFactory(ItemCategory.ART).createItem(baseData(
-                    "artist", "Picasso",
-                    "title", "Blue",
-                    "yearCreated", "1901"
-            ));
+            Item item =
+                    ItemFactory.getFactory(ItemCategory.ART)
+                            .createItem(
+                                    baseData(
+                                            "artist", "Picasso",
+                                            "title", "Blue",
+                                            "yearCreated", "1901"));
 
             Art art = assertInstanceOf(Art.class, item);
             assertCommonItemFields(art, ItemCategory.ART);
@@ -68,12 +72,14 @@ class ModelAndFactoryTest {
         @Test
         @DisplayName("VehicleFactory tạo item phương tiện kèm trường riêng")
         void vehicleFactory_createsVehicleWithBaseAndSpecificFields() {
-            Item item = ItemFactory.getFactory(ItemCategory.VEHICLE).createItem(baseData(
-                    "brand", "Toyota",
-                    "licensePlate", "30A-12345",
-                    "year", "2020",
-                    "color", "white"
-            ));
+            Item item =
+                    ItemFactory.getFactory(ItemCategory.VEHICLE)
+                            .createItem(
+                                    baseData(
+                                            "brand", "Toyota",
+                                            "licensePlate", "30A-12345",
+                                            "year", "2020",
+                                            "color", "white"));
 
             Vehicle vehicle = assertInstanceOf(Vehicle.class, item);
             assertCommonItemFields(vehicle, ItemCategory.VEHICLE);
@@ -96,7 +102,8 @@ class ModelAndFactoryTest {
         @DisplayName("factory báo lỗi khi trường số nghiệp vụ không hợp lệ")
         void factory_throwsWhenRequiredNumericFieldIsInvalid() {
             Map<String, String> data = baseData("year", "not-a-number");
-            assertThrows(NumberFormatException.class,
+            assertThrows(
+                    NumberFormatException.class,
                     () -> ItemFactory.getFactory(ItemCategory.VEHICLE).createItem(data));
         }
     }
@@ -123,5 +130,4 @@ class ModelAndFactoryTest {
         assertEquals("image.png", item.getImage());
         assertEquals(category, item.getCategory());
     }
-
 }

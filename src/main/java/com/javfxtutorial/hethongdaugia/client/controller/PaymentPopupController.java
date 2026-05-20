@@ -3,12 +3,11 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.Util.TimeLeft;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import java.time.LocalDateTime;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.stage.Stage;
-
-import java.time.LocalDateTime;
 
 public class PaymentPopupController {
 
@@ -22,17 +21,15 @@ public class PaymentPopupController {
     public void setAuction(Auction auction) {
         if (auction == null || auction.getItem() == null) return;
 
-        if (lbProductName != null)
-            lbProductName.setText(auction.getItem().getName());
+        if (lbProductName != null) lbProductName.setText(auction.getItem().getName());
 
         if (lbWinningPrice != null) {
-            double price = auction.getCurrentPrice() != null
-                    ? auction.getCurrentPrice().doubleValue() : 0;
+            double price =
+                    auction.getCurrentPrice() != null ? auction.getCurrentPrice().doubleValue() : 0;
             lbWinningPrice.setText(String.format("%,.0f VND", price));
         }
 
-        if (lbAuctionId != null)
-            lbAuctionId.setText("Mã phiên: " + auction.getAuctionId());
+        if (lbAuctionId != null) lbAuctionId.setText("Mã phiên: " + auction.getAuctionId());
 
         if (productImageView != null
                 && auction.getItem().getImage() != null

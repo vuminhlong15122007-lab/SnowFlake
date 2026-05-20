@@ -1,7 +1,6 @@
 package com.javfxtutorial.hethongdaugia.server.network;
 
 import com.javfxtutorial.hethongdaugia.server.handler.GlobalExceptionHandler;
-
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -10,9 +9,9 @@ public class ServerApp {
     private static final int PORT = 5000;
     private static volatile int userCount = 0;
 
-     public static void main(String[] args) {
-         GlobalExceptionHandler.register();
-         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
+    public static void main(String[] args) {
+        GlobalExceptionHandler.register();
+        try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             System.out.println("Server đã khởi động, đang lắng nghe trên cổng " + PORT);
             while (true) {
                 Socket clientSocket = serverSocket.accept();

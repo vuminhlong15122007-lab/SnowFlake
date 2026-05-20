@@ -8,7 +8,6 @@ import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
-import com.javfxtutorial.hethongdaugia.server.dao.DAOInterface;
 import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
 import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
@@ -22,9 +21,10 @@ public class UpdateAuctionCommand extends Command {
     public UpdateAuctionCommand(Auction auction) {
         this.auction = auction;
     }
+
     @Override
     public Response handle() {
-        try{
+        try {
             AuctionStatus status = AuctionManager.getInstance().refreshAuctionStatus(auction);
             if (status == AuctionStatus.NOT_START) {
                 Item item = auction.getItem();
@@ -37,8 +37,12 @@ public class UpdateAuctionCommand extends Command {
                 }
                 return new Response(false, "Lỗi!!! Sửa thất bại", null, this);
             }
-            return new Response(false, "Lỗi!!! Sửa thất bại, phiên đấu giá đã bắt đầu hoặc kết thúc", null, this); } catch (
-            EntityNotFoundException e) {
+            return new Response(
+                    false,
+                    "Lỗi!!! Sửa thất bại, phiên đấu giá đã bắt đầu hoặc kết thúc",
+                    null,
+                    this);
+        } catch (EntityNotFoundException e) {
             log.error("Không tìm thấy auction: auctionId={}", auction.getAuctionId(), e);
             return new Response(false, "Không tìm thấy phiên đấu giá", null, this);
         } catch (DataException e) {

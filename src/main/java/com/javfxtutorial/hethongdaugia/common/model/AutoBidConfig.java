@@ -12,7 +12,8 @@ public class AutoBidConfig implements Serializable {
     private boolean isActive;
     private LocalDateTime registeredAt;
 
-    public AutoBidConfig(int userId,String userName, int auctionId, BigDecimal maxPrice, boolean isActive) {
+    public AutoBidConfig(
+            int userId, String userName, int auctionId, BigDecimal maxPrice, boolean isActive) {
         this.userId = userId;
         this.userName = userName;
         this.auctionId = auctionId;
@@ -24,21 +25,50 @@ public class AutoBidConfig implements Serializable {
     public LocalDateTime getRegisteredAt() {
         return registeredAt;
     }
+
     public void setRegisteredAt(LocalDateTime registeredAt) {
         this.registeredAt = registeredAt;
     }
 
-    public String getUserName() {return userName;}
-    public void setUserName(String userName) {this.userName = userName;}
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
 
     public AutoBidConfig() {}
 
-    public int getUserId() { return userId; }
-    public void setUserId(int userId) { this.userId = userId; }
-    public int getAuctionId() { return auctionId; }
-    public void setAuctionId(int auctionId) { this.auctionId = auctionId; }
-    public BigDecimal getMaxPrice() { return maxPrice; }
-    public void setMaxPrice(BigDecimal maxPrice) { this.maxPrice = maxPrice; }
-    public boolean isActive() { return isActive; }
-    public void setActive(boolean active) { isActive = active; }
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getAuctionId() {
+        return auctionId;
+    }
+
+    public void setAuctionId(int auctionId) {
+        this.auctionId = auctionId;
+    }
+
+    public BigDecimal getMaxPrice() {
+        return maxPrice;
+    }
+
+    public void setMaxPrice(BigDecimal maxPrice) {
+        this.maxPrice = maxPrice;
+    }
+
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
 }

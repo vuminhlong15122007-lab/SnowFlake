@@ -3,10 +3,9 @@ package com.javfxtutorial.hethongdaugia.common.model.factory;
 import com.javfxtutorial.hethongdaugia.common.model.Art;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
-
 import java.util.Map;
 
-public class ArtFactory extends ItemFactory{
+public class ArtFactory extends ItemFactory {
     @Override
     public Item createItem(Map<String, String> data) {
         Art art = new Art();

@@ -3,7 +3,6 @@ package com.javfxtutorial.hethongdaugia.common.model.factory;
 import com.javfxtutorial.hethongdaugia.common.model.Electronics;
 import com.javfxtutorial.hethongdaugia.common.model.Item;
 import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
-
 import java.util.Map;
 
 public class ElectronicsFactory extends ItemFactory {

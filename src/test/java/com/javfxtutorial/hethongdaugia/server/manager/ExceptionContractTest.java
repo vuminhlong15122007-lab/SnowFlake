@@ -1,5 +1,8 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+
 import com.javfxtutorial.hethongdaugia.common.Exception.ErrorCode;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotFoundException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auth.InvalidCredentialsException;
@@ -9,9 +12,6 @@ import com.javfxtutorial.hethongdaugia.common.Exception.bid.SelfBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DuplicateKeyException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
 
 @DisplayName("Mã lỗi nghiệp vụ trả về cho client")
 class ExceptionContractTest {
@@ -27,7 +27,8 @@ class ExceptionContractTest {
     @DisplayName("lỗi xác thực và dữ liệu giữ mã trả về cho client")
     void authenticationAndDataExceptions_keepClientFacingCodes() {
         InvalidCredentialsException invalidLogin = new InvalidCredentialsException("bad login");
-        DuplicateKeyException duplicateEmail = new DuplicateKeyException("User", "email", "a@example.com");
+        DuplicateKeyException duplicateEmail =
+                new DuplicateKeyException("User", "email", "a@example.com");
 
         assertEquals("AUTH-001", invalidLogin.getErrorCode());
         assertEquals(401, invalidLogin.getHttpStatusCode());

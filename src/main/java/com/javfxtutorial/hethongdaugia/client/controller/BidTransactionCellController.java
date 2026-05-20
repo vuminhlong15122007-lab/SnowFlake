@@ -5,14 +5,11 @@ import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 
 public class BidTransactionCellController {
-    @FXML
-    private Label amountLabel;
-    @FXML
-    private Label bidderNameLabel;
-    @FXML
-    private Label timestampLabel;
+    @FXML private Label amountLabel;
+    @FXML private Label bidderNameLabel;
+    @FXML private Label timestampLabel;
 
-    public void setData(BidTransaction bidTransaction){
+    public void setData(BidTransaction bidTransaction) {
         amountLabel.setText(String.format("%,.0f VND", bidTransaction.getAmount()));
         bidderNameLabel.setText(bidTransaction.getBidderName());
         timestampLabel.setText(bidTransaction.getTimestamp().toString());

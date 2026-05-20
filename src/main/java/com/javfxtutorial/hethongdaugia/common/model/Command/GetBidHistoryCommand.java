@@ -5,22 +5,24 @@ import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.BidDAO;
+import java.util.ArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-
 public class GetBidHistoryCommand extends Command {
     private static final Logger log = LoggerFactory.getLogger(GetBidHistoryCommand.class);
+
     @Override
     public Response handle() {
-        try{
+        try {
             int auctionId = (int) this.getData("auctionId");
-            ArrayList<BidTransaction> bidHistory = BidDAO.getInstance().getBidsByAuctionId(auctionId);
-            if (bidHistory == null){
+            ArrayList<BidTransaction> bidHistory =
+                    BidDAO.getInstance().getBidsByAuctionId(auctionId);
+            if (bidHistory == null) {
                 return new Response(false, "Lấy không thành công", null, this);
             }
-            return new Response(true, "Lấy thành công", bidHistory, this);} catch (ClassCastException e) {
+            return new Response(true, "Lấy thành công", bidHistory, this);
+        } catch (ClassCastException e) {
             log.error("Lỗi ép kiểu dữ liệu: {}", e.getMessage(), e);
             return new Response(false, "Dữ liệu đầu vào không hợp lệ", null, this);
         } catch (QueryExecutionException e) {

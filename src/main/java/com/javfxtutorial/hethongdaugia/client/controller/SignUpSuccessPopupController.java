@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import java.util.Random;
 import javafx.animation.FadeTransition;
 import javafx.animation.KeyFrame;
 import javafx.animation.ParallelTransition;
@@ -17,17 +18,13 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Window;
 import javafx.util.Duration;
 
-import java.util.Random;
-
 public class SignUpSuccessPopupController {
-    @FXML
-    private StackPane rootPane;
-    @FXML
-    private Pane confettiLayer;
+    @FXML private StackPane rootPane;
+    @FXML private Pane confettiLayer;
 
     private final Random random = new Random();
     private final String[] colors = {
-            "#66ccff", "#b3c6ff", "#f4b8ff", "#ffcf5c", "#9be7c7", "#ff8cc6"
+        "#66ccff", "#b3c6ff", "#f4b8ff", "#ffcf5c", "#9be7c7", "#ff8cc6"
     };
     private int runningConfettiAnimations;
     private boolean burstFinished;
@@ -38,15 +35,16 @@ public class SignUpSuccessPopupController {
     }
 
     private void playConfettiBurst() {
-        Timeline burstTimeline = new Timeline(
-                new KeyFrame(Duration.ZERO, _ -> createConfettiWave()),
-                new KeyFrame(Duration.millis(420), _ -> createConfettiWave()),
-                new KeyFrame(Duration.millis(840), _ -> createConfettiWave())
-        );
-        burstTimeline.setOnFinished(_ -> {
-            burstFinished = true;
-            closePopupIfConfettiFinished();
-        });
+        Timeline burstTimeline =
+                new Timeline(
+                        new KeyFrame(Duration.ZERO, _ -> createConfettiWave()),
+                        new KeyFrame(Duration.millis(420), _ -> createConfettiWave()),
+                        new KeyFrame(Duration.millis(840), _ -> createConfettiWave()));
+        burstTimeline.setOnFinished(
+                _ -> {
+                    burstFinished = true;
+                    closePopupIfConfettiFinished();
+                });
         burstTimeline.play();
     }
 
@@ -61,7 +59,8 @@ public class SignUpSuccessPopupController {
     private Node createConfettiPiece() {
         Color color = Color.web(colors[random.nextInt(colors.length)]);
         if (random.nextBoolean()) {
-            Rectangle rectangle = new Rectangle(6 + random.nextInt(8), 10 + random.nextInt(12), color);
+            Rectangle rectangle =
+                    new Rectangle(6 + random.nextInt(8), 10 + random.nextInt(12), color);
             rectangle.setArcHeight(3);
             rectangle.setArcWidth(3);
             return rectangle;
@@ -79,11 +78,13 @@ public class SignUpSuccessPopupController {
         piece.setLayoutY(startY);
         piece.setOpacity(0.95);
 
-        TranslateTransition move = new TranslateTransition(Duration.millis(1450 + random.nextInt(850)), piece);
+        TranslateTransition move =
+                new TranslateTransition(Duration.millis(1450 + random.nextInt(850)), piece);
         move.setByX(endX);
         move.setByY(endY);
 
-        RotateTransition spin = new RotateTransition(Duration.millis(900 + random.nextInt(900)), piece);
+        RotateTransition spin =
+                new RotateTransition(Duration.millis(900 + random.nextInt(900)), piece);
         spin.setByAngle(random.nextBoolean() ? 420 : -420);
 
         FadeTransition fade = new FadeTransition(Duration.millis(950), piece);
@@ -93,11 +94,12 @@ public class SignUpSuccessPopupController {
 
         ParallelTransition animation = new ParallelTransition(move, spin, fade);
         runningConfettiAnimations++;
-        animation.setOnFinished(_ -> {
-            confettiLayer.getChildren().remove(piece);
-            runningConfettiAnimations--;
-            closePopupIfConfettiFinished();
-        });
+        animation.setOnFinished(
+                _ -> {
+                    confettiLayer.getChildren().remove(piece);
+                    runningConfettiAnimations--;
+                    closePopupIfConfettiFinished();
+                });
         animation.play();
     }
 

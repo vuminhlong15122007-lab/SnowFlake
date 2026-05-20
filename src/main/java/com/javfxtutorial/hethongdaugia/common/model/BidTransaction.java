@@ -13,19 +13,23 @@ public class BidTransaction implements Serializable {
     private LocalDateTime timestamp;
     private LocalDateTime newEndingTime;
 
-    public BidTransaction(String bidderName, int auctionId, BigDecimal amount, LocalDateTime timestamp) {
+    public BidTransaction(
+            String bidderName, int auctionId, BigDecimal amount, LocalDateTime timestamp) {
         this.bidderName = bidderName;
         this.auctionId = auctionId;
         this.amount = amount;
         this.timestamp = timestamp;
     }
 
-    public BidTransaction() {
+    public BidTransaction() {}
+
+    public LocalDateTime getNewEndingTime() {
+        return newEndingTime;
     }
 
-    public LocalDateTime getNewEndingTime() {return newEndingTime;}
-
-    public void setNewEndingTime(LocalDateTime newEndingTime) {this.newEndingTime = newEndingTime;}
+    public void setNewEndingTime(LocalDateTime newEndingTime) {
+        this.newEndingTime = newEndingTime;
+    }
 
     public int getBidId() {
         return bidId;
@@ -75,4 +79,3 @@ public class BidTransaction implements Serializable {
         this.timestamp = timestamp;
     }
 }
-

@@ -22,12 +22,12 @@ public class PlaceBidCommand extends Command {
     @Override
     public Response handle() {
         BidTransaction bid = (BidTransaction) this.getData("bid");
-        try{
+        try {
             if (AuctionManager.getInstance().placeBid(bid, ClientHandlerContextHolder.get())) {
                 return new Response(true, "Đặt giá thành công", bid, this);
             }
-            return new Response(false, "Cần đặt giá lớn hơn giá hiện tại + bước giá", bid, this);} catch (
-                AuctionNotFoundException e) {
+            return new Response(false, "Cần đặt giá lớn hơn giá hiện tại + bước giá", bid, this);
+        } catch (AuctionNotFoundException e) {
             log.warn("Không tìm thấy auction: {}", e.getMessage());
             return new Response(false, "AUCTION_CANCELLED", null, this);
         } catch (AuctionNotStartedException e) {
@@ -39,11 +39,10 @@ public class PlaceBidCommand extends Command {
         } catch (LowerThanCurrentBidException e) {
             log.warn("Giá thấp hơn giá hiện tại: {}", e.getMessage());
             return new Response(false, e.getMessage(), null, this);
-        }
-        catch (BidAmountExceedsLimitException e) {
+        } catch (BidAmountExceedsLimitException e) {
             log.warn("Giá vượt giới hạn: {}", e.getMessage());
             return new Response(false, e.getMessage(), null, this);
-        }catch (SelfBidException e) {
+        } catch (SelfBidException e) {
             log.warn("Tự đặt giá: {}", e.getMessage());
             return new Response(false, e.getMessage(), null, this);
         } catch (InsufficientIncrementException e) {
