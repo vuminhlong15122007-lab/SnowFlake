@@ -134,7 +134,12 @@ public class NetworkManager {
                                 if (list != null) {
                                     for (ResponseListener listener : list) {
                                         if (listener != null) {
-                                            listener.onResponse(rp);
+                                            try {
+                                                listener.onResponse(rp);
+                                            } catch (Exception e) {
+                                                log.error("Listener {} crash khi xử lý response: {}",
+                                                        listener.getClass().getSimpleName(), e.getMessage(), e);
+                                            }
                                         }
                                     }
                                 } else {

@@ -162,7 +162,8 @@ public class ParticipatedAuctionCellController implements ResponseListener {
                             NetworkManager.getInstance()
                                     .sendRequest(new UpdateAuctionStatusCommand(auction), this);
                         } catch (SendFailedException | ConnectionFailedException e) {
-                            throw new RuntimeException(e);
+                            Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu thanh toán.", "Wrong.gif"));
+
                         }
                     });
 
