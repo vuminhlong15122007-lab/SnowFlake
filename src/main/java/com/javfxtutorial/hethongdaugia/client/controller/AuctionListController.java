@@ -230,12 +230,12 @@ public class AuctionListController implements ResponseListener {
             // Mỗi lần sendRequest tạo requestId mới → listener tự clean sau mỗi lần
         }
         if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
-            Auction cancelled = (Auction) rp.getPayLoad();
-            if (cancelled == null) return;
+            Auction updated = (Auction) rp.getPayLoad();
+            if (updated == null) return;
             Platform.runLater(() -> {
                 for (Auction a : observable) {
-                    if (a.getAuctionId() == cancelled.getAuctionId()) {
-                        a.setStatus(cancelled.getStatus()); //  statusProperty tự notify cell UI
+                    if (a.getAuctionId() == updated.getAuctionId()) {
+                        a.setStatus(updated.getStatus()); //  dùng status từ payload
                         break;
                     }
                 }
