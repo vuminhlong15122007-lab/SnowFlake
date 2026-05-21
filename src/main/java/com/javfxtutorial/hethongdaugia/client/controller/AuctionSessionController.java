@@ -1,15 +1,15 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
+
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
-
-import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 
 public class AuctionSessionController {
     // ── Dùng chung cho tất cả cell ──
@@ -21,8 +21,7 @@ public class AuctionSessionController {
     @FXML private ImageView productImage;
     @FXML private Button actionButton;
     @FXML private Label nguoidandau;
-    @FXML private Label gia ;
-
+    @FXML private Label gia;
 
     private Auction auction;
 
@@ -35,11 +34,14 @@ public class AuctionSessionController {
         lbSellerName.setText(auction.getItem().getSellerName());
         lbCategory.setText(String.valueOf(auction.getItem().getCategory()));
 
-        lbWinner.setText(auction.getWinnerId() != 0 ? auction.getWinnerName() : "Không có người đấu giá");
+        lbWinner.setText(
+                auction.getWinnerId() != 0 ? auction.getWinnerName() : "Không có người đấu giá");
         // Load ảnh
-        if (!(productImage == null || auction.getItem().getImage() == null || auction.getItem().getImage().isBlank()))
-        {ImageHelper.loadBase64ToImageView(productImage, auction.getItem().getImage());}
-
+        if (!(productImage == null
+                || auction.getItem().getImage() == null
+                || auction.getItem().getImage().isBlank())) {
+            ImageHelper.loadBase64ToImageView(productImage, auction.getItem().getImage());
+        }
 
         // Xử lý theo trạng thái
         switch (auction.getStatus()) {
@@ -51,10 +53,9 @@ public class AuctionSessionController {
                     actionButton.setDisable(false);
                     actionButton.setText("THAM GIA");
                     setActionButtonClass(actionButton, "sf-auction-action-primary");
-
                 }
                 if (nguoidandau != null) nguoidandau.setText("ID dẫn đầu : ");
-                if (lbWinner != null) lbWinner.setText(""+auction.getWinnerName());
+                if (lbWinner != null) lbWinner.setText("" + auction.getWinnerName());
                 gia.setText("Giá hiện tại : ");
                 break;
 
@@ -75,9 +76,16 @@ public class AuctionSessionController {
                 statusBadge.setText("ĐÃ KẾT THÚC");
                 setStatusBadgeClass("sf-status-ended");
                 lbPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
-                lbCategory.setText(""+(auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
-                lbWinner.setText(auction.getWinnerName() != null ? auction.getWinnerName(): "Không có người tham gia đấu giá");
-                if (lbWinner != null) lbWinner.setText(""+auction.getWinnerId());
+                lbCategory.setText(
+                        ""
+                                + (auction.getItem().getCategory() != null
+                                        ? auction.getItem().getCategory()
+                                        : "Khác"));
+                lbWinner.setText(
+                        auction.getWinnerName() != null
+                                ? auction.getWinnerName()
+                                : "Không có người tham gia đấu giá");
+                if (lbWinner != null) lbWinner.setText("" + auction.getWinnerId());
                 if (actionButton != null) {
                     actionButton.setText("ĐÃ KẾT THÚC");
                     setActionButtonClass(actionButton, "sf-auction-action-neutral");
@@ -89,28 +97,28 @@ public class AuctionSessionController {
     private void setActionButtonClass(Button button, String styleClass) {
         if (button == null) return;
         button.setStyle("");
-        button.getStyleClass().removeAll(
-                "sf-auction-action-primary",
-                "sf-auction-action-warning",
-                "sf-auction-action-neutral",
-                "sf-auction-action-success",
-                "sf-auction-action-danger"
-        );
+        button.getStyleClass()
+                .removeAll(
+                        "sf-auction-action-primary",
+                        "sf-auction-action-warning",
+                        "sf-auction-action-neutral",
+                        "sf-auction-action-success",
+                        "sf-auction-action-danger");
         button.getStyleClass().add(styleClass);
     }
 
     private void setStatusBadgeClass(String styleClass) {
         if (statusBadge == null) return;
         statusBadge.setStyle("");
-        statusBadge.getStyleClass().removeAll(
-                "sf-status-badge",
-                "sf-status-running",
-                "sf-status-upcoming",
-                "sf-status-ended"
-        );
+        statusBadge
+                .getStyleClass()
+                .removeAll(
+                        "sf-status-badge",
+                        "sf-status-running",
+                        "sf-status-upcoming",
+                        "sf-status-ended");
         statusBadge.getStyleClass().addAll("sf-status-badge", styleClass);
     }
-
 
     @FXML
     public void clickToGoToLiveAuction(ActionEvent event) {

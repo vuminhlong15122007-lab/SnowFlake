@@ -1,7 +1,10 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import static com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus.NOT_START;
+import static com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus.RUNNING;
+
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
@@ -11,9 +14,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
-import static com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus.NOT_START;
-import static com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus.RUNNING;
-
 public class SellerProductController {
     @FXML private ImageView itemImageView1;
     @FXML private Label lbProductName;
@@ -21,25 +21,24 @@ public class SellerProductController {
     @FXML private Label ItemID;
     @FXML private Label lbStatus;
 
-
-    public void update(Auction auction){
+    public void update(Auction auction) {
         lbPrice.setText(String.format("%,.0f VNĐ", auction.getCurrentPrice()));
         lbProductName.setText(auction.getItem().getName());
         ItemID.setText(String.valueOf(auction.getItem().getItemId()));
         String base64Data = auction.getItem().getImage();
-        ImageHelper.loadBase64ToImageView(itemImageView1 , base64Data);
+        ImageHelper.loadBase64ToImageView(itemImageView1, base64Data);
         AuctionStatus status = auction.getStatus();
 
-        if (status == NOT_START){
+        if (status == NOT_START) {
             lbStatus.setStyle("-fx-text-fill: -sf-warning; -fx-font-size : 18px;");
-        }
-        else if(status == RUNNING){
+        } else if (status == RUNNING) {
             lbStatus.setStyle("-fx-text-fill: -sf-success; -fx-font-size : 18px;");
-        }else{
+        } else {
             lbStatus.setStyle("-fx-text-fill: -sf-danger; -fx-font-size : 18px;");
         }
         makeElementFlash(lbStatus);
     }
+
     // hiệu ứng nháy nháy nè
     public void makeElementFlash(Node element) {
         FadeTransition fadeTransition = new FadeTransition(Duration.millis(500), element);
@@ -48,6 +47,5 @@ public class SellerProductController {
         fadeTransition.setCycleCount(Animation.INDEFINITE);
         fadeTransition.setAutoReverse(true);
         fadeTransition.play();
-        }
+    }
 }
-

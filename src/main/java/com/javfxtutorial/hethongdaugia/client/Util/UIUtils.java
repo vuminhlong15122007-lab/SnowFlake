@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.Util;
 
+import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -16,11 +17,13 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-import java.io.IOException;
-
 public class UIUtils {
     public static void showAlert(String title, String message) {
-        showAlert(title, message, "/com/javfxtutorial/hethongdaugia/assets/Logo.png", "/com/javfxtutorial/hethongdaugia/assets/Fox.gif");
+        showAlert(
+                title,
+                message,
+                "/com/javfxtutorial/hethongdaugia/assets/Logo.png",
+                "/com/javfxtutorial/hethongdaugia/assets/Fox.gif");
     }
 
     public static void showAlert(String title, String message, String meme) {
@@ -67,53 +70,55 @@ public class UIUtils {
         dialogPane.setPrefWidth(430);
         dialogPane.setMinHeight(Region.USE_PREF_SIZE);
         dialogPane.setStyle(
-                "-fx-background-color: linear-gradient(to bottom right, -sf-page-start, -sf-surface 50%, -sf-purple-soft);" +
-                "-fx-background-radius: 24;" +
-                "-fx-border-color: -sf-border;" +
-                "-fx-border-radius: 24;" +
-                "-fx-border-width: 1.4;" +
-                "-fx-padding: 22;"
-        );
+                "-fx-background-color: linear-gradient(to bottom right, -sf-page-start, -sf-surface 50%, -sf-purple-soft);"
+                        + "-fx-background-radius: 24;"
+                        + "-fx-border-color: -sf-border;"
+                        + "-fx-border-radius: 24;"
+                        + "-fx-border-width: 1.4;"
+                        + "-fx-padding: 22;");
 
         Button okButton = (Button) dialogPane.lookupButton(ButtonType.OK);
         okButton.setText("Đồng ý");
         okButton.setStyle(
-                "-fx-background-color: linear-gradient(to right, -sf-accent-2, -sf-border);" +
-                "-fx-background-radius: 18;" +
-                "-fx-text-fill: -sf-text;" +
-                "-fx-font-weight: bold;" +
-                "-fx-padding: 8 28;" +
-                "-fx-cursor: hand;" +
-                "-fx-effect: dropshadow(gaussian, -sf-shadow, 12, 0.22, 0, 3);"
-        );
+                "-fx-background-color: linear-gradient(to right, -sf-accent-2, -sf-border);"
+                        + "-fx-background-radius: 18;"
+                        + "-fx-text-fill: -sf-text;"
+                        + "-fx-font-weight: bold;"
+                        + "-fx-padding: 8 28;"
+                        + "-fx-cursor: hand;"
+                        + "-fx-effect: dropshadow(gaussian, -sf-shadow, 12, 0.22, 0, 3);");
 
-        alert.setOnShowing(_ -> {
-            Scene scene = dialogPane.getScene();
-            if (scene != null) {
-                ThemeManager.apply(scene);
-                scene.setFill(Color.TRANSPARENT);
-                if (scene.getWindow() instanceof Stage stage) {
-                    stage.setResizable(false);
-                    if (iconPath != null) {
-                        try {
-                            stage.getIcons().add(new Image(UIUtils.class.getResourceAsStream(iconPath)));
-                        } catch (Exception e) {
-                            System.err.println("Khong load duoc icon tai: " + iconPath);
+        alert.setOnShowing(
+                _ -> {
+                    Scene scene = dialogPane.getScene();
+                    if (scene != null) {
+                        ThemeManager.apply(scene);
+                        scene.setFill(Color.TRANSPARENT);
+                        if (scene.getWindow() instanceof Stage stage) {
+                            stage.setResizable(false);
+                            if (iconPath != null) {
+                                try {
+                                    stage.getIcons()
+                                            .add(
+                                                    new Image(
+                                                            UIUtils.class.getResourceAsStream(
+                                                                    iconPath)));
+                                } catch (Exception e) {
+                                    System.err.println("Khong load duoc icon tai: " + iconPath);
+                                }
+                            }
                         }
                     }
-                }
-            }
 
-            Node contentLabel = dialogPane.lookup(".content.label");
-            if (contentLabel != null) {
-                contentLabel.setStyle(
-                        "-fx-font-size: 14px;" +
-                        "-fx-text-fill: -sf-text;" +
-                        "-fx-font-weight: bold;" +
-                        "-fx-wrap-text: true;"
-                );
-            }
-        });
+                    Node contentLabel = dialogPane.lookup(".content.label");
+                    if (contentLabel != null) {
+                        contentLabel.setStyle(
+                                "-fx-font-size: 14px;"
+                                        + "-fx-text-fill: -sf-text;"
+                                        + "-fx-font-weight: bold;"
+                                        + "-fx-wrap-text: true;");
+                    }
+                });
     }
 
     public static void changeScene(ActionEvent event, String fxmlPath) {

@@ -1,14 +1,12 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
-import com.javfxtutorial.hethongdaugia.common.model.SellerNotification;
+import com.javfxtutorial.hethongdaugia.common.model.domain.SellerNotification;
+import java.util.function.Consumer;
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
-
-import java.util.function.Consumer;
-
 
 public class NotifiCationPopupController {
 
@@ -25,21 +23,20 @@ public class NotifiCationPopupController {
     @FXML
     public void initialize() {
         if (notificationListView != null) {
-            notificationListView.setCellFactory(_ ->
-                    new NotificationListCell(notif -> {
-                        if (onMarkRead != null) onMarkRead.accept(notif);
-                        // Refresh listview để cell tự cập nhật trạng thái
-                        Platform.runLater(() -> notificationListView.refresh());
-                    })
-            );
+            notificationListView.setCellFactory(
+                    _ ->
+                            new NotificationListCell(
+                                    notif -> {
+                                        if (onMarkRead != null) onMarkRead.accept(notif);
+                                        // Refresh listview để cell tự cập nhật trạng thái
+                                        Platform.runLater(() -> notificationListView.refresh());
+                                    }));
             notificationListView.setStyle(
-                    "-fx-background-color: transparent;" +
-                            "-fx-background-insets: 0;" +
-                            "-fx-control-inner-background: transparent;"
-            );
+                    "-fx-background-color: transparent;"
+                            + "-fx-background-insets: 0;"
+                            + "-fx-control-inner-background: transparent;");
         }
     }
-
 
     public void loadNotifications(ObservableList<SellerNotification> notifications) {
         if (notificationListView == null) return;

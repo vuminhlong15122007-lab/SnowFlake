@@ -7,15 +7,18 @@ public class InsufficientIncrementException extends BidException {
     private final double minIncrement;
     private final double actualIncrement;
 
-    public InsufficientIncrementException(){
+    public InsufficientIncrementException() {
         super(ErrorCode.BID_MINIMUM_NOT_MET);
         this.minIncrement = 0;
         this.actualIncrement = 0;
     }
 
     public InsufficientIncrementException(double minIncrement, double actualIncrement) {
-        super(ErrorCode.BID_MINIMUM_NOT_MET, String.format("Bước giá %.2f VNĐ không đạt mức tối thiểu %.2f VNĐ",
-                actualIncrement, minIncrement));
+        super(
+                ErrorCode.BID_MINIMUM_NOT_MET,
+                String.format(
+                        "Bước giá %.2f VNĐ không đạt mức tối thiểu %.2f VNĐ",
+                        actualIncrement, minIncrement));
         this.minIncrement = minIncrement;
         this.actualIncrement = actualIncrement;
     }

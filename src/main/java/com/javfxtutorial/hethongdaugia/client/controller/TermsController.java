@@ -1,16 +1,14 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import java.util.function.Consumer;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.stage.Stage;
 
-import java.util.function.Consumer;
-
 public class TermsController {
 
-    @FXML
-    private ScrollPane scrollPane;
+    @FXML private ScrollPane scrollPane;
 
     // Callback để báo kết quả về RegisterController
     private Consumer<Boolean> resultCallback;

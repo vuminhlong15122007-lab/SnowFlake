@@ -1,7 +1,11 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
+
 import com.javfxtutorial.hethongdaugia.common.Exception.auth.InvalidCredentialsException;
-import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
 import com.javfxtutorial.hethongdaugia.server.security.PasswordHasher;
@@ -10,10 +14,6 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.MockedStatic;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
 
 @DisplayName("Luồng nghiệp vụ tài khoản người dùng")
 class UserContractTest {
@@ -26,8 +26,7 @@ class UserContractTest {
                 "alice@example.com",
                 "0901234567",
                 AccountType.USER,
-                "alice.png"
-        );
+                "alice.png");
     }
 
     @Nested
@@ -63,8 +62,7 @@ class UserContractTest {
 
                 assertThrows(
                         InvalidCredentialsException.class,
-                        () -> UserManager.getInstance().authenticate("missing", "pass123")
-                );
+                        () -> UserManager.getInstance().authenticate("missing", "pass123"));
                 verify(userDAO).selectByUsername("missing");
             }
         }
@@ -81,8 +79,7 @@ class UserContractTest {
 
                 assertThrows(
                         InvalidCredentialsException.class,
-                        () -> UserManager.getInstance().authenticate("alice", "wrong")
-                );
+                        () -> UserManager.getInstance().authenticate("alice", "wrong"));
                 verify(userDAO).selectByUsername("alice");
                 verify(userDAO, never()).update(any(User.class));
             }
@@ -100,8 +97,7 @@ class UserContractTest {
 
                 assertThrows(
                         InvalidCredentialsException.class,
-                        () -> UserManager.getInstance().authenticate("alice", "Pass123")
-                );
+                        () -> UserManager.getInstance().authenticate("alice", "Pass123"));
                 verify(userDAO).selectByUsername("alice");
                 verify(userDAO, never()).update(any(User.class));
             }
@@ -119,8 +115,7 @@ class UserContractTest {
 
                 assertThrows(
                         InvalidCredentialsException.class,
-                        () -> UserManager.getInstance().authenticate("alice", null)
-                );
+                        () -> UserManager.getInstance().authenticate("alice", null));
                 verify(userDAO).selectByUsername("alice");
                 verify(userDAO, never()).update(any(User.class));
             }
@@ -129,15 +124,15 @@ class UserContractTest {
         @Test
         @DisplayName("mật khẩu đã hash xác thực được và không migrate lại")
         void authenticate_acceptsStoredHashWithoutMigratingAgain() throws Exception {
-            User user = new User(
-                    1,
-                    "alice",
-                    PasswordHasher.hash("pass123"),
-                    "alice@example.com",
-                    "0901234567",
-                    AccountType.USER,
-                    null
-            );
+            User user =
+                    new User(
+                            1,
+                            "alice",
+                            PasswordHasher.hash("pass123"),
+                            "alice@example.com",
+                            "0901234567",
+                            AccountType.USER,
+                            null);
             UserDAO userDAO = mock(UserDAO.class);
             when(userDAO.selectByUsername("alice")).thenReturn(user);
 
@@ -168,7 +163,8 @@ class UserContractTest {
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
-                User result = UserManager.getInstance().updateUserProfile(1, null, "   ", null, null);
+                User result =
+                        UserManager.getInstance().updateUserProfile(1, null, "   ", null, null);
 
                 assertNotNull(result);
                 assertEquals("alice", result.getName());
@@ -190,13 +186,14 @@ class UserContractTest {
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
-                User result = UserManager.getInstance().updateUserProfile(
-                        1,
-                        "  Alice Updated  ",
-                        "  updated@example.com  ",
-                        "  0999888777  ",
-                        "updated.png"
-                );
+                User result =
+                        UserManager.getInstance()
+                                .updateUserProfile(
+                                        1,
+                                        "  Alice Updated  ",
+                                        "  updated@example.com  ",
+                                        "  0999888777  ",
+                                        "updated.png");
 
                 assertNotNull(result);
                 assertEquals("Alice Updated", result.getName());
@@ -217,13 +214,9 @@ class UserContractTest {
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
-                User result = UserManager.getInstance().updateUserProfile(
-                        1,
-                        "new",
-                        "new@example.com",
-                        "0999",
-                        "new.png"
-                );
+                User result =
+                        UserManager.getInstance()
+                                .updateUserProfile(1, "new", "new@example.com", "0999", "new.png");
 
                 assertNotNull(result);
                 assertEquals(oldUser.getId(), result.getId());
@@ -244,13 +237,9 @@ class UserContractTest {
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
-                User result = UserManager.getInstance().updateUserProfile(
-                        1,
-                        "new",
-                        "new@example.com",
-                        "0999",
-                        ""
-                );
+                User result =
+                        UserManager.getInstance()
+                                .updateUserProfile(1, "new", "new@example.com", "0999", "");
 
                 assertNotNull(result);
                 User sentToDao = userCaptor.getValue();
@@ -273,13 +262,10 @@ class UserContractTest {
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
-                assertNull(UserManager.getInstance().updateUserProfile(
-                        404,
-                        "new",
-                        "new@example.com",
-                        "0999",
-                        "new.png"
-                ));
+                assertNull(
+                        UserManager.getInstance()
+                                .updateUserProfile(
+                                        404, "new", "new@example.com", "0999", "new.png"));
                 verify(userDAO, never()).update(any(User.class));
             }
         }
@@ -295,13 +281,9 @@ class UserContractTest {
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
-                assertNull(UserManager.getInstance().updateUserProfile(
-                        1,
-                        "new",
-                        "new@example.com",
-                        "0999",
-                        "new.png"
-                ));
+                assertNull(
+                        UserManager.getInstance()
+                                .updateUserProfile(1, "new", "new@example.com", "0999", "new.png"));
                 verify(userDAO).update(any(User.class));
             }
         }
@@ -370,7 +352,8 @@ class UserContractTest {
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
-                assertTrue(UserManager.getInstance().deleteUser(1, "ignored", "ignored", "ignored"));
+                assertTrue(
+                        UserManager.getInstance().deleteUser(1, "ignored", "ignored", "ignored"));
                 verify(userDAO).selectById(1);
                 verify(userDAO).delete(user);
             }
@@ -387,7 +370,8 @@ class UserContractTest {
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
 
-                assertFalse(UserManager.getInstance().deleteUser(1, "ignored", "ignored", "ignored"));
+                assertFalse(
+                        UserManager.getInstance().deleteUser(1, "ignored", "ignored", "ignored"));
                 verify(userDAO).delete(user);
             }
         }

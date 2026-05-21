@@ -3,7 +3,7 @@ package com.javfxtutorial.hethongdaugia.common.network;
 import java.io.Serializable;
 import java.util.HashMap;
 
-//abstract class cho mọi Command
+// abstract class cho mọi Command
 public abstract class Command implements Serializable {
     private String requestId;
     HashMap<String, Object> data;
@@ -16,7 +16,7 @@ public abstract class Command implements Serializable {
         return data.get(key);
     }
 
-    public HashMap<String, Object> getData(){
+    public HashMap<String, Object> getData() {
         return this.data;
     }
 

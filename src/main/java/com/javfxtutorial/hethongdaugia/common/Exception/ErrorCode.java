@@ -1,14 +1,14 @@
 package com.javfxtutorial.hethongdaugia.common.Exception;
 
 public enum ErrorCode {
-    //loi xac thuc
+    // loi xac thuc
     AUTH_INVALID_CREDENTIALS("AUTH-001", "Sai tên đăng nhập hoặc mật khẩu", 401),
 
     AUTH_USER_ALREADY_EXISTS("AUTH-002", "Tài khoản đã tồn tại", 400),
 
     AUTH_USER_NOTFOUND("AUTH-003", "Không tìm thấy người dùng", 404),
 
-    //loi dau gia
+    // loi dau gia
 
     BID_LOWER_THAN_CURRENT("BID-001", "Giá đặt phải cao hơn giá hiện tại", 400),
 
@@ -20,7 +20,7 @@ public enum ErrorCode {
 
     BID_CONFLICT("BID-005", "Xung đột đấu giá", 409),
 
-    //loi phien dau gia
+    // loi phien dau gia
 
     AUC_NOT_FOUND("AUC-001", "Không tìm thấy phiên đấu giá", 404),
 
@@ -28,7 +28,7 @@ public enum ErrorCode {
 
     AUC_NOT_STARTED("AUC-003", "Phiên đấu giá chưa bắt đầu", 400),
 
-    //loi data
+    // loi data
 
     DATA_NOT_FOUND("DATA-001", "Không tìm thấy dữ liệu", 404),
 
@@ -44,7 +44,7 @@ public enum ErrorCode {
 
     DATA_DELETE_FAILED("DATA-007", "Lỗi khi xóa dữ liệu", 500),
 
-    //loi network
+    // loi network
 
     NET_CONNECTION_TIMEOUT("NET-001", "Kết nối đến server bị timeout", 408),
 
@@ -56,13 +56,13 @@ public enum ErrorCode {
 
     NET_SERVER_UNVAILABLE("NET-005", "Server hiện không khả dụng", 503),
 
-    //loi nghiep vu
+    // loi nghiep vu
 
     BIZ_INVALID_INPUT("BIZ-001", "Dữ liệu đầu vào không hợp lệ", 400),
 
     BIZ_CONCURRENT_ACCESS("BIZ-002", "Có xung đột dữ liệu", 409),
 
-    //loi he thong
+    // loi he thong
 
     SYS_UNKNOW_ERROR("SYS-001", "Đã xảy ra lỗi không xác định", 500),
 
@@ -89,10 +89,11 @@ public enum ErrorCode {
     public int getHttpStatusCode() {
         return httpStatusCode;
     }
-    //tim loi theo ma loi
-    public static ErrorCode fromCode(String code){
-        for(ErrorCode errorCode : values()){
-            if ((errorCode.code.equals(code))){
+
+    // tim loi theo ma loi
+    public static ErrorCode fromCode(String code) {
+        for (ErrorCode errorCode : values()) {
+            if ((errorCode.code.equals(code))) {
                 return errorCode;
             }
         }

@@ -15,8 +15,10 @@ public class ConcurrentAccessException extends BusinessException {
     }
 
     public ConcurrentAccessException(String entityType, String entityId) {
-        super(ErrorCode.BIZ_CONCURRENT_ACCESS,
-                String.format("Xung đột dữ liệu trên %s [%s], vui lòng thử lại", entityType, entityId));
+        super(
+                ErrorCode.BIZ_CONCURRENT_ACCESS,
+                String.format(
+                        "Xung đột dữ liệu trên %s [%s], vui lòng thử lại", entityType, entityId));
         this.entityType = entityType;
         this.entityId = entityId;
     }
@@ -27,6 +29,11 @@ public class ConcurrentAccessException extends BusinessException {
         this.entityId = null;
     }
 
-    public String getEntityType() { return entityType; }
-    public String getEntityId() { return entityId; }
+    public String getEntityType() {
+        return entityType;
+    }
+
+    public String getEntityId() {
+        return entityId;
+    }
 }

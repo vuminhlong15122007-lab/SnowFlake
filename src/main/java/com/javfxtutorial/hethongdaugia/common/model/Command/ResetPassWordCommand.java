@@ -2,7 +2,7 @@ package com.javfxtutorial.hethongdaugia.common.model.Command;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.auth.UserNotFoundException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
-import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.manager.UserManager;
@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 public class ResetPassWordCommand extends Command {
     private static final Logger log = LoggerFactory.getLogger(ResetPassWordCommand.class);
+
     @Override
     public Response handle() {
         try {

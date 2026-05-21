@@ -23,7 +23,7 @@
             <Region prefHeight="68.0" prefWidth="545.0" HBox.hgrow="ALWAYS" />
 
             <Button mnemonicParsing="false" onAction="#clickToGoProductDisplayInfo" prefHeight="30.0" prefWidth="155.0" styleClass="sf-btn-secondary" text="Thông tin sản phẩm" />
-            <Button mnemonicParsing="false" onAction="#goMenu" prefHeight="30.0" prefWidth="118.0" styleClass="sf-btn-primary" text="Quay lại Menu" />
+            <Button mnemonicParsing="false" onAction="#goMenu" prefHeight="30.0" prefWidth="118.0" styleClass="sf-btn-primary" text="Quay lại" />
         </HBox>
     </top>
 
@@ -39,6 +39,10 @@
 
             <VBox alignment="TOP_CENTER" prefHeight="430.0" prefWidth="331.0" spacing="11.0" style="-fx-background-color: -sf-surface-raised; -fx-padding: 18; -fx-background-radius: 15; -fx-border-radius: 15; -fx-border-color: -sf-border; -fx-effect: dropshadow(gaussian, -sf-shadow-neutral, 6, 0, 0, 2);">
                 <Label styleClass="sf-section-title" text="Bảng điều khiển" />
+                <Label fx:id="auctionStatusLabel" text="" visible="false"
+                       style="-fx-font-weight: bold; -fx-font-size: 13px;" maxWidth="Infinity"
+                       alignment="CENTER"
+                       wrapText="true" />
 
                 <VBox spacing="8.0">
                     <HBox alignment="CENTER_LEFT" prefHeight="38.0" spacing="8.0" style="-fx-background-color: -sf-surface; -fx-border-color: -sf-border-muted; -fx-border-radius: 8; -fx-background-radius: 8; -fx-padding: 9;">

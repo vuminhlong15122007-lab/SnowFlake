@@ -1,5 +1,7 @@
 package com.javfxtutorial.hethongdaugia.client.Util;
 
+import java.net.URL;
+import java.util.List;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -14,38 +16,36 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Window;
 
-import java.net.URL;
-import java.util.List;
-
 public final class ThemeManager {
     private static final String GLOBAL_CSS = "/com/javfxtutorial/hethongdaugia/view/css/global.css";
-    private static final String SWISS_RED_CSS = "/com/javfxtutorial/hethongdaugia/view/css/swissredmode.css";
+    private static final String SWISS_RED_CSS =
+            "/com/javfxtutorial/hethongdaugia/view/css/swissredmode.css";
     private static final String MINT_CSS = "/com/javfxtutorial/hethongdaugia/view/css/mintmode.css";
-    private static final String AUTUMN_CSS = "/com/javfxtutorial/hethongdaugia/view/css/autumnmode.css";
+    private static final String AUTUMN_CSS =
+            "/com/javfxtutorial/hethongdaugia/view/css/autumnmode.css";
     private static final String DARK_CSS = "/com/javfxtutorial/hethongdaugia/view/css/darkmode.css";
 
     // Old theme paths are kept only to remove stale stylesheets from already-open scenes.
-    private static final List<String> LEGACY_THEME_CSS = List.of(
-            "/com/javfxtutorial/hethongdaugia/view/css/auroramode.css",
-            "/com/javfxtutorial/hethongdaugia/view/css/royalmode.css",
-            "/com/javfxtutorial/hethongdaugia/view/css/frostmode.css",
-            "/com/javfxtutorial/hethongdaugia/view/css/embermode.css",
-            "/com/javfxtutorial/hethongdaugia/view/css/oceanmode.css",
-            "/com/javfxtutorial/hethongdaugia/view/css/graphitemode.css",
-            "/com/javfxtutorial/hethongdaugia/view/css/lavendermode.css",
-            "/com/javfxtutorial/hethongdaugia/view/css/forestmode.css",
-            "/com/javfxtutorial/hethongdaugia/view/css/sunsetmode.css",
-            "/com/javfxtutorial/hethongdaugia/view/css/blossommode.css",
-            "/com/javfxtutorial/hethongdaugia/view/css/cybermode.css"
-    );
+    private static final List<String> LEGACY_THEME_CSS =
+            List.of(
+                    "/com/javfxtutorial/hethongdaugia/view/css/auroramode.css",
+                    "/com/javfxtutorial/hethongdaugia/view/css/royalmode.css",
+                    "/com/javfxtutorial/hethongdaugia/view/css/frostmode.css",
+                    "/com/javfxtutorial/hethongdaugia/view/css/embermode.css",
+                    "/com/javfxtutorial/hethongdaugia/view/css/oceanmode.css",
+                    "/com/javfxtutorial/hethongdaugia/view/css/graphitemode.css",
+                    "/com/javfxtutorial/hethongdaugia/view/css/lavendermode.css",
+                    "/com/javfxtutorial/hethongdaugia/view/css/forestmode.css",
+                    "/com/javfxtutorial/hethongdaugia/view/css/sunsetmode.css",
+                    "/com/javfxtutorial/hethongdaugia/view/css/blossommode.css",
+                    "/com/javfxtutorial/hethongdaugia/view/css/cybermode.css");
     private static final String THEME_PROPERTY = "snowfox.theme";
     private static final String THEME_ENV = "SNOWFOX_THEME";
     private static final String SWITCHER_ID = "themeModeSwitcher";
     private static final String SWITCHER_SHELL_ID = "themeModeSwitcherShell";
     private static ColorMode currentMode = resolveInitialMode();
 
-    private ThemeManager() {
-    }
+    private ThemeManager() {}
 
     public static void apply(Scene scene) {
         if (scene == null) {
@@ -112,7 +112,9 @@ public final class ThemeManager {
     }
 
     private static void installThemeSwitcher(Scene scene) {
-        if (scene == null || !(scene.getRoot() instanceof Parent root) || !isApplicationScreenRoot(root)) {
+        if (scene == null
+                || !(scene.getRoot() instanceof Parent root)
+                || !isApplicationScreenRoot(root)) {
             return;
         }
 
@@ -167,12 +169,15 @@ public final class ThemeManager {
         switcher.setPrefHeight(28);
         switcher.setMaxHeight(28);
         switcher.getStyleClass().add("theme-switcher");
-        switcher.setTooltip(new Tooltip("Change color mode: Xanh nguyên bản, Đỏ Thụy Sĩ, Xanh lá mint, Mùa thu lá vàng, Darkmode"));
-        switcher.setOnAction(_ -> {
-            currentMode = currentMode.next();
-            System.setProperty(THEME_PROPERTY, currentMode.id());
-            applyOpenWindows();
-        });
+        switcher.setTooltip(
+                new Tooltip(
+                        "Change color mode: Xanh nguyên bản, Đỏ Thụy Sĩ, Xanh lá mint, Mùa thu lá vàng, Darkmode"));
+        switcher.setOnAction(
+                _ -> {
+                    currentMode = currentMode.next();
+                    System.setProperty(THEME_PROPERTY, currentMode.id());
+                    applyOpenWindows();
+                });
         updateSwitcher(switcher);
         return switcher;
     }
@@ -277,16 +282,24 @@ public final class ThemeManager {
                 return DARK;
             }
             String normalized = raw.trim().toLowerCase();
-            if (normalized.equals("light") || normalized.equals("blue") || normalized.equals("ocean") || normalized.equals("frost")) {
+            if (normalized.equals("light")
+                    || normalized.equals("blue")
+                    || normalized.equals("ocean")
+                    || normalized.equals("frost")) {
                 return BLUE;
             }
-            if (normalized.equals("red") || normalized.equals("swiss") || normalized.equals("swissred") || normalized.equals("blossom")) {
+            if (normalized.equals("red")
+                    || normalized.equals("swiss")
+                    || normalized.equals("swissred")
+                    || normalized.equals("blossom")) {
                 return SWISS_RED;
             }
             if (normalized.equals("green") || normalized.equals("forest")) {
                 return MINT;
             }
-            if (normalized.equals("yellow") || normalized.equals("ember") || normalized.equals("sunset")) {
+            if (normalized.equals("yellow")
+                    || normalized.equals("ember")
+                    || normalized.equals("sunset")) {
                 return AUTUMN;
             }
             for (ColorMode mode : values()) {
@@ -315,8 +328,7 @@ public final class ThemeManager {
                     "theme-ember",
                     "theme-forest",
                     "theme-graphite",
-                    "theme-cyber"
-            );
+                    "theme-cyber");
         }
     }
 }

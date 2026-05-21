@@ -1,7 +1,7 @@
 package com.javfxtutorial.hethongdaugia.common.model.Command;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataDeleteException;
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
@@ -14,7 +14,10 @@ import org.slf4j.LoggerFactory;
 public class DeleteAuctionCommand extends Command {
     private static final Logger log = LoggerFactory.getLogger(DeleteAuctionCommand.class);
     private final Auction auction;
-    public DeleteAuctionCommand(Auction auction) {this.auction = auction;}
+
+    public DeleteAuctionCommand(Auction auction) {
+        this.auction = auction;
+    }
 
     public Auction getAuction() {
         return auction;
@@ -22,11 +25,14 @@ public class DeleteAuctionCommand extends Command {
 
     @Override
     public Response handle() {
-        try{
+        try {
             AuctionStatus status = AuctionManager.getInstance().refreshAuctionStatus(auction);
             if (status == AuctionStatus.NOT_START) {
-                int result1 = ItemDAO.getInstance().delete(auction.getItem()); // vì item là cha auction nne xóa item auction tự xóa r
-                if (result1  <= 0) {
+                int result1 =
+                        ItemDAO.getInstance()
+                                .delete(auction.getItem()); // vì item là cha auction nne xóa item
+                // auction tự xóa r
+                if (result1 <= 0) {
                     return new Response(false, "Không thể xóa phiên đấu giá", null, this);
                 }
                 Response rp = new Response(true, "xóa phiên đấu giá thành công", null, this);
@@ -48,5 +54,4 @@ public class DeleteAuctionCommand extends Command {
             return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);
         }
     }
-
 }

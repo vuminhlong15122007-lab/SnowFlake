@@ -1,6 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
-import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ListCell;
@@ -17,7 +17,11 @@ public class BidTransactionCell extends ListCell<BidTransaction> {
         }
 
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/BidTransactionCell.fxml"));
+            FXMLLoader loader =
+                    new FXMLLoader(
+                            getClass()
+                                    .getResource(
+                                            "/com/javfxtutorial/hethongdaugia/view/fxml/BidTransactionCell.fxml"));
             Parent root = loader.load();
 
             BidTransactionCellController controller = loader.getController();
@@ -28,7 +32,10 @@ public class BidTransactionCell extends ListCell<BidTransaction> {
         } catch (Exception e) {
             e.printStackTrace();
             setGraphic(null);
-            setText(bidTransaction.getBidderName() != null ? String.valueOf(bidTransaction.getAmount()) : "Khong the hien thi phien dau gia");
+            setText(
+                    bidTransaction.getBidderName() != null
+                            ? String.valueOf(bidTransaction.getAmount())
+                            : "Khong the hien thi phien dau gia");
         }
     }
 }

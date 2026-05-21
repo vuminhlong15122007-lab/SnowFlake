@@ -1,10 +1,10 @@
 package com.javfxtutorial.hethongdaugia.server.security;
 
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.PBEKeySpec;
 import java.security.SecureRandom;
 import java.security.spec.KeySpec;
 import java.util.Base64;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.PBEKeySpec;
 
 public final class PasswordHasher {
     private static final String ALGORITHM = "PBKDF2WithHmacSHA256";
@@ -14,8 +14,7 @@ public final class PasswordHasher {
     private static final int KEY_BITS = 256;
     private static final SecureRandom RANDOM = new SecureRandom();
 
-    private PasswordHasher() {
-    }
+    private PasswordHasher() {}
 
     public static String hash(String rawPassword) {
         if (rawPassword == null) {
@@ -29,8 +28,12 @@ public final class PasswordHasher {
         RANDOM.nextBytes(salt);
         byte[] hash = pbkdf2(rawPassword.toCharArray(), salt, ITERATIONS, KEY_BITS);
 
-        return PREFIX + "$" + ITERATIONS + "$"
-                + Base64.getEncoder().encodeToString(salt) + "$"
+        return PREFIX
+                + "$"
+                + ITERATIONS
+                + "$"
+                + Base64.getEncoder().encodeToString(salt)
+                + "$"
                 + Base64.getEncoder().encodeToString(hash);
     }
 
@@ -47,7 +50,8 @@ public final class PasswordHasher {
             int iterations = Integer.parseInt(parts[1]);
             byte[] salt = Base64.getDecoder().decode(parts[2]);
             byte[] expectedHash = Base64.getDecoder().decode(parts[3]);
-            byte[] actualHash = pbkdf2(rawPassword.toCharArray(), salt, iterations, expectedHash.length * 8);
+            byte[] actualHash =
+                    pbkdf2(rawPassword.toCharArray(), salt, iterations, expectedHash.length * 8);
             return slowEquals(expectedHash, actualHash);
         } catch (RuntimeException e) {
             return false;

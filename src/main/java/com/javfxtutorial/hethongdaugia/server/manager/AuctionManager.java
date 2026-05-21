@@ -1,6 +1,5 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
-import com.javfxtutorial.hethongdaugia.client.controller.RegisterController;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionAlreadyEndedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotFoundException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotStartedException;
@@ -11,18 +10,16 @@ import com.javfxtutorial.hethongdaugia.common.Exception.bid.SelfBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DuplicateKeyException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.QueryExecutionException;
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
-import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.AntiSnipeExtender;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.AutoBidConfig;
+import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.BidDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.ParticipatedAuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.network.BidListener;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -33,19 +30,22 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AuctionManager {
     private static final Logger log = LoggerFactory.getLogger(AuctionManager.class);
 
-    //Néue có người đắtj giá X s cuối thì ra hạn thêm Y
     private static final long ANTI_SNIPE_X_SECONDS = 60;
     private static final long ANTI_SNIPE_Y_SECONDS = 60;
+    
+    private final AntiSnipeExtender antiSnipeExtender =
+            new AntiSnipeExtender(ANTI_SNIPE_X_SECONDS, ANTI_SNIPE_Y_SECONDS);
 
     // ── Singleton thread-safe ─────────────────────────
     private static volatile AuctionManager instance;
 
-    private AuctionManager() {
-    }
+    private AuctionManager() {}
 
     public static AuctionManager getInstance() {
         if (instance == null) {
@@ -59,16 +59,13 @@ public class AuctionManager {
     }
 
     // ── Observer: auctionId → list listener ──────────
-    private final Map<Integer, List<BidListener>> auctionSubscribers
-            = new ConcurrentHashMap<>();
+    private final Map<Integer, List<BidListener>> auctionSubscribers = new ConcurrentHashMap<>();
 
     // ── RAM cache ────────────────────────────────────
-    private final Map<Integer, Auction> activeAuctions
-            = new ConcurrentHashMap<>();
+    private final Map<Integer, Auction> activeAuctions = new ConcurrentHashMap<>();
 
     // ── AutoBid registry ─────────────────────────────
-    private final Map<Integer, List<AutoBidConfig>> autoBidRegistry
-            = new ConcurrentHashMap<>();
+    private final Map<Integer, List<AutoBidConfig>> autoBidRegistry = new ConcurrentHashMap<>();
     // ── Lock riêng theo từng auctionId ───────────────
     private final Map<Integer, ReentrantLock> auctionLocks = new ConcurrentHashMap<>();
 
@@ -85,10 +82,7 @@ public class AuctionManager {
             log.warn("Không thể đăng ký auction {} vì listener null", auctionId);
             return;
         }
-        auctionSubscribers.computeIfAbsent(
-                auctionId,
-                k -> new CopyOnWriteArrayList<>()
-        );
+        auctionSubscribers.computeIfAbsent(auctionId, k -> new CopyOnWriteArrayList<>());
 
         List<BidListener> list = auctionSubscribers.get(auctionId);
         if (!list.contains(listener)) {
@@ -112,24 +106,26 @@ public class AuctionManager {
         auctionSubscribers.values().forEach(list -> list.remove(listener));
     }
 
-    public boolean placeBid(BidTransaction bid,
-                                         ClientHandler senderThread) throws AuctionNotFoundException, AuctionNotStartedException, AuctionAlreadyEndedException,
-            LowerThanCurrentBidException, SelfBidException, InsufficientIncrementException, DataException, BidAmountExceedsLimitException {
-        if (bid == null || bid.getAmount() == null) {
-            return false;
-        }
+    public boolean placeBid(BidTransaction bid, ClientHandler senderThread)
+            throws AuctionNotFoundException, AuctionNotStartedException,
+                    AuctionAlreadyEndedException, LowerThanCurrentBidException, SelfBidException,
+                    InsufficientIncrementException, DataException, BidAmountExceedsLimitException {
+
+        if (bid == null || bid.getAmount() == null) {return false;}
         ReentrantLock lock = getAuctionLock(bid.getAuctionId());
         lock.lock();
         BidTransaction acceptedBid;
         LocalDateTime endTimeNew;
-        try{
+        try {
             // 1. Lấy auction từ RAM
             Auction auction = activeAuctions.get(bid.getAuctionId());
 
             // 2. Nếu RAM trống → nạp từ DB
             if (auction == null) {
                 auction = AuctionDAO.getInstance().selectById(bid.getAuctionId());
-                if (auction == null){ throw new AuctionNotFoundException(bid.getAuctionId());} // auction không tồn tại
+                if (auction == null) {
+                    throw new AuctionNotFoundException(bid.getAuctionId());
+                } // auction không tồn tại
                 activeAuctions.put(auction.getAuctionId(), auction);
             }
             System.out.println("Đã lấy xong auction từ bidAuctionId");
@@ -146,17 +142,18 @@ public class AuctionManager {
 
             BigDecimal minRequired = auction.getCurrentPrice().add(auction.getStepPrice());
             if (bid.getAmount().compareTo(auction.getCurrentPrice()) <= 0) {
-                throw new LowerThanCurrentBidException(auction.getCurrentPrice().doubleValue(), bid.getAmount().doubleValue());
+                throw new LowerThanCurrentBidException(
+                        auction.getCurrentPrice().doubleValue(), bid.getAmount().doubleValue());
             }
             if (bid.getAmount().compareTo(minRequired) < 0) {
-                throw new InsufficientIncrementException(auction.getStepPrice().doubleValue(),
+                throw new InsufficientIncrementException(
+                        auction.getStepPrice().doubleValue(),
                         bid.getAmount().subtract(auction.getCurrentPrice()).doubleValue());
             }
             if (bid.getAmount().compareTo(new BigDecimal("999999999999.99")) > 0) {
                 throw new BidAmountExceedsLimitException(
-                        999999999999.99,
-                        bid.getAmount().doubleValue()
-                );}
+                        999999999999.99, bid.getAmount().doubleValue());
+            }
             // KIỂM TRA NGƯỜI BÁN KHÔNG ĐƯỢC ĐẶT GIÁ
             if (bid.getBidderId() == auction.getSellerId()) {
                 log.warn("Người bán {} cố gắng đặt giá sản phẩm của chính mình", bid.getBidderId());
@@ -165,27 +162,19 @@ public class AuctionManager {
 
             System.out.println("Bid hợp lệ");
 
-
-
             // 4. Cập nhật auction trong RAM
             auction.setCurrentPrice(bid.getAmount());
             auction.setWinnerId(bid.getBidderId());
             auction.setWinningPrice(bid.getAmount());
             auction.setWinnerName(bid.getBidderName());
+            auction.setWinnerEmail(bid.getBidderEmail());
+            auction.setWinnerSdt(bid.getBidderSdt());
 
             System.out.println("Đã cập nhật lại auction");
 
+
             // Logic gia hạn phiên đấu giá
-            LocalDateTime now = LocalDateTime.now();
-            LocalDateTime endingTime = auction.getEndingTime();
-            long secondsLeft = Duration.between(now, endingTime).toSeconds();
-            if (secondsLeft <= ANTI_SNIPE_X_SECONDS && secondsLeft > 0) {
-                endTimeNew = endingTime.plusSeconds(ANTI_SNIPE_Y_SECONDS);
-                auction.setEndingTime(endTimeNew);
-                System.out.println("GIA HẠN PHIÊN ĐẤU GIÁ THÀNH CÔNG");
-            } else {
-                endTimeNew = endingTime;
-            }
+            endTimeNew = antiSnipeExtender.applyIfNeeded(auction);
 
             // 5. Lưu DB
             AuctionDAO.getInstance().update(auction);
@@ -193,12 +182,17 @@ public class AuctionManager {
             try {
                 ParticipatedAuctionDAO.getInstance().insert(bid);
             } catch (DuplicateKeyException e) {
-                log.info("User {} đã tham gia auction {} rồi, bỏ qua", bid.getBidderId(), bid.getAuctionId());
+                log.info(
+                        "User {} đã tham gia auction {} rồi, bỏ qua",
+                        bid.getBidderId(),
+                        bid.getAuctionId());
             }
 
             System.out.println("Đã lưu vào database");
             acceptedBid = bid;
-            acceptedBid.setNewEndingTime(endTimeNew);}finally {
+            acceptedBid.setNewEndingTime(endTimeNew);
+
+        } finally {
             lock.unlock();
         }
 
@@ -212,15 +206,12 @@ public class AuctionManager {
 
     // ─────────────────────────────────────────────────
     // NOTIFY — thông báo cho tất cả subscriber
-    // ─────────────────────────────────────────────────
-    private void notifySubscribers(int auctionId,
-                                   BidTransaction bid,
-                                   ClientHandler sender) {
+
+    private void notifySubscribers(int auctionId, BidTransaction bid, ClientHandler sender) {
         List<BidListener> list = auctionSubscribers.get(auctionId);
         if (list == null || list.isEmpty()) return;
         list.forEach(listener -> listener.onPlaceBid(bid, sender));
     }
-
 
     // ─────────────────────────────────────────────────
     // CHECK VALID BID
@@ -229,16 +220,18 @@ public class AuctionManager {
         return amount.compareTo(auction.getCurrentPrice().add(auction.getStepPrice())) >= 0;
     }
 
-    // ─────────────────────────────────────────────────
     // AUCTION STATUS
-    // ─────────────────────────────────────────────────
+
     public AuctionStatus refreshAuctionStatus(Auction auction) throws DataException {
         AuctionStatus previousStatus = auction.getStatus();
 
+        if (previousStatus == AuctionStatus.CANCELLED) {
+            return previousStatus;
+        }
         if (LocalDateTime.now().isBefore(auction.getStartingTime())) {
             auction.setStatus(AuctionStatus.NOT_START);
-        }else if (previousStatus == AuctionStatus.PAID){
-           return previousStatus;
+        } else if (previousStatus == AuctionStatus.PAID) {
+            return previousStatus;
         } else if (LocalDateTime.now().isAfter(auction.getEndingTime().plusHours(24))) {
             auction.setStatus(checkPaymentStatus(auction));
         } else if (LocalDateTime.now().isAfter(auction.getEndingTime())) {
@@ -246,7 +239,7 @@ public class AuctionManager {
         } else {
             auction.setStatus(AuctionStatus.RUNNING);
         }
-        if (auction.getAuctionId() == 0){
+        if (auction.getAuctionId() == 0) {
             return auction.getStatus();
         }
         if (previousStatus != auction.getStatus()) {
@@ -255,15 +248,21 @@ public class AuctionManager {
         return auction.getStatus();
     }
 
-    // ─────────────────────────────────────────────────
-    // AUTO BID — giữ nguyên logic của người khác viết
-    // ─────────────────────────────────────────────────
-    public synchronized boolean registerAutoBid(AutoBidConfig config) throws DataException, LowerThanCurrentBidException, SelfBidException, InsufficientIncrementException, AuctionNotFoundException, AuctionNotStartedException, AuctionAlreadyEndedException, BidAmountExceedsLimitException {
+
+    public synchronized boolean registerAutoBid(AutoBidConfig config)
+            throws DataException,
+                    LowerThanCurrentBidException,
+                    SelfBidException,
+                    InsufficientIncrementException,
+                    AuctionNotFoundException,
+                    AuctionNotStartedException,
+                    AuctionAlreadyEndedException,
+                    BidAmountExceedsLimitException {
         config.setRegisteredAt(LocalDateTime.now());
-        List<AutoBidConfig> configs = autoBidRegistry.computeIfAbsent(
-                config.getAuctionId(),
-                k -> Collections.synchronizedList(new ArrayList<>())
-        );
+        List<AutoBidConfig> configs =
+                autoBidRegistry.computeIfAbsent(
+                        config.getAuctionId(),
+                        k -> Collections.synchronizedList(new ArrayList<>()));
 
         synchronized (configs) {
             configs.removeIf(c -> c.getUserId() == config.getUserId());
@@ -273,8 +272,7 @@ public class AuctionManager {
 
                 Auction current = activeAuctions.get(config.getAuctionId());
                 if (current == null) {
-                    current = AuctionDAO.getInstance()
-                            .selectById(config.getAuctionId());
+                    current = AuctionDAO.getInstance().selectById(config.getAuctionId());
                     if (current != null) {
                         activeAuctions.put(current.getAuctionId(), current);
                     }
@@ -288,9 +286,16 @@ public class AuctionManager {
         return true;
     }
 
-    private void checkAndExecuteAutoBids(Auction auction) throws LowerThanCurrentBidException, DataException, SelfBidException, InsufficientIncrementException, AuctionNotFoundException, AuctionNotStartedException, AuctionAlreadyEndedException, BidAmountExceedsLimitException {
-        List<AutoBidConfig> configs = autoBidRegistry
-                .get(auction.getAuctionId());
+    private void checkAndExecuteAutoBids(Auction auction)
+            throws LowerThanCurrentBidException,
+                    DataException,
+                    SelfBidException,
+                    InsufficientIncrementException,
+                    AuctionNotFoundException,
+                    AuctionNotStartedException,
+                    AuctionAlreadyEndedException,
+                    BidAmountExceedsLimitException {
+        List<AutoBidConfig> configs = autoBidRegistry.get(auction.getAuctionId());
         if (configs == null || configs.isEmpty()) return;
 
         BigDecimal step = auction.getStepPrice(); // lấy giá step
@@ -304,22 +309,23 @@ public class AuctionManager {
         }
         if (eligibleBots.isEmpty()) return;
 
-        eligibleBots.sort((b1, b2) -> {
-            int cmp = b2.getMaxPrice().compareTo(b1.getMaxPrice());
-            if (cmp != 0) return cmp;
+        eligibleBots.sort(
+                (b1, b2) -> {
+                    int cmp = b2.getMaxPrice().compareTo(b1.getMaxPrice());
+                    if (cmp != 0) return cmp;
 
-            return b1.getRegisteredAt().compareTo(b2.getRegisteredAt());
-        });
+                    return b1.getRegisteredAt().compareTo(b2.getRegisteredAt());
+                });
 
         AutoBidConfig winnerBot = eligibleBots.getFirst();
 
         // logic của autobid đây hehe
-//        Nếu max cao nhất > max cao thứ hai:
-//        giá thắng = min(max cao thứ hai + step, max cao nhất)
-//
-//        Nếu max cao nhất == max cao thứ hai:
-//        người đăng ký trước thắng
-//        giá thắng = maxBid đó
+        //        Nếu max cao nhất > max cao thứ hai:
+        //        giá thắng = min(max cao thứ hai + step, max cao nhất)
+        //
+        //        Nếu max cao nhất == max cao thứ hai:
+        //        người đăng ký trước thắng
+        //        giá thắng = maxBid đó
 
         BigDecimal finalAmount;
 
@@ -359,9 +365,13 @@ public class AuctionManager {
         this.placeBid(autoBid, null);
     }
 
-    public List<Auction> getParticipatedAuctionsByBidder(int userId) throws QueryExecutionException {
+    public List<Auction> getParticipatedAuctionsByBidder(int userId)
+            throws QueryExecutionException {
         ArrayList<Auction> auctionList = new ArrayList<>();
-        auctionList = (ArrayList<Auction>) ParticipatedAuctionDAO.getInstance().getParticipatedAuctionsByBidder(userId);
+        auctionList =
+                (ArrayList<Auction>)
+                        ParticipatedAuctionDAO.getInstance()
+                                .getParticipatedAuctionsByBidder(userId);
         return auctionList;
     }
 
@@ -372,5 +382,11 @@ public class AuctionManager {
             }
         }
         return auction.getStatus();
+    }
+    public void updateAuctionStatus(int auctionId, AuctionStatus status) {
+        Auction auction = activeAuctions.get(auctionId);
+        if (auction != null) {
+            auction.setStatus(status);
+        }
     }
 }

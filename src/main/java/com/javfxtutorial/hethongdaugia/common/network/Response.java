@@ -4,22 +4,22 @@ import java.io.Serializable;
 
 public class Response implements Serializable {
     private Command command;
-    private boolean success; //xem hành động có thnahf công hay k
+    private boolean success; // xem hành động có thnahf công hay k
     private String message;
-    private Object payLoad; //dữ liệu mà server trả lại theo y/c của Client
+    private Object payLoad; // dữ liệu mà server trả lại theo y/c của Client
 
     public Response(boolean success, String message, Object payLoad) {
         this.success = success;
         this.message = message;
         this.payLoad = payLoad;
     }
+
     public Response(boolean success, String message, Object payLoad, Command command) {
         this.success = success;
         this.message = message;
         this.payLoad = payLoad;
         this.command = command;
     }
-
 
     public Command getCommand() {
         return command;

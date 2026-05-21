@@ -6,7 +6,9 @@ public class UnknownSystemException extends SystemException {
     private static final long serialVersionUID = 1L;
 
     public UnknownSystemException() {
-        super(ErrorCode.SYS_UNKNOW_ERROR, "Đã xảy ra lỗi không xác định, vui lòng liên hệ quản trị viên");
+        super(
+                ErrorCode.SYS_UNKNOW_ERROR,
+                "Đã xảy ra lỗi không xác định, vui lòng liên hệ quản trị viên");
     }
 
     public UnknownSystemException(String message) {

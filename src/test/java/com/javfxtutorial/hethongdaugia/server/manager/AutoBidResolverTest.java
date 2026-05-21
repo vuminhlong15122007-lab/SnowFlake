@@ -1,27 +1,5 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
-import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
-import com.javfxtutorial.hethongdaugia.common.Exception.data.QueryExecutionException;
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
-import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
-import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
-import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
-import com.javfxtutorial.hethongdaugia.server.dao.BidDAO;
-import com.javfxtutorial.hethongdaugia.server.dao.ParticipatedAuctionDAO;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
-import org.mockito.MockedStatic;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,6 +8,26 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.AutoBidConfig;
+import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
+import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
+import com.javfxtutorial.hethongdaugia.server.dao.BidDAO;
+import com.javfxtutorial.hethongdaugia.server.dao.ParticipatedAuctionDAO;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.MockedStatic;
 
 @DisplayName("Luật chọn người thắng auto-bid")
 class AutoBidResolverTest {
@@ -56,7 +54,8 @@ class AutoBidResolverTest {
         @DisplayName("một bot đủ điều kiện đặt giá tối thiểu")
         void singleEligibleBot_bidsMinimumRequired() throws Exception {
             Auction auction = auction("100", "10", 2);
-            AutoBidResult result = runAutoBid(auction, List.of(bot(1, "alice", "200", true, EARLY)));
+            AutoBidResult result =
+                    runAutoBid(auction, List.of(bot(1, "alice", "200", true, EARLY)));
 
             assertBid(result, 1, "110");
             assertEquals(1, auction.getWinnerId());
@@ -67,7 +66,8 @@ class AutoBidResolverTest {
         @DisplayName("bỏ qua bot đã tắt")
         void inactiveBot_isIgnored() throws Exception {
             Auction auction = auction("100", "10", 2);
-            AutoBidResult result = runAutoBid(auction, List.of(bot(1, "alice", "200", false, EARLY)));
+            AutoBidResult result =
+                    runAutoBid(auction, List.of(bot(1, "alice", "200", false, EARLY)));
 
             assertNoBid(result);
             assertEquals(2, auction.getWinnerId());
@@ -78,7 +78,8 @@ class AutoBidResolverTest {
         @DisplayName("bỏ qua bot có maxBid dưới giá tối thiểu")
         void botBelowMinimumRequired_isIgnored() throws Exception {
             Auction auction = auction("100", "10", 2);
-            AutoBidResult result = runAutoBid(auction, List.of(bot(1, "alice", "109", true, EARLY)));
+            AutoBidResult result =
+                    runAutoBid(auction, List.of(bot(1, "alice", "109", true, EARLY)));
 
             assertNoBid(result);
             assertEquals(2, auction.getWinnerId());
@@ -145,7 +146,8 @@ class AutoBidResolverTest {
         @DisplayName("bot đang dẫn đầu không tự đấu với chính mình")
         void currentWinnerDoesNotBidAgainstThemself() throws Exception {
             Auction auction = auction("100", "10", 1);
-            AutoBidResult result = runAutoBid(auction, List.of(bot(1, "alice", "500", true, EARLY)));
+            AutoBidResult result =
+                    runAutoBid(auction, List.of(bot(1, "alice", "500", true, EARLY)));
 
             assertNoBid(result);
             assertEquals(1, auction.getWinnerId());
@@ -167,9 +169,11 @@ class AutoBidResolverTest {
         }
     }
 
-    private AutoBidResult runAutoBid(Auction auction, List<AutoBidConfig> configs) throws Exception {
+    private AutoBidResult runAutoBid(Auction auction, List<AutoBidConfig> configs)
+            throws Exception {
         TestStateSupport.activeAuctions(manager).put(auction.getAuctionId(), auction);
-        TestStateSupport.autoBidRegistry(manager).put(auction.getAuctionId(), new ArrayList<>(configs));
+        TestStateSupport.autoBidRegistry(manager)
+                .put(auction.getAuctionId(), new ArrayList<>(configs));
 
         AuctionDAO auctionDAO = mock(AuctionDAO.class);
         BidDAO bidDAO = mock(BidDAO.class);
@@ -180,16 +184,17 @@ class AutoBidResolverTest {
         when(participatedAuctionDAO.insert(any(BidTransaction.class))).thenReturn(1);
 
         try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
-             MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
-             MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
-                     mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+                MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+                MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                        mockParticipatedAuctionDAO(participatedAuctionDAO)) {
             TestStateSupport.executeAutoBidCheck(manager, auction);
         }
 
         return new AutoBidResult(auctionDAO, bidDAO, bidCaptor.getAllValues());
     }
 
-    private void assertBid(AutoBidResult result, int expectedUserId, String expectedAmount) throws DataException {
+    private void assertBid(AutoBidResult result, int expectedUserId, String expectedAmount)
+            throws DataException {
         assertEquals(1, result.capturedBids().size());
         BidTransaction bid = result.capturedBids().get(0);
 
@@ -218,11 +223,11 @@ class AutoBidResolverTest {
     }
 
     private MockedStatic<ParticipatedAuctionDAO> mockParticipatedAuctionDAO(
-            ParticipatedAuctionDAO participatedAuctionDAO
-    ) {
+            ParticipatedAuctionDAO participatedAuctionDAO) {
         MockedStatic<ParticipatedAuctionDAO> mockedParticipatedAuctionDAO =
                 mockStatic(ParticipatedAuctionDAO.class);
-        mockedParticipatedAuctionDAO.when(ParticipatedAuctionDAO::getInstance)
+        mockedParticipatedAuctionDAO
+                .when(ParticipatedAuctionDAO::getInstance)
                 .thenReturn(participatedAuctionDAO);
         return mockedParticipatedAuctionDAO;
     }
@@ -245,17 +250,13 @@ class AutoBidResolverTest {
             String userName,
             String maxPrice,
             boolean active,
-            LocalDateTime registeredAt
-    ) {
-        AutoBidConfig config = new AutoBidConfig(userId, userName, 100, new BigDecimal(maxPrice), active);
+            LocalDateTime registeredAt) {
+        AutoBidConfig config =
+                new AutoBidConfig(userId, userName, 100, new BigDecimal(maxPrice), active);
         config.setRegisteredAt(registeredAt);
         return config;
     }
 
     private record AutoBidResult(
-            AuctionDAO auctionDAO,
-            BidDAO bidDAO,
-            List<BidTransaction> capturedBids
-    ) {
-    }
+            AuctionDAO auctionDAO, BidDAO bidDAO, List<BidTransaction> capturedBids) {}
 }

@@ -1,36 +1,5 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
-import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
-import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Command.AutoBidCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Command.GetAuctionStatusCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Command.RegisterToAuctionCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand;
-import com.javfxtutorial.hethongdaugia.common.model.Item;
-import com.javfxtutorial.hethongdaugia.common.model.User;
-import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
-import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
-import com.javfxtutorial.hethongdaugia.common.network.Response;
-import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
-import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
-import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
-import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
-import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
-import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
-
-import java.math.BigDecimal;
-import java.time.LocalDateTime;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -43,6 +12,36 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.AutoBidConfig;
+import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.AutoBidCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.GetAuctionStatusCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.RegisterToAuctionCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Item;
+import com.javfxtutorial.hethongdaugia.common.model.domain.User;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
+import com.javfxtutorial.hethongdaugia.common.network.Response;
+import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
+import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
+import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
+import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
+import org.mockito.MockedStatic;
 
 @DisplayName("Contract xử lý command từ client")
 class CommandContractTest {
@@ -165,7 +164,7 @@ class CommandContractTest {
             when(auctionDAO.update(auction)).thenReturn(1);
 
             try (MockedStatic<ItemDAO> mockedItemDAO = mockStatic(ItemDAO.class);
-                 MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class)) {
+                    MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class)) {
                 mockedItemDAO.when(ItemDAO::getInstance).thenReturn(itemDAO);
                 mockedAuctionDAO.when(AuctionDAO::getInstance).thenReturn(auctionDAO);
 
@@ -180,7 +179,8 @@ class CommandContractTest {
 
         @Test
         @DisplayName("đăng ký listener hiện tại vào phòng auction")
-        void registerToAuctionCommand_registersCurrentContextListenerAndReturnsSuccessResponse() throws Exception {
+        void registerToAuctionCommand_registersCurrentContextListenerAndReturnsSuccessResponse()
+                throws Exception {
             Auction auction = runningAuction(AuctionStatus.RUNNING);
             auction.setAuctionId(123);
             ClientHandler currentClient = new ClientHandler(null);
@@ -200,7 +200,8 @@ class CommandContractTest {
 
         @Test
         @DisplayName("thiếu auction thì không đăng ký listener")
-        void registerToAuctionCommand_missingAuctionReturnsFailureWithoutRegisteringListener() throws Exception {
+        void registerToAuctionCommand_missingAuctionReturnsFailureWithoutRegisteringListener()
+                throws Exception {
             RegisterToAuctionCommand command = new RegisterToAuctionCommand();
 
             Response response = command.handle();
@@ -284,7 +285,8 @@ class CommandContractTest {
     class ProfileCommandTest {
         @Test
         @DisplayName("cập nhật profile thành công và giữ command để client dispatch")
-        void updateProfileCommand_successResponseKeepsCommandForClientDispatch() throws DataException {
+        void updateProfileCommand_successResponseKeepsCommandForClientDispatch()
+                throws DataException {
             UpdateProfileCommand command = new UpdateProfileCommand();
             command.addData("userId", 1);
             command.addData("username", "Alice Nguyen");
@@ -293,9 +295,16 @@ class CommandContractTest {
             command.addData("avt", "avatar.png");
 
             UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectById(1)).thenReturn(
-                    new User(1, "Alice", "secret", "alice@example.com", "0900000000", AccountType.USER, "old.png")
-            );
+            when(userDAO.selectById(1))
+                    .thenReturn(
+                            new User(
+                                    1,
+                                    "Alice",
+                                    "secret",
+                                    "alice@example.com",
+                                    "0900000000",
+                                    AccountType.USER,
+                                    "old.png"));
             when(userDAO.update(any(User.class))).thenReturn(1);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {

@@ -2,7 +2,7 @@ package com.javfxtutorial.hethongdaugia.common.model.Command;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.auth.UserNotFoundException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
-import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.manager.UserManager;
@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 public class UpdateProfileCommand extends Command {
     private static final Logger log = LoggerFactory.getLogger(UpdateProfileCommand.class);
+
     @Override
     public Response handle() {
         try {
@@ -20,12 +21,13 @@ public class UpdateProfileCommand extends Command {
             String phone = (String) this.getData("phone");
             String avatar = (String) this.getData("avt");
 
-            User updateUser = UserManager.getInstance().updateUserProfile(userId, name, email, phone, avatar);
+            User updateUser =
+                    UserManager.getInstance().updateUserProfile(userId, name, email, phone, avatar);
             if (updateUser != null) {
                 return new Response(true, "Cap nhat thanh cong", updateUser, this);
             }
             return new Response(false, "Cap nhat that bai", null, this);
-        }catch (UserNotFoundException e) {
+        } catch (UserNotFoundException e) {
             log.warn("Không tìm thấy user để cập nhật: {}", e.getMessage());
             return new Response(false, "Không tìm thấy người dùng", null, this);
         } catch (ClassCastException e) {
