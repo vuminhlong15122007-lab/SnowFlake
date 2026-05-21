@@ -11,6 +11,7 @@ import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedExce
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
@@ -48,6 +49,7 @@ public class AuctionListController implements ResponseListener {
 
     @FXML
     public void initialize() throws ConnectionFailedException {
+        NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
         observable = ClientModel.getInstance().getAllAuctions();
 
         VBox.setVgrow(featuredProductList, Priority.ALWAYS);
@@ -227,5 +229,16 @@ public class AuctionListController implements ResponseListener {
             });
             // Mỗi lần sendRequest tạo requestId mới → listener tự clean sau mỗi lần
         }
+        if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
+            Auction cancelled = (Auction) rp.getPayLoad();
+            if (cancelled == null) return;
+            Platform.runLater(() -> {
+                for (Auction a : observable) {
+                    if (a.getAuctionId() == cancelled.getAuctionId()) {
+                        a.setStatus(cancelled.getStatus()); //  statusProperty tự notify cell UI
+                        break;
+                    }
+                }
+            });
     }
-}
+}}
