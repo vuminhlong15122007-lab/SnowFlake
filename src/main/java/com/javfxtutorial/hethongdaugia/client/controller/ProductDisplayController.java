@@ -221,12 +221,7 @@ public class ProductDisplayController implements ResponseListener {
     @FXML
     public void QuaylaiMenu(ActionEvent event) {
         cleanup();
-        AccountType type = ClientModel.getInstance().getCurrentUser().getAccountType();
-        if (type == AccountType.ADMIN) {
-            changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_ProductManagement.fxml");
-        } else {
-            changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml");
-        }
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml");
     }
 
     @FXML
