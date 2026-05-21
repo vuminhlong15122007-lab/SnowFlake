@@ -61,9 +61,10 @@ public class LiveAuctionController implements ResponseListener {
     @FXML private TextField autoMaxPrice_tf; // Ô nhập giá trần
     @FXML private ToggleButton autoBidToggle; // Nút bật/tắt chế độ tự động
     @FXML private Label auctionStatusLabel;   // Nhãn trạng thái phiên (chỉ hiện cho admin)
-    @FXML private Button backToAdminButton;   // Nút quay lại trang admin
+
 
     private boolean isAdmin = false;
+    private final NetworkManager networkManager = NetworkManager.getInstance();
 
     private final ObservableList<BidTransaction> observable = FXCollections.observableArrayList();
     private TimeLeft timer;
@@ -86,6 +87,8 @@ public class LiveAuctionController implements ResponseListener {
     @FXML
     public void clickToGoProductDisplayInfo(ActionEvent event) {
         timer.stop();
+        running = false;
+        networkManager.unregister(PlaceBidCommand.class, this);
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionInformation.fxml");
     }
 
