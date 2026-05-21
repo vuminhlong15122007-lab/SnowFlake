@@ -157,6 +157,7 @@ public class LiveAuctionController implements ResponseListener {
         // register để nhận command của người khác nữa
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.register(PlaceBidCommand.class, this);
+        networkManager.register(UpdateAuctionStatusCommand.class, this);
         // khi vào auction thì register
         currentAuction = ClientModel.getInstance().getCurrentAuction();
         Command cmd = new RegisterToAuctionCommand();
@@ -383,6 +384,22 @@ public class LiveAuctionController implements ResponseListener {
                         });
             }
         }
+        if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
+            if ("AUCTION_CANCELLED".equals(rp.getMessage())) {
+                Platform.runLater(() -> {
+                    timer.stop();
+                    placeBidButton.setDisable(true);
+                    placeBidButton.setText("Đã hủy");
+                    autoBidToggle.setDisable(true);
+                    priceInput_tf.setDisable(true);
+                    autoMaxPrice_tf.setDisable(true);
+                    showAlert("Thông báo", "Phiên đấu giá đã bị admin hủy.");
+                    changeScene(
+                            new ActionEvent(placeBidButton, null),
+                            "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml"
+                    );
+                });
+            }
         if (rp.getCommand().getClass() == GetBidHistoryCommand.class) {
             NetworkManager networkManager = NetworkManager.getInstance();
             networkManager.unregister(GetBidHistoryCommand.class, this);
@@ -429,4 +446,4 @@ public class LiveAuctionController implements ResponseListener {
             Platform.runLater(() -> UIUtils.showAlert("Hệ thống AutoBid", rp.getMessage()));
         }
     }
-}
+}}

@@ -391,4 +391,10 @@ public class AuctionManager {
         }
         return auction.getStatus();
     }
+    public void updateAuctionStatus(int auctionId, AuctionStatus status) {
+        Auction auction = activeAuctions.get(auctionId);
+        if (auction != null) {
+            auction.setStatus(status);
+        }
+    }
 }

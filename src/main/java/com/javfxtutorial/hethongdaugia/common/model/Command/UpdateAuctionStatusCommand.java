@@ -3,9 +3,11 @@ package com.javfxtutorial.hethongdaugia.common.model.Command;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataUpdateException;
 import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
+import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,6 +25,14 @@ public class UpdateAuctionStatusCommand extends Command {
         try {
             int result1 = AuctionDAO.getInstance().update(auction);
             if (result1 > 0) {
+                if (auction.getStatus() == AuctionStatus.CANCELLED) {
+                    // Cập nhật lại RAM trong AuctionManager
+                    AuctionManager.getInstance().updateAuctionStatus(
+                            auction.getAuctionId(), AuctionStatus.CANCELLED
+                    );
+                    ClientHandler.broadcast(
+                            new Response(false, "AUCTION_CANCELLED", auction, this)
+                    );}
                 Response rp = new Response(true, "Cập nhật status thành công", auction, this);
                 ClientHandler.broadcast(rp);
                 return rp;
