@@ -1,6 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
-import com.javfxtutorial.hethongdaugia.common.model.SellerNotification;
+import com.javfxtutorial.hethongdaugia.common.model.domain.SellerNotification;
 import java.io.IOException;
 import java.util.function.Consumer;
 import javafx.fxml.FXMLLoader;

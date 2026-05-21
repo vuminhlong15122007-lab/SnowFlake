@@ -17,8 +17,8 @@ import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotStartedExc
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.InsufficientIncrementException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.SelfBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DuplicateKeyException;
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.BidDAO;

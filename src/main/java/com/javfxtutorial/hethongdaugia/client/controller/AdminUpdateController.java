@@ -8,26 +8,29 @@ import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand;
-import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AdminUpdateController implements ResponseListener {
     @FXML private TextField txtName;
     @FXML private TextField txtEmail;
     @FXML private TextField txtPhone;
     @FXML private Button btnCancel;
+    private static final Logger log = LoggerFactory.getLogger(AdminUpdateController.class);
 
     // lay du lieu tu login de hien thi
     // ham tu dong chay khi load man hinh
     @FXML
     public void initialize() {
         // gan su kien dong cua so cho nut huy
-        btnCancel.setOnAction(
-                _ -> {
+        btnCancel.setOnAction(_ -> {
                     // Llay va dong stage hien tai
                     Stage stage = (Stage) btnCancel.getScene().getWindow();
                     stage.close();
@@ -52,7 +55,7 @@ public class AdminUpdateController implements ResponseListener {
 
     // cap nhat thong tin
     @FXML
-    public void handleUpdateInfo() throws ConnectionFailedException, SendFailedException {
+    public void handleUpdateInfo(){
         // lay du lieu tu o nhap
         String newName = txtName.getText();
         String newEmail = txtEmail.getText();
@@ -74,7 +77,16 @@ public class AdminUpdateController implements ResponseListener {
         cmd.addData("phone", newPhone);
 
         NetworkManager networkManager = NetworkManager.getInstance();
-        networkManager.sendRequest(cmd, this);
+        new Thread(()->{
+            try {
+                networkManager.sendRequest(cmd, this);
+            } catch (ConnectionFailedException | SendFailedException e) {
+                log.error("Lỗi gửi UpdateProfileCommand: {}", e.getMessage(), e);
+                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "WrongCat.gif"));
+            }
+
+        });
+
     }
 
     @Override

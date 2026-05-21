@@ -6,7 +6,7 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.Util.TimeLeft;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
-import com.javfxtutorial.hethongdaugia.common.model.*;
+import com.javfxtutorial.hethongdaugia.common.model.domain.*;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
@@ -78,21 +78,17 @@ public class ProductDisplayController {
         } else if (auction.getStatus() == AuctionStatus.NOT_START) {
             lbtimeLeft.setText("CHƯA BẮT ĐẦU");
             UI01.setStyle("-fx-text-fill: -sf-warning; -fx-alignment: CENTER;");
-            UI02.setStyle(
-                    "-fx-background-color: -sf-surface; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: -sf-warning; -fx-alignment: CENTER;");
+            UI02.setStyle("-fx-background-color: -sf-surface; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: -sf-warning; -fx-alignment: CENTER;");
             lbtimeLeft.setStyle("-fx-text-fill: -sf-warning;");
             ThamGiaDauGiaBtn.setText("Chưa thể tham gia");
-            ThamGiaDauGiaBtn.setStyle(
-                    "-fx-background-color: linear-gradient(to right, -sf-danger, -sf-warning); -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
+            ThamGiaDauGiaBtn.setStyle("-fx-background-color: linear-gradient(to right, -sf-danger, -sf-warning); -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
         } else {
             lbtimeLeft.setText("ĐÃ KẾT THÚC");
             UI01.setStyle("-fx-text-fill: -sf-danger; -fx-alignment: CENTER;");
-            UI02.setStyle(
-                    "-fx-background-color: -sf-surface; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: -sf-danger; -fx-alignment: CENTER;");
+            UI02.setStyle("-fx-background-color: -sf-surface; -fx-background-radius: 10; -fx-border-radius: 10; -fx-border-color: -sf-danger; -fx-alignment: CENTER;");
             lbtimeLeft.setStyle("-fx-text-fill: -sf-danger;");
             ThamGiaDauGiaBtn.setText("Phiên đấu giá đã đóng");
-            ThamGiaDauGiaBtn.setStyle(
-                    "-fx-background-color: -sf-neutral; -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
+            ThamGiaDauGiaBtn.setStyle("-fx-background-color: -sf-neutral; -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
         }
     }
 
@@ -147,11 +143,9 @@ public class ProductDisplayController {
             showBox(vehicleInfoBox);
             if (detailTitle != null) detailTitle.setText("THÔNG TIN VEHICLE");
             if (licensePlateValue != null)
-                licensePlateValue.setText(
-                        vehicle.getLicensePlate() != null ? vehicle.getLicensePlate() : "...");
+                licensePlateValue.setText(vehicle.getLicensePlate() != null ? vehicle.getLicensePlate() : "...");
             if (vehicleYearValue != null)
-                vehicleYearValue.setText(
-                        vehicle.getYear() > 0 ? String.valueOf(vehicle.getYear()) : "...");
+                vehicleYearValue.setText(vehicle.getYear() > 0 ? String.valueOf(vehicle.getYear()) : "...");
             if (brandValue != null)
                 brandValue.setText(vehicle.getBrand() != null ? vehicle.getBrand() : "...");
             if (colorValue != null)

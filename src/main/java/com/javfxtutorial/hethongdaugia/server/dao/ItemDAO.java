@@ -1,10 +1,10 @@
 package com.javfxtutorial.hethongdaugia.server.dao;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.data.*;
-import com.javfxtutorial.hethongdaugia.common.model.Art;
-import com.javfxtutorial.hethongdaugia.common.model.Electronics;
-import com.javfxtutorial.hethongdaugia.common.model.Item;
-import com.javfxtutorial.hethongdaugia.common.model.Vehicle;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Art;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Electronics;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Item;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Vehicle;
 import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import java.sql.*;
 import java.util.ArrayList;

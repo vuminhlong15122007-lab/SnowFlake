@@ -3,19 +3,23 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
-import com.javfxtutorial.hethongdaugia.client.model.AuctionModificationManager;
+import com.javfxtutorial.hethongdaugia.common.model.domain.AuctionModificationManager;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -40,6 +44,7 @@ public class AuctionListController implements ResponseListener {
     private ObservableList<Auction> observable;
     private FilteredList<Auction> filterData;
     private AuctionStatus currentStatus = null; // null = Tất cả
+    private ScheduledExecutorService statusRefreshScheduler;
 
 
     @FXML
@@ -98,6 +103,19 @@ public class AuctionListController implements ResponseListener {
         if (!AuctionModificationManager.getInstance().isAllAuctionsLoaded) {
             loadData();
         }
+        // Cứ 30 giây refresh lại status từ server 1 lần
+        statusRefreshScheduler = Executors.newSingleThreadScheduledExecutor(r -> {
+            Thread t = new Thread(r, "auction-status-refresh");
+            t.setDaemon(true);
+            return t;
+        });
+        statusRefreshScheduler.scheduleAtFixedRate(() -> {
+            try {
+                NetworkManager.getInstance().sendRequest(new GetAllAuctionsCommand(), this);
+            } catch (Exception e) {
+                log.warn("Auto-refresh thất bại: {}", e.getMessage());
+            }
+        }, 30, 30, TimeUnit.SECONDS);
     }
 
     // Áp dụng tất cả bộ lọc
@@ -158,31 +176,20 @@ public class AuctionListController implements ResponseListener {
     // Gửi request lấy danh sách đấu giá — dùng networkManager.sendRequest() của Doc 1
     public void loadData() throws ConnectionFailedException {
         Command cmd = new GetAllAuctionsCommand();
-        new Thread(
-                        () -> {
-                            try {
-                                NetworkManager networkManager = NetworkManager.getInstance();
-                                networkManager.register(GetAllAuctionsCommand.class, this);
-                                networkManager.sendRequest(cmd, this);
-                            } catch (SendFailedException e) {
-                                log.error("Lỗi gửi: {}", e.getMessage());
-                                Platform.runLater(
-                                        () ->
-                                                showAlert(
-                                                        "Lỗi",
-                                                        "Không thể gửi yêu cầu",
-                                                        "Loading.gif"));
-                            } catch (Exception e) {
-                                log.error("Lỗi load data: {}", e.getMessage(), e);
-                                Platform.runLater(
-                                        () ->
-                                                showAlert(
-                                                        "Lỗi",
-                                                        "Tải dữ liệu thất bại",
-                                                        "Loading.gif"));
-                            }
-                        })
-                .start();
+        new Thread(() -> {
+            try {
+                NetworkManager networkManager = NetworkManager.getInstance();
+                networkManager.sendRequest(cmd, this);
+            } catch (SendFailedException e) {
+                log.error("Lỗi gửi: {}", e.getMessage());
+                Platform.runLater(() ->
+                        showAlert("Lỗi", "Không thể gửi yêu cầu", "Loading.gif"));
+            } catch (Exception e) {
+                log.error("Lỗi load data: {}", e.getMessage(), e);
+                Platform.runLater(() ->
+                        showAlert("Lỗi", "Tải dữ liệu thất bại", "Loading.gif"));
+            }
+        }).start();
     }
 
     public void logOut1(ActionEvent event) {
@@ -211,18 +218,16 @@ public class AuctionListController implements ResponseListener {
     @Override
     public void onResponse(Response rp) {
         if (rp.getCommand().getClass() == GetAllAuctionsCommand.class) {
-            Platform.runLater(
-                    () -> {
-                        if (!rp.isSuccess()) {
-                            showAlert("Lỗi tải dữ liệu", rp.getMessage(), "Loading.gif");
-                            return;
-                        }
-                        ArrayList<Auction> auctions = (ArrayList<Auction>) rp.getPayLoad();
-                        observable.setAll(auctions);
-                        AuctionModificationManager.getInstance().isAllAuctionsLoaded = true;
-                    });
-            NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.unregister(GetAllAuctionsCommand.class, this);
+            Platform.runLater(() -> {
+                if (!rp.isSuccess()) {
+                    showAlert("Lỗi tải dữ liệu", rp.getMessage(), "Loading.gif");
+                    return;
+                }
+                ArrayList<Auction> auctions = (ArrayList<Auction>) rp.getPayLoad();
+                observable.setAll(auctions);
+                AuctionModificationManager.getInstance().isAllAuctionsLoaded = true;
+            });
+            // Mỗi lần sendRequest tạo requestId mới → listener tự clean sau mỗi lần
         }
         if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
             Auction cancelled = (Auction) rp.getPayLoad();

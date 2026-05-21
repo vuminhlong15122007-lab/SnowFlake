@@ -1,8 +1,8 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
-import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.AutoBidConfig;
+import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
 import com.javfxtutorial.hethongdaugia.server.network.BidListener;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;

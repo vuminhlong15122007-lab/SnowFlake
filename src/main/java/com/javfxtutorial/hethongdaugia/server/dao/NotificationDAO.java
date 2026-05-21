@@ -3,7 +3,7 @@ package com.javfxtutorial.hethongdaugia.server.dao;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataDeleteException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataInsertException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DatabaseConnectionException;
-import com.javfxtutorial.hethongdaugia.common.model.SellerNotification;
+import com.javfxtutorial.hethongdaugia.common.model.domain.SellerNotification;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;

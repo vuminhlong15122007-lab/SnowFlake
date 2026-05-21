@@ -30,6 +30,7 @@ public class Edit_User_Popup_Controller implements ResponseListener {
     private static final Logger log = LoggerFactory.getLogger(Edit_User_Popup_Controller.class);
     @FXML private TextField txtName;
     @FXML private TextField txtEmail;
+    @FXML private PasswordField txtPassword;
     @FXML private TextField txtPhoneNumber;
     @FXML private ComboBox<String> cbRole;
     @FXML private Button btnCancel;
@@ -38,12 +39,11 @@ public class Edit_User_Popup_Controller implements ResponseListener {
     @FXML
     public void initialize() {
         // gan su kien dong cua so cho nut huy
-        btnCancel.setOnAction(
-                _ -> {
-                    // Llay va dong stage hien tai
-                    Stage stage = (Stage) btnCancel.getScene().getWindow();
-                    stage.close();
-                });
+        btnCancel.setOnAction(_ -> {
+            // Llay va dong stage hien tai
+            Stage stage = (Stage) btnCancel.getScene().getWindow();
+            stage.close();
+        });
         // them chon vai tro
         cbRole.setItems(FXCollections.observableArrayList("USER", "ADMIN"));
     }
@@ -56,12 +56,18 @@ public class Edit_User_Popup_Controller implements ResponseListener {
         saveEvent = event;
         String name = txtName.getText();
         String email = txtEmail.getText();
+        String password = txtPassword.getText();
         String sdt = txtPhoneNumber.getText();
         String selectRole = cbRole.getValue();
-        String password = "000000";
+
         // khong de o trong
-        if (name.isEmpty() || email.isEmpty() || sdt.isEmpty() || selectRole == null) {
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty() || sdt.isEmpty() || selectRole == null) {
             message.setText("Vui lòng điền đầy đủ thông tin!");
+            return;
+        }
+        // check mat khau
+        if (password.length() < 6) {
+            message.setText("Mật khẩu phải có ít nhất 6 ký tự!");
             return;
         }
         // check so dien thoai
@@ -92,34 +98,29 @@ public class Edit_User_Popup_Controller implements ResponseListener {
 
     @Override
     public void onResponse(Response rp) {
-        Platform.runLater(
-                () -> {
-                    if (rp.isSuccess()) {
-                        Stage stage1 =
-                                (Stage) ((Node) saveEvent.getSource()).getScene().getWindow();
-                        stage1.close();
-                        Stage stage = new Stage();
-                        stage.setTitle("Tạo Tài Khoản Thành Công");
-                        FXMLLoader fxmlLoader =
-                                new FXMLLoader(
-                                        MainApplication.class.getResource(
-                                                "/com/javfxtutorial/hethongdaugia/view/fxml/SignUpSuccessPopup.fxml"));
-                        stage.initStyle(StageStyle.TRANSPARENT);
-                        Scene scene = null;
-                        try {
-                            scene = new Scene(fxmlLoader.load());
-                            ThemeManager.apply(scene);
-                        } catch (IOException e) {
-                            log.error("Lỗi load popup thành công: {}", e.getMessage(), e);
-                            showAlert("Thành công", "Tạo tài khoản thành công!");
-                        }
-                        scene.setFill(Color.TRANSPARENT);
-                        stage.setScene(scene);
-                        stage.show();
-                    } else {
-                        showAlert("Đăng ký không thành công", rp.getMessage(), "False.gif");
-                    }
-                });
+        Platform.runLater(() -> {
+            if (rp.isSuccess()) {
+                Stage stage1 = (Stage) ((Node) saveEvent.getSource()).getScene().getWindow();
+                stage1.close();
+                Stage stage = new Stage();
+                stage.setTitle("Tạo Tài Khoản Thành Công");
+                FXMLLoader fxmlLoader = new FXMLLoader(MainApplication.class.getResource("/com/javfxtutorial/hethongdaugia/view/fxml/SignUpSuccessPopup.fxml"));
+                stage.initStyle(StageStyle.TRANSPARENT);
+                Scene scene = null;
+                try {
+                    scene = new Scene(fxmlLoader.load());
+                    ThemeManager.apply(scene);
+                } catch (IOException e) {
+                    log.error("Lỗi load popup thành công: {}", e.getMessage(), e);
+                    showAlert("Thành công", "Tạo tài khoản thành công!");
+                }
+                scene.setFill(Color.TRANSPARENT);
+                stage.setScene(scene);
+                stage.show();
+            } else {
+                showAlert("Đăng ký không thành công", rp.getMessage(), "False.gif");
+            }
+        });
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.unregister(AddAccountCommand.class, this);
     }

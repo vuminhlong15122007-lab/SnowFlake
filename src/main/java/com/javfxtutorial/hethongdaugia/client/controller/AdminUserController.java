@@ -9,7 +9,7 @@ import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedExce
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteUserCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllUsersCommand;
-import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import java.net.URL;
@@ -56,90 +56,77 @@ public class AdminUserController implements Initializable, ResponseListener {
 
     @FXML
     private void loadUserData() {
-        new Thread(
-                        () -> {
-                            try {
-                                Command cmd = new GetAllUsersCommand();
-                                NetworkManager networkManager = NetworkManager.getInstance();
-                                networkManager.sendRequest(cmd, this);
-                            } catch (ConnectionFailedException e) {
-                                log.error("Lỗi kết nối: {}", e.getMessage());
-                                Platform.runLater(
-                                        () ->
-                                                showAlert(
-                                                        "Lỗi kết nối",
-                                                        "Không thể kết nối đến server"));
-                            } catch (SendFailedException e) {
-                                log.error("Lỗi gửi: {}", e.getMessage());
-                                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu"));
-                            } catch (Exception e) {
-                                log.error("Lỗi tải user: {}", e.getMessage(), e);
-                                Platform.runLater(() -> showAlert("Lỗi", "Tải dữ liệu thất bại"));
-                            }
-                        })
-                .start();
+        new Thread(() -> {
+            try {
+                Command cmd = new GetAllUsersCommand();
+                NetworkManager networkManager = NetworkManager.getInstance();
+                networkManager.sendRequest(cmd, this);
+            } catch (ConnectionFailedException e) {
+                log.error("Lỗi kết nối: {}", e.getMessage());
+                Platform.runLater(() ->
+                        showAlert("Lỗi kết nối", "Không thể kết nối đến server"));
+            } catch (SendFailedException e) {
+                log.error("Lỗi gửi: {}", e.getMessage());
+                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu"));
+            } catch (Exception e) {
+                log.error("Lỗi tải user: {}", e.getMessage(), e);
+                Platform.runLater(() -> showAlert("Lỗi", "Tải dữ liệu thất bại"));
+            }
+        }).start();
     }
 
     @FXML
     public void getUpdateAdmin(ActionEvent event) {
-        changePopup(
-                event,
-                "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UpdateAdminInfo.fxml",
-                "sửa thông tin admin");
+        changePopup(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UpdateAdminInfo.fxml", "sửa thông tin admin");
     }
 
     public void clickToAddUser(ActionEvent event) {
-        changePopup(
-                event,
-                "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UpdateUserInfo.fxml",
-                "Thêm User mới");
+        changePopup(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UpdateUserInfo.fxml", "Thêm User mới");
     }
 
     @FXML
-    public void clickToDeleteUser() throws ConnectionFailedException, SendFailedException {
+    public void clickToDeleteUser() {
         selectUser = userTable.getSelectionModel().getSelectedItem();
         if (selectUser == null) {
             showAlert("Lỗi", "Vui lòng chọn người dùng cần xóa", "WrongCat.gif");
             return;
         }
+
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Xác nhận xóa");
         confirmAlert.setHeaderText("Bạn chắc chắn muốn xóa tài khoản?");
         confirmAlert.setContentText(
-                "Tài khoản: "
-                        + selectUser.getName()
-                        + "\nEmail: "
-                        + selectUser.getEmail()
-                        + "\nSố điện thoại: "
-                        + selectUser.getSdt());
+                "Tài khoản: " + selectUser.getName()
+                        + "\nEmail: " + selectUser.getEmail()
+                        + "\nSố điện thoại: " + selectUser.getSdt());
         ButtonType yes = new ButtonType("Có", ButtonBar.ButtonData.YES);
         ButtonType no = new ButtonType("Không", ButtonBar.ButtonData.NO);
         confirmAlert.getButtonTypes().setAll(yes, no);
         ButtonType result = confirmAlert.showAndWait().orElse(null);
-        // neu co
+
         if (result == yes) {
-            // tao command gui len server
             DeleteUserCommand cmd = new DeleteUserCommand();
             cmd.addData("userId", selectUser.getId());
             cmd.addData("username", selectUser.getName());
             cmd.addData("email", selectUser.getEmail());
             cmd.addData("phone", selectUser.getSdt());
 
-            NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.sendRequest(cmd, this);
+            new Thread(() -> {
+                try {
+                    NetworkManager.getInstance().sendRequest(cmd, this);
+                } catch (Exception e) {
+                    log.error("Lỗi gửi DeleteUserCommand: {}", e.getMessage(), e);
+                    Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "WrongCat.gif"));
+                }
+            }).start();
         }
     }
+
 
     @FXML
     public void clickToResetPW() {
         try {
-            Parent root =
-                    FXMLLoader.load(
-                            Objects.requireNonNull(
-                                    getClass()
-                                            .getResource(
-                                                    "/com/javfxtutorial/hethongdaugia/view/fxml/reset_password.fxml")));
-
+            Parent root = FXMLLoader.load(Objects.requireNonNull(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/reset_password.fxml")));
             Stage stage = new Stage();
             // khong dong cua so cu ma khoa cua so cu o phía  sau
             stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
@@ -153,7 +140,7 @@ public class AdminUserController implements Initializable, ResponseListener {
     }
 
     public void reLoad() {
-        loadUserData(); // ✅ Gọi lại method loadUserData() thay vì gọi DAO
+        loadUserData(); //  Gọi lại method loadUserData() thay vì gọi DAO
         System.out.println("Dữ liệu đã được cập nhật!");
     }
 
@@ -199,28 +186,29 @@ public class AdminUserController implements Initializable, ResponseListener {
     @Override
     public void onResponse(Response rp) {
         if (rp.getCommand().getClass() == DeleteUserCommand.class) {
-            if (rp.isSuccess()) {
-                showAlert("Xóa thành công", rp.getMessage(), "Kiss.gif");
-                userTable.getItems().remove(selectUser);
-            } else {
-                showAlert("Lỗi", rp.getMessage(), "WrongCat.gif");
-            }
-            NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.unregister(DeleteUserCommand.class, this);
+            Platform.runLater(() -> {
+                if (rp.isSuccess()) {
+                    showAlert("Xóa thành công", rp.getMessage(), "Kiss.gif");
+                    userTable.getItems().remove(selectUser);
+                } else {
+                    showAlert("Lỗi", rp.getMessage(), "WrongCat.gif");
+                }
+            });
+            NetworkManager.getInstance().unregister(DeleteUserCommand.class, this);
         }
+
         if (rp.getCommand().getClass() == GetAllUsersCommand.class) {
+            // phần này đã có Platform.runLater, giữ nguyên
             if (rp.isSuccess()) {
                 List<User> users = (List<User>) rp.getPayLoad();
-                javafx.application.Platform.runLater(
-                        () -> {
-                            danhSach = FXCollections.observableArrayList(users);
-                            userTable.setItems(danhSach);
-                        });
+                Platform.runLater(() -> {
+                    danhSach = FXCollections.observableArrayList(users);
+                    userTable.setItems(danhSach);
+                });
             } else {
-                javafx.application.Platform.runLater(() -> showAlert("Lỗi", rp.getMessage()));
+                Platform.runLater(() -> showAlert("Lỗi", rp.getMessage()));
             }
-            NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.unregister(GetAllUsersCommand.class, this);
+            NetworkManager.getInstance().unregister(GetAllUsersCommand.class, this);
         }
     }
 }

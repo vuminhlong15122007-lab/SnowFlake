@@ -3,8 +3,8 @@ package com.javfxtutorial.hethongdaugia.server.dao;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DatabaseConnectionException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DuplicateKeyException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.QueryExecutionException;
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -90,6 +90,8 @@ public class ParticipatedAuctionDAO {
                         + "    i.sellerName, \n"
                         + "    i.category,\n"
                         + "    u.name AS winner_name,\n"
+                        + "    u.email AS winner_email,\n"  
+                        + "    u.sdt AS winner_sdt,\n"
                         + "\n"
                         + "    e.brand AS e_brand, \n"
                         + "    e.model,\n"

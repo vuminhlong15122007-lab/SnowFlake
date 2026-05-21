@@ -2,7 +2,7 @@ package com.javfxtutorial.hethongdaugia.common.model.Command;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.QueryExecutionException;
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;

@@ -1,7 +1,7 @@
 package com.javfxtutorial.hethongdaugia.common.model.Command;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.data.QueryExecutionException;
-import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.BidDAO;

@@ -1,6 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
-import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ListCell;

@@ -10,10 +10,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.AutoBidConfig;
-import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
-import com.javfxtutorial.hethongdaugia.common.model.Item;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.AutoBidConfig;
+import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Item;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;

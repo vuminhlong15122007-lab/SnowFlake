@@ -4,7 +4,7 @@ import com.javfxtutorial.hethongdaugia.common.Exception.auth.InvalidCredentialsE
 import com.javfxtutorial.hethongdaugia.common.Exception.auth.UserNotFoundException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.EntityNotFoundException;
-import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
 import com.javfxtutorial.hethongdaugia.server.security.PasswordHasher;
 import org.slf4j.Logger;

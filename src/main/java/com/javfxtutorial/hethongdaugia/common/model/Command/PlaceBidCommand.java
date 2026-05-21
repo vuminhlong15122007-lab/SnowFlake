@@ -8,7 +8,7 @@ import com.javfxtutorial.hethongdaugia.common.Exception.bid.InsufficientIncremen
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.LowerThanCurrentBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.SelfBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
-import com.javfxtutorial.hethongdaugia.common.model.BidTransaction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;

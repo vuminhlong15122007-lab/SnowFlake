@@ -4,7 +4,7 @@ import static com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus.N
 import static com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus.RUNNING;
 
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;

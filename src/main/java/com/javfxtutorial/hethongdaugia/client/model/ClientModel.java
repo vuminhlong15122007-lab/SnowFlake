@@ -1,8 +1,9 @@
 package com.javfxtutorial.hethongdaugia.client.model;
 
-import com.javfxtutorial.hethongdaugia.common.model.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.SellerNotification;
-import com.javfxtutorial.hethongdaugia.common.model.User;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.AuctionModificationManager;
+import com.javfxtutorial.hethongdaugia.common.model.domain.SellerNotification;
+import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import java.util.HashSet;
 import java.util.Set;
 import javafx.collections.FXCollections;
@@ -71,9 +72,6 @@ public class ClientModel {
         return sellerNotifications;
     }
 
-    public void clearSellerNotifications() {
-        sellerNotifications.clear();
-    }
 
     // ── Read notification IDs (persist qua Preferences) ───────────────────────
     private Set<Integer> readNotificationIds = new HashSet<>();
@@ -154,5 +152,8 @@ public class ClientModel {
         currentAuction = null;
         sellerNotifications.clear();
         readNotificationIds.clear();
+        myAuctions.clear();
+        AuctionModificationManager.getInstance().isAllAuctionsLoaded = false;
+        getAllAuctions().clear();
     }
 }
