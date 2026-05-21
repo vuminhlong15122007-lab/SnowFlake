@@ -225,6 +225,9 @@ public class AuctionManager {
     public AuctionStatus refreshAuctionStatus(Auction auction) throws DataException {
         AuctionStatus previousStatus = auction.getStatus();
 
+        if (previousStatus == AuctionStatus.CANCELLED) {
+            return previousStatus;
+        }
         if (LocalDateTime.now().isBefore(auction.getStartingTime())) {
             auction.setStatus(AuctionStatus.NOT_START);
         } else if (previousStatus == AuctionStatus.PAID) {
