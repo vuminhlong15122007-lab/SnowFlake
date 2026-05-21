@@ -107,6 +107,11 @@ public class ProductDisplayController {
 
     @FXML
     public void goToManHinhDauGiaTrucTiep(ActionEvent event) {
+        AccountType type = ClientModel.getInstance().getCurrentUser().getAccountType();
+        if (type == AccountType.ADMIN) {
+            showAlert("KHông thể tham gia", "Bạn không thể tham gia phin đấu giá");
+            return;
+        }
         if (auction.getStatus() == AuctionStatus.RUNNING) {
             System.out.println(
                     "Phiên đấu giá hiện tại: " + ClientModel.getInstance().getCurrentAuction());

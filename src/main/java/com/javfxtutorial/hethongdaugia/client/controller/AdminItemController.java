@@ -14,6 +14,7 @@ import com.javfxtutorial.hethongdaugia.common.model.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
+import com.javfxtutorial.hethongdaugia.common.model.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
@@ -38,6 +39,7 @@ public class AdminItemController implements ResponseListener {
     @FXML private TableColumn<Auction, String> colOwner;
     @FXML private TableColumn<Auction, String> colStatus;
     private ObservableList<Auction> observableList;
+    @FXML private TextField searchField;
 
     @FXML
     public void initialize() {
@@ -168,6 +170,34 @@ public class AdminItemController implements ResponseListener {
                 }
             }
         });
+    }
+    @FXML
+    public void clickToSearch() {
+        String textWord = searchField.getText();
+
+        if (textWord == null || textWord.trim().isEmpty()) {
+            itemTable.setItems(observableList);
+            return;
+        }
+
+        ObservableList<Auction> result = FXCollections.observableArrayList();
+        String keyword = textWord.toLowerCase().trim();
+
+        for (Auction auction : observableList) {
+            if (String.valueOf(auction.getAuctionId()).contains(keyword)
+                    || auction.getItem().getName().toLowerCase().contains(keyword)
+                    || auction.getItem().getSellerName().toLowerCase().contains(keyword)
+                    || auction.getStatus().name().toLowerCase().contains(keyword)) {
+                result.add(auction);
+            }
+        }
+        itemTable.setItems(result);
+        System.out.println("Đã tìm thấy " + result.size() + " kết quả");
+    }
+
+    public void clickToDeleteSearch() {
+        searchField.clear();
+        itemTable.setItems(observableList);
     }
 
     @Override
