@@ -275,9 +275,17 @@ public class SellerManagementController implements ResponseListener {
      */
     public Auction getInfo() throws Exception {
         String rawPrice2 = priceField.getText().replaceAll("[^0-9.]", "");
+        if (rawPrice2.isEmpty()) {
+            showAlert("Lỗi", "Vui lòng nhập giá khởi điểm.");
+            return null;
+        }
         BigDecimal initPrice = new BigDecimal(rawPrice2);
 
         String rawStep = tfstepPrice.getText().replaceAll("[^0-9.]", "");
+        if (rawStep.isEmpty()) {
+            showAlert("Lỗi", "Vui lòng nhập bước giá.");
+            return null;
+        }
         BigDecimal stepPrice = new BigDecimal(rawStep);
 
         LocalDate ngayBD = startDatePicker.getValue();
@@ -287,7 +295,14 @@ public class SellerManagementController implements ResponseListener {
         LocalDate ngayKT = endDatePicker.getValue();
         int endHour = (int) endHourSpinner.getValue();
         int endMinu = (int) endMinuteSpinner.getValue();
-
+        if (ngayBD == null) {
+            showAlert("Lỗi", "Vui lòng chọn ngày bắt đầu.");
+            return null;
+        }
+        if (ngayKT == null) {
+            showAlert("Lỗi", "Vui lòng chọn ngày kết thúc.");
+            return null;
+        }
         LocalDateTime tGianBD = LocalDateTime.of(ngayBD, LocalTime.of(startHour, startMinu));
         LocalDateTime tGianKT = LocalDateTime.of(ngayKT, LocalTime.of(endHour, endMinu));
 

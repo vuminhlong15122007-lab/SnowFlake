@@ -26,7 +26,8 @@ public class GetAuctionsBySellerIdCommand extends Command {
                         try {
                             AuctionManager.getInstance().refreshAuctionStatus(auction);
                         } catch (DataException e) {
-                            throw new RuntimeException(e);
+                            log.error("Lỗi refresh status auction {}: {}",
+                                    auction.getAuctionId(), e.getMessage());
                         }
                     });
             return new Response(true, "Thành công", auctions, this);
