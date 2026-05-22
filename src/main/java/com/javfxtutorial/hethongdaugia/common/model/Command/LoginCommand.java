@@ -6,6 +6,8 @@ import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.manager.UserManager;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +21,11 @@ public class LoginCommand extends Command {
         try {
             User user = UserManager.getInstance().authenticate(username, password);
             if (user != null) {
-                return new Response(true, "Đăng nhập thành công", user, this);
+                ClientHandler currentClient = ClientHandlerContextHolder.get();
+                if (currentClient != null) {
+                    currentClient.setCurrentUser(user);
+                }
+                return new Response(true, "Đăng nhập thành công", sanitize(user), this);
             }
             return new Response(false, "Sai tên hoặc mật khẩu", null, this);
         } catch (InvalidCredentialsException e) {
@@ -32,5 +38,16 @@ public class LoginCommand extends Command {
             log.error("Lỗi không xác định: {}", e.getMessage(), e);
             return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);
         }
+    }
+
+    private static User sanitize(User user) {
+        return new User(
+                user.getId(),
+                user.getName(),
+                null,
+                user.getEmail(),
+                user.getSdt(),
+                user.getAccountType(),
+                user.getImagePath());
     }
 }

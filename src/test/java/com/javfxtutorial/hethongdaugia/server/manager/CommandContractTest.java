@@ -20,9 +20,11 @@ import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AutoBidCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAuctionStatusCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.LoginCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.RegisterToAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Item;
 import com.javfxtutorial.hethongdaugia.common.model.domain.User;
@@ -221,6 +223,50 @@ class CommandContractTest {
             assertFalse(response.isSuccess());
             assertNull(response.getPayLoad());
         }
+
+        @Test
+        @DisplayName("UpdateAuctionStatusCommand thieu auction thi khong goi DAO")
+        void updateAuctionStatusCommand_missingAuctionReturnsFailureBeforeDao()
+                throws DataException {
+            UpdateAuctionStatusCommand command = new UpdateAuctionStatusCommand(null);
+            AuctionDAO auctionDAO = mock(AuctionDAO.class);
+
+            try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class);
+                    MockedStatic<ClientHandler> mockedClientHandler =
+                            mockStatic(ClientHandler.class)) {
+                mockedAuctionDAO.when(AuctionDAO::getInstance).thenReturn(auctionDAO);
+
+                Response response = command.handle();
+
+                assertFalse(response.isSuccess());
+                assertNull(response.getPayLoad());
+                verify(auctionDAO, never()).update(any(Auction.class));
+                mockedClientHandler.verifyNoInteractions();
+            }
+        }
+
+        @Test
+        @DisplayName("UpdateAuctionStatusCommand update fail thi khong broadcast")
+        void updateAuctionStatusCommand_failedDaoUpdateDoesNotBroadcast() throws DataException {
+            Auction auction = runningAuction(AuctionStatus.CANCELLED);
+            UpdateAuctionStatusCommand command = new UpdateAuctionStatusCommand(auction);
+            AuctionDAO auctionDAO = mock(AuctionDAO.class);
+            when(auctionDAO.update(auction)).thenReturn(0);
+
+            try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class);
+                    MockedStatic<ClientHandler> mockedClientHandler =
+                            mockStatic(ClientHandler.class)) {
+                mockedAuctionDAO.when(AuctionDAO::getInstance).thenReturn(auctionDAO);
+
+                Response response = command.handle();
+
+                assertFalse(response.isSuccess());
+                assertNull(response.getPayLoad());
+                verify(auctionDAO).update(auction);
+                mockedClientHandler.verify(
+                        () -> ClientHandler.broadcast(any(Response.class)), never());
+            }
+        }
     }
 
     @Nested
@@ -276,6 +322,117 @@ class CommandContractTest {
                 assertFalse(response.isSuccess());
                 assertNull(response.getPayLoad());
                 verify(userDAO, never()).insert(any(User.class));
+            }
+        }
+
+        @Test
+        @DisplayName("khong cho client chua dang nhap admin tao tai khoan ADMIN")
+        void addAccountCommand_adminRoleWithoutAdminSessionReturnsFailureBeforeDao()
+                throws DataException {
+            AddAccountCommand command = validAddAccountCommand();
+            command.addData("accountType", "ADMIN");
+            UserDAO userDAO = mock(UserDAO.class);
+
+            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+                Response response = command.handle();
+
+                assertFalse(response.isSuccess());
+                assertNull(response.getPayLoad());
+                verify(userDAO, never()).insert(any(User.class));
+            }
+        }
+
+        @Test
+        @DisplayName("admin da dang nhap duoc tao tai khoan ADMIN")
+        void addAccountCommand_adminRoleWithAdminSessionCanCreateAdminAccount()
+                throws DataException {
+            AddAccountCommand command = validAddAccountCommand();
+            command.addData("accountType", "ADMIN");
+            UserDAO userDAO = mock(UserDAO.class);
+            when(userDAO.insert(any(User.class))).thenReturn(1);
+            ClientHandler adminClient = new ClientHandler(null);
+            adminClient.setCurrentUser(
+                    new User(
+                            99,
+                            "admin",
+                            null,
+                            "admin@example.com",
+                            "0900000000",
+                            AccountType.ADMIN,
+                            null));
+            ClientHandlerContextHolder.set(adminClient);
+
+            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+                Response response = command.handle();
+
+                assertTrue(response.isSuccess());
+                assertNull(response.getPayLoad());
+                verify(userDAO).insert(any(User.class));
+            }
+        }
+
+        @Test
+        @DisplayName("du lieu bat buoc blank bi chan truoc DAO")
+        void addAccountCommand_blankRequiredFieldReturnsFailureBeforeDao() throws DataException {
+            AddAccountCommand command = validAddAccountCommand();
+            command.addData("username", "   ");
+            UserDAO userDAO = mock(UserDAO.class);
+
+            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+                Response response = command.handle();
+
+                assertFalse(response.isSuccess());
+                assertNull(response.getPayLoad());
+                verify(userDAO, never()).insert(any(User.class));
+            }
+        }
+    }
+
+    @Nested
+    @DisplayName("Auth command")
+    class AuthCommandTest {
+        @Test
+        @DisplayName("LoginCommand thanh cong khong tra password ve client")
+        void loginCommand_successPayloadDoesNotExposePassword() throws Exception {
+            LoginCommand command = new LoginCommand();
+            command.addData("username", "alice");
+            command.addData("password", "pass123");
+            User user =
+                    new User(
+                            1,
+                            "alice",
+                            "pbkdf2-or-legacy-value",
+                            "alice@example.com",
+                            "0901234567",
+                            AccountType.USER,
+                            "alice.png");
+            UserManager userManager = mock(UserManager.class);
+            when(userManager.authenticate("alice", "pass123")).thenReturn(user);
+            ClientHandler currentClient = new ClientHandler(null);
+            ClientHandlerContextHolder.set(currentClient);
+
+            try (MockedStatic<UserManager> mockedUserManager = mockStatic(UserManager.class)) {
+                mockedUserManager.when(UserManager::getInstance).thenReturn(userManager);
+
+                Response response = command.handle();
+
+                assertTrue(response.isSuccess());
+                User payload = (User) response.getPayLoad();
+                assertNotNull(payload);
+                assertNull(payload.getPassWord());
+                assertEquals(user.getId(), payload.getId());
+                assertEquals(user.getName(), payload.getName());
+                assertEquals(user.getEmail(), payload.getEmail());
+                assertEquals(user.getSdt(), payload.getSdt());
+                assertEquals(user.getAccountType(), payload.getAccountType());
+                assertEquals(user.getImagePath(), payload.getImagePath());
+                assertSame(user, currentClient.getCurrentUser());
             }
         }
     }

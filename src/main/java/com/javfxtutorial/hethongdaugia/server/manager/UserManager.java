@@ -39,7 +39,7 @@ public class UserManager {
 
             if (user != null && PasswordHasher.matches(password, user.getPassWord())) {
                 if (!PasswordHasher.isHashed(user.getPassWord())) {
-                    user.setPassWord(password);
+                    user.setPassWord(PasswordHasher.hash(password));
                     UserDAO.getInstance().update(user);
                 }
             }
@@ -93,6 +93,9 @@ public class UserManager {
             throws UserNotFoundException, DataException {
         try {
             User deleteUser = UserDAO.getInstance().selectById(userId);
+            if (deleteUser == null) {
+                return false;
+            }
             int result = UserDAO.getInstance().delete(deleteUser);
             if (result > 0) {
                 System.out.println("Xoa user thanh cong");
@@ -117,7 +120,7 @@ public class UserManager {
                     new User(
                             userId,
                             resetPW.getName(),
-                            passWord,
+                            PasswordHasher.hash(passWord),
                             resetPW.getEmail(),
                             resetPW.getSdt(),
                             resetPW.getAccountType(),
