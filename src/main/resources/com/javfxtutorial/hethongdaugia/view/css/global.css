@@ -542,8 +542,8 @@
 
 .sf-home-hero {
     -fx-background-color: radial-gradient(center 18% 18%, radius 42%, -sf-accent-soft, transparent),
-                          radial-gradient(center 82% 84%, radius 46%, -sf-purple-soft, transparent),
-                          linear-gradient(to bottom right, -sf-panel-strong, -sf-surface-soft);
+    radial-gradient(center 82% 84%, radius 46%, -sf-purple-soft, transparent),
+    linear-gradient(to bottom right, -sf-panel-strong, -sf-surface-soft);
     -fx-background-radius: 26;
     -fx-border-color: -sf-border-soft;
     -fx-border-radius: 26;
@@ -1344,4 +1344,208 @@
 .sf-participated-auction-cell .button.sf-auction-action-danger:disabled,
 .sf-participated-auction-cell .button.sf-auction-action-neutral:disabled {
     -fx-opacity: 0.58;
+}
+
+/* ==================== Admin Panel Theme Variables ==================== */
+/*
+ * Để thay màu giao diện admin, chỉ cần sửa các biến trong .admin-theme bên dưới.
+ * Các màu này áp dụng cho cả Admin_UserManagement và Admin_ProductManagement.
+ *
+ * Ví dụ đổi sang dark mode admin: đổi -admin-bg thành #1E1E2E, v.v.
+ */
+.admin-theme {
+    /* === NỀN TRANG === */
+    -admin-bg:              #E3F2FD;   /* màu nền toàn trang */
+    -admin-header-bg:       #FFFFFF;   /* thanh header trên cùng */
+    -admin-header-border:   #90CAF9;   /* viền dưới header */
+    -admin-sidebar-bg:      #FFFFFF;   /* sidebar phải */
+    -admin-sidebar-border:  #90CAF9;   /* viền trái sidebar */
+
+    /* === BẢNG DỮ LIỆU === */
+    -admin-table-bg:        #FFFFFF;
+    -admin-table-border:    #64B5F6;
+    -admin-col-header-bg-start: #F5F5F5;
+    -admin-col-header-bg-end:   #E0E0E0;
+    -admin-selection:       #E3F2FD;
+    -admin-selection-nf:    #F1F8FF;
+
+    /* === CHỮ === */
+    -admin-text-primary:    #1565C0;   /* chữ tiêu đề chính */
+    -admin-text-secondary:  #546E7A;   /* chữ mô tả nhỏ */
+    -admin-heading:         #0D47A1;   /* tiêu đề bảng */
+    -admin-badge-bg:        #BBDEFB;
+    -admin-badge-border:    #90CAF9;
+    -admin-badge-text:      #1565C0;
+
+    /* === NÚT ĐIỀU HƯỚNG === */
+    -admin-btn-nav-bg:      #FFFFFF;
+    -admin-btn-nav-text:    #0D47A1;
+    -admin-btn-nav-border:  #42A5F5;
+
+    /* === NÚT THÊM === */
+    -admin-btn-add-bg:      #E8EAF6;
+    -admin-btn-add-text:    #3F51B5;
+    -admin-btn-add-border:  #C5CAE9;
+
+    /* === NÚT SỬA === */
+    -admin-btn-edit-bg:     #FFF3E0;
+    -admin-btn-edit-text:   #E65100;
+    -admin-btn-edit-border: #FFB74D;
+
+    /* === NÚT RESET MK === */
+    -admin-btn-reset-bg:    #E0F2F1;
+    -admin-btn-reset-text:  #004D40;
+    -admin-btn-reset-border:#4DB6AC;
+
+    /* === NÚT TẢI LẠI === */
+    -admin-btn-reload-bg:   #E1F5FE;
+    -admin-btn-reload-text: #01579B;
+    -admin-btn-reload-border:#4FC3F7;
+
+    /* === NÚT XÓA === */
+    -admin-btn-delete-bg:   #FFEBEE;
+    -admin-btn-delete-text: #C62828;
+    -admin-btn-delete-border:#E57373;
+
+    /* === NÚT THOÁT === */
+    -admin-btn-exit-bg:     #FFFFFF;
+    -admin-btn-exit-text:   #37474F;
+    -admin-btn-exit-border: #B0BEC5;
+}
+
+/* Áp dụng màu nền trang admin */
+.admin-theme {
+    -fx-background-color: -admin-bg;
+}
+
+/* Header admin */
+.admin-header-bar {
+    -fx-background-color: -admin-header-bg;
+    -fx-border-color: -admin-header-border;
+    -fx-border-width: 0 0 1 0;
+}
+
+/* Sidebar admin */
+.admin-sidebar-panel {
+    -fx-background-color: -admin-sidebar-bg;
+    -fx-border-color: -admin-sidebar-border;
+    -fx-border-width: 0 0 0 1.5;
+}
+
+/* Badge đếm người dùng/sản phẩm */
+.admin-count-badge {
+    -fx-font-size: 11px;
+    -fx-font-weight: bold;
+    -fx-background-color: -admin-badge-bg;
+    -fx-border-color: -admin-badge-border;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+    -fx-padding: 2 10 2 10;
+    -fx-text-fill: -admin-badge-text;
+}
+
+/* Các nút trong sidebar admin */
+.admin-btn-nav {
+    -fx-background-color: -admin-btn-nav-bg;
+    -fx-text-fill: -admin-btn-nav-text;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-border-color: -admin-btn-nav-border;
+    -fx-border-radius: 6;
+    -fx-padding: 0 12;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+    -fx-pref-height: 38;
+}
+.admin-btn-add {
+    -fx-background-color: -admin-btn-add-bg;
+    -fx-text-fill: -admin-btn-add-text;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-border-color: -admin-btn-add-border;
+    -fx-border-radius: 6;
+    -fx-padding: 0 12;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+    -fx-pref-height: 38;
+}
+.admin-btn-edit {
+    -fx-background-color: -admin-btn-edit-bg;
+    -fx-text-fill: -admin-btn-edit-text;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-border-color: -admin-btn-edit-border;
+    -fx-border-radius: 6;
+    -fx-padding: 0 12;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+    -fx-pref-height: 38;
+}
+.admin-btn-reset {
+    -fx-background-color: -admin-btn-reset-bg;
+    -fx-text-fill: -admin-btn-reset-text;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-border-color: -admin-btn-reset-border;
+    -fx-border-radius: 6;
+    -fx-padding: 0 12;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+    -fx-pref-height: 38;
+}
+.admin-btn-reload {
+    -fx-background-color: -admin-btn-reload-bg;
+    -fx-text-fill: -admin-btn-reload-text;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-border-color: -admin-btn-reload-border;
+    -fx-border-radius: 6;
+    -fx-padding: 0 12;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+    -fx-pref-height: 38;
+}
+.admin-btn-delete {
+    -fx-background-color: -admin-btn-delete-bg;
+    -fx-text-fill: -admin-btn-delete-text;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-border-color: -admin-btn-delete-border;
+    -fx-border-radius: 6;
+    -fx-padding: 0 12;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+    -fx-pref-height: 38;
+}
+.admin-btn-exit {
+    -fx-background-color: -admin-btn-exit-bg;
+    -fx-text-fill: -admin-btn-exit-text;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 6;
+    -fx-border-color: -admin-btn-exit-border;
+    -fx-border-radius: 6;
+    -fx-padding: 0 12;
+    -fx-alignment: CENTER_LEFT;
+    -fx-cursor: hand;
+    -fx-pref-height: 38;
+}
+
+/* Hover chung cho tất cả nút admin */
+.admin-btn-nav:hover,
+.admin-btn-add:hover,
+.admin-btn-edit:hover,
+.admin-btn-reset:hover,
+.admin-btn-reload:hover,
+.admin-btn-delete:hover,
+.admin-btn-exit:hover {
+    -fx-opacity: 0.85;
+    -fx-scale-x: 1.02;
+    -fx-scale-y: 1.02;
 }

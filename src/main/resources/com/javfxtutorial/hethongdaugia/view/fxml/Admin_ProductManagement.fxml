@@ -1,89 +1,111 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="720.0" prefWidth="1280.0" styleClass="sf-page" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminItemController">
+<BorderPane prefHeight="720.0" prefWidth="1280.0" styleClass="sf-page" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminItemController">
 
+    <!-- ═══════════════════════════  TOP BAR  ═══════════════════════════ -->
     <top>
-        <HBox alignment="CENTER_LEFT" prefHeight="67.0" prefWidth="1280.0" spacing="16.0" style="-fx-background-color: linear-gradient(to right, -sf-surface-raised, -sf-surface, -sf-page-start);                      -fx-border-color: -sf-border;                      -fx-border-width: 0 0 1 0;                      -fx-effect: dropshadow(gaussian, -sf-shadow, 12, 0.2, 0, 3);">
+        <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="1280.0" spacing="12.0" style="                 -fx-background-color: -sf-surface;                 -fx-border-color: -sf-border;                 -fx-border-width: 0 0 1 0;             " BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="12.0" left="22.0" right="22.0" top="12.0" />
+                <Insets bottom="10.0" left="18.0" right="18.0" top="10.0" />
             </padding>
 
-            <ImageView fitHeight="52.0" fitWidth="52.0" pickOnBounds="true" preserveRatio="true">
-                <image>
-                    <Image url="@../../assets/Beta01.png" />
-                </image>
-            </ImageView>
+            <!-- Logo box -->
+            <StackPane prefHeight="40.0" prefWidth="40.0" style="  -fx-background-radius: 8;                 ">
+                <ImageView fitHeight="43.0" fitWidth="47.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../../assets/Beta01.png" />
+                    </image>
+                </ImageView>
+            </StackPane>
 
-            <VBox alignment="CENTER_LEFT" spacing="4.0">
-                <Label styleClass="sf-title" text="Bảng Điều Khiển Admin" />
-                <Label style="-fx-font-size: 13px; -fx-text-fill: -sf-text; -fx-font-weight: bold;" text="Quản lý sản phẩm và phiên đấu giá" />
+            <!-- Title -->
+            <VBox spacing="1.0">
+                <Label style="                         -fx-font-size: 15px;                         -fx-font-weight: bold;                         -fx-text-fill: -sf-text-primary;                     " text="Bảng điều khiển admin" />
+                <Label style="                         -fx-font-size: 12px;                         -fx-text-fill: -sf-text-secondary;                     " text="Quản lý sản phẩm và phiên đấu giá" />
             </VBox>
 
             <Region HBox.hgrow="ALWAYS" />
 
-            <HBox alignment="CENTER" spacing="8.0" style="-fx-background-color: -sf-panel;                          -fx-background-radius: 22;                          -fx-border-color: -sf-border-soft;                          -fx-border-radius: 22;                          -fx-padding: 7 8 7 12;">
-                <TextField fx:id="searchField" prefHeight="34.0" prefWidth="275.0" promptText="Tìm kiếm tên sản phẩm, danh mục..." style="-fx-background-color: transparent;                                   -fx-border-color: transparent;                                   -fx-font-size: 13px;" />
-                <Button fx:id="btnSearch" onAction="#clickToSearch" prefHeight="34.0" prefWidth="81.0" styleClass="sf-btn-primary" text="Tìm kiếm" />
-            <Button fx:id="btnDelete" maxWidth="Infinity" onAction="#clickToDeleteSearch" prefHeight="30.0" prefWidth="76.0" styleClass="sf-btn-danger" text="Xóa" />
+            <!-- Search bar -->
+            <HBox alignment="CENTER_LEFT" spacing="8.0" style="                     -fx-background-color: -sf-panel;                     -fx-border-color: -sf-border;                     -fx-border-radius: 20;                     -fx-background-radius: 20;                     -fx-padding: 5 8 5 12;                 ">
+                <TextField fx:id="searchField" prefHeight="30.0" prefWidth="255.0" promptText="Tìm tên sản phẩm, danh mục, trạng thái..." style="                         -fx-background-color: transparent;                         -fx-font-size: 13px;                         -fx-text-fill: -sf-text-primary;                     " />
+                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#clickToSearch" style="                         -fx-background-color: #1D9E75;                         -fx-text-fill: white;                         -fx-font-weight: bold;                         -fx-font-size: 12px;                         -fx-background-radius: 8;                         -fx-padding: 6 14 6 14;                         -fx-cursor: hand;                     " text="Tìm kiếm" />
+                <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#clickToDeleteSearch" style="                         -fx-background-color: -sf-panel;                         -fx-text-fill: -sf-text-secondary;                         -fx-font-size: 12px;                         -fx-background-radius: 8;                         -fx-border-color: -sf-border;                         -fx-border-radius: 8;                         -fx-padding: 6 14 6 14;                         -fx-cursor: hand;                     " text="Xóa" />
             </HBox>
         </HBox>
     </top>
 
+    <!-- ═══════════════════════════  CENTER  ═══════════════════════════ -->
     <center>
-        <VBox spacing="12.0" style="-fx-background-color: linear-gradient(to bottom right, -sf-surface, -sf-page-soft);">
+        <VBox spacing="12.0" BorderPane.alignment="CENTER">
             <padding>
                 <Insets bottom="18.0" left="18.0" right="18.0" top="18.0" />
             </padding>
 
-            <Label styleClass="sf-section-title" text="Danh sách sản phẩm trên hệ thống" />
+            <!-- Section header -->
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <Label style="                         -fx-font-size: 13px;                         -fx-font-weight: bold;                         -fx-text-fill: -sf-text-secondary;                     " text="Danh sách sản phẩm trên hệ thống" />
+                <Label fx:id="itemCountBadge" style="                         -fx-font-size: 11px;                         -fx-background-color: -sf-panel;                         -fx-border-color: -sf-border;                         -fx-border-radius: 20;                         -fx-background-radius: 20;                         -fx-padding: 2 10 2 10;                         -fx-text-fill: -sf-text-secondary;                     " text="Đang tải..." />
+            </HBox>
 
-            <TableView fx:id="itemTable" style="-fx-background-color: -sf-surface;                               -fx-background-radius: 10;                               -fx-border-color: -sf-border;                               -fx-border-radius: 10;                               -fx-table-cell-border-color: -sf-page-start;                               -fx-control-inner-background: -sf-surface;                               -fx-control-inner-background-alt: -sf-surface-soft;                               -fx-selection-bar: -sf-accent;                               -fx-selection-bar-non-focused: -sf-accent-2;" styleClass="admin-product-table" VBox.vgrow="ALWAYS">
+            <!-- Table -->
+            <TableView fx:id="itemTable" style="                     -fx-font-size: 12.5px;                     -fx-background-color: -sf-surface;                     -fx-background-radius: 10;                     -fx-border-color: -sf-border;                     -fx-border-radius: 10;                     -fx-selection-bar: #E1F5EE;                     -fx-selection-bar-non-focused: #E1F5EE;                     -fx-control-inner-background: -sf-surface;                     -fx-control-inner-background-alt: -sf-surface-soft;                     -fx-table-cell-border-color: -sf-border-soft;                 " VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="colId" prefWidth="83.60001200437546" text="Mã SP" />
-                    <TableColumn fx:id="colItemName" prefWidth="224.3999786376953" text="Tên sản phẩm" />
-                    <TableColumn fx:id="colCategory" prefWidth="113.0" text="Danh mục" />
-                    <TableColumn fx:id="colOwner" prefWidth="121.5999755859375" text="Người đăng" />
-                    <TableColumn fx:id="colStartPrice" prefWidth="134.20001220703125" text="Giá hiện tại" />
-                    <TableColumn fx:id="colStepPrice" prefWidth="173.0" text="Bước giá" />
-                    <TableColumn fx:id="colStatus" prefWidth="93.5999755859375" text="Trạng thái" />
+                    <TableColumn fx:id="colId" prefWidth="72.0" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Mã SP" />
+                    <TableColumn fx:id="colItemName" prefWidth="220.0" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Tên sản phẩm" />
+                    <TableColumn fx:id="colCategory" prefWidth="120.0" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Danh mục" />
+                    <TableColumn fx:id="colOwner" prefWidth="130.0" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Người đăng" />
+                    <TableColumn fx:id="colStartPrice" prefWidth="140.0" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Giá hiện tại" />
+                    <TableColumn fx:id="colStepPrice" prefWidth="140.0" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Bước giá" />
+                    <TableColumn fx:id="colStatus" prefWidth="110.0" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Trạng thái" />
                 </columns>
             </TableView>
         </VBox>
     </center>
 
+    <!-- ═══════════════════════════  RIGHT SIDEBAR  ═══════════════════════════ -->
     <right>
-        <VBox alignment="TOP_CENTER" prefWidth="300.0" spacing="18.0" style="-fx-background-color: -sf-surface-raised;                      -fx-border-color: -sf-border;                      -fx-border-width: 0 0 0 1;">
+        <VBox prefWidth="240.0" spacing="8.0" style="                 -fx-background-color: -sf-surface;                 -fx-border-color: -sf-border;                 -fx-border-width: 0 0 0 1;             " BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="24.0" left="20.0" right="20.0" top="28.0" />
+                <Insets bottom="20.0" left="12.0" right="12.0" top="20.0" />
             </padding>
 
-            <Label styleClass="sf-section-title" text="Thao tác quản trị" />
+            <!-- Group: Điều hướng -->
+            <Label style="                     -fx-font-size: 11px;                     -fx-font-weight: bold;                     -fx-text-fill: -sf-text-tertiary;                     -fx-padding: 0 4 2 4;                 " text="ĐIỀU HƯỚNG" />
 
-            <Button fx:id="UserAdmin" maxWidth="Infinity" onAction="#clickToGoUserAdmin" prefHeight="44.0" styleClass="sf-btn-secondary" text="Quản lý người dùng" />
-         <Button fx:id="btnToAuction" maxWidth="Infinity" onAction="#clickToGoAuction" prefHeight="44.0" styleClass="sf-btn-secondary" text="Xem phiên đấu giá" />
-         <Button fx:id="btnCancelAuction" maxWidth="Infinity" onAction="#clickToCancelAuction" prefHeight="44.0" styleClass="sf-btn-danger" text="Hủy phiên đấu giá" />
+            <!-- Quản lý người dùng — secondary -->
+            <Button fx:id="UserAdmin" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToGoUserAdmin" style="                     -fx-background-color: -sf-panel;                     -fx-text-fill: -sf-text-primary;                     -fx-font-size: 13px;                     -fx-font-weight: bold;                     -fx-background-radius: 8;                     -fx-border-color: -sf-border;                     -fx-border-radius: 8;                     -fx-padding: 9 12 9 12;                     -fx-alignment: CENTER_LEFT;                     -fx-cursor: hand;                 " text="  Quản lý người dùng" />
 
-            <Button fx:id="btnDeleteProduct" maxWidth="Infinity" onAction="#clickToDeleteItem" prefHeight="44.0" styleClass="sf-btn-danger" text="Xóa sản phẩm" />
+            <Separator style="-fx-padding: 4 0 4 0;" />
+
+            <!-- Group: Phiên đấu giá -->
+            <Label style="                     -fx-font-size: 11px;                     -fx-font-weight: bold;                     -fx-text-fill: -sf-text-tertiary;                     -fx-padding: 0 4 2 4;                 " text="PHIÊN ĐẤU GIÁ" />
+
+            <!-- Xem phiên — Teal primary -->
+            <Button fx:id="btnToAuction" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToGoAuction" style="                     -fx-background-color: #1D9E75;                     -fx-text-fill: white;                     -fx-font-size: 13px;                     -fx-font-weight: bold;                     -fx-background-radius: 8;                     -fx-padding: 9 12 9 12;                     -fx-alignment: CENTER_LEFT;                     -fx-cursor: hand;                 " text="  Xem phiên đấu giá" />
+
+            <!-- Hủy phiên — Amber cảnh báo -->
+            <Button fx:id="btnCancelAuction" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToCancelAuction" style="                     -fx-background-color: #FAC775;                     -fx-text-fill: #412402;                     -fx-font-size: 13px;                     -fx-font-weight: bold;                     -fx-background-radius: 8;                     -fx-padding: 9 12 9 12;                     -fx-alignment: CENTER_LEFT;                     -fx-cursor: hand;                 " text="  Hủy phiên đấu giá" />
+
+            <Separator style="-fx-padding: 4 0 4 0;" />
+
+            <!-- Group: Sản phẩm -->
+            <Label style="                     -fx-font-size: 11px;                     -fx-font-weight: bold;                     -fx-text-fill: -sf-text-tertiary;                     -fx-padding: 0 4 2 4;                 " text="SẢN PHẨM" />
+
+            <!-- Xóa sản phẩm — Coral nguy hiểm -->
+            <Button fx:id="btnDeleteProduct" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToDeleteItem" style="                     -fx-background-color: #D85A30;                     -fx-text-fill: white;                     -fx-font-size: 13px;                     -fx-font-weight: bold;                     -fx-background-radius: 8;                     -fx-padding: 9 12 9 12;                     -fx-alignment: CENTER_LEFT;                     -fx-cursor: hand;                 " text="  Xóa sản phẩm" />
 
             <Region VBox.vgrow="ALWAYS" />
-
             <Separator />
 
-            <Button fx:id="logOutAd" maxWidth="Infinity" onAction="#clickButtonExit" prefHeight="42.0" styleClass="sf-btn-secondary" text="Thoát" />
+            <!-- Thoát — Ghost -->
+            <Button fx:id="logOutAd" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickButtonExit" style="                     -fx-background-color: transparent;                     -fx-text-fill: -sf-text-secondary;                     -fx-font-size: 13px;                     -fx-font-weight: bold;                     -fx-background-radius: 8;                     -fx-border-color: -sf-border;                     -fx-border-radius: 8;                     -fx-padding: 9 12 9 12;                     -fx-alignment: CENTER_LEFT;                     -fx-cursor: hand;                 " text="  Thoát" />
         </VBox>
     </right>
+
 </BorderPane>
