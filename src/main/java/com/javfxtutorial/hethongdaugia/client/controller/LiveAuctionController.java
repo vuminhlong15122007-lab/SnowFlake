@@ -60,8 +60,8 @@ public class LiveAuctionController implements ResponseListener {
     @FXML private ListView<BidTransaction> bidHistory;
     @FXML private TextField autoMaxPrice_tf; // Ô nhập giá trần
     @FXML private ToggleButton autoBidToggle; // Nút bật/tắt chế độ tự động
-    @FXML private Label auctionStatusLabel;   // Nhãn trạng thái phiên (chỉ hiện cho admin)
-
+    @FXML private Label auctionStatusLabel;// Nhãn trạng thái phiên (chỉ hiện cho admin)
+    @FXML private Button btnToInformation;
 
     private boolean isAdmin = false;
     private final NetworkManager networkManager = NetworkManager.getInstance();
@@ -249,6 +249,7 @@ public class LiveAuctionController implements ResponseListener {
         autoBidToggle.setDisable(true);
         priceInput_tf.setDisable(true);
         autoMaxPrice_tf.setDisable(true);
+        btnToInformation.setDisable(true);
     }
 
     private void initializePriceChart() {
