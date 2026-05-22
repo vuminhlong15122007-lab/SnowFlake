@@ -5,6 +5,7 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.*;
 import com.javfxtutorial.hethongdaugia.client.Util.ThemeManager;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
+import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteUserCommand;
@@ -30,7 +31,7 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AdminUserController implements Initializable, ResponseListener {
+public class AdminUserController implements  ResponseListener {
     private static final Logger log = LoggerFactory.getLogger(AdminUserController.class);
 
     @FXML private TableView<User> userTable;
@@ -40,17 +41,34 @@ public class AdminUserController implements Initializable, ResponseListener {
     @FXML private TableColumn<User, String> colPhone;
     @FXML private TableColumn<User, String> colRole;
     @FXML private TextField searchField;
-    private User selectUser;
+    @FXML private Label userCountBadge;
 
+    private User selectUser;
     private ObservableList<User> danhSach;
 
-    @Override
-    public void initialize(URL location, ResourceBundle resources) {
+    private void updateCountBadge() {
+        if (userCountBadge == null) return;
+        int total = (danhSach != null) ? danhSach.size() : 0;
+        int showing = userTable.getItems().size();
+
+        if (showing == total) {
+            userCountBadge.setText(total + " người dùng");
+        } else {
+            userCountBadge.setText(showing + " / " + total + " người dùng");
+        }
+    }
+
+    @FXML
+    public void initialize() {
         colId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colUsername.setCellValueFactory(new PropertyValueFactory<>("name"));
         colEmail.setCellValueFactory(new PropertyValueFactory<>("email"));
         colPhone.setCellValueFactory(new PropertyValueFactory<>("sdt"));
         colRole.setCellValueFactory(new PropertyValueFactory<>("accountType"));
+        if (userCountBadge != null) {
+            userCountBadge.setText("Đang tải...");
+        }
+
         loadUserData();
     }
 
@@ -63,17 +81,26 @@ public class AdminUserController implements Initializable, ResponseListener {
                 networkManager.sendRequest(cmd, this);
             } catch (ConnectionFailedException e) {
                 log.error("Lỗi kết nối: {}", e.getMessage());
-                Platform.runLater(() ->
-                        showAlert("Lỗi kết nối", "Không thể kết nối đến server"));
+                Platform.runLater(() -> {
+                    showAlert("Lỗi kết nối", "Không thể kết nối đến server");
+                    if (userCountBadge != null) userCountBadge.setText("Lỗi kết nối");
+                });
             } catch (SendFailedException e) {
                 log.error("Lỗi gửi: {}", e.getMessage());
-                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu"));
+                Platform.runLater(() -> {
+                    showAlert("Lỗi", "Không thể gửi yêu cầu");
+                    if (userCountBadge != null) userCountBadge.setText("Lỗi");
+                });
             } catch (Exception e) {
                 log.error("Lỗi tải user: {}", e.getMessage(), e);
-                Platform.runLater(() -> showAlert("Lỗi", "Tải dữ liệu thất bại"));
+                Platform.runLater(() -> {
+                    showAlert("Lỗi", "Tải dữ liệu thất bại");
+                    if (userCountBadge != null) userCountBadge.setText("Lỗi");
+                });
             }
         }).start();
     }
+
 
     @FXML
     public void getUpdateAdmin(ActionEvent event) {
@@ -111,16 +138,21 @@ public class AdminUserController implements Initializable, ResponseListener {
             cmd.addData("email", selectUser.getEmail());
             cmd.addData("phone", selectUser.getSdt());
 
+
+            NetworkManager.getInstance().register(DeleteUserCommand.class, this);
+
             new Thread(() -> {
                 try {
-                    NetworkManager.getInstance().sendRequest(cmd, this);
+                    NetworkManager.getConnection().sendCommand(cmd);
                 } catch (Exception e) {
                     log.error("Lỗi gửi DeleteUserCommand: {}", e.getMessage(), e);
+                    NetworkManager.getInstance().unregister(DeleteUserCommand.class, this);
                     Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "WrongCat.gif"));
                 }
             }).start();
         }
     }
+
 
 
     @FXML
@@ -140,7 +172,8 @@ public class AdminUserController implements Initializable, ResponseListener {
     }
 
     public void reLoad() {
-        loadUserData(); //  Gọi lại method loadUserData() thay vì gọi DAO
+        if (userCountBadge != null) userCountBadge.setText("Đang tải...");
+        loadUserData();
         System.out.println("Dữ liệu đã được cập nhật!");
     }
 
@@ -155,6 +188,7 @@ public class AdminUserController implements Initializable, ResponseListener {
 
         if (textWord == null || textWord.trim().isEmpty()) {
             userTable.setItems(danhSach);
+            updateCountBadge(); // hiển thị tổng đầy đủ
             return;
         }
 
@@ -168,13 +202,16 @@ public class AdminUserController implements Initializable, ResponseListener {
                 result.add(user);
             }
         }
+
         userTable.setItems(result);
-        System.out.println("Đã tìm thấy " + result.size() + " kết quả");
+        updateCountBadge(); // hiển thị "X / Y người dùng"
+        log.info("Tìm kiếm '{}' → {} kết quả", keyword, result.size());
     }
 
     public void clickToDeleteSearch() {
         searchField.clear();
         userTable.setItems(danhSach);
+        updateCountBadge(); // về lại tổng đầy đủ
     }
 
     @FXML
@@ -185,11 +222,16 @@ public class AdminUserController implements Initializable, ResponseListener {
 
     @Override
     public void onResponse(Response rp) {
+
+        // ── Xóa user ──
         if (rp.getCommand().getClass() == DeleteUserCommand.class) {
             Platform.runLater(() -> {
                 if (rp.isSuccess()) {
                     showAlert("Xóa thành công", rp.getMessage(), "Kiss.gif");
+                    // Xóa khỏi cả danh sách gốc lẫn table
                     userTable.getItems().remove(selectUser);
+                    if (danhSach != null) danhSach.remove(selectUser);
+                    updateCountBadge(); // cập nhật badge sau khi xóa
                 } else {
                     showAlert("Lỗi", rp.getMessage(), "WrongCat.gif");
                 }
@@ -197,16 +239,20 @@ public class AdminUserController implements Initializable, ResponseListener {
             NetworkManager.getInstance().unregister(DeleteUserCommand.class, this);
         }
 
+        // ── Tải danh sách ──
         if (rp.getCommand().getClass() == GetAllUsersCommand.class) {
-            // phần này đã có Platform.runLater, giữ nguyên
             if (rp.isSuccess()) {
                 List<User> users = (List<User>) rp.getPayLoad();
                 Platform.runLater(() -> {
                     danhSach = FXCollections.observableArrayList(users);
                     userTable.setItems(danhSach);
+                    updateCountBadge(); // cập nhật badge sau khi tải xong
                 });
             } else {
-                Platform.runLater(() -> showAlert("Lỗi", rp.getMessage()));
+                Platform.runLater(() -> {
+                    showAlert("Lỗi", rp.getMessage());
+                    if (userCountBadge != null) userCountBadge.setText("0 người dùng");
+                });
             }
             NetworkManager.getInstance().unregister(GetAllUsersCommand.class, this);
         }

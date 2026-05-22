@@ -2,6 +2,7 @@ package com.javfxtutorial.hethongdaugia.server.network;
 
 import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
+import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
@@ -20,11 +21,20 @@ public class ClientHandler extends Thread implements BidListener {
     private Socket clientSocket;
     private ObjectInputStream in;
     private ObjectOutputStream out;
+    private User currentUser;
     private static final CopyOnWriteArrayList<ClientHandler> allClients =
             new CopyOnWriteArrayList<>();
 
     public ClientHandler(Socket socket) {
         this.clientSocket = socket;
+    }
+
+    public User getCurrentUser() {
+        return currentUser;
+    }
+
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
     }
 
     @Override

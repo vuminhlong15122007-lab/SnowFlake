@@ -1,6 +1,7 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -14,7 +15,9 @@ import static org.mockito.Mockito.when;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionAlreadyEndedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotFoundException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotStartedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.bid.BidAmountExceedsLimitException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.InsufficientIncrementException;
+import com.javfxtutorial.hethongdaugia.common.Exception.bid.LowerThanCurrentBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.SelfBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DuplicateKeyException;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
@@ -254,6 +257,66 @@ public class AuctionManagerTest {
             assertThrows(
                     InsufficientIncrementException.class, () -> auctionManager.placeBid(bid, null));
 
+            verify(bidDAO, never()).insertBid(any(BidTransaction.class));
+            verify(participatedAuctionDAO, never()).insert(any(BidTransaction.class));
+        }
+    }
+
+    @Test
+    @DisplayName("bid null hoac amount null tra false va khong truy cap DB")
+    void placeBid_returnsFalseForNullBidOrNullAmount() throws Exception {
+        BidTransaction missingAmount = bid(100, 20, "alice", "150");
+        missingAmount.setAmount(null);
+
+        assertFalse(auctionManager.placeBid(null, null));
+        assertFalse(auctionManager.placeBid(missingAmount, null));
+    }
+
+    @Test
+    @DisplayName("khong luu bid khi gia bang current price")
+    void placeBid_rejectsBidAtCurrentPriceAndDoesNotPersistBid() throws Exception {
+        Auction auction = runningAuction(107, "100", "10");
+        TestStateSupport.activeAuctions(auctionManager).put(auction.getAuctionId(), auction);
+
+        BidTransaction bid = bid(auction.getAuctionId(), 20, "alice", "100");
+        AuctionDAO auctionDAO = mock(AuctionDAO.class);
+        BidDAO bidDAO = mock(BidDAO.class);
+        ParticipatedAuctionDAO participatedAuctionDAO = mock(ParticipatedAuctionDAO.class);
+
+        try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
+                MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+                MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                        mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+            assertThrows(
+                    LowerThanCurrentBidException.class,
+                    () -> auctionManager.placeBid(bid, null));
+
+            verify(auctionDAO, never()).update(any(Auction.class));
+            verify(bidDAO, never()).insertBid(any(BidTransaction.class));
+            verify(participatedAuctionDAO, never()).insert(any(BidTransaction.class));
+        }
+    }
+
+    @Test
+    @DisplayName("khong luu bid khi gia vuot gioi han he thong")
+    void placeBid_rejectsBidAboveLimitAndDoesNotPersistBid() throws Exception {
+        Auction auction = runningAuction(108, "100", "10");
+        TestStateSupport.activeAuctions(auctionManager).put(auction.getAuctionId(), auction);
+
+        BidTransaction bid = bid(auction.getAuctionId(), 20, "alice", "1000000000000.00");
+        AuctionDAO auctionDAO = mock(AuctionDAO.class);
+        BidDAO bidDAO = mock(BidDAO.class);
+        ParticipatedAuctionDAO participatedAuctionDAO = mock(ParticipatedAuctionDAO.class);
+
+        try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
+                MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+                MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                        mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+            assertThrows(
+                    BidAmountExceedsLimitException.class,
+                    () -> auctionManager.placeBid(bid, null));
+
+            verify(auctionDAO, never()).update(any(Auction.class));
             verify(bidDAO, never()).insertBid(any(BidTransaction.class));
             verify(participatedAuctionDAO, never()).insert(any(BidTransaction.class));
         }

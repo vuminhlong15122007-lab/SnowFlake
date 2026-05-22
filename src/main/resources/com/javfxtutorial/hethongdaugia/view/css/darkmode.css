@@ -1062,3 +1062,24 @@
 .sf-participated-auction-cell .button.sf-auction-action-neutral:disabled {
     -fx-opacity: 0.58;
 }
+
+/* Admin fixed action blue: only dark mode gets a darker surface variant. */
+.admin-theme .admin-btn-edit,
+.admin-theme .admin-btn-primary {
+    -fx-background-color: linear-gradient(to bottom, #2B557F, #22476F);
+    -fx-text-fill: #4F8DFF;
+    -fx-border-color: #5A86B7;
+}
+
+.admin-theme .admin-btn-edit:hover,
+.admin-theme .admin-btn-primary:hover {
+    -fx-background-color: linear-gradient(to bottom, #32618F, #28537F);
+    -fx-text-fill: #78A8FF;
+    -fx-border-color: #6EA2D6;
+}
+
+.admin-theme .admin-btn-edit:pressed,
+.admin-theme .admin-btn-primary:pressed {
+    -fx-background-color: #1B385A;
+    -fx-text-fill: #A7C7FF;
+}

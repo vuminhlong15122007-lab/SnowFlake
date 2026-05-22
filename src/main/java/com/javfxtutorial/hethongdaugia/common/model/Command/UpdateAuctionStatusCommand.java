@@ -23,6 +23,9 @@ public class UpdateAuctionStatusCommand extends Command {
     @Override
     public Response handle() {
         try {
+            if (auction == null) {
+                return new Response(false, "Du lieu dau vao khong hop le", null, this);
+            }
             int result1 = AuctionDAO.getInstance().update(auction);
             if (result1 > 0) {
                 if (auction.getStatus() == AuctionStatus.CANCELLED) {

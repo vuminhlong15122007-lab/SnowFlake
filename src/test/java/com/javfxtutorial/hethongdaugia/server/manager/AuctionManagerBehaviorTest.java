@@ -140,7 +140,40 @@ class AuctionManagerBehaviorTest {
         }
 
         @Test
-        @DisplayName("chuyển CLOSED quá hạn thanh toán sang CANCELLED và cập nhật DB")
+        @DisplayName("giu CANCELLED va khong update DB")
+        void refreshAuctionStatus_keepsCancelledWithoutDatabaseUpdate() throws DataException {
+            Auction auction =
+                    auctionWithTime(
+                            LocalDateTime.now().minusDays(2),
+                            LocalDateTime.now().minusDays(1),
+                            AuctionStatus.CANCELLED);
+
+            try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class)) {
+                assertEquals(AuctionStatus.CANCELLED, manager.refreshAuctionStatus(auction));
+                assertEquals(AuctionStatus.CANCELLED, auction.getStatus());
+                mockedAuctionDAO.verifyNoInteractions();
+            }
+        }
+
+        @Test
+        @DisplayName("auction tam thoi id 0 khong update DB khi status doi")
+        void refreshAuctionStatus_skipsDatabaseUpdateForZeroAuctionId() throws DataException {
+            Auction auction =
+                    auctionWithTime(
+                            LocalDateTime.now().minusMinutes(5),
+                            LocalDateTime.now().plusMinutes(5),
+                            AuctionStatus.NOT_START);
+            auction.setAuctionId(0);
+
+            try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class)) {
+                assertEquals(AuctionStatus.RUNNING, manager.refreshAuctionStatus(auction));
+                assertEquals(AuctionStatus.RUNNING, auction.getStatus());
+                mockedAuctionDAO.verifyNoInteractions();
+            }
+        }
+
+        @Test
+        @DisplayName("chuyen CLOSED qua han thanh toan sang CANCELLED va cap nhat DB")
         void refreshAuctionStatus_movesClosedPastPaymentWindowToCancelledAndUpdatesDatabase()
                 throws DataException {
             Auction auction =

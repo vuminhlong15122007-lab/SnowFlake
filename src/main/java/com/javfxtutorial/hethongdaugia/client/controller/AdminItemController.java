@@ -29,6 +29,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 
 public class AdminItemController implements ResponseListener {
+
     @FXML private TableView<Auction> itemTable;
     @FXML private TableColumn<Auction, Integer> colId;
     @FXML private TableColumn<Auction, String> colItemName;
@@ -37,8 +38,35 @@ public class AdminItemController implements ResponseListener {
     @FXML private TableColumn<Auction, String> colCategory;
     @FXML private TableColumn<Auction, String> colOwner;
     @FXML private TableColumn<Auction, String> colStatus;
-    private ObservableList<Auction> observableList;
     @FXML private TextField searchField;
+
+    /** Badge "X sản phẩm" trên header bảng — inject từ FXML */
+    @FXML private Label itemCountBadge;
+
+    private ObservableList<Auction> observableList;
+
+    // ─────────────────────────────────────────────────────────────
+    //  Helper: cập nhật badge đếm số dòng đang hiển thị
+    // ─────────────────────────────────────────────────────────────
+
+    /**
+     * Cập nhật badge theo trạng thái hiện tại của bảng.
+     * - Hiển thị đầy đủ  → "25 sản phẩm"
+     * - Đang search/lọc → "3 / 25 sản phẩm"
+     */
+    private void updateCountBadge() {
+        if (itemCountBadge == null) return;
+        int total   = (observableList != null) ? observableList.size() : 0;
+        int showing = itemTable.getItems().size();
+
+        if (showing == total) {
+            itemCountBadge.setText(total + " sản phẩm");
+        } else {
+            itemCountBadge.setText(showing + " / " + total + " sản phẩm");
+        }
+    }
+
+
 
     @FXML
     public void initialize() {
@@ -48,39 +76,39 @@ public class AdminItemController implements ResponseListener {
         colId.setCellValueFactory(new PropertyValueFactory<>("auctionId"));
         colItemName.setCellValueFactory(
                 cellData -> new SimpleStringProperty(cellData.getValue().getItem().getName()));
-        colCategory.setCellValueFactory(new PropertyValueFactory<>("status")); // truyền bừa
         colOwner.setCellValueFactory(new PropertyValueFactory<>("sellerId"));
         colStartPrice.setCellValueFactory(
-                cellData ->
-                        new SimpleStringProperty(
-                                String.format("%,.0f VND", cellData.getValue().getCurrentPrice())));
-
+                cellData -> new SimpleStringProperty(
+                        String.format("%,.0f VND", cellData.getValue().getCurrentPrice())));
         colStepPrice.setCellValueFactory(
-                cellData ->
-                        new SimpleStringProperty(
-                                String.format("%,.0f VND", cellData.getValue().getStepPrice())));
+                cellData -> new SimpleStringProperty(
+                        String.format("%,.0f VND", cellData.getValue().getStepPrice())));
         colCategory.setCellValueFactory(
-                cellData ->
-                        new SimpleStringProperty(
-                                cellData.getValue().getItem().getCategory().name()));
+                cellData -> new SimpleStringProperty(
+                        cellData.getValue().getItem().getCategory().name()));
         colStatus.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+        // Badge mặc định khi chưa tải xong
+        if (itemCountBadge != null) {
+            itemCountBadge.setText("Đang tải...");
+        }
+
+        // Nếu dữ liệu đã có sẵn trong ClientModel thì cập nhật badge ngay
+        if (observableList != null && !observableList.isEmpty()) {
+            updateCountBadge();
+        }
+
         try {
             if (!AuctionModificationManager.getInstance().isAllAuctionsLoaded) {
                 loadItemData();
             }
-        } catch (IOException
-                | ClassNotFoundException
-                | SendFailedException
-                | ConnectionFailedException e) {
+        } catch (IOException | ClassNotFoundException | SendFailedException | ConnectionFailedException e) {
             throw new RuntimeException(e);
         }
     }
-
+    
     private void loadItemData()
-            throws IOException,
-                    ClassNotFoundException,
-                    SendFailedException,
-                    ConnectionFailedException {
+            throws IOException, ClassNotFoundException, SendFailedException, ConnectionFailedException {
         Command cmd = new GetAllAuctionsCommand();
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.sendRequest(cmd, this);
@@ -101,23 +129,19 @@ public class AdminItemController implements ResponseListener {
             showAlert("Lỗi", "Vui lòng chọn sản phẩm cần xóa");
             return;
         }
+
         Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
         confirmAlert.setTitle("Xác nhận xóa");
         confirmAlert.setHeaderText("Bạn chắc chắn muốn xóa sản phẩm?");
         confirmAlert.setContentText(
-                "Sản phẩm: "
-                        + selectItem.getItem().getName()
-                        + "\nDescription: "
-                        + selectItem.getItem().getDescription()
-                        + "\nID người bán: "
-                        + selectItem.getSellerId());
+                "Sản phẩm: " + selectItem.getItem().getName()
+                        + "\nDescription: " + selectItem.getItem().getDescription()
+                        + "\nID người bán: " + selectItem.getSellerId());
         ButtonType yes = new ButtonType("Có", ButtonBar.ButtonData.YES);
-        ButtonType no = new ButtonType("Không", ButtonBar.ButtonData.NO);
-        // gan 2 nut vao thay ok, cancle mac dinh
+        ButtonType no  = new ButtonType("Không", ButtonBar.ButtonData.NO);
         confirmAlert.getButtonTypes().setAll(yes, no);
-        // cho nguoi dung bam
         ButtonType result = confirmAlert.showAndWait().orElse(null);
-        // neu co
+
         if (result == yes) {
             DeleteAuctionCommand cmd = new DeleteAuctionCommand(selectItem);
             NetworkManager networkManager = NetworkManager.getInstance();
@@ -126,6 +150,7 @@ public class AdminItemController implements ResponseListener {
             connection.sendCommand(cmd);
         }
     }
+
     @FXML
     public void clickToGoAuction(ActionEvent event) {
         Auction selected = itemTable.getSelectionModel().getSelectedItem();
@@ -136,6 +161,7 @@ public class AdminItemController implements ResponseListener {
         ClientModel.getInstance().setCurrentAuction(selected);
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/LiveAuction.fxml");
     }
+
     @FXML
     public void clickToCancelAuction(ActionEvent event) {
         Auction selected = itemTable.getSelectionModel().getSelectedItem();
@@ -154,7 +180,7 @@ public class AdminItemController implements ResponseListener {
         confirm.setHeaderText("Hủy phiên đấu giá?");
         confirm.setContentText("Sản phẩm: " + selected.getItem().getName());
         ButtonType yes = new ButtonType("Hủy phiên", ButtonBar.ButtonData.YES);
-        ButtonType no = new ButtonType("Không", ButtonBar.ButtonData.NO);
+        ButtonType no  = new ButtonType("Không", ButtonBar.ButtonData.NO);
         confirm.getButtonTypes().setAll(yes, no);
 
         confirm.showAndWait().ifPresent(result -> {
@@ -170,12 +196,14 @@ public class AdminItemController implements ResponseListener {
             }
         });
     }
+
     @FXML
     public void clickToSearch() {
         String textWord = searchField.getText();
 
         if (textWord == null || textWord.trim().isEmpty()) {
             itemTable.setItems(observableList);
+            updateCountBadge(); // hiển thị tổng đầy đủ
             return;
         }
 
@@ -190,59 +218,64 @@ public class AdminItemController implements ResponseListener {
                 result.add(auction);
             }
         }
+
         itemTable.setItems(result);
-        System.out.println("Đã tìm thấy " + result.size() + " kết quả");
+        updateCountBadge(); // hiển thị "X / Y sản phẩm"
     }
 
     public void clickToDeleteSearch() {
         searchField.clear();
         itemTable.setItems(observableList);
+        updateCountBadge(); // về lại tổng đầy đủ
     }
 
     @Override
     public void onResponse(Response rp) {
+
+        // ── Xóa phiên đấu giá ──
         if (rp.getCommand().getClass() == DeleteAuctionCommand.class) {
             if (rp.isSuccess()) {
-                Platform.runLater(
-                        () -> {
-                            showAlert("Xóa thành công", rp.getMessage(), "FunnyCat.gif");
-                        });
+                Platform.runLater(() -> showAlert("Xóa thành công", rp.getMessage(), "FunnyCat.gif"));
                 try {
-                    loadItemData(); // load lai bang
-                } catch (IOException
-                        | ClassNotFoundException
-                        | SendFailedException
-                        | ConnectionFailedException ex) {
+                    loadItemData(); // load lại bảng — badge sẽ được cập nhật trong GetAllAuctionsCommand
+                } catch (IOException | ClassNotFoundException | SendFailedException | ConnectionFailedException ex) {
                     throw new RuntimeException(ex);
                 }
             } else {
-                Platform.runLater(
-                        () -> {
-                            showAlert("Lỗi", rp.getMessage(), "Wrong.gif");
-                        });
+                Platform.runLater(() -> showAlert("Lỗi", rp.getMessage(), "Wrong.gif"));
             }
-            NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.unregister(DeleteAuctionCommand.class, this);
+            NetworkManager.getInstance().unregister(DeleteAuctionCommand.class, this);
         }
-        if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
-            if ("AUCTION_CANCELLED".equals(rp.getMessage())) return;
 
+        // ── Cập nhật trạng thái phiên (hủy) ──
+        if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
             NetworkManager.getInstance().unregister(UpdateAuctionStatusCommand.class, this);
             Platform.runLater(() -> {
                 if (rp.isSuccess()) {
                     showAlert("Thành công", "Đã hủy phiên đấu giá.", "FunnyCat.gif");
+                    try { loadItemData(); } catch (Exception e) { e.printStackTrace(); }
                 } else {
                     showAlert("Lỗi", rp.getMessage(), "Wrong.gif");
                 }
-            });}
+            });
+        }
+
+        // ── Tải toàn bộ danh sách ──
         if (rp.getCommand().getClass() == GetAllAuctionsCommand.class) {
             if (rp.isSuccess()) {
-                ArrayList<Auction> auctionlist = (ArrayList<Auction>) rp.getPayLoad();
+                ArrayList<Auction> auctionList = (ArrayList<Auction>) rp.getPayLoad();
                 AuctionModificationManager.getInstance().isAllAuctionsLoaded = true;
-                observableList.setAll(auctionlist);
+                Platform.runLater(() -> {
+                    observableList.setAll(auctionList);
+                    itemTable.setItems(observableList);
+                    updateCountBadge(); // cập nhật badge sau khi tải xong
+                });
+            } else {
+                Platform.runLater(() -> {
+                    if (itemCountBadge != null) itemCountBadge.setText("0 sản phẩm");
+                });
             }
-            NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.unregister(GetAllAuctionsCommand.class, this);
+            NetworkManager.getInstance().unregister(GetAllAuctionsCommand.class, this);
         }
     }
 }

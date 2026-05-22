@@ -37,8 +37,9 @@ class UserContractTest {
         void authenticate_returnsUserWhenLegacyPlainPasswordMatches() throws Exception {
             User user = alice();
             UserDAO userDAO = mock(UserDAO.class);
+            ArgumentCaptor<User> userCaptor = ArgumentCaptor.forClass(User.class);
             when(userDAO.selectByUsername("alice")).thenReturn(user);
-            when(userDAO.update(any(User.class))).thenReturn(1);
+            when(userDAO.update(userCaptor.capture())).thenReturn(1);
 
             try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
                 mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
@@ -47,7 +48,13 @@ class UserContractTest {
 
                 assertSame(user, result);
                 assertEquals("alice", result.getName());
+                assertTrue(PasswordHasher.isHashed(result.getPassWord()));
+                assertTrue(PasswordHasher.matches("pass123", result.getPassWord()));
                 verify(userDAO).selectByUsername("alice");
+                verify(userDAO).update(any(User.class));
+                User migrated = userCaptor.getValue();
+                assertTrue(PasswordHasher.isHashed(migrated.getPassWord()));
+                assertTrue(PasswordHasher.matches("pass123", migrated.getPassWord()));
             }
         }
 
@@ -313,11 +320,13 @@ class UserContractTest {
                 assertEquals("0901234567", reset.getSdt());
                 assertEquals(AccountType.USER, reset.getAccountType());
                 assertEquals("alice.png", reset.getImagePath());
-                assertEquals("new-secret", reset.getPassWord());
+                assertTrue(PasswordHasher.isHashed(reset.getPassWord()));
+                assertTrue(PasswordHasher.matches("new-secret", reset.getPassWord()));
 
                 User sentToDao = userCaptor.getValue();
                 assertEquals(reset.getId(), sentToDao.getId());
                 assertEquals(reset.getPassWord(), sentToDao.getPassWord());
+                assertTrue(PasswordHasher.matches("new-secret", sentToDao.getPassWord()));
             }
         }
 
@@ -373,6 +382,22 @@ class UserContractTest {
                 assertFalse(
                         UserManager.getInstance().deleteUser(1, "ignored", "ignored", "ignored"));
                 verify(userDAO).delete(user);
+            }
+        }
+
+        @Test
+        @DisplayName("khong goi delete khi user khong ton tai")
+        void deleteUser_returnsFalseWhenUserDoesNotExistWithoutDeleting() throws Exception {
+            UserDAO userDAO = mock(UserDAO.class);
+            when(userDAO.selectById(404)).thenReturn(null);
+
+            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+                assertFalse(
+                        UserManager.getInstance().deleteUser(404, "ignored", "ignored", "ignored"));
+                verify(userDAO).selectById(404);
+                verify(userDAO, never()).delete(any(User.class));
             }
         }
     }

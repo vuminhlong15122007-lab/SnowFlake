@@ -7,6 +7,8 @@ import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,12 +27,20 @@ public class AddAccountCommand extends Command {
         String sdt = (String) this.getData("sdt");
         String type = (String) this.getData("accountType");
 
+        if (isBlank(username) || isBlank(password) || isBlank(email) || isBlank(sdt)) {
+            return new Response(false, "Du lieu dau vao khong hop le", null, this);
+        }
+
         AccountType role;
         try {
             role = AccountType.valueOf(type);
         } catch (IllegalArgumentException | NullPointerException e) {
             log.warn("AccountType không hợp lệ: {}", type);
             return new Response(false, "Vai trò không hợp lệ", null, this);
+        }
+        if (!canCreateRole(role)) {
+            log.warn("Tu choi tao tai khoan voi role dac quyen: {}", role);
+            return new Response(false, "Vai tro khong hop le", null, this);
         }
 
         try {
@@ -59,5 +69,18 @@ public class AddAccountCommand extends Command {
             log.error("Lỗi không xác định khi tạo tài khoản: {}", e.getMessage(), e);
             return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);
         }
+    }
+
+    private static boolean isBlank(String value) {
+        return value == null || value.isBlank();
+    }
+
+    private static boolean canCreateRole(AccountType role) {
+        if (role == AccountType.USER) {
+            return true;
+        }
+        ClientHandler currentClient = ClientHandlerContextHolder.get();
+        User currentUser = currentClient == null ? null : currentClient.getCurrentUser();
+        return currentUser != null && currentUser.getAccountType() == AccountType.ADMIN;
     }
 }

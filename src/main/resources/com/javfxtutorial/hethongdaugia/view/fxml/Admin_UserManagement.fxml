@@ -1,44 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Separator?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.TextField?>
-<?import javafx.scene.image.Image?>
-<?import javafx.scene.image.ImageView?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Region?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.image.*?>
+<?import javafx.scene.layout.*?>
 
-<BorderPane prefHeight="720.0" prefWidth="1280.0" styleClass="sf-page" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminUserController">
+<BorderPane prefHeight="720.0" prefWidth="1280.0" styleClass="admin-theme" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminUserController">
 
     <top>
-        <HBox alignment="CENTER_LEFT" prefHeight="58.0" prefWidth="1280.0" spacing="14.0" style="-fx-background-color: linear-gradient(to right, -sf-surface-raised, -sf-surface, -sf-page-start); -fx-border-color: -sf-border; -fx-border-width: 0 0 1 0; -fx-effect: dropshadow(gaussian, -sf-shadow-soft, 8, 0, 0, 2);" BorderPane.alignment="CENTER">
+        <HBox alignment="CENTER_LEFT" prefHeight="64.0" prefWidth="1280.0" spacing="12.0" styleClass="admin-header-bar" BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="10.0" left="20.0" right="20.0" top="10.0" />
+                <Insets bottom="10.0" left="18.0" right="18.0" top="10.0" />
             </padding>
 
-            <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
-                <image>
-                    <Image url="@../../assets/Beta01.png" />
-                </image>
-            </ImageView>
+            <StackPane prefHeight="38.0" prefWidth="38.0" style="-fx-background-radius: 8;">
+                <ImageView fitHeight="47.0" fitWidth="53.0" pickOnBounds="true" preserveRatio="true">
+                    <image>
+                        <Image url="@../../assets/Beta01.png" />
+                    </image>
+                </ImageView>
+            </StackPane>
 
-            <VBox spacing="2.0">
-                <Label styleClass="sf-title" text="Bảng Điều Khiển Admin" />
-                <Label style="-fx-font-size: 13px; -fx-text-fill: -sf-text; -fx-font-weight: bold;" text="Quản lý tài khoản người dùng" />
+            <VBox spacing="1.0">
+                <Label styleClass="admin-title" text="Bảng điều khiển admin" />
+                <Label styleClass="admin-subtitle" text="Quản lý tài khoản người dùng" />
             </VBox>
 
             <Region HBox.hgrow="ALWAYS" />
 
-            <HBox alignment="CENTER_LEFT" prefHeight="62.0" prefWidth="413.0" spacing="8.0" style="-fx-background-color: -sf-panel; -fx-border-color: -sf-border; -fx-border-radius: 20; -fx-background-radius: 20; -fx-padding: 5 6 5 10;">
-                <TextField fx:id="searchField" prefHeight="1.0" prefWidth="258.0" promptText="Tìm kiếm tên, email hoặc ID..." style="-fx-background-color: transparent; -fx-padding: 6 8 6 8;" />
-                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#clickToSearch" prefHeight="19.0" prefWidth="82.0" styleClass="sf-btn-primary" text="Tìm kiếm" />
-                <Button fx:id="dltSearch" alignment="CENTER" mnemonicParsing="false" onAction="#clickToDeleteSearch" prefHeight="14.0" prefWidth="58.0" styleClass="sf-btn-danger" text="Xóa" textAlignment="CENTER" />
+            <HBox alignment="CENTER_LEFT" spacing="6.0" styleClass="admin-search-box">
+                <TextField fx:id="searchField" prefHeight="28.0" prefWidth="210.0" promptText="Tìm tên, email hoặc ID..." styleClass="admin-search-field" />
+                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#clickToSearch" prefHeight="28.0" styleClass="admin-btn-search" text="Tìm" />
+                <Button fx:id="dltSearch" mnemonicParsing="false" onAction="#clickToDeleteSearch" prefHeight="28.0" styleClass="admin-btn-search-clear" text="Xóa" />
             </HBox>
         </HBox>
     </top>
@@ -46,47 +39,54 @@
     <center>
         <VBox spacing="12.0" BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="18.0" left="18.0" right="18.0" top="18.0" />
+                <Insets bottom="16.0" left="16.0" right="16.0" top="16.0" />
             </padding>
 
-            <HBox alignment="CENTER_LEFT">
-                <Label styleClass="sf-section-title" text="Danh sách tài khoản hệ thống" />
-                <Region HBox.hgrow="ALWAYS" />
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+                <Label styleClass="admin-section-title" text="Danh sách tài khoản hệ thống" />
+                <Label fx:id="userCountBadge" styleClass="admin-count-badge" text="5 người dùng" />
             </HBox>
 
-            <TableView fx:id="userTable" prefHeight="532.0" prefWidth="985.0" style="-fx-font-size: 12px; -fx-background-color: -sf-surface; -fx-background-radius: 10; -fx-border-color: -sf-border; -fx-border-radius: 10; -fx-font-weight: bold; -fx-selection-bar: -sf-accent; -fx-selection-bar-non-focused: -sf-accent-2; -fx-control-inner-background: -sf-surface; -fx-control-inner-background-alt: -sf-surface-soft; -fx-table-cell-border-color: -sf-border-soft;" styleClass="admin-user-table" VBox.vgrow="ALWAYS">
+            <TableView fx:id="userTable" styleClass="admin-user-table" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="colId" prefWidth="62.0" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="ID" />
-                    <TableColumn fx:id="colUsername" prefWidth="193.0" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Tên đăng nhập" />
-                    <TableColumn fx:id="colEmail" prefWidth="296.6" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Email" />
-                    <TableColumn fx:id="colPhone" prefWidth="180.8" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Số điện thoại" />
-                    <TableColumn fx:id="colRole" prefWidth="97.2" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Vai trò" />
-                    <TableColumn fx:id="colStatus" prefWidth="136.4" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Trạng thái" />
+                    <TableColumn fx:id="colId" prefWidth="65.0" style="-fx-alignment: CENTER-LEFT; -fx-font-weight: bold;" text="ID" />
+                    <TableColumn fx:id="colUsername" prefWidth="230.0" style="-fx-font-weight: bold;" text="Tên đăng nhập" />
+                    <TableColumn fx:id="colEmail" prefWidth="290.0" style="-fx-font-weight: bold;" text="Email" />
+                    <TableColumn fx:id="colPhone" prefWidth="180.0" style="-fx-font-weight: bold;" text="Số điện thoại" />
+                    <TableColumn fx:id="colRole" prefWidth="130.0" style="-fx-font-weight: bold;" text="Vai trò" />
                 </columns>
+                <columnResizePolicy>
+                    <TableView fx:constant="CONSTRAINED_RESIZE_POLICY" />
+                </columnResizePolicy>
             </TableView>
         </VBox>
     </center>
 
     <right>
-        <VBox prefWidth="280.0" spacing="13.0" style="-fx-background-color: -sf-surface-raised; -fx-border-color: -sf-border; -fx-border-width: 0 0 0 1;" BorderPane.alignment="CENTER">
+        <VBox prefWidth="240.0" spacing="10.0" styleClass="admin-sidebar-panel" BorderPane.alignment="CENTER">
             <padding>
-                <Insets bottom="20.0" left="15.0" right="15.0" top="20.0" />
+                <Insets bottom="16.0" left="14.0" right="14.0" top="16.0" />
             </padding>
 
-            <Label styleClass="sf-section-title" text="Thao tác quản trị" />
-            <Button fx:id="itemAdmin" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToGoItemAdmin" styleClass="sf-btn-secondary" text="Quản lý sản phẩm" />
+            <Label styleClass="admin-nav-heading" text="ĐIỀU HƯỚNG" />
 
-            <Button fx:id="btnAddUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToAddUser" styleClass="sf-btn-primary" text=" Thêm người dùng mới" />
-            <Button fx:id="btnEditUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#getUpdateAdmin" style="-fx-background-color: -sf-warning; -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 10;" text="Cập nhật thông tin Admin" />
-            <Button fx:id="btnResetPassword" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToResetPW" style="-fx-background-color: -sf-purple; -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-background-radius: 8; -fx-padding: 10;" text="Đặt lại mật khẩu" />
-            <Button fx:id="reload" maxWidth="Infinity" mnemonicParsing="false" onAction="#reLoad" styleClass="sf-btn-success" text="Tải lại dữ liệu" />
+            <Button fx:id="itemAdmin" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToGoItemAdmin" styleClass="admin-btn-nav" text="📦  Quản lý sản phẩm" />
 
-            <Button fx:id="deleteButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToDeleteUser" styleClass="sf-btn-danger" text="XÓA TÀI KHOẢN" />
+            <Separator style="-fx-opacity: 0.5; -fx-padding: 4 0 4 0;" />
+
+            <Label styleClass="admin-nav-heading" text="QUẢN LÝ TÀI KHOẢN" />
+
+            <Button fx:id="btnAddUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToAddUser" styleClass="admin-btn-add" text="➕ Thêm người dùng" />
+            <Button fx:id="btnEditUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#getUpdateAdmin" styleClass="admin-btn-edit" text="📝  Cập nhật thông tin" />
+            <Button fx:id="btnResetPassword" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToResetPW" styleClass="admin-btn-reset" text="🔓  Đặt lại mật khẩu" />
+            <Button fx:id="reload" maxWidth="Infinity" mnemonicParsing="false" onAction="#reLoad" styleClass="admin-btn-reload" text="🔄  Tải lại dữ liệu" />
+            <Button fx:id="deleteButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToDeleteUser" styleClass="admin-btn-delete" text="🗑️  Xóa tài khoản" />
 
             <Region VBox.vgrow="ALWAYS" />
-            <Separator />
+            <Separator style="-fx-opacity: 0.5; -fx-padding: 4 0 4 0;" />
 
-            <Button fx:id="logOutAd" mnemonicParsing="false" onAction="#logOut" prefHeight="32.0" prefWidth="252.0" styleClass="sf-btn-secondary" text="Thoát" />
+            <Button fx:id="logOutAd" maxWidth="Infinity" mnemonicParsing="false" onAction="#logOut" styleClass="admin-btn-exit" text="🚪  Thoát" />
         </VBox>
     </right>
+
 </BorderPane>
