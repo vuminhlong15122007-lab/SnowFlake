@@ -51,15 +51,16 @@
 
             <Label styleClass="sf-section-title" text="Danh sách sản phẩm trên hệ thống" />
 
-            <TableView fx:id="itemTable" style="-fx-background-color: -sf-surface;                               -fx-background-radius: 10;                               -fx-border-color: -sf-border;                               -fx-border-radius: 10;                               -fx-table-cell-border-color: -sf-page-start;                               -fx-control-inner-background: -sf-surface;                               -fx-control-inner-background-alt: -sf-surface-soft;                               -fx-selection-bar: -sf-accent;                               -fx-selection-bar-non-focused: -sf-accent-2;" styleClass="admin-product-table" VBox.vgrow="ALWAYS">
+            <TableView fx:id="itemTable" style="-fx-background-color: -sf-surface; -fx-font-size: 12px;
+-fx-font-weight: bold;                              -fx-background-radius: 10;                               -fx-border-color: -sf-border;                               -fx-border-radius: 10;                               -fx-table-cell-border-color: -sf-page-start;                               -fx-control-inner-background: -sf-surface;                               -fx-control-inner-background-alt: -sf-surface-soft;                               -fx-selection-bar: -sf-accent;                               -fx-selection-bar-non-focused: -sf-accent-2;" styleClass="admin-product-table" VBox.vgrow="ALWAYS">
                 <columns>
-                    <TableColumn fx:id="colId" prefWidth="83.60001200437546" text="Mã SP" />
-                    <TableColumn fx:id="colItemName" prefWidth="224.3999786376953" text="Tên sản phẩm" />
-                    <TableColumn fx:id="colCategory" prefWidth="113.0" text="Danh mục" />
-                    <TableColumn fx:id="colOwner" prefWidth="121.5999755859375" text="Người đăng" />
-                    <TableColumn fx:id="colStartPrice" prefWidth="134.20001220703125" text="Giá hiện tại" />
-                    <TableColumn fx:id="colStepPrice" prefWidth="173.0" text="Bước giá" />
-                    <TableColumn fx:id="colStatus" prefWidth="93.5999755859375" text="Trạng thái" />
+                    <TableColumn fx:id="colId" prefWidth="83.60001200437546" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Mã SP" />
+                    <TableColumn fx:id="colItemName" prefWidth="224.3999786376953" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Tên sản phẩm" />
+                    <TableColumn fx:id="colCategory" prefWidth="113.0" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Danh mục" />
+                    <TableColumn fx:id="colOwner" prefWidth="121.5999755859375" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Người đăng" />
+                    <TableColumn fx:id="colStartPrice" prefWidth="134.20001220703125" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Giá hiện tại" />
+                    <TableColumn fx:id="colStepPrice" prefWidth="173.0" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Bước giá" />
+                    <TableColumn fx:id="colStatus" prefWidth="93.5999755859375" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Trạng thái" />
                 </columns>
             </TableView>
         </VBox>
