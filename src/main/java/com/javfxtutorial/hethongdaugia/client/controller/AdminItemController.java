@@ -114,10 +114,6 @@ public class AdminItemController implements ResponseListener {
         networkManager.sendRequest(cmd, this);
     }
 
-    // ─────────────────────────────────────────────────────────────
-    //  Các action handler
-    // ─────────────────────────────────────────────────────────────
-
     public void clickButtonExit(ActionEvent event) {
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
     }
@@ -163,7 +159,7 @@ public class AdminItemController implements ResponseListener {
             return;
         }
         ClientModel.getInstance().setCurrentAuction(selected);
-        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionInformation.fxml");
+        changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/LiveAuction.fxml");
     }
 
     @FXML
