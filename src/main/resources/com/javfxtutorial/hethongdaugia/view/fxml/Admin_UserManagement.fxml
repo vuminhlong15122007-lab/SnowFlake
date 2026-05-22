@@ -22,16 +22,16 @@
             </StackPane>
 
             <VBox spacing="1.0">
-                <Label style="-fx-font-size: 15px; -fx-font-weight: bold; -fx-text-fill: -admin-text-primary;" text="Bảng điều khiển admin" />
-                <Label style="-fx-font-size: 12px; -fx-text-fill: -admin-text-secondary;" text="Quản lý tài khoản người dùng" />
+                <Label styleClass="admin-title" text="Bảng điều khiển admin" />
+                <Label styleClass="admin-subtitle" text="Quản lý tài khoản người dùng" />
             </VBox>
 
             <Region HBox.hgrow="ALWAYS" />
 
-            <HBox alignment="CENTER_LEFT" spacing="6.0" style="-fx-background-color: #F5F5F5; -fx-border-color: #B0BEC5; -fx-border-radius: 6; -fx-background-radius: 6; -fx-padding: 4 6 4 12;">
-                <TextField fx:id="searchField" prefHeight="28.0" prefWidth="210.0" promptText="Tìm tên, email hoặc ID..." style="-fx-background-color: transparent; -fx-font-size: 13px; -fx-padding: 0;" />
-                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#clickToSearch" prefHeight="28.0" style="-fx-background-color: #FFFFFF; -fx-text-fill: -admin-text-primary; -fx-font-weight: bold; -fx-font-size: 12px; -fx-background-radius: 4; -fx-border-color: #B0BEC5; -fx-border-radius: 4; -fx-padding: 0 14; -fx-cursor: hand;" text="Tìm" />
-                <Button fx:id="dltSearch" mnemonicParsing="false" onAction="#clickToDeleteSearch" prefHeight="28.0" style="-fx-background-color: #FFFFFF; -fx-font-size: 12px; -fx-background-radius: 4; -fx-border-color: #CFD8DC; -fx-border-radius: 4; -fx-padding: 0 14; -fx-cursor: hand;" text="Xóa" />
+            <HBox alignment="CENTER_LEFT" spacing="6.0" styleClass="admin-search-box">
+                <TextField fx:id="searchField" prefHeight="28.0" prefWidth="210.0" promptText="Tìm tên, email hoặc ID..." styleClass="admin-search-field" />
+                <Button fx:id="btnSearch" mnemonicParsing="false" onAction="#clickToSearch" prefHeight="28.0" styleClass="admin-btn-search" text="Tìm" />
+                <Button fx:id="dltSearch" mnemonicParsing="false" onAction="#clickToDeleteSearch" prefHeight="28.0" styleClass="admin-btn-search-clear" text="Xóa" />
             </HBox>
         </HBox>
     </top>
@@ -43,7 +43,7 @@
             </padding>
 
             <HBox alignment="CENTER_LEFT" spacing="8.0">
-                <Label style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: -admin-heading;" text="Danh sách tài khoản hệ thống" />
+                <Label styleClass="admin-section-title" text="Danh sách tài khoản hệ thống" />
                 <Label fx:id="userCountBadge" styleClass="admin-count-badge" text="5 người dùng" />
             </HBox>
 
@@ -68,13 +68,13 @@
                 <Insets bottom="16.0" left="14.0" right="14.0" top="16.0" />
             </padding>
 
-            <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: -admin-text-secondary; -fx-padding: 4 4 2 4;" text="ĐIỀU HƯỚNG" />
+            <Label styleClass="admin-nav-heading" text="ĐIỀU HƯỚNG" />
 
             <Button fx:id="itemAdmin" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToGoItemAdmin" styleClass="admin-btn-nav" text="📦  Quản lý sản phẩm" />
 
             <Separator style="-fx-opacity: 0.5; -fx-padding: 4 0 4 0;" />
 
-            <Label style="-fx-font-size: 11px; -fx-font-weight: bold; -fx-text-fill: -admin-text-secondary; -fx-padding: 0 4 2 4;" text="QUẢN LÝ TÀI KHOẢN" />
+            <Label styleClass="admin-nav-heading" text="QUẢN LÝ TÀI KHOẢN" />
 
             <Button fx:id="btnAddUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToAddUser" styleClass="admin-btn-add" text="➕ Thêm người dùng" />
             <Button fx:id="btnEditUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#getUpdateAdmin" styleClass="admin-btn-edit" text="📝  Cập nhật thông tin" />
