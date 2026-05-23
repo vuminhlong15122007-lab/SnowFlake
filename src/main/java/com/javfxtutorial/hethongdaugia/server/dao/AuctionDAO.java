@@ -338,16 +338,16 @@ public class AuctionDAO implements DAOInterface<Auction> {
         return baseItem;
     }
 
-    public ArrayList<Auction> selectUnpaidByWinnerId(int winnerId) throws DataException {
+    public ArrayList<Auction> selectUnpaidByWinnerName(String winnerName) throws DataException {
         ArrayList<Auction> list = new ArrayList<>();
-        String sql = BASE_QUERY + " WHERE a.winner_id = ? AND a.auctionStatus = 'CLOSED'";
+        String sql = BASE_QUERY + " WHERE a.winner_name = ? AND a.auctionStatus = 'CLOSED'";
 
         try (Connection conn = JDBCUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql)) {
-            ps.setInt(1, winnerId);
+            ps.setString(1, winnerName);
 
             try (ResultSet rs = ps.executeQuery()) {
-                log.info("Đang lấy Auction thắng bởi userID: {}", winnerId);
+                log.info("Đang lấy Auction thắng bởi userID: {}", winnerName);
                 while (rs.next()) {
                     list.add(mapResultSet(rs));
                 }

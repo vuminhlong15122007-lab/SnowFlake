@@ -134,6 +134,9 @@ public class AuctionListController implements ResponseListener {
                     }
 
                     // 2. Lọc theo trạng thái
+                    if (currentStatus == AuctionStatus.CLOSED && (auction.getStatus() == AuctionStatus.CANCELLED || auction.getStatus() == AuctionStatus.PAID)){
+                        return true;
+                    }
                     if (currentStatus != null && auction.getStatus() != currentStatus) {
                         return false;
                     }

@@ -193,7 +193,8 @@ Hệ thống cho phép người bán đăng sản phẩm và mở phiên đấu 
 | Trừu tượng | DAO interface, command abstraction, listener interface. |
 
 ### 3.4 Thiết Kế Kiến Trúc Hệ Thống Networking & MVC
-
+java -jar server-app.jar
+java -jar client-app.jar
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"fontFamily": "Inter, Segoe UI, Arial", "primaryTextColor": "#0f172a", "lineColor": "#64748b"}}}%%
 flowchart LR

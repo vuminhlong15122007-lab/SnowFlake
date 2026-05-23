@@ -111,7 +111,7 @@ public class ParticipatedAuctionDAO {
                         + "LEFT JOIN electronics e ON i.itemid = e.item_id\n"
                         + "LEFT JOIN art art ON i.itemid = art.item_id\n"
                         + "LEFT JOIN vehicle v ON i.itemid = v.item_id\n"
-                        + "LEFT JOIN user u ON a.winner_id = u.id\n"
+                        + "LEFT JOIN user u ON a.winner_name = u.name\n"
                         + "WHERE pa.bidderId = ?";
 
         try (Connection con = JDBCUtil.getConnection();

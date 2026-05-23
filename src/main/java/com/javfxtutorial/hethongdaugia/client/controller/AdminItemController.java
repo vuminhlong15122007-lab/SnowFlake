@@ -162,7 +162,6 @@ public class AdminItemController implements ResponseListener {
             if (result == yes) {
                 try {
                     selected.setStatus(AuctionStatus.CANCELLED);
-                    selected.setWinnerId(0);
                     selected.setWinnerName("");
                     selected.setWinningPrice(null);
                     UpdateAuctionStatusCommand cmd = new UpdateAuctionStatusCommand(selected);

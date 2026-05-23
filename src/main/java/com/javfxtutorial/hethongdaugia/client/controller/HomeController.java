@@ -110,10 +110,10 @@ public class HomeController implements ResponseListener {
     }
 
     public void checkUnpaidAuction() {
-        int userId = ClientModel.getInstance().getCurrentUser().getId();
+        String userName = ClientModel.getInstance().getCurrentUser().getName();
         new Thread(() -> {
             try {
-                GetUnpaidAuctionCommand cmd = new GetUnpaidAuctionCommand(userId);
+                GetUnpaidAuctionCommand cmd = new GetUnpaidAuctionCommand(userName);
                 NetworkManager.getInstance().sendRequest(cmd, this);
             } catch (Exception e) {
                 log.error("Lỗi check unpaid: {}", e.getMessage());

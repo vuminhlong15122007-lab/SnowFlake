@@ -396,7 +396,6 @@ public class LiveAuctionController implements ResponseListener {
 
                         // Cập nhật lại Model đang lưu trong RAM
                         currentAuction.setCurrentPrice(newPrice);
-                        currentAuction.setWinnerId(bidderId);
                         currentAuction.setWinningPrice(newPrice);
                         currentAuction.setWinnerName(bidderName);
 

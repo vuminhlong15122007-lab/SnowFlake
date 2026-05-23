@@ -136,11 +136,11 @@ public class ParticipatedAuctionController implements ResponseListener {
                     }
                     if (currentStatus == AuctionStatus.CLOSED
                             || currentStatus == AuctionStatus.PAID) {
-                        int userId = ClientModel.getInstance().getCurrentUser().getId();
+                        String userName = ClientModel.getInstance().getCurrentUser().getName();
                         if (filterLoser) { // Đã tham gia nhưng không thắng
-                            return auction.getWinnerId() != userId;
+                            return !auction.getWinnerName().equals(userName);
                         } else { // Chờ thanh toán / đã thanh toán → user thắng
-                            return auction.getWinnerId() == userId;
+                            return auction.getWinnerName().equals(userName);
                         }
                     }
 

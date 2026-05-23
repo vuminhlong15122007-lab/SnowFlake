@@ -10,11 +10,13 @@ import com.javfxtutorial.hethongdaugia.common.Exception.bid.SelfBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DuplicateKeyException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.QueryExecutionException;
+import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.domain.AntiSnipeExtender;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.domain.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
+import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.BidDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.ParticipatedAuctionDAO;
@@ -116,9 +118,10 @@ public class AuctionManager {
         lock.lock();
         BidTransaction acceptedBid;
         LocalDateTime endTimeNew;
+        Auction auction;
         try {
             // 1. Lấy auction từ RAM
-            Auction auction = activeAuctions.get(bid.getAuctionId());
+            auction = activeAuctions.get(bid.getAuctionId());
 
             // 2. Nếu RAM trống → nạp từ DB
             if (auction == null) {
@@ -129,6 +132,12 @@ public class AuctionManager {
                 activeAuctions.put(auction.getAuctionId(), auction);
             }
             log.info("Đã lấy xong auction từ bidAuctionId");
+
+            // KIỂM TRA NGƯỜI BÁN KHÔNG ĐƯỢC ĐẶT GIÁ
+            if (bid.getBidderId() == auction.getSellerId()) {
+                log.warn("Người bán {} cố gắng đặt giá sản phẩm của chính mình", bid.getBidderId());
+                throw new SelfBidException();
+            }
 
             // 3. Kiểm tra hợp lệ
             AuctionStatus status = refreshAuctionStatus(auction);
@@ -154,17 +163,11 @@ public class AuctionManager {
                 throw new BidAmountExceedsLimitException(
                         999999999999.99, bid.getAmount().doubleValue());
             }
-            // KIỂM TRA NGƯỜI BÁN KHÔNG ĐƯỢC ĐẶT GIÁ
-            if (bid.getBidderId() == auction.getSellerId()) {
-                log.warn("Người bán {} cố gắng đặt giá sản phẩm của chính mình", bid.getBidderId());
-                throw new SelfBidException();
-            }
 
             log.info("Bid hợp lệ");
 
             // 4. Cập nhật auction trong RAM
             auction.setCurrentPrice(bid.getAmount());
-            auction.setWinnerId(bid.getBidderId());
             auction.setWinningPrice(bid.getAmount());
             auction.setWinnerName(bid.getBidderName());
             auction.setWinnerEmail(bid.getBidderEmail());
@@ -198,6 +201,7 @@ public class AuctionManager {
 
         // 6. Thông báo cho tất cả subscriber của auction này
         notifySubscribers(acceptedBid.getAuctionId(), acceptedBid, senderThread);
+        ClientHandler.broadcast(new Response(true, "giá thay đổi", auction, new UpdateAuctionCommand(auction)));
 
         // 7. Kích hoạt AutoBid nếu có
         checkAndExecuteAutoBids(activeAuctions.get(acceptedBid.getAuctionId()));
@@ -330,7 +334,7 @@ public class AuctionManager {
         BigDecimal finalAmount;
 
         if (eligibleBots.size() == 1) {
-            if (winnerBot.getUserId() == auction.getWinnerId()) return;
+            if (winnerBot.getUserName().equals(auction.getWinnerName())) return;
             finalAmount = minRequired;
         } else {
             AutoBidConfig secondBot = eligibleBots.get(1);

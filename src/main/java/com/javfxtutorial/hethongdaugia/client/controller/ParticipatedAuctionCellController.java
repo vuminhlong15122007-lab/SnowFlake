@@ -186,7 +186,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
             case RUNNING:
                 hideCountdown();
                 lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
-                lbWinnerName.setText(String.valueOf(auction.getWinnerId()));
+                lbWinnerName.setText(String.valueOf(auction.getWinnerName()));
                 if (actionButton != null) {
                     actionButton.setDisable(false);
                     actionButton.setText("THAM GIA");
@@ -197,8 +197,8 @@ public class ParticipatedAuctionCellController implements ResponseListener {
             case CLOSED:
                 lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
                 lbWinnerName.setText("Người thắng: " + auction.getWinnerName());
-                int userId = ClientModel.getInstance().getCurrentUser().getId();
-                if (auction.getWinnerId() == userId) {
+                String userName = ClientModel.getInstance().getCurrentUser().getName();
+                if (auction.getWinnerName().equals(userName)) {
                     actionButton.setDisable(false);
                     actionButton.setText("THANH TOÁN");
                     setActionButtonClass("sf-auction-action-warning");
@@ -217,7 +217,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
 
             case CANCELLED:
                 hideCountdown();
-                lbCurrentPrice.setText(String.format("%,.0f VND", auction.getInitPrice()));
+                lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
                 lbWinnerName.setText("Phiên bị hủy");
                 if (actionButton != null) {
                     actionButton.setDisable(true);
@@ -228,13 +228,13 @@ public class ParticipatedAuctionCellController implements ResponseListener {
 
             case PAID:
                 hideCountdown();
-                lbCurrentPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
+                lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
                 lbCategory.setText(
                         "Loại: "
                                 + (auction.getItem().getCategory() != null
                                         ? auction.getItem().getCategory()
                                         : "Khác"));
-                lbWinnerName.setText("Người thắng: " + auction.getWinnerId());
+                lbWinnerName.setText("Người thắng: " + auction.getWinnerName());
                 if (actionButton != null) {
                     actionButton.setDisable(true);
                     actionButton.setText("ĐÃ THANH TOÁN");

@@ -154,7 +154,5 @@ public class ClientModel {
         sellerNotifications.clear();
         readNotificationIds.clear();
         myAuctions.clear();
-        AuctionModificationManager.getInstance().isAllAuctionsLoaded = false;
-        getAllAuctions().clear();
     }
 }

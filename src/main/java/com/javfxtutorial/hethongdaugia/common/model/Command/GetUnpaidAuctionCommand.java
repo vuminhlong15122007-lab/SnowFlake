@@ -10,17 +10,17 @@ import org.slf4j.LoggerFactory;
 
 public class GetUnpaidAuctionCommand extends Command {
     private static final Logger log = LoggerFactory.getLogger(GetUnpaidAuctionCommand.class);
-    private final int userId; // lưu thẳng vào field, không dùng HashMap
+    private final String userName; // lưu thẳng vào field, không dùng HashMap
 
-    public GetUnpaidAuctionCommand(int userId) {
-        this.userId = userId; // constructor nhận userId luôn
+    public GetUnpaidAuctionCommand(String userName) {
+        this.userName = userName; // constructor nhận userId luôn
     }
 
     @Override
     public Response handle() {
         try {
-            ArrayList<Auction> unpaid = AuctionDAO.getInstance().selectUnpaidByWinnerId(userId);
-            log.info("User {} có {} phiên chưa thanh toán", userId, unpaid.size());
+            ArrayList<Auction> unpaid = AuctionDAO.getInstance().selectUnpaidByWinnerName(userName);
+            log.info("User {} có {} phiên chưa thanh toán", userName, unpaid.size());
             return new Response(true, "OK", unpaid, this);
         } catch (Exception e) {
             log.error("Lỗi GetUnpaidAuction: {}", e.getMessage(), e);
