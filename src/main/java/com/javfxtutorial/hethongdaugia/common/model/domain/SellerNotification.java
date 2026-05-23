@@ -10,7 +10,9 @@ public class SellerNotification implements Serializable {
     public enum Type {
         CLOSED,
         PAID,
-        CANCELLED
+        CANCELLED,
+        CANCELLED_BY_ADMIN,
+        DELETED_BY_ADMIN
     }
 
     private int notificationId;
@@ -41,75 +43,37 @@ public class SellerNotification implements Serializable {
         this.notificationId = idCounter;
     }
 
-    public int getNotificationId() {
-        return notificationId;
-    }
+    public int getNotificationId() { return notificationId; }
+    public void setNotificationId(int v) { notificationId = v; }
 
-    public void setNotificationId(int v) {
-        notificationId = v;
-    }
+    public int getAuctionId() { return auctionId; }
+    public void setAuctionId(int v) { auctionId = v; }
 
-    public int getAuctionId() {
-        return auctionId;
-    }
+    public Type getType() { return type; }
+    public void setType(Type type) { this.type = type; }
 
-    public void setAuctionId(int v) {
-        auctionId = v;
-    }
+    public String getProductName() { return productName; }
+    public void setProductName(String v) { productName = v; }
 
-    public Type getType() {
-        return type;
-    }
+    public String getWinnerName() { return winnerName; }
+    public void setWinnerName(String v) { winnerName = v; }
 
-    public void setType(Type type) {
-        this.type = type;
-    }
+    public BigDecimal getWinningPrice() { return winningPrice; }
+    public void setWinningPrice(BigDecimal v) { winningPrice = v; }
 
-    public String getProductName() {
-        return productName;
-    }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public void setCreatedAt(LocalDateTime v) { createdAt = v; }
 
-    public void setProductName(String v) {
-        productName = v;
-    }
-
-    public String getWinnerName() {
-        return winnerName;
-    }
-
-    public void setWinnerName(String v) {
-        winnerName = v;
-    }
-
-    public BigDecimal getWinningPrice() {
-        return winningPrice;
-    }
-
-    public void setWinningPrice(BigDecimal v) {
-        winningPrice = v;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime v) {
-        createdAt = v;
-    }
-
-    public boolean isRead() {
-        return read;
-    }
-
-    public void setRead(boolean read) {
-        this.read = read;
-    }
+    public boolean isRead() { return read; }
+    public void setRead(boolean read) { this.read = read; }
 
     public String getMessage() {
         return switch (type) {
             case CLOSED -> {
-                // Không có người thắng: winnerName rỗng, null, "N/A", hoặc giá = 0
-                boolean noWinner = winnerName == null || winnerName.isBlank() || winnerName.equals("N/A") || winningPrice == null || winningPrice.compareTo(java.math.BigDecimal.ZERO) == 0;
+                boolean noWinner = winnerName == null || winnerName.isBlank()
+                        || winnerName.equals("N/A")
+                        || winningPrice == null
+                        || winningPrice.compareTo(java.math.BigDecimal.ZERO) == 0;
                 if (noWinner) {
                     yield String.format(
                             "😞 Phiên \"%s\" kết thúc!\nKhông có ai tham gia đấu giá.\nBạn có thể đăng lại phiên nếu muốn.",
@@ -124,13 +88,17 @@ public class SellerNotification implements Serializable {
             case PAID -> {
                 String price = String.format("%,.0f", winningPrice);
                 yield String.format(
-                        "✅ Phiên \"%s\" đã được thanh toán!\n%s đã thanh toán thành công %s VND.\nChuẩn bị giao hàng cho họ nhé!",
+                        "✅ Phiên \"%s\" đã được thanh toán!\n \"%s\"  đã thanh toán thành công %s VND.\nChuẩn bị giao hàng cho họ nhé!",
                         productName, winnerName, price);
             }
             case CANCELLED ->
                     String.format(
-                            "❌ Phiên \"%s\" bị hủy!\n%s không thanh toán trong 24h.\nBạn có thể kiện nếu cần.",
+                            "❌ Phiên \"%s\" bị hủy!\n \"%s\" không thanh toán trong 24h.\nBạn có thể kiện nếu cần.",
                             productName, winnerName);
+            case DELETED_BY_ADMIN ->
+                    String.format("🚫 Sản phẩm \"%s\" đã bị admin xóa!\n Lý do: Vi phạm tiêu chuẩn cộng đồng...", productName);
+            case CANCELLED_BY_ADMIN ->
+                    String.format("⚠️ Phiên đấu giá \"%s\" đã bị admin hủy!\n Lý do: Phiên có dấu nghi vấn gian lận hoặc \n vi phạm tiêu chuẩn cộng đồng", productName);
         };
     }
 }

@@ -2,6 +2,7 @@ package com.javfxtutorial.hethongdaugia.common.model.Command;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataDeleteException;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.SellerNotification;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
@@ -35,6 +36,18 @@ public class DeleteAuctionCommand extends Command {
                 if (result1 <= 0) {
                     return new Response(false, "Không thể xóa phiên đấu giá", null, this);
                 }
+        
+                String productName = (auction.getItem() != null) ? auction.getItem().getName() : String.valueOf(auction.getAuctionId());
+                SellerNotification notif = new SellerNotification(
+                        auction.getAuctionId(),
+                        SellerNotification.Type.DELETED_BY_ADMIN,
+                        productName,
+                        null,
+                        null
+                );
+                Response notifResponse = new Response(true, "ADMIN_DELETED_PRODUCT", notif, this);
+                ClientHandler.broadcastToSeller(auction.getSellerId(), notifResponse);
+
                 Response rp = new Response(true, "xóa phiên đấu giá thành công", null, this);
                 ClientHandler.broadcast(rp);
                 return rp;

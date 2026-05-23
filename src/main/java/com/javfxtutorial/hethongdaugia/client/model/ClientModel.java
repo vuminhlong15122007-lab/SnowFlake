@@ -6,10 +6,14 @@ import com.javfxtutorial.hethongdaugia.common.model.domain.SellerNotification;
 import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.prefs.Preferences;
+
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static java.util.stream.Collectors.joining;
 
 public class ClientModel {
     private static final Logger log = LoggerFactory.getLogger(ClientModel.class);
@@ -72,7 +76,6 @@ public class ClientModel {
         return sellerNotifications;
     }
 
-
     // ── Read notification IDs (persist qua Preferences) ───────────────────────
     private Set<Integer> readNotificationIds = new HashSet<>();
 
@@ -125,18 +128,16 @@ public class ClientModel {
         readNotificationIds.clear();
     }
 
+
+    public void removeMyAuctionById(int auctionId) {
+        myAuctions.removeIf(a -> a.getAuctionId() == auctionId);
+    }
+
     private void persistReadIds() {
         if (currentUser == null) return;
         try {
-            java.util.prefs.Preferences prefs =
-                    java.util.prefs.Preferences.userRoot()
-                            .node(
-                                    "com/javfxtutorial/hethongdaugia/notifications/"
-                                            + currentUser.getId());
-            String joined =
-                    readNotificationIds.stream()
-                            .map(String::valueOf)
-                            .collect(java.util.stream.Collectors.joining(","));
+            Preferences prefs = Preferences.userRoot().node("com/javfxtutorial/hethongdaugia/notifications/" + currentUser.getId());
+            String joined = readNotificationIds.stream().map(String::valueOf).collect(joining(","));
             prefs.put("read_ids", joined);
             prefs.flush();
         } catch (java.util.prefs.BackingStoreException e) {

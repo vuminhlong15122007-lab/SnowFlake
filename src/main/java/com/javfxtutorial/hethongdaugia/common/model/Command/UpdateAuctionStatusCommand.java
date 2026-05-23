@@ -3,6 +3,7 @@ package com.javfxtutorial.hethongdaugia.common.model.Command;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataUpdateException;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.SellerNotification;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
@@ -33,6 +34,18 @@ public class UpdateAuctionStatusCommand extends Command {
                     AuctionManager.getInstance().updateAuctionStatus(
                             auction.getAuctionId(), AuctionStatus.CANCELLED
                     );
+                    // Gửi notification CANCELLED_BY_ADMIN về đúng seller
+                    String productName = (auction.getItem() != null) ? auction.getItem().getName() : String.valueOf(auction.getAuctionId());
+                    SellerNotification notif = new SellerNotification(
+                            auction.getAuctionId(),
+                            SellerNotification.Type.CANCELLED_BY_ADMIN,
+                            productName,
+                            null,
+                            null
+                    );
+                    Response notifResponse = new Response(true, "ADMIN_CANCELLED_AUCTION", notif, this);
+                    ClientHandler.broadcastToSeller(auction.getSellerId(), notifResponse);
+
                     ClientHandler.broadcast(
                             new Response(false, "AUCTION_CANCELLED", auction, this)
                     );}
