@@ -228,6 +228,11 @@ public class AdminItemController implements ResponseListener {
         itemTable.setItems(observableList);
         updateCountBadge(); // về lại tổng đầy đủ
     }
+    public void reLoad() throws SendFailedException, IOException, ClassNotFoundException, ConnectionFailedException {
+        if (itemCountBadge != null) itemCountBadge.setText("Đang tải...");
+        loadItemData();
+        System.out.println("Dữ liệu đã được cập nhật!");
+    }
 
     @Override
     public void onResponse(Response rp) {
