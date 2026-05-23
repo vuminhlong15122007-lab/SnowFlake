@@ -242,30 +242,6 @@ public class AuctionDAO implements DAOInterface<Auction> {
         return null;
     }
 
-    public Auction selectByItemId(int id) throws DataException { // lấy auction dựa trên itemId
-        Auction result = null;
-        String sql = BASE_QUERY + " WHERE a.item_id = ?";
-
-        try (Connection connection = JDBCUtil.getConnection();
-             PreparedStatement pst = connection.prepareStatement(sql)) {
-
-            pst.setInt(1, id);
-
-            try (ResultSet resultSet = pst.executeQuery()) {
-                log.info("Đang lấy Auction có item ID là: {}", id);
-                if (resultSet.next()) {
-                    result = mapResultSet(resultSet);
-                }
-            }
-
-        } catch (SQLException e) {
-            log.error("Lỗi SQL khi lấy Auction theo sellerId: {}", e.getMessage(), e);
-            throw new QueryExecutionException(sql);
-        } catch (NullPointerException e) {
-            log.warn("Dữ liệu không tồn tại", e);
-        }
-        return result;
-    }
 
     public ArrayList<Auction> selectBySellerId(int id)
             throws DataException { // lấy auction dựa trên sellerID

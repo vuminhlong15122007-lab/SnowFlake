@@ -290,7 +290,7 @@ class AuctionManagerBehaviorTest {
         void registerAutoBid_replacesPreviousConfigForSameUser() throws Exception {
             Auction auction = auctionWithPrice("100", "10");
             auction.setAuctionId(100);
-            auction.setWinnerId(1);
+            auction.setWinnerName(1);
             TestStateSupport.activeAuctions(manager).put(100, auction);
 
             AutoBidConfig first = new AutoBidConfig(1, "alice", 100, new BigDecimal("200"), true);

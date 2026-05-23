@@ -1,6 +1,7 @@
 package com.javfxtutorial.hethongdaugia.common.model.Command;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionAlreadyEndedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionCancelledException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotFoundException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotStartedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.BidAmountExceedsLimitException;
@@ -27,9 +28,12 @@ public class PlaceBidCommand extends Command {
                 return new Response(true, "Đặt giá thành công", bid, this);
             }
             return new Response(false, "Cần đặt giá lớn hơn giá hiện tại + bước giá", bid, this);
+        } catch (AuctionCancelledException e) {
+            log.warn("Auction đã bị hủy: {}", e.getMessage());
+            return new Response(false, "AUCTION_CANCELLED", null, this);
         } catch (AuctionNotFoundException e) {
             log.warn("Không tìm thấy auction: {}", e.getMessage());
-            return new Response(false, "AUCTION_CANCELLED", null, this);
+            return new Response(false, e.getMessage(), null, this);
         } catch (AuctionNotStartedException e) {
             log.warn("Auction chưa bắt đầu: {}", e.getMessage());
             return new Response(false, e.getMessage(), null, this);

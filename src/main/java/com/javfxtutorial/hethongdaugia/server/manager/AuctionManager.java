@@ -1,6 +1,7 @@
 package com.javfxtutorial.hethongdaugia.server.manager;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionAlreadyEndedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionCancelledException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotFoundException;
 import com.javfxtutorial.hethongdaugia.common.Exception.auc.AuctionNotStartedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.bid.BidAmountExceedsLimitException;
@@ -109,9 +110,9 @@ public class AuctionManager {
     }
 
     public boolean placeBid(BidTransaction bid, ClientHandler senderThread)
-            throws AuctionNotFoundException, AuctionNotStartedException,
-                    AuctionAlreadyEndedException, LowerThanCurrentBidException, SelfBidException,
-                    InsufficientIncrementException, DataException, BidAmountExceedsLimitException {
+        throws AuctionNotFoundException, AuctionNotStartedException,
+        AuctionAlreadyEndedException, LowerThanCurrentBidException, SelfBidException,
+        InsufficientIncrementException, DataException, BidAmountExceedsLimitException, AuctionCancelledException {
 
         if (bid == null || bid.getAmount() == null) {return false;}
         ReentrantLock lock = getAuctionLock(bid.getAuctionId());
@@ -133,6 +134,9 @@ public class AuctionManager {
             }
             log.info("Đã lấy xong auction từ bidAuctionId");
 
+            if (auction.getStatus().equals(AuctionStatus.CANCELLED_BY_ADMIN)){
+                throw new AuctionCancelledException(auction.getAuctionId());
+            }
             // KIỂM TRA NGƯỜI BÁN KHÔNG ĐƯỢC ĐẶT GIÁ
             if (bid.getBidderId() == auction.getSellerId()) {
                 log.warn("Người bán {} cố gắng đặt giá sản phẩm của chính mình", bid.getBidderId());
@@ -254,14 +258,14 @@ public class AuctionManager {
 
 
     public synchronized boolean registerAutoBid(AutoBidConfig config)
-            throws DataException,
-                    LowerThanCurrentBidException,
-                    SelfBidException,
-                    InsufficientIncrementException,
-                    AuctionNotFoundException,
-                    AuctionNotStartedException,
-                    AuctionAlreadyEndedException,
-                    BidAmountExceedsLimitException {
+        throws DataException,
+        LowerThanCurrentBidException,
+        SelfBidException,
+        InsufficientIncrementException,
+        AuctionNotFoundException,
+        AuctionNotStartedException,
+        AuctionAlreadyEndedException,
+        BidAmountExceedsLimitException, AuctionCancelledException {
         config.setRegisteredAt(LocalDateTime.now());
         List<AutoBidConfig> configs =
                 autoBidRegistry.computeIfAbsent(
@@ -291,14 +295,14 @@ public class AuctionManager {
     }
 
     private void checkAndExecuteAutoBids(Auction auction)
-            throws LowerThanCurrentBidException,
-                    DataException,
-                    SelfBidException,
-                    InsufficientIncrementException,
-                    AuctionNotFoundException,
-                    AuctionNotStartedException,
-                    AuctionAlreadyEndedException,
-                    BidAmountExceedsLimitException {
+        throws LowerThanCurrentBidException,
+        DataException,
+        SelfBidException,
+        InsufficientIncrementException,
+        AuctionNotFoundException,
+        AuctionNotStartedException,
+        AuctionAlreadyEndedException,
+        BidAmountExceedsLimitException, AuctionCancelledException {
         List<AutoBidConfig> configs = autoBidRegistry.get(auction.getAuctionId());
         if (configs == null || configs.isEmpty()) return;
 
