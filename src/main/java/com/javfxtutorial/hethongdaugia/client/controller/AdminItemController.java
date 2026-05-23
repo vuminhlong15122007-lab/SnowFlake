@@ -144,6 +144,11 @@ public class AdminItemController implements ResponseListener {
             showAlert("Thông báo", "Vui lòng chọn một phiên đấu giá.");
             return;
         }
+        if (selected.getStatus() == AuctionStatus.CLOSED
+                || selected.getStatus() == AuctionStatus.CANCELLED) {
+            showAlert("Thông báo", "Phiên này đã kết thúc hoặc đã bị hủy.");
+            return;
+        }
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Xác nhận hủy");
