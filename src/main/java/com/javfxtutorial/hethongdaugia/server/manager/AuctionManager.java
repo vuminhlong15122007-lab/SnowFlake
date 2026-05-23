@@ -89,13 +89,13 @@ public class AuctionManager {
             list.add(listener);
         }
 
-        System.out.println("Đã thêm " + listener + " vào phòng auction id: " + auctionId);
+        log.info("Đã thêm {} vào phòng auction id: {}", listener, auctionId);
     }
 
     public void unregisterFromAuction(BidListener listener, int auctionId) {
         List<BidListener> list = auctionSubscribers.get(auctionId);
         if (list != null) list.remove(listener);
-        System.out.println("Client hủy đăng ký auction #" + auctionId);
+        log.info("Client hủy đăng ký auction #{}", auctionId);
     }
 
     // ─────────────────────────────────────────────────
@@ -128,7 +128,7 @@ public class AuctionManager {
                 } // auction không tồn tại
                 activeAuctions.put(auction.getAuctionId(), auction);
             }
-            System.out.println("Đã lấy xong auction từ bidAuctionId");
+            log.info("Đã lấy xong auction từ bidAuctionId");
 
             // 3. Kiểm tra hợp lệ
             AuctionStatus status = refreshAuctionStatus(auction);
@@ -160,7 +160,7 @@ public class AuctionManager {
                 throw new SelfBidException();
             }
 
-            System.out.println("Bid hợp lệ");
+            log.info("Bid hợp lệ");
 
             // 4. Cập nhật auction trong RAM
             auction.setCurrentPrice(bid.getAmount());
@@ -170,7 +170,7 @@ public class AuctionManager {
             auction.setWinnerEmail(bid.getBidderEmail());
             auction.setWinnerSdt(bid.getBidderSdt());
 
-            System.out.println("Đã cập nhật lại auction");
+            log.info("Đã cập nhật lại auction");
 
 
             // Logic gia hạn phiên đấu giá
@@ -188,7 +188,7 @@ public class AuctionManager {
                         bid.getAuctionId());
             }
 
-            System.out.println("Đã lưu vào database");
+            log.info("Đã lưu vào database");
             acceptedBid = bid;
             acceptedBid.setNewEndingTime(endTimeNew);
 

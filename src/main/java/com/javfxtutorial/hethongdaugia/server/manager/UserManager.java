@@ -98,7 +98,7 @@ public class UserManager {
             }
             int result = UserDAO.getInstance().delete(deleteUser);
             if (result > 0) {
-                System.out.println("Xoa user thanh cong");
+                log.info("Xoa user thanh cong");
                 return true;
             }
             return false;
@@ -128,7 +128,7 @@ public class UserManager {
 
             int result = UserDAO.getInstance().update(newUser);
             if (result > 0) {
-                System.out.println("Doi mat khau thanh cong");
+                log.info("Doi mat khau thanh cong");
                 return newUser;
             }
             return null;

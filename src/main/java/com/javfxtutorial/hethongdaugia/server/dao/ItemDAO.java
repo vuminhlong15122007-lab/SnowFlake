@@ -101,7 +101,7 @@ public class ItemDAO implements DAOInterface<Item> {
             // Gán giá trị cho dấu ? trong mệnh đề WHERE (Quan trọng nhất)
             pst.setInt(4, item.getItemId());
 
-            System.out.println("Bạn đang thực thi cập nhật Item có ID: " + item.getItemId());
+            log.info("Bạn đang thực thi cập nhật Item có ID: {}", item.getItemId());
 
             // Thực thi câu lệnh
             result = pst.executeUpdate();
@@ -147,7 +147,7 @@ public class ItemDAO implements DAOInterface<Item> {
             Statement st = connection.createStatement();
             // lenh sql
             sql = "SELECT * FROM item";
-            System.out.println(sql);
+            log.info("Đang thực thi câu lệnh: {}", sql);
             ResultSet resultSet = st.executeQuery(sql);
             // lấy dữ liệu
             while (resultSet.next()) {

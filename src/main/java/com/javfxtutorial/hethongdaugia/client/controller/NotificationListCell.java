@@ -6,8 +6,11 @@ import java.util.function.Consumer;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.control.ListCell;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NotificationListCell extends ListCell<SellerNotification> {
+    private static final Logger log = LoggerFactory.getLogger(NotificationListCell.class);
 
     private Node cellRoot;
     private NotificationCellController cellController;
@@ -30,7 +33,7 @@ public class NotificationListCell extends ListCell<SellerNotification> {
                         updateItem(getItem(), false);
                     });
         } catch (IOException e) {
-            System.err.println("Không load được NotificationCellPopup.fxml: " + e.getMessage());
+            log.error("Không load được NotificationCellPopup.fxml: {}", e.getMessage(), e);
         }
     }
 

@@ -95,7 +95,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
                 }
                 log.info("Tạo Auction thành công: {}", auction);
             } else {
-                System.out.println("Tạo Auction thất bại");
+                log.warn("Tạo Auction thất bại");
             }
         } catch (SQLException e) {
             log.error("Lỗi SQL khi tạo Auction: {}", e.getMessage(), e);
@@ -265,7 +265,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
             log.error("Lỗi SQL khi lấy Auction theo sellerId: {}", e.getMessage(), e);
             throw new QueryExecutionException(sql);
         } catch (NullPointerException e) {
-            System.out.println("dữ liệu k tồn tại");
+            log.warn("Dữ liệu không tồn tại", e);
         }
         return result;
     }
@@ -291,7 +291,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
             log.error("Lỗi SQL khi lấy Auction theo sellerId: {}", e.getMessage(), e);
             throw new QueryExecutionException(sql);
         } catch (NullPointerException e) {
-            System.out.println("dữ liệu k tồn tại");
+            log.warn("Dữ liệu không tồn tại", e);
         }
         return list;
     }
@@ -360,7 +360,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
             log.error("Lỗi SQL khi lấy các Auction theo winnerID: {}", e.getMessage(), e);
             throw new QueryExecutionException(sql);
         } catch (NullPointerException e) {
-            System.out.println("dữ liệu k tồn tại");
+            log.warn("Dữ liệu không tồn tại", e);
         }
         return list;
     }
