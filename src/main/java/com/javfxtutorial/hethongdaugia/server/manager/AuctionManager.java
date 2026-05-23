@@ -380,6 +380,9 @@ public class AuctionManager {
     }
 
     public AuctionStatus checkPaymentStatus(Auction auction) throws DataException {
+        if (auction.getWinnerName().isBlank()){
+            auction.setStatus(AuctionStatus.CLOSED);
+        }
         if (LocalDateTime.now().isAfter(auction.getEndingTime().plusHours(24))) {
             if (auction.getStatus() != AuctionStatus.PAID) {
                 auction.setStatus(AuctionStatus.CANCELLED);

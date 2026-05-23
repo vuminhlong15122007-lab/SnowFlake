@@ -144,8 +144,8 @@ public class AdminItemController implements ResponseListener {
             showAlert("Thông báo", "Vui lòng chọn một phiên đấu giá.");
             return;
         }
-        if (selected.getStatus() == AuctionStatus.CLOSED
-                || selected.getStatus() == AuctionStatus.CANCELLED) {
+        if (!(selected.getStatus() == AuctionStatus.RUNNING)
+                || !(selected.getStatus() == AuctionStatus.NOT_START)) {
             showAlert("Thông báo", "Phiên này đã kết thúc hoặc đã bị hủy.");
             return;
         }
@@ -161,12 +161,10 @@ public class AdminItemController implements ResponseListener {
         confirm.showAndWait().ifPresent(result -> {
             if (result == yes) {
                 try {
-                    selected.setStatus(AuctionStatus.CANCELLED);
-                    selected.setWinnerName("");
-                    selected.setWinningPrice(null);
+                    selected.setStatus(AuctionStatus.CANCELLED_BY_ADMIN);
                     UpdateAuctionStatusCommand cmd = new UpdateAuctionStatusCommand(selected);
-                    NetworkManager.getConnection().sendCommand(cmd);
                     NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
+                    NetworkManager.getConnection().sendCommand(cmd);
                 } catch (Exception e) {
                     showAlert("Lỗi", "Không thể hủy phiên: " + e.getMessage());
                 }
@@ -213,22 +211,6 @@ public class AdminItemController implements ResponseListener {
 
     @Override
     public void onResponse(Response rp) {
-
-        // ── Xóa phiên đấu giá ──
-        if (rp.getCommand().getClass() == DeleteAuctionCommand.class) {
-            if (rp.isSuccess()) {
-                Platform.runLater(() -> showAlert("Xóa thành công", rp.getMessage(), "FunnyCat.gif"));
-                try {
-                    loadItemData(); // load lại bảng — badge sẽ được cập nhật trong GetAllAuctionsCommand
-                } catch (IOException | ClassNotFoundException | SendFailedException | ConnectionFailedException ex) {
-                    throw new RuntimeException(ex);
-                }
-            } else {
-                Platform.runLater(() -> showAlert("Lỗi", rp.getMessage(), "Wrong.gif"));
-            }
-            NetworkManager.getInstance().unregister(DeleteAuctionCommand.class, this);
-        }
-
         // ── Cập nhật trạng thái phiên (hủy) ──
         if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
             if ("AUCTION_CANCELLED".equals(rp.getMessage())) return;

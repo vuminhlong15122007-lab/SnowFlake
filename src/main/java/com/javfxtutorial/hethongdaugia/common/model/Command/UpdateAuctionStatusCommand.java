@@ -29,7 +29,7 @@ public class UpdateAuctionStatusCommand extends Command {
             }
             int result1 = AuctionDAO.getInstance().update(auction);
             if (result1 > 0) {
-                if (auction.getStatus() == AuctionStatus.CANCELLED) {
+                if (auction.getStatus() == AuctionStatus.CANCELLED)  {
                     // Cập nhật lại RAM trong AuctionManager
                     AuctionManager.getInstance().updateAuctionStatus(
                             auction.getAuctionId(), AuctionStatus.CANCELLED
