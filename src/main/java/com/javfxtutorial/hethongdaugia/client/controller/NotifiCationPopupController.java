@@ -25,14 +25,12 @@ public class NotifiCationPopupController {
         if (notificationListView != null) {
             notificationListView.setCellFactory(
                     _ ->
-                            new NotificationListCell(
-                                    notif -> {
+                            new NotificationListCell(notif -> {
                                         if (onMarkRead != null) onMarkRead.accept(notif);
                                         // Refresh listview để cell tự cập nhật trạng thái
                                         Platform.runLater(() -> notificationListView.refresh());
                                     }));
-            notificationListView.setStyle(
-                    "-fx-background-color: transparent;"
+            notificationListView.setStyle("-fx-background-color: transparent;"
                             + "-fx-background-insets: 0;"
                             + "-fx-control-inner-background: transparent;");
         }

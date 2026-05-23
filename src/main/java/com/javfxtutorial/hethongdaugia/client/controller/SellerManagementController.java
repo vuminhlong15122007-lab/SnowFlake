@@ -109,13 +109,13 @@ public class SellerManagementController implements ResponseListener {
     private String image =
             "/9j/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEI=";
 
-    // ── Navigation ────────────────────────────────────────────────────────────
+
     public void goMenu(ActionEvent event) {
         if (autoRefreshTimeline != null) autoRefreshTimeline.stop();
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
     }
 
-    // ── Initialize ────────────────────────────────────────────────────────────
+    //Initialize
     @FXML
     public void initialize() {
         // Ẩn panel người thắng khi khởi động
@@ -201,11 +201,15 @@ public class SellerManagementController implements ResponseListener {
                         switch (st) {
                             case CLOSED -> SellerNotification.Type.CLOSED;
                             case PAID -> SellerNotification.Type.PAID;
+                            case DELETED_BY_ADMIN -> SellerNotification.Type.DELETED_BY_ADMIN;
+                            case CANCELLED_BY_ADMIN -> SellerNotification.Type.CANCELLED_BY_ADMIN;
                             default -> SellerNotification.Type.CANCELLED;
                         };
-                String pName = String.valueOf(newVal.getAuctionId());
-                String wName = newVal.getWinnerName();
-                SellerNotification notif = new SellerNotification(newVal.getAuctionId(), type, pName, wName, newVal.getWinningPrice());addOrReplaceNotification(notif);}
+                String pName = (newVal.getItem() != null) ? newVal.getItem().getName() : String.valueOf(newVal.getAuctionId()); // ← lấy tên, fallback mới dùng ID
+                String wName = (newVal.getWinnerName() != null && !newVal.getWinnerName().isBlank()) ? newVal.getWinnerName() : "Người thắng";
+                SellerNotification notif = new SellerNotification(newVal.getAuctionId(), type, pName, wName, newVal.getWinningPrice());
+                addOrReplaceNotification(notif);
+            }
         });
 
         notifications = ClientModel.getInstance().getSellerNotifications();
@@ -272,8 +276,7 @@ public class SellerManagementController implements ResponseListener {
                 "-fx-background-color: #007bff; -fx-text-fill: white; -fx-font-weight: bold;"
                         + " -fx-background-radius: 5; -fx-padding: 5 0; -fx-font-size: 12px;");
         saveButton.setText("Lưu");
-        saveButton.setOnAction(
-                _ -> {
+        saveButton.setOnAction(_ -> {
                     try {
                         onSaveButton(event);
                     } catch (IOException e) {
@@ -638,8 +641,8 @@ public class SellerManagementController implements ResponseListener {
                         case "Đang diễn ra" -> st == AuctionStatus.RUNNING;
                         case "Chờ thanh toán" -> st == AuctionStatus.CLOSED && a.getWinnerId() != 0;
                         case "Thành toán thành công" -> st == AuctionStatus.PAID;
-                        case "Sản phẩm đã hủy" -> st == AuctionStatus.CANCELLED && a.getWinnerId() != 0;
-                        case "Không ai đấu giá" -> (st == AuctionStatus.CLOSED || st == AuctionStatus.CANCELLED) && a.getWinnerId() == 0;
+                        case "Sản phẩm đã hủy"  -> st == AuctionStatus.CANCELLED || st == AuctionStatus.CANCELLED_BY_ADMIN || st == AuctionStatus.DELETED_BY_ADMIN;
+                        case "Không ai đấu giá" -> st == AuctionStatus.CLOSED && a.getWinnerId() == 0;
                         default -> true;
                     };
                 });
@@ -775,11 +778,18 @@ public class SellerManagementController implements ResponseListener {
                 // Sinh thông báo cho các phiên đã kết thúc
                 for (Auction a : auctions) {
                     AuctionStatus st = a.getStatus();
-                    if (st != AuctionStatus.CLOSED && st != AuctionStatus.PAID && st != AuctionStatus.CANCELLED)
+                    if (st != AuctionStatus.CLOSED
+                            && st != AuctionStatus.PAID
+                            && st != AuctionStatus.CANCELLED
+                            && st != AuctionStatus.CANCELLED_BY_ADMIN
+                            && st != AuctionStatus.DELETED_BY_ADMIN)
                         continue;
+
                     SellerNotification.Type type = switch (st) {
                         case CLOSED -> SellerNotification.Type.CLOSED;
                         case PAID -> SellerNotification.Type.PAID;
+                        case CANCELLED_BY_ADMIN -> SellerNotification.Type.CANCELLED_BY_ADMIN;
+                        case DELETED_BY_ADMIN -> SellerNotification.Type.DELETED_BY_ADMIN;
                         default -> SellerNotification.Type.CANCELLED;
                     };
                     String pName = (a.getItem() != null) ? a.getItem().getName() : String.valueOf(a.getAuctionId());
@@ -849,18 +859,23 @@ public class SellerManagementController implements ResponseListener {
 
         // Server push: cập nhật trạng thái phiên
         if (rp.getCommand().getClass().equals(UpdateAuctionStatusCommand.class)
+                && !"ADMIN_CANCELLED_AUCTION".equals(rp.getMessage())
                 && rp.getPayLoad() instanceof Auction auction) {
             AuctionStatus status = auction.getStatus();
             if (status != AuctionStatus.CLOSED
                     && status != AuctionStatus.PAID
-                    && status != AuctionStatus.CANCELLED) return;
+                    && status != AuctionStatus.CANCELLED
+                    && status != AuctionStatus.CANCELLED_BY_ADMIN
+                    && status != AuctionStatus.DELETED_BY_ADMIN)   
+                return;
 
-            SellerNotification.Type type =
-                    switch (status) {
-                        case CLOSED -> SellerNotification.Type.CLOSED;
-                        case PAID -> SellerNotification.Type.PAID;
-                        default -> SellerNotification.Type.CANCELLED;
-                    };
+            SellerNotification.Type type = switch (status) {
+                case CLOSED -> SellerNotification.Type.CLOSED;
+                case PAID -> SellerNotification.Type.PAID;
+                case CANCELLED_BY_ADMIN -> SellerNotification.Type.CANCELLED_BY_ADMIN;  // ← thêm
+                case DELETED_BY_ADMIN -> SellerNotification.Type.DELETED_BY_ADMIN;      // ← thêm
+                default -> SellerNotification.Type.CANCELLED;
+            };
             String productName = (auction.getItem() != null) ? auction.getItem().getName() : String.valueOf(auction.getAuctionId());
             String winnerName = (auction.getWinnerName() != null) ? auction.getWinnerName() : "N/A";
 

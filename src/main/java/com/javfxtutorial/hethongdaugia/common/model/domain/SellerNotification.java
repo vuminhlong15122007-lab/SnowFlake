@@ -70,13 +70,10 @@ public class SellerNotification implements Serializable {
     public String getMessage() {
         return switch (type) {
             case CLOSED -> {
-                boolean noWinner = winnerName == null || winnerName.isBlank()
-                        || winnerName.equals("N/A")
-                        || winningPrice == null
-                        || winningPrice.compareTo(java.math.BigDecimal.ZERO) == 0;
+                boolean noWinner = winnerName == null || winnerName.isBlank() ;
                 if (noWinner) {
                     yield String.format(
-                            "😞 Phiên \"%s\" kết thúc!\nKhông có ai tham gia đấu giá.\nBạn có thể đăng lại phiên nếu muốn.",
+                            "😞 Phiên \"%s\" kết thúc!\n Không có ai tham gia đấu giá.\nBạn có thể đăng lại phiên nếu muốn.",
                             productName);
                 } else {
                     String price = String.format("%,.0f", winningPrice);
@@ -88,7 +85,7 @@ public class SellerNotification implements Serializable {
             case PAID -> {
                 String price = String.format("%,.0f", winningPrice);
                 yield String.format(
-                        "✅ Phiên \"%s\" đã được thanh toán!\n \"%s\"  đã thanh toán thành công %s VND.\nChuẩn bị giao hàng cho họ nhé!",
+                        "✅ Phiên \"%s\" đã được thanh toán!\n \"%s\"  đã thanh toán thành công  \"%s\" VND.\nChuẩn bị giao hàng cho họ nhé!",
                         productName, winnerName, price);
             }
             case CANCELLED ->
