@@ -36,6 +36,8 @@ import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
+
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterEach;
@@ -347,7 +349,7 @@ class CommandContractTest {
         @Test
         @DisplayName("admin da dang nhap duoc tao tai khoan ADMIN")
         void addAccountCommand_adminRoleWithAdminSessionCanCreateAdminAccount()
-                throws DataException {
+            throws DataException, IOException {
             AddAccountCommand command = validAddAccountCommand();
             command.addData("accountType", "ADMIN");
             UserDAO userDAO = mock(UserDAO.class);

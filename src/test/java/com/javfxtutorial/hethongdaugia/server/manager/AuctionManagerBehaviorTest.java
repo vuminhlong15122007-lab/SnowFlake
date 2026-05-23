@@ -80,12 +80,12 @@ class AuctionManagerBehaviorTest {
         @Test
         @DisplayName("giữ NOT_START trước thời điểm bắt đầu")
         void refreshAuctionStatus_keepsNotStartBeforeStart_withoutDatabaseUpdate()
-                throws DataException {
+            throws DataException {
             Auction auction =
-                    auctionWithTime(
-                            LocalDateTime.now().plusHours(1),
-                            LocalDateTime.now().plusHours(2),
-                            AuctionStatus.NOT_START);
+                auctionWithTime(
+                    LocalDateTime.now().plusHours(1),
+                    LocalDateTime.now().plusHours(2),
+                    AuctionStatus.NOT_START);
 
             assertEquals(AuctionStatus.NOT_START, manager.refreshAuctionStatus(auction));
             assertEquals(AuctionStatus.NOT_START, auction.getStatus());
@@ -94,12 +94,12 @@ class AuctionManagerBehaviorTest {
         @Test
         @DisplayName("giữ RUNNING trong thời gian đấu giá")
         void refreshAuctionStatus_keepsRunningDuringAuction_withoutDatabaseUpdate()
-                throws DataException {
+            throws DataException {
             Auction auction =
-                    auctionWithTime(
-                            LocalDateTime.now().minusMinutes(5),
-                            LocalDateTime.now().plusMinutes(5),
-                            AuctionStatus.RUNNING);
+                auctionWithTime(
+                    LocalDateTime.now().minusMinutes(5),
+                    LocalDateTime.now().plusMinutes(5),
+                    AuctionStatus.RUNNING);
 
             assertEquals(AuctionStatus.RUNNING, manager.refreshAuctionStatus(auction));
             assertEquals(AuctionStatus.RUNNING, auction.getStatus());
@@ -109,10 +109,10 @@ class AuctionManagerBehaviorTest {
         @DisplayName("chuyển NOT_START sang RUNNING và cập nhật DB khi đến giờ")
         void refreshAuctionStatus_movesNotStartToRunningAndUpdatesDatabase() throws DataException {
             Auction auction =
-                    auctionWithTime(
-                            LocalDateTime.now().minusMinutes(5),
-                            LocalDateTime.now().plusMinutes(5),
-                            AuctionStatus.NOT_START);
+                auctionWithTime(
+                    LocalDateTime.now().minusMinutes(5),
+                    LocalDateTime.now().plusMinutes(5),
+                    AuctionStatus.NOT_START);
             AuctionDAO auctionDAO = mock(AuctionDAO.class);
             when(auctionDAO.update(auction)).thenReturn(1);
 
@@ -130,10 +130,10 @@ class AuctionManagerBehaviorTest {
         @DisplayName("giữ CLOSED sau khi kết thúc")
         void refreshAuctionStatus_keepsClosedAfterEnd_withoutDatabaseUpdate() throws DataException {
             Auction auction =
-                    auctionWithTime(
-                            LocalDateTime.now().minusHours(2),
-                            LocalDateTime.now().minusHours(1),
-                            AuctionStatus.CLOSED);
+                auctionWithTime(
+                    LocalDateTime.now().minusHours(2),
+                    LocalDateTime.now().minusHours(1),
+                    AuctionStatus.CLOSED);
 
             assertEquals(AuctionStatus.CLOSED, manager.refreshAuctionStatus(auction));
             assertEquals(AuctionStatus.CLOSED, auction.getStatus());
@@ -143,10 +143,10 @@ class AuctionManagerBehaviorTest {
         @DisplayName("giu CANCELLED va khong update DB")
         void refreshAuctionStatus_keepsCancelledWithoutDatabaseUpdate() throws DataException {
             Auction auction =
-                    auctionWithTime(
-                            LocalDateTime.now().minusDays(2),
-                            LocalDateTime.now().minusDays(1),
-                            AuctionStatus.CANCELLED);
+                auctionWithTime(
+                    LocalDateTime.now().minusDays(2),
+                    LocalDateTime.now().minusDays(1),
+                    AuctionStatus.CANCELLED);
 
             try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class)) {
                 assertEquals(AuctionStatus.CANCELLED, manager.refreshAuctionStatus(auction));
@@ -159,10 +159,10 @@ class AuctionManagerBehaviorTest {
         @DisplayName("auction tam thoi id 0 khong update DB khi status doi")
         void refreshAuctionStatus_skipsDatabaseUpdateForZeroAuctionId() throws DataException {
             Auction auction =
-                    auctionWithTime(
-                            LocalDateTime.now().minusMinutes(5),
-                            LocalDateTime.now().plusMinutes(5),
-                            AuctionStatus.NOT_START);
+                auctionWithTime(
+                    LocalDateTime.now().minusMinutes(5),
+                    LocalDateTime.now().plusMinutes(5),
+                    AuctionStatus.NOT_START);
             auction.setAuctionId(0);
 
             try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class)) {
@@ -175,12 +175,12 @@ class AuctionManagerBehaviorTest {
         @Test
         @DisplayName("chuyen CLOSED qua han thanh toan sang CANCELLED va cap nhat DB")
         void refreshAuctionStatus_movesClosedPastPaymentWindowToCancelledAndUpdatesDatabase()
-                throws DataException {
+            throws DataException {
             Auction auction =
-                    auctionWithTime(
-                            LocalDateTime.now().minusDays(2),
-                            LocalDateTime.now().minusHours(25),
-                            AuctionStatus.CLOSED);
+                auctionWithTime(
+                    LocalDateTime.now().minusDays(2),
+                    LocalDateTime.now().minusHours(25),
+                    AuctionStatus.CLOSED);
             AuctionDAO auctionDAO = mock(AuctionDAO.class);
             when(auctionDAO.update(auction)).thenReturn(1);
 
@@ -198,10 +198,11 @@ class AuctionManagerBehaviorTest {
         @DisplayName("giữ PAID sau cửa sổ thanh toán")
         void checkPaymentStatus_keepsPaidAuctionAfterPaymentWindow() throws DataException {
             Auction auction =
-                    auctionWithTime(
-                            LocalDateTime.now().minusDays(2),
-                            LocalDateTime.now().minusHours(25),
-                            AuctionStatus.PAID);
+                auctionWithTime(
+                    LocalDateTime.now().minusDays(2),
+                    LocalDateTime.now().minusHours(25),
+                    AuctionStatus.PAID);
+            auction.setWinnerName("abc");
 
             assertEquals(AuctionStatus.PAID, manager.checkPaymentStatus(auction));
         }
@@ -210,10 +211,10 @@ class AuctionManagerBehaviorTest {
         @DisplayName("giữ CLOSED khi chưa hết hạn thanh toán")
         void checkPaymentStatus_keepsStatusBeforePaymentWindowExpires() throws DataException {
             Auction auction =
-                    auctionWithTime(
-                            LocalDateTime.now().minusHours(2),
-                            LocalDateTime.now().minusHours(1),
-                            AuctionStatus.CLOSED);
+                auctionWithTime(
+                    LocalDateTime.now().minusHours(2),
+                    LocalDateTime.now().minusHours(1),
+                    AuctionStatus.CLOSED);
 
             assertEquals(AuctionStatus.CLOSED, manager.checkPaymentStatus(auction));
         }
@@ -231,7 +232,7 @@ class AuctionManagerBehaviorTest {
             manager.registerToAuction(listener, 100);
 
             Map<Integer, List<BidListener>> subscribers =
-                    TestStateSupport.auctionSubscribers(manager);
+                TestStateSupport.auctionSubscribers(manager);
             assertEquals(1, subscribers.get(100).size());
             assertSame(listener, subscribers.get(100).get(0));
         }
@@ -272,13 +273,13 @@ class AuctionManagerBehaviorTest {
         @Test
         @DisplayName("tắt auto-bid xóa cấu hình hiện có")
         void registerAutoBid_inactiveConfigRemovesExistingConfigWithoutDatabaseAccess()
-                throws Exception {
+            throws Exception {
             AutoBidConfig active = new AutoBidConfig(1, "alice", 100, new BigDecimal("200"), true);
             AutoBidConfig inactive =
-                    new AutoBidConfig(1, "alice", 100, new BigDecimal("200"), false);
+                new AutoBidConfig(1, "alice", 100, new BigDecimal("200"), false);
 
             TestStateSupport.autoBidRegistry(manager)
-                    .put(100, new java.util.ArrayList<>(List.of(active)));
+                .put(100, new java.util.ArrayList<>(List.of(active)));
 
             assertTrue(manager.registerAutoBid(inactive));
 
@@ -290,7 +291,7 @@ class AuctionManagerBehaviorTest {
         void registerAutoBid_replacesPreviousConfigForSameUser() throws Exception {
             Auction auction = auctionWithPrice("100", "10");
             auction.setAuctionId(100);
-            auction.setWinnerName(1);
+            auction.setWinnerName("alice");
             TestStateSupport.activeAuctions(manager).put(100, auction);
 
             AutoBidConfig first = new AutoBidConfig(1, "alice", 100, new BigDecimal("200"), true);
@@ -309,21 +310,21 @@ class AuctionManagerBehaviorTest {
         void executeAutoBidCheck_noEligibleBotsLeavesAuctionUnchanged() throws Exception {
             Auction auction = auctionWithPrice("100", "10");
             auction.setAuctionId(100);
-            auction.setWinnerId(2);
+            auction.setWinnerName("bob");
             TestStateSupport.autoBidRegistry(manager)
-                    .put(
-                            100,
-                            new java.util.ArrayList<>(
-                                    List.of(
-                                            new AutoBidConfig(
-                                                    1, "alice", 100, new BigDecimal("109"), true),
-                                            new AutoBidConfig(
-                                                    3, "carol", 100, new BigDecimal("50"), true))));
+                .put(
+                    100,
+                    new java.util.ArrayList<>(
+                        List.of(
+                            new AutoBidConfig(
+                                1, "alice", 100, new BigDecimal("109"), true),
+                            new AutoBidConfig(
+                                3, "carol", 100, new BigDecimal("50"), true))));
 
             TestStateSupport.executeAutoBidCheck(manager, auction);
 
             assertEquals(new BigDecimal("100"), auction.getCurrentPrice());
-            assertEquals(2, auction.getWinnerId());
+            assertEquals("bob", auction.getWinnerName());
         }
 
         @Test
@@ -331,23 +332,23 @@ class AuctionManagerBehaviorTest {
         void executeAutoBidCheck_winnerAlreadyLeadingDoesNotCreateNewBid() throws Exception {
             Auction auction = auctionWithPrice("100", "10");
             auction.setAuctionId(100);
-            auction.setWinnerId(1);
+            auction.setWinnerName("alice");
             TestStateSupport.autoBidRegistry(manager)
-                    .put(
-                            100,
-                            new java.util.ArrayList<>(
-                                    List.of(
-                                            new AutoBidConfig(
-                                                    1,
-                                                    "alice",
-                                                    100,
-                                                    new BigDecimal("500"),
-                                                    true))));
+                .put(
+                    100,
+                    new java.util.ArrayList<>(
+                        List.of(
+                            new AutoBidConfig(
+                                1,
+                                "alice",
+                                100,
+                                new BigDecimal("500"),
+                                true))));
 
             TestStateSupport.executeAutoBidCheck(manager, auction);
 
             assertEquals(new BigDecimal("100"), auction.getCurrentPrice());
-            assertEquals(1, auction.getWinnerId());
+            assertEquals("alice", auction.getWinnerName());
         }
     }
 
@@ -367,7 +368,7 @@ class AuctionManagerBehaviorTest {
     }
 
     private static Auction auctionWithTime(
-            LocalDateTime start, LocalDateTime end, AuctionStatus status) {
+        LocalDateTime start, LocalDateTime end, AuctionStatus status) {
         Auction auction = auctionWithPrice("100", "10");
         auction.setStartingTime(start);
         auction.setEndingTime(end);

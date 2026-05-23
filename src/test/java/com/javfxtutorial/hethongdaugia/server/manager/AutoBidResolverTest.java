@@ -53,127 +53,127 @@ class AutoBidResolverTest {
         @Test
         @DisplayName("một bot đủ điều kiện đặt giá tối thiểu")
         void singleEligibleBot_bidsMinimumRequired() throws Exception {
-            Auction auction = auction("100", "10", 2);
+            Auction auction = auction("100", "10", "other");
             AutoBidResult result =
-                    runAutoBid(auction, List.of(bot(1, "alice", "200", true, EARLY)));
+                runAutoBid(auction, List.of(bot(1, "alice", "200", true, EARLY)));
 
             assertBid(result, 1, "110");
-            assertEquals(1, auction.getWinnerId());
+            assertEquals("alice", auction.getWinnerName());
             assertEquals(new BigDecimal("110"), auction.getCurrentPrice());
         }
 
         @Test
         @DisplayName("bỏ qua bot đã tắt")
         void inactiveBot_isIgnored() throws Exception {
-            Auction auction = auction("100", "10", 2);
+            Auction auction = auction("100", "10", "other");
             AutoBidResult result =
-                    runAutoBid(auction, List.of(bot(1, "alice", "200", false, EARLY)));
+                runAutoBid(auction, List.of(bot(1, "alice", "200", false, EARLY)));
 
             assertNoBid(result);
-            assertEquals(2, auction.getWinnerId());
+            assertEquals("other", auction.getWinnerName());
             assertEquals(new BigDecimal("100"), auction.getCurrentPrice());
         }
 
         @Test
         @DisplayName("bỏ qua bot có maxBid dưới giá tối thiểu")
         void botBelowMinimumRequired_isIgnored() throws Exception {
-            Auction auction = auction("100", "10", 2);
+            Auction auction = auction("100", "10", "other");
             AutoBidResult result =
-                    runAutoBid(auction, List.of(bot(1, "alice", "109", true, EARLY)));
+                runAutoBid(auction, List.of(bot(1, "alice", "109", true, EARLY)));
 
             assertNoBid(result);
-            assertEquals(2, auction.getWinnerId());
+            assertEquals("other", auction.getWinnerName());
             assertEquals(new BigDecimal("100"), auction.getCurrentPrice());
         }
 
         @Test
         @DisplayName("bot maxBid cao nhất thắng với giá vừa đủ hơn bot thứ hai")
         void highestMaxBidWinsAndPaysSecondMaxPlusStep() throws Exception {
-            Auction auction = auction("100", "10", 9);
+            Auction auction = auction("100", "10", "carol");
             AutoBidConfig lower = bot(1, "alice", "200", true, EARLY);
             AutoBidConfig higher = bot(2, "bob", "500", true, LATE);
 
             AutoBidResult result = runAutoBid(auction, List.of(lower, higher));
 
             assertBid(result, 2, "210");
-            assertEquals(2, auction.getWinnerId());
+            assertEquals("bob", auction.getWinnerName());
             assertEquals(new BigDecimal("210"), auction.getCurrentPrice());
         }
 
         @Test
         @DisplayName("cùng maxBid thì bot đăng ký sớm thắng")
         void sameMaxBidEarlierRegistrationWinsAndPaysMaxBid() throws Exception {
-            Auction auction = auction("100", "10", 9);
+            Auction auction = auction("100", "10", "carol");
             AutoBidConfig early = bot(1, "alice", "300", true, EARLY);
             AutoBidConfig late = bot(2, "bob", "300", true, LATE);
 
             AutoBidResult result = runAutoBid(auction, List.of(late, early));
 
             assertBid(result, 1, "300");
-            assertEquals(1, auction.getWinnerId());
+            assertEquals("alice", auction.getWinnerName());
             assertEquals(new BigDecimal("300"), auction.getCurrentPrice());
         }
 
         @Test
         @DisplayName("người đang dẫn đầu giữ lợi thế khi cùng maxBid")
         void sameMaxBidCurrentWinnerKeepsLeadAndPriceMovesToMaxBid() throws Exception {
-            Auction auction = auction("100", "10", 1);
+            Auction auction = auction("100", "10", "alice");
             AutoBidConfig currentWinner = bot(1, "alice", "300", true, EARLY);
             AutoBidConfig challenger = bot(2, "bob", "300", true, LATE);
 
             AutoBidResult result = runAutoBid(auction, List.of(challenger, currentWinner));
 
             assertBid(result, 1, "300");
-            assertEquals(1, auction.getWinnerId());
+            assertEquals("alice", auction.getWinnerName());
             assertEquals(new BigDecimal("300"), auction.getCurrentPrice());
         }
 
         @Test
         @DisplayName("giá auto-bid không vượt maxBid của bot thắng")
         void finalAmountIsClampedToWinnerMaxBid() throws Exception {
-            Auction auction = auction("100", "10", 9);
+            Auction auction = auction("100", "10", "carol");
             AutoBidConfig winner = bot(1, "alice", "205", true, EARLY);
             AutoBidConfig second = bot(2, "bob", "200", true, LATE);
 
             AutoBidResult result = runAutoBid(auction, List.of(winner, second));
 
             assertBid(result, 1, "205");
-            assertEquals(1, auction.getWinnerId());
+            assertEquals("alice", auction.getWinnerName());
             assertEquals(new BigDecimal("205"), auction.getCurrentPrice());
         }
 
         @Test
         @DisplayName("bot đang dẫn đầu không tự đấu với chính mình")
         void currentWinnerDoesNotBidAgainstThemself() throws Exception {
-            Auction auction = auction("100", "10", 1);
+            Auction auction = auction("100", "10", "alice");
             AutoBidResult result =
-                    runAutoBid(auction, List.of(bot(1, "alice", "500", true, EARLY)));
+                runAutoBid(auction, List.of(bot(1, "alice", "500", true, EARLY)));
 
             assertNoBid(result);
-            assertEquals(1, auction.getWinnerId());
+            assertEquals("alice", auction.getWinnerName());
             assertEquals(new BigDecimal("100"), auction.getCurrentPrice());
         }
 
         @Test
         @DisplayName("bot thấp hơn vẫn thắng khi bot cao hơn bị tắt")
         void lowerMaxBotCanWinWhenHigherBotIsInactive() throws Exception {
-            Auction auction = auction("100", "10", 9);
+            Auction auction = auction("100", "10", "carol");
             AutoBidConfig inactiveHigher = bot(1, "alice", "500", false, EARLY);
             AutoBidConfig activeLower = bot(2, "bob", "200", true, LATE);
 
             AutoBidResult result = runAutoBid(auction, List.of(inactiveHigher, activeLower));
 
             assertBid(result, 2, "110");
-            assertEquals(2, auction.getWinnerId());
+            assertEquals("bob", auction.getWinnerName());
             assertEquals(new BigDecimal("110"), auction.getCurrentPrice());
         }
     }
 
     private AutoBidResult runAutoBid(Auction auction, List<AutoBidConfig> configs)
-            throws Exception {
+        throws Exception {
         TestStateSupport.activeAuctions(manager).put(auction.getAuctionId(), auction);
         TestStateSupport.autoBidRegistry(manager)
-                .put(auction.getAuctionId(), new ArrayList<>(configs));
+            .put(auction.getAuctionId(), new ArrayList<>(configs));
 
         AuctionDAO auctionDAO = mock(AuctionDAO.class);
         BidDAO bidDAO = mock(BidDAO.class);
@@ -184,9 +184,9 @@ class AutoBidResolverTest {
         when(participatedAuctionDAO.insert(any(BidTransaction.class))).thenReturn(1);
 
         try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
-                MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
-                MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
-                        mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+             MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+             MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                 mockParticipatedAuctionDAO(participatedAuctionDAO)) {
             TestStateSupport.executeAutoBidCheck(manager, auction);
         }
 
@@ -194,7 +194,7 @@ class AutoBidResolverTest {
     }
 
     private void assertBid(AutoBidResult result, int expectedUserId, String expectedAmount)
-            throws DataException {
+        throws DataException {
         assertEquals(1, result.capturedBids().size());
         BidTransaction bid = result.capturedBids().get(0);
 
@@ -223,22 +223,22 @@ class AutoBidResolverTest {
     }
 
     private MockedStatic<ParticipatedAuctionDAO> mockParticipatedAuctionDAO(
-            ParticipatedAuctionDAO participatedAuctionDAO) {
+        ParticipatedAuctionDAO participatedAuctionDAO) {
         MockedStatic<ParticipatedAuctionDAO> mockedParticipatedAuctionDAO =
-                mockStatic(ParticipatedAuctionDAO.class);
+            mockStatic(ParticipatedAuctionDAO.class);
         mockedParticipatedAuctionDAO
-                .when(ParticipatedAuctionDAO::getInstance)
-                .thenReturn(participatedAuctionDAO);
+            .when(ParticipatedAuctionDAO::getInstance)
+            .thenReturn(participatedAuctionDAO);
         return mockedParticipatedAuctionDAO;
     }
 
-    private Auction auction(String currentPrice, String stepPrice, int winnerId) {
+    private Auction auction(String currentPrice, String stepPrice, String winnerName) {
         Auction auction = new Auction();
         auction.setAuctionId(100);
         auction.setCurrentPrice(new BigDecimal(currentPrice));
         auction.setStepPrice(new BigDecimal(stepPrice));
         auction.setWinningPrice(new BigDecimal(currentPrice));
-        auction.setWinnerId(winnerId);
+        auction.setWinnerName(winnerName);
         auction.setStartingTime(LocalDateTime.now().minusMinutes(5));
         auction.setEndingTime(LocalDateTime.now().plusMinutes(5));
         auction.setStatus(AuctionStatus.RUNNING);
@@ -246,17 +246,17 @@ class AutoBidResolverTest {
     }
 
     private AutoBidConfig bot(
-            int userId,
-            String userName,
-            String maxPrice,
-            boolean active,
-            LocalDateTime registeredAt) {
+        int userId,
+        String userName,
+        String maxPrice,
+        boolean active,
+        LocalDateTime registeredAt) {
         AutoBidConfig config =
-                new AutoBidConfig(userId, userName, 100, new BigDecimal(maxPrice), active);
+            new AutoBidConfig(userId, userName, 100, new BigDecimal(maxPrice), active);
         config.setRegisteredAt(registeredAt);
         return config;
     }
 
     private record AutoBidResult(
-            AuctionDAO auctionDAO, BidDAO bidDAO, List<BidTransaction> capturedBids) {}
+        AuctionDAO auctionDAO, BidDAO bidDAO, List<BidTransaction> capturedBids) {}
 }

@@ -20,8 +20,8 @@ public class ClientHandler extends Thread implements BidListener {
     private static final Logger log = LoggerFactory.getLogger(ClientHandler.class);
 
     private final Socket clientSocket;
-    private final ObjectOutputStream out;
-    private final ObjectInputStream in;
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
     private User currentUser;
 
     private static final CopyOnWriteArrayList<ClientHandler> allClients =
@@ -30,8 +30,10 @@ public class ClientHandler extends Thread implements BidListener {
     public ClientHandler(Socket socket) throws IOException {
         this.clientSocket = socket;
         // ObjectOutputStream phải khởi tạo TRƯỚC ObjectInputStream
-        this.out = new ObjectOutputStream(clientSocket.getOutputStream());
-        this.in  = new ObjectInputStream(clientSocket.getInputStream());
+        if (socket != null) {
+            this.out = new ObjectOutputStream(clientSocket.getOutputStream());
+            this.in = new ObjectInputStream(clientSocket.getInputStream());
+        }
     }
 
     public User getCurrentUser() { return currentUser; }

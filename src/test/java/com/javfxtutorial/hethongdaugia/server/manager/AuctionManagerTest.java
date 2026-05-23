@@ -55,7 +55,7 @@ public class AuctionManagerTest {
     @Test
     @DisplayName("đặt giá hợp lệ lưu DB, thông báo realtime và gia hạn anti-snipe")
     void placeBid_acceptsValidBid_persistsBid_notifiesSubscribersAndExtendsNearEndAuction()
-            throws Exception {
+        throws Exception {
         Auction auction = runningAuction(100, "100", "10");
         LocalDateTime originalEnd = LocalDateTime.now().plusSeconds(30);
         auction.setEndingTime(originalEnd);
@@ -74,13 +74,12 @@ public class AuctionManagerTest {
         when(participatedAuctionDAO.insert(any(BidTransaction.class))).thenReturn(1);
 
         try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
-                MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
-                MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
-                        mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+             MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+             MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                 mockParticipatedAuctionDAO(participatedAuctionDAO)) {
             auctionManager.placeBid(bid, null);
 
             assertEquals(new BigDecimal("150"), auction.getCurrentPrice());
-            assertEquals(20, auction.getWinnerId());
             assertEquals("alice", auction.getWinnerName());
             assertEquals(originalEnd.plusSeconds(60), auction.getEndingTime());
             assertEquals(originalEnd.plusSeconds(60), bid.getNewEndingTime());
@@ -108,11 +107,11 @@ public class AuctionManagerTest {
         ParticipatedAuctionDAO participatedAuctionDAO = mock(ParticipatedAuctionDAO.class);
 
         try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
-                MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
-                MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
-                        mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+             MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+             MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                 mockParticipatedAuctionDAO(participatedAuctionDAO)) {
             assertThrows(
-                    AuctionNotStartedException.class, () -> auctionManager.placeBid(bid, null));
+                AuctionNotStartedException.class, () -> auctionManager.placeBid(bid, null));
 
             verify(bidDAO, never()).insertBid(any(BidTransaction.class));
             verify(participatedAuctionDAO, never()).insert(any(BidTransaction.class));
@@ -133,14 +132,14 @@ public class AuctionManagerTest {
         when(participatedAuctionDAO.insert(bid)).thenReturn(1);
 
         try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
-                MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
-                MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
-                        mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+             MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+             MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                 mockParticipatedAuctionDAO(participatedAuctionDAO)) {
             assertTrue(auctionManager.placeBid(bid, null));
 
             assertSame(
-                    auction,
-                    TestStateSupport.activeAuctions(auctionManager).get(auction.getAuctionId()));
+                auction,
+                TestStateSupport.activeAuctions(auctionManager).get(auction.getAuctionId()));
             assertEquals(new BigDecimal("150"), auction.getCurrentPrice());
             verify(auctionDAO).selectById(auction.getAuctionId());
             verify(auctionDAO).update(auction);
@@ -176,11 +175,11 @@ public class AuctionManagerTest {
         ParticipatedAuctionDAO participatedAuctionDAO = mock(ParticipatedAuctionDAO.class);
 
         try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
-                MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
-                MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
-                        mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+             MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+             MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                 mockParticipatedAuctionDAO(participatedAuctionDAO)) {
             assertThrows(
-                    AuctionAlreadyEndedException.class, () -> auctionManager.placeBid(bid, null));
+                AuctionAlreadyEndedException.class, () -> auctionManager.placeBid(bid, null));
 
             verify(bidDAO, never()).insertBid(any(BidTransaction.class));
             verify(participatedAuctionDAO, never()).insert(any(BidTransaction.class));
@@ -200,14 +199,14 @@ public class AuctionManagerTest {
         when(auctionDAO.update(auction)).thenReturn(1);
         when(bidDAO.insertBid(bid)).thenReturn(true);
         when(participatedAuctionDAO.insert(bid))
-                .thenThrow(
-                        new DuplicateKeyException(
-                                "ParticipatedAuction", "auctionId/userId", auction.getAuctionId()));
+            .thenThrow(
+                new DuplicateKeyException(
+                    "ParticipatedAuction", "auctionId/userId", auction.getAuctionId()));
 
         try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
-                MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
-                MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
-                        mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+             MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+             MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                 mockParticipatedAuctionDAO(participatedAuctionDAO)) {
             assertTrue(auctionManager.placeBid(bid, null));
 
             assertEquals(new BigDecimal("150"), auction.getCurrentPrice());
@@ -229,9 +228,9 @@ public class AuctionManagerTest {
         ParticipatedAuctionDAO participatedAuctionDAO = mock(ParticipatedAuctionDAO.class);
 
         try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
-                MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
-                MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
-                        mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+             MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+             MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                 mockParticipatedAuctionDAO(participatedAuctionDAO)) {
             assertThrows(SelfBidException.class, () -> auctionManager.placeBid(bid, null));
 
             verify(bidDAO, never()).insertBid(any(BidTransaction.class));
@@ -251,11 +250,11 @@ public class AuctionManagerTest {
         ParticipatedAuctionDAO participatedAuctionDAO = mock(ParticipatedAuctionDAO.class);
 
         try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
-                MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
-                MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
-                        mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+             MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+             MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                 mockParticipatedAuctionDAO(participatedAuctionDAO)) {
             assertThrows(
-                    InsufficientIncrementException.class, () -> auctionManager.placeBid(bid, null));
+                InsufficientIncrementException.class, () -> auctionManager.placeBid(bid, null));
 
             verify(bidDAO, never()).insertBid(any(BidTransaction.class));
             verify(participatedAuctionDAO, never()).insert(any(BidTransaction.class));
@@ -284,12 +283,12 @@ public class AuctionManagerTest {
         ParticipatedAuctionDAO participatedAuctionDAO = mock(ParticipatedAuctionDAO.class);
 
         try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
-                MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
-                MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
-                        mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+             MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+             MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                 mockParticipatedAuctionDAO(participatedAuctionDAO)) {
             assertThrows(
-                    LowerThanCurrentBidException.class,
-                    () -> auctionManager.placeBid(bid, null));
+                LowerThanCurrentBidException.class,
+                () -> auctionManager.placeBid(bid, null));
 
             verify(auctionDAO, never()).update(any(Auction.class));
             verify(bidDAO, never()).insertBid(any(BidTransaction.class));
@@ -309,12 +308,12 @@ public class AuctionManagerTest {
         ParticipatedAuctionDAO participatedAuctionDAO = mock(ParticipatedAuctionDAO.class);
 
         try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockAuctionDAO(auctionDAO);
-                MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
-                MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
-                        mockParticipatedAuctionDAO(participatedAuctionDAO)) {
+             MockedStatic<BidDAO> mockedBidDAO = mockBidDAO(bidDAO);
+             MockedStatic<ParticipatedAuctionDAO> mockedParticipatedDAO =
+                 mockParticipatedAuctionDAO(participatedAuctionDAO)) {
             assertThrows(
-                    BidAmountExceedsLimitException.class,
-                    () -> auctionManager.placeBid(bid, null));
+                BidAmountExceedsLimitException.class,
+                () -> auctionManager.placeBid(bid, null));
 
             verify(auctionDAO, never()).update(any(Auction.class));
             verify(bidDAO, never()).insertBid(any(BidTransaction.class));
@@ -336,7 +335,7 @@ public class AuctionManagerTest {
     }
 
     private static BidTransaction bid(
-            int auctionId, int bidderId, String bidderName, String amount) {
+        int auctionId, int bidderId, String bidderName, String amount) {
         BidTransaction bid = new BidTransaction();
         bid.setAuctionId(auctionId);
         bid.setBidderId(bidderId);
@@ -359,12 +358,12 @@ public class AuctionManagerTest {
     }
 
     private static MockedStatic<ParticipatedAuctionDAO> mockParticipatedAuctionDAO(
-            ParticipatedAuctionDAO participatedAuctionDAO) {
+        ParticipatedAuctionDAO participatedAuctionDAO) {
         MockedStatic<ParticipatedAuctionDAO> mockedParticipatedAuctionDAO =
-                mockStatic(ParticipatedAuctionDAO.class);
+            mockStatic(ParticipatedAuctionDAO.class);
         mockedParticipatedAuctionDAO
-                .when(ParticipatedAuctionDAO::getInstance)
-                .thenReturn(participatedAuctionDAO);
+            .when(ParticipatedAuctionDAO::getInstance)
+            .thenReturn(participatedAuctionDAO);
         return mockedParticipatedAuctionDAO;
     }
 
