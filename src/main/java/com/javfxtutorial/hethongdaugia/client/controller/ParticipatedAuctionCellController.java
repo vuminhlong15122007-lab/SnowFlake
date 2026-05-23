@@ -116,8 +116,12 @@ public class ParticipatedAuctionCellController implements ResponseListener {
                         })); // thay đổi UI nếu có status mơid
         lbProductName.setText(auction.getItem().getName());
         lbCategory.setText(String.valueOf(auction.getItem().getCategory()));
-        lbWinnerName.setText(String.valueOf(auction.getWinnerId()));
-        lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
+        lbWinnerName.setText(String.valueOf(auction.getWinnerName()));
+        if (auction.getWinningPrice() != null && auction.getWinningPrice().doubleValue() > 0) {
+            lbCurrentPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
+        } else {
+            lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
+        }
 
         if (productImage != null
                 && auction.getItem().getImage() != null
@@ -192,7 +196,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
 
             case CLOSED:
                 lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
-                lbWinnerName.setText("Người thắng: " + auction.getWinnerId());
+                lbWinnerName.setText("Người thắng: " + auction.getWinnerName());
                 int userId = ClientModel.getInstance().getCurrentUser().getId();
                 if (auction.getWinnerId() == userId) {
                     actionButton.setDisable(false);

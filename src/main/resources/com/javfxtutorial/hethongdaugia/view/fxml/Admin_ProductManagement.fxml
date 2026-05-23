@@ -59,7 +59,7 @@
             </HBox>
 
             <!-- Table -->
-            <TableView fx:id="itemTable" styleClass="admin-product-table" VBox.vgrow="ALWAYS">
+            <TableView fx:id="itemTable" styleClass="admin-product-table" style="-fx-font-size: 12px; -fx-font-weight: bold;" VBox.vgrow="ALWAYS">
                 <columns>
                     <TableColumn fx:id="colId" prefWidth="72.0" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Mã SP" />
                     <TableColumn fx:id="colItemName" prefWidth="220.0" style="-fx-font-size: 12px; -fx-font-weight: bold;" text="Tên sản phẩm" />

@@ -77,7 +77,7 @@
             <Label styleClass="admin-nav-heading" text="QUẢN LÝ TÀI KHOẢN" />
 
             <Button fx:id="btnAddUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToAddUser" styleClass="admin-btn-add" text="➕ Thêm người dùng" />
-            <Button fx:id="btnEditUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#getUpdateAdmin" styleClass="admin-btn-edit" text="📝  Cập nhật thông tin" />
+            <Button fx:id="btnEditUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#getUpdateAdmin" styleClass="admin-btn-edit" text="📝  Cập nhật thông tin Admin" />
             <Button fx:id="btnResetPassword" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToResetPW" styleClass="admin-btn-reset" text="🔓  Đặt lại mật khẩu" />
             <Button fx:id="reload" maxWidth="Infinity" mnemonicParsing="false" onAction="#reLoad" styleClass="admin-btn-reload" text="🔄  Tải lại dữ liệu" />
             <Button fx:id="deleteButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToDeleteUser" styleClass="admin-btn-delete" text="🗑️  Xóa tài khoản" />

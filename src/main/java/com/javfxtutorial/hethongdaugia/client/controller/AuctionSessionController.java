@@ -85,7 +85,7 @@ public class AuctionSessionController {
                         auction.getWinnerName() != null
                                 ? auction.getWinnerName()
                                 : "Không có người tham gia đấu giá");
-                if (lbWinner != null) lbWinner.setText("" + auction.getWinnerId());
+                if (lbWinner != null) lbWinner.setText("" + auction.getWinnerName());
                 if (actionButton != null) {
                     actionButton.setText("ĐÃ KẾT THÚC");
                     setActionButtonClass(actionButton, "sf-auction-action-neutral");
