@@ -49,7 +49,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
                     + "LEFT JOIN electronics e ON i.itemid = e.item_id\n"
                     + "LEFT JOIN art art ON i.itemid = art.item_id\n"
                     + "LEFT JOIN vehicle v ON i.itemid = v.item_id\n"
-                    + "LEFT JOIN user u ON a.winner_id = u.id";
+                    + "LEFT JOIN user u ON a.winner_name = u.name";
 
     private AuctionDAO() {}
 
@@ -107,11 +107,11 @@ public class AuctionDAO implements DAOInterface<Auction> {
     @Override
     public int update(Auction auction) throws DataException {
         int result = 0;
-        String sql = "UPDATE Auction SET winner_id = ?,init_price = ?, step_price = ?, current_price = ?, winning_price = ?, starting_time = ?, ending_time = ?, auctionStatus =? WHERE auction_id = ?";
+        String sql = "UPDATE Auction SET winner_name = ?,init_price = ?, step_price = ?, current_price = ?, winning_price = ?, starting_time = ?, ending_time = ?, auctionStatus =? WHERE auction_id = ?";
 
         try (Connection connection = JDBCUtil.getConnection();
              PreparedStatement pst = connection.prepareStatement(sql)) {
-            pst.setInt(1, auction.getWinnerId());
+            pst.setString(1, auction.getWinnerName());
             pst.setBigDecimal(2, auction.getInitPrice());
             pst.setBigDecimal(3, auction.getStepPrice());
             pst.setBigDecimal(4, auction.getCurrentPrice());
@@ -188,8 +188,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
                 rs.getInt("auction_id"),
                 item,
                 rs.getInt("seller_id"),
-                rs.getInt("winner_id"),
-                rs.getString("winner_name") != null ? rs.getString("winner_name") : "",
+                rs.getString("winner_name"),
                 rs.getBigDecimal("init_price"),
                 rs.getBigDecimal("current_price"),
                 rs.getBigDecimal("step_price"),
@@ -197,8 +196,6 @@ public class AuctionDAO implements DAOInterface<Auction> {
                 startingTime,
                 endingTime,
                 status);
-        auction.setWinnerEmail(rs.getString("winner_email") != null ? rs.getString("winner_email") : "");
-        auction.setWinnerSdt(rs.getString("winner_sdt") != null ? rs.getString("winner_sdt") : "");
         return auction;
     }
 

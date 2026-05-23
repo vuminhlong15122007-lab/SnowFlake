@@ -33,10 +33,9 @@ public class Auction implements Serializable {
             statusProperty; // dùng transient để bỏ qua khi serializable
 
     // ID của người chiến thắng (sau khi phiên kết thúc)
-    private int winnerId;
-    private String winnerName = "";
-    private String winnerEmail = "";
-    private String winnerSdt = "";
+    private String winnerName;
+    private String winnerEmail;
+    private String winnerSdt;
 
     public Auction() {}
 
@@ -57,7 +56,7 @@ public class Auction implements Serializable {
     }
 
     public Auction(
-            int auctionId, Item item, int sellerId, int winnerId,
+            int auctionId, Item item, int sellerId,
             String winnerName,
             BigDecimal initPrice, BigDecimal currentPrice, BigDecimal stepPrice, BigDecimal winningPrice,
             LocalDateTime startingTime, LocalDateTime endingTime, AuctionStatus status) {
@@ -71,7 +70,6 @@ public class Auction implements Serializable {
         this.startingTime = startingTime;
         this.endingTime = endingTime;
         this.status = status;
-        this.winnerId = winnerId;
         this.winnerName = winnerName;
     }
 
@@ -161,12 +159,6 @@ public class Auction implements Serializable {
     public void setEndingTime(LocalDateTime endingTime) {
         this.endingTime = endingTime;
     }
-    public int getWinnerId() {
-        return winnerId;
-    }
-    public void setWinnerId(int winnerId) {
-        this.winnerId = winnerId;
-    }
     public String getWinnerName() {
         return winnerName;
     }
@@ -199,8 +191,6 @@ public class Auction implements Serializable {
                 + endingTime
                 + ", status="
                 + status
-                + ", winnerId="
-                + winnerId
                 + ", winnerName="
                 + winnerName
                 + '}';
