@@ -272,11 +272,6 @@ public class AdminItemController implements ResponseListener {
                     showAlert("Lỗi", rp.getMessage(), "Wrong.gif");
                 }
             });
-                        if (rp.isSuccess()) {
-                            showAlert("Thành công", "Đã hủy phiên đấu giá.", "FunnyCat.gif");
-                        } else {
-                            showAlert("Lỗi", rp.getMessage(), "Wrong.gif");
-                        }});
         }
 
         // ── Tải toàn bộ danh sách ──
