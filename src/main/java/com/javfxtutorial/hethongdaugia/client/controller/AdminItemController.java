@@ -125,34 +125,6 @@ public class AdminItemController implements ResponseListener {
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UserManagement.fxml");
     }
 
-    @FXML
-    public void clickToDeleteItem() throws SendFailedException, ConnectionFailedException {
-        Auction selectItem = itemTable.getSelectionModel().getSelectedItem();
-        if (selectItem == null) {
-            showAlert("Lỗi", "Vui lòng chọn sản phẩm cần xóa");
-            return;
-        }
-
-        Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmAlert.setTitle("Xác nhận xóa");
-        confirmAlert.setHeaderText("Bạn chắc chắn muốn xóa sản phẩm?");
-        confirmAlert.setContentText(
-                "Sản phẩm: " + selectItem.getItem().getName()
-                        + "\nDescription: " + selectItem.getItem().getDescription()
-                        + "\nID người bán: " + selectItem.getSellerId());
-        ButtonType yes = new ButtonType("Có", ButtonBar.ButtonData.YES);
-        ButtonType no  = new ButtonType("Không", ButtonBar.ButtonData.NO);
-        confirmAlert.getButtonTypes().setAll(yes, no);
-        ButtonType result = confirmAlert.showAndWait().orElse(null);
-
-        if (result == yes) {
-            DeleteAuctionCommand cmd = new DeleteAuctionCommand(selectItem);
-            NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.register(DeleteAuctionCommand.class, this);
-            ServerConnection connection = NetworkManager.getConnection();
-            connection.sendCommand(cmd);
-        }
-    }
 
     @FXML
     public void clickToGoAuction(ActionEvent event) {
@@ -172,11 +144,6 @@ public class AdminItemController implements ResponseListener {
             showAlert("Thông báo", "Vui lòng chọn một phiên đấu giá.");
             return;
         }
-        if (selected.getStatus() == AuctionStatus.CLOSED
-                || selected.getStatus() == AuctionStatus.CANCELLED) {
-            showAlert("Thông báo", "Phiên này đã kết thúc hoặc đã bị hủy.");
-            return;
-        }
 
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Xác nhận hủy");
@@ -190,6 +157,9 @@ public class AdminItemController implements ResponseListener {
             if (result == yes) {
                 try {
                     selected.setStatus(AuctionStatus.CANCELLED);
+                    selected.setWinnerId(0);
+                    selected.setWinnerName("");
+                    selected.setWinningPrice(null);
                     UpdateAuctionStatusCommand cmd = new UpdateAuctionStatusCommand(selected);
                     NetworkManager.getConnection().sendCommand(cmd);
                     NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);

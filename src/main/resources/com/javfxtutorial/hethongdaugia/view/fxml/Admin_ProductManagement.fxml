@@ -110,12 +110,6 @@
 
             <Separator style="-fx-padding: 4 0 4 0;" />
 
-            <!-- Group: Sản phẩm -->
-            <Label styleClass="admin-nav-heading" text="SẢN PHẨM" />
-
-            <!-- Xóa sản phẩm — Coral nguy hiểm -->
-            <Button fx:id="btnDeleteProduct" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToDeleteItem" styleClass="admin-btn-delete" text="  Xóa sản phẩm" />
-
             <Region VBox.vgrow="ALWAYS" />
             <Separator />
 
