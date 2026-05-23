@@ -19,11 +19,7 @@ public class NotificationListCell extends ListCell<SellerNotification> {
     public NotificationListCell(Consumer<SellerNotification> onMarkRead) {
         this.onMarkRead = onMarkRead;
         try {
-            FXMLLoader loader =
-                    new FXMLLoader(
-                            getClass()
-                                    .getResource(
-                                            "/com/javfxtutorial/hethongdaugia/view/fxml/NotificationCellPopup.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/javfxtutorial/hethongdaugia/view/fxml/NotificationCellPopup.fxml"));
             cellRoot = loader.load();
             cellController = loader.getController();
             cellController.setOnMarkRead(

@@ -17,16 +17,15 @@ public class AuctionDAO implements DAOInterface<Auction> {
             "\n"
                     + "SELECT \n"
                     + "    a.*, \n"
-                    + "    i.name, \n"
+                    + "    a.winner_name AS auction_winner_name,\n"
+                    + "    i.name AS item_name, \n"
                     + "    i.description, \n"
                     + "    i.imagepath, \n"
                     + "    i.idseller AS seller_id, \n"
                     + "    i.sellerName, \n"
-                    + "    u.name AS winner_name,\n"
                     + "    u.email AS winner_email,\n"
                     + "    u.sdt AS winner_sdt,\n"
                     + "    i.category,\n"
-                    + "    \n"
                     + "    -- Dữ liệu từ bảng 1 (brand, model - ví dụ: đồ điện tử/đồng hồ)\n"
                     + "    e.brand AS e_brand, \n"
                     + "    e.model,\n"
@@ -188,7 +187,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
                 rs.getInt("auction_id"),
                 item,
                 rs.getInt("seller_id"),
-                rs.getString("winner_name"),
+                rs.getString("auction_winner_name"),  // ← dùng alias mới
                 rs.getBigDecimal("init_price"),
                 rs.getBigDecimal("current_price"),
                 rs.getBigDecimal("step_price"),
@@ -196,6 +195,8 @@ public class AuctionDAO implements DAOInterface<Auction> {
                 startingTime,
                 endingTime,
                 status);
+        auction.setWinnerEmail(rs.getString("winner_email"));
+        auction.setWinnerSdt(rs.getString("winner_sdt"));
         return auction;
     }
 
@@ -295,15 +296,14 @@ public class AuctionDAO implements DAOInterface<Auction> {
 
     public Item loadItemDetail(ResultSet rs) throws SQLException {
         ItemCategory category = ItemCategory.valueOf(rs.getString("category"));
-        Item baseItem =
-                new Item(
-                        rs.getString("sellerName"),
-                        rs.getInt("seller_id"),
-                        rs.getInt("item_id"),
-                        rs.getString("name"),
-                        rs.getString("description"),
-                        rs.getString("imagepath"),
-                        category);
+        Item baseItem = new Item(
+                rs.getString("sellerName"),
+                rs.getInt("seller_id"),
+                rs.getInt("item_id"),
+                rs.getString("item_name"),
+                rs.getString("description"),
+                rs.getString("imagepath"),
+                category);
 
         if (category == ItemCategory.ELECTRONICS) {
             return new Electronics(

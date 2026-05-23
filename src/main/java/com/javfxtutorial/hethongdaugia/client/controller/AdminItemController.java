@@ -102,14 +102,12 @@ public class AdminItemController implements ResponseListener {
         }
 
         try {
-            if (!AuctionModificationManager.getInstance().isAllAuctionsLoaded) {
-                loadItemData();
-            }
+            loadItemData();
         } catch (IOException | ClassNotFoundException | SendFailedException | ConnectionFailedException e) {
             throw new RuntimeException(e);
         }
     }
-    
+
     private void loadItemData()
             throws IOException, ClassNotFoundException, SendFailedException, ConnectionFailedException {
         Command cmd = new GetAllAuctionsCommand();
@@ -149,7 +147,6 @@ public class AdminItemController implements ResponseListener {
             showAlert("Thông báo", "Phiên này đã kết thúc hoặc đã bị hủy.");
             return;
         }
-
         Alert confirm = new Alert(Alert.AlertType.CONFIRMATION);
         confirm.setTitle("Xác nhận hủy");
         confirm.setHeaderText("Hủy phiên đấu giá?");
@@ -161,7 +158,7 @@ public class AdminItemController implements ResponseListener {
         confirm.showAndWait().ifPresent(result -> {
             if (result == yes) {
                 try {
-                    selected.setStatus(AuctionStatus.CANCELLED);
+                    selected.setStatus(AuctionStatus.CANCELLED_BY_ADMIN);
                     selected.setWinnerName("");
                     selected.setWinningPrice(null);
                     UpdateAuctionStatusCommand cmd = new UpdateAuctionStatusCommand(selected);
@@ -231,21 +228,21 @@ public class AdminItemController implements ResponseListener {
 
         // ── Cập nhật trạng thái phiên (hủy) ──
         if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
-            if ("AUCTION_CANCELLED".equals(rp.getMessage())) return;
-
-            NetworkManager.getInstance().unregister(UpdateAuctionStatusCommand.class, this);
-            Platform.runLater(() -> {
-                if (rp.isSuccess()) {
-                    showAlert("Thành công", "Đã hủy phiên đấu giá.", "FunnyCat.gif");
-                    try {
-                        loadItemData();
-                    } catch (Exception e) {
-                        log.error("Không thể tải lại danh sách sản phẩm: {}", e.getMessage(), e);
+            if (!"AUCTION_CANCELLED".equals(rp.getMessage())) {
+                NetworkManager.getInstance().unregister(UpdateAuctionStatusCommand.class, this);
+                Platform.runLater(() -> {
+                    if (rp.isSuccess()) {
+                        showAlert("Thành công", "Đã hủy phiên đấu giá (Admin).", "FunnyCat.gif");
+                        try {
+                            loadItemData();
+                        } catch (Exception e) {
+                            log.error("Không thể tải lại danh sách sản phẩm: {}", e.getMessage(), e);
+                        }
+                    } else {
+                        showAlert("Lỗi", rp.getMessage(), "Wrong.gif");
                     }
-                } else {
-                    showAlert("Lỗi", rp.getMessage(), "Wrong.gif");
-                }
-            });
+                });
+            }
         }
 
         // ── Tải toàn bộ danh sách ──

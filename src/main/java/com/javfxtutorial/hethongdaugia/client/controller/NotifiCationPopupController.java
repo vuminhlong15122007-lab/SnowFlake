@@ -24,8 +24,7 @@ public class NotifiCationPopupController {
     public void initialize() {
         if (notificationListView != null) {
             notificationListView.setCellFactory(
-                    _ ->
-                            new NotificationListCell(notif -> {
+                    _ -> new NotificationListCell(notif -> {
                                         if (onMarkRead != null) onMarkRead.accept(notif);
                                         // Refresh listview để cell tự cập nhật trạng thái
                                         Platform.runLater(() -> notificationListView.refresh());

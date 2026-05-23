@@ -6,6 +6,5 @@ public enum AuctionStatus {
     CLOSED,
     CANCELLED,
     PAID,
-    DELETED_BY_ADMIN,
     CANCELLED_BY_ADMIN;
 }
