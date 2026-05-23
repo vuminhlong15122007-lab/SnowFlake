@@ -16,8 +16,7 @@ public class NotificationCellController {
     @FXML private Label timeLabel;
     @FXML private Label readBtn;
 
-    private static final DateTimeFormatter TIME_FMT =
-            DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
+    private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
 
     private Consumer<SellerNotification> onMarkRead;
 
@@ -28,7 +27,6 @@ public class NotificationCellController {
     public void setData(SellerNotification notif) {
         if (notif == null) return;
 
-        // Xác định có phải trường hợp "không người thắng" không
         boolean isNoWinner = (notif.getType() == SellerNotification.Type.CLOSED) &&
                 (notif.getWinnerName() == null || notif.getWinnerName().isBlank() ||
                         notif.getWinnerName().equals("N/A") ||
@@ -44,6 +42,8 @@ public class NotificationCellController {
                 case CLOSED -> "#16c784"; // xanh lá (có người thắng)
                 case PAID -> "#2980b9";   // xanh dương
                 case CANCELLED -> "#dc3545"; // đỏ
+                case DELETED_BY_ADMIN -> "#6c3483"; // tím
+                case CANCELLED_BY_ADMIN -> "#e67e22"; // cam 
             };
         }
 
@@ -59,6 +59,8 @@ public class NotificationCellController {
                     case CLOSED -> "#f0fdf8";   // xanh lá nhạt
                     case PAID -> "#eff6ff";     // xanh dương nhạt
                     case CANCELLED -> "#fff5f5"; // đỏ nhạt
+                    case DELETED_BY_ADMIN -> "#f5eef8"; // tím nhạt
+                    case CANCELLED_BY_ADMIN -> "#fef9e7"; // cam nhạt
                 };
             }
         }
@@ -90,6 +92,8 @@ public class NotificationCellController {
                             case CLOSED -> "🏆";
                             case PAID -> "✅";
                             case CANCELLED -> "❌";
+                            case DELETED_BY_ADMIN -> "🚫";
+                            case CANCELLED_BY_ADMIN -> "⚠️";
                         });
             }
             iconLabel.setStyle("-fx-font-size: 18px;");
