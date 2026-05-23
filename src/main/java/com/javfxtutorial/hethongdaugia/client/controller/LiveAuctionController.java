@@ -199,6 +199,15 @@ public class LiveAuctionController implements ResponseListener {
             autoMaxPrice_tf.setDisable(true);
         });
         timer.start();
+        if (currentAuction.getStatus() == AuctionStatus.CANCELLED) {
+            timer.stop();
+            lbTimeLeft.setText("00:00:00");
+            placeBidButton.setDisable(true);
+            placeBidButton.setText("Đã kết thúc");
+            autoBidToggle.setDisable(true);
+            priceInput_tf.setDisable(true);
+            autoMaxPrice_tf.setDisable(true);
+        }
     }
 
 

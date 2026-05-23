@@ -252,6 +252,8 @@ public class AdminItemController implements ResponseListener {
 
         // ── Cập nhật trạng thái phiên (hủy) ──
         if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
+            if ("AUCTION_CANCELLED".equals(rp.getMessage())) return;
+
             NetworkManager.getInstance().unregister(UpdateAuctionStatusCommand.class, this);
             Platform.runLater(() -> {
                 if (rp.isSuccess()) {
@@ -265,6 +267,11 @@ public class AdminItemController implements ResponseListener {
                     showAlert("Lỗi", rp.getMessage(), "Wrong.gif");
                 }
             });
+                        if (rp.isSuccess()) {
+                            showAlert("Thành công", "Đã hủy phiên đấu giá.", "FunnyCat.gif");
+                        } else {
+                            showAlert("Lỗi", rp.getMessage(), "Wrong.gif");
+                        }});
         }
 
         // ── Tải toàn bộ danh sách ──

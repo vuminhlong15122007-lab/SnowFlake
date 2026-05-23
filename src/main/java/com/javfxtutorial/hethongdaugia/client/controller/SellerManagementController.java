@@ -157,11 +157,22 @@ public class SellerManagementController implements ResponseListener {
         // Listener chọn sản phẩm
         productList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal == null) return;
-            if (newVal.getStatus() == AuctionStatus.CLOSED || newVal.getStatus() == AuctionStatus.CANCELLED || newVal.getStatus() == AuctionStatus.PAID) {
-                if (newVal.getWinnerId() <= 0) {
-                    Platform.runLater(() -> {
-                        showAlert("Kết quả đấu giá", "Sản phẩm \"" + newVal.getItem().getName() + "\" không có ai đặt giá.", "Wait.gif");});
-                } else {
+            if (newVal.getStatus() == AuctionStatus.CLOSED || newVal.getStatus() == AuctionStatus.CANCELLED || newVal.getStatus() == AuctionStatus.PAID || newVal.getStatus() == AuctionStatus.DELETED_BY_ADMIN) {
+                if (newVal.getStatus() == AuctionStatus.CANCELLED) {
+                    //  Bị hủy
+                    Platform.runLater(() ->
+                            showAlert("Phiên bị hủy",
+                                    "Sản phẩm \"" + newVal.getItem().getName() + "\" đã bị admin hủy.", "Wrong.gif"));
+                } else if (newVal.getStatus() == AuctionStatus.CLOSED && newVal.getWinnerId() <= 0) {
+                    Platform.runLater(() ->
+                            showAlert("Kết quả đấu giá",
+                                    "Sản phẩm \"" + newVal.getItem().getName() + "\" không có ai đặt giá.", "Wait.gif"));
+                }else if (newVal.getStatus() == AuctionStatus.DELETED_BY_ADMIN) {
+                    //  Bị xóa
+                    Platform.runLater(() ->
+                            showAlert("Phiên bị xóa",
+                                    "Sản phẩm \"" + newVal.getItem().getName() + "\" đã bị admin xóa.", "Wrong.gif"));}
+                else {
                     // Hiện panel thông tin người thắng bên phải
                     showWinnerInfo(newVal);
                     selectedAuction = newVal;
