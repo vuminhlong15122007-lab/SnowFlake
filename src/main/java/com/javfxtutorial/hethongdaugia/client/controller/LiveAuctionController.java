@@ -199,6 +199,15 @@ public class LiveAuctionController implements ResponseListener {
             autoMaxPrice_tf.setDisable(true);
         });
         timer.start();
+        if (currentAuction.getStatus() == AuctionStatus.CANCELLED) {
+            timer.stop();
+            lbTimeLeft.setText("00:00:00");
+            placeBidButton.setDisable(true);
+            placeBidButton.setText("Đã kết thúc");
+            autoBidToggle.setDisable(true);
+            priceInput_tf.setDisable(true);
+            autoMaxPrice_tf.setDisable(true);
+        }
     }
 
 
@@ -348,16 +357,7 @@ public class LiveAuctionController implements ResponseListener {
         if (rp.getCommand().getClass() == PlaceBidCommand.class) {
             BidTransaction bid = (BidTransaction) rp.getPayLoad();
             if (!rp.isSuccess()) {
-                // Nếu admin hủy phiên
-                if ("AUCTION_CANCELLED".equals(rp.getMessage())) {
-                    Platform.runLater(() -> {
-                        showAlert("Thông báo", "Phiên đấu giá đã bị hủy.");
-                        // Thoát ra màn hình trước
-                        Stage stage = (Stage) placeBidButton.getScene().getWindow();
-                        stage.close();
-                    });
-                    return;
-                }
+
                 Platform.runLater(() -> showAlert("Trạng thái đặt bid", rp.getMessage()));
                 return;
             }
@@ -398,6 +398,7 @@ public class LiveAuctionController implements ResponseListener {
                         currentAuction.setCurrentPrice(newPrice);
                         currentAuction.setWinnerId(bidderId);
                         currentAuction.setWinningPrice(newPrice);
+                        currentAuction.setWinnerName(bidderName);
 
                         // Cập nhật các Label hiển thị bên trái màn hình
                         currentPrice_tf.setText(String.format("%,.0f VND", newPrice));
@@ -476,7 +477,7 @@ public class LiveAuctionController implements ResponseListener {
         if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
             if ("AUCTION_CANCELLED".equals(rp.getMessage())) {
                 Platform.runLater(() -> {
-                    timer.stop();
+                    if (timer != null) timer.stop();
                     showAlert("Thông báo", "Phiên đấu giá đã bị admin hủy.");
                     changeScene(new ActionEvent(placeBidButton, null),
                             "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml");
