@@ -229,7 +229,7 @@ public class AuctionManager {
     public AuctionStatus refreshAuctionStatus(Auction auction) throws DataException {
         AuctionStatus previousStatus = auction.getStatus();
 
-        if (previousStatus == AuctionStatus.CANCELLED) {
+        if (previousStatus == AuctionStatus.CANCELLED || previousStatus == AuctionStatus.CANCELLED_BY_ADMIN) {
             return previousStatus;
         }
         if (LocalDateTime.now().isBefore(auction.getStartingTime())) {
@@ -380,6 +380,9 @@ public class AuctionManager {
     }
 
     public AuctionStatus checkPaymentStatus(Auction auction) throws DataException {
+        if (auction.getWinnerName().isBlank()){
+            auction.setStatus(AuctionStatus.CLOSED);
+        }
         if (LocalDateTime.now().isAfter(auction.getEndingTime().plusHours(24))) {
             if (auction.getStatus() != AuctionStatus.PAID) {
                 auction.setStatus(AuctionStatus.CANCELLED);

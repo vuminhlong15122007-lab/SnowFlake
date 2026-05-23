@@ -92,45 +92,6 @@ public class AuctionSessionController {
                 }
                 break;
 
-            case PAID:
-                statusBadge.setText("ĐÃ THANH TOÁN");
-                setStatusBadgeClass("sf-status-ended");
-                lbPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
-                lbCategory.setText(
-                    ""
-                        + (auction.getItem().getCategory() != null
-                        ? auction.getItem().getCategory()
-                        : "Khác"));
-                lbWinner.setText(
-                    auction.getWinnerName() != null
-                        ? auction.getWinnerName()
-                        : "Không có người tham gia đấu giá");
-                if (lbWinner != null) lbWinner.setText("" + auction.getWinnerName());
-                if (actionButton != null) {
-                    actionButton.setText("ĐÃ THANH TOÁN");
-                    setActionButtonClass(actionButton, "sf-auction-action-neutral");
-                }
-                break;
-
-            case CANCELLED:
-                statusBadge.setText("ĐÃ BỊ HỦY");
-                setStatusBadgeClass("sf-status-ended");
-                lbPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
-                lbCategory.setText(
-                    ""
-                        + (auction.getItem().getCategory() != null
-                        ? auction.getItem().getCategory()
-                        : "Khác"));
-                lbWinner.setText(
-                    auction.getWinnerName() != null
-                        ? auction.getWinnerName()
-                        : "Không có người tham gia đấu giá");
-                if (lbWinner != null) lbWinner.setText("" + auction.getWinnerName());
-                if (actionButton != null) {
-                    actionButton.setText("ĐÃ BỊ HỦY");
-                    setActionButtonClass(actionButton, "sf-auction-action-neutral");
-                }
-                break;
         }
     }
 

@@ -123,7 +123,7 @@ public class AuctionListController implements ResponseListener {
         filterData.setPredicate(
                 auction -> {
                     if (auction == null || auction.getItem() == null) return false;
-
+                    if (auction.getStatus().equals(AuctionStatus.CANCELLED_BY_ADMIN) || auction.getStatus().equals(AuctionStatus.CANCELLED) || auction.getStatus().equals(AuctionStatus.PAID)) return false;
                     // 1. Tìm kiếm theo tên
                     String search = searchField.getText();
                     if (search != null && !search.isBlank()) {
@@ -134,9 +134,6 @@ public class AuctionListController implements ResponseListener {
                     }
 
                     // 2. Lọc theo trạng thái
-                    if (currentStatus == AuctionStatus.CLOSED && (auction.getStatus() == AuctionStatus.CANCELLED || auction.getStatus() == AuctionStatus.PAID)){
-                        return true;
-                    }
                     if (currentStatus != null && auction.getStatus() != currentStatus) {
                         return false;
                     }
