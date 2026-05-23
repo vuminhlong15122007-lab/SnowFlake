@@ -94,7 +94,7 @@ public class LiveAuctionController implements ResponseListener {
 
     @FXML
     public void placeBid() {
-        System.out.println("Bạn vừa ấn placeBid");
+        log.info("Bạn vừa ấn placeBid");
 
         try {
             // 1. Lấy text và loại bỏ các dấu phẩy, khoảng trắng (nếu người dùng có nhập)
@@ -127,7 +127,7 @@ public class LiveAuctionController implements ResponseListener {
             Command cmd = new PlaceBidCommand();
             cmd.addData("bid", bid);
             NetworkManager.getInstance().sendRequest(cmd, this);
-            System.out.println("Đã send bidcommand với giá: " + inputAmount);
+            log.info("Đã send bidcommand với giá: {}", inputAmount);
 
         } catch (NumberFormatException e) {
             Platform.runLater(() -> {
@@ -163,7 +163,7 @@ public class LiveAuctionController implements ResponseListener {
         itemNameLb.setText(currentAuction.getItem().getName());
         String base64Data = currentAuction.getItem().getImage();
         ImageHelper.loadBase64ToImageView(itemImageView, base64Data);
-        System.out.println("Đã load xong giao diện");
+        log.info("Đã load xong giao diện");
     }
 
     @FXML
@@ -419,8 +419,9 @@ public class LiveAuctionController implements ResponseListener {
                     } else {
                         // (Tùy chọn) In log ra console để bạn dễ theo dõi những luồng dữ
                         // liệu bị chậm
-                        System.out.println("Đã chặn gói tin tới muộn: " + newPrice
-                                + " nhỏ hơn giá hiện tại " + currentAuction.getCurrentPrice());
+                        log.info("Đã chặn gói tin tới muộn: {} nhỏ hơn giá hiện tại {}",
+                                newPrice,
+                                currentAuction.getCurrentPrice());
                     }
                 });
             }

@@ -176,7 +176,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
             popupStage.setScene(new Scene(root));
             popupStage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Không thể mở cửa sổ thanh toán: {}", e.getMessage(), e);
             showAlert("Lỗi", "Không thể mở cửa sổ thanh toán: " + e.getMessage());
         }
     }

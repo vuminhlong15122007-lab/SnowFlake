@@ -104,7 +104,7 @@ public class PasswordResetController implements ResponseListener {
     public void onResponse(Response rp) {
         if (rp.isSuccess()) {
             currentUser.setPassWord(newPW);
-            // System.out.println("PW từ server: " + newUser.getPassWord());
+            // log.debug("PW từ server: {}", newUser.getPassWord());
 
             // load lai man hinh
             loadUserInfo();

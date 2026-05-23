@@ -89,7 +89,7 @@ public class UserDAO implements DAOInterface<User> {
             result = pst.executeUpdate();
 
             if (result > 0) {
-                System.out.println("Cap nhat user thanh cong");
+                log.info("Cap nhat user thanh cong");
                 return result;
             }
             throw new EntityNotFoundException("User", user.getId());
@@ -109,7 +109,7 @@ public class UserDAO implements DAOInterface<User> {
             pst.setInt(1, user.getId());
             result = pst.executeUpdate();
             if (result > 0) {
-                System.out.println("Xoa user thanh cong");
+                log.info("Xoa user thanh cong");
                 return result;
             }
             throw new EntityNotFoundException("User", user.getId());

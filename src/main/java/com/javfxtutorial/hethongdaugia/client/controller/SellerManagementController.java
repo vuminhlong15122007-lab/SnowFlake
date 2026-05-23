@@ -500,7 +500,7 @@ public class SellerManagementController implements ResponseListener {
                 Image.setImage(new Image(new ByteArrayInputStream(fileContent)));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Không thể tải ảnh lên: {}", e.getMessage(), e);
             showAlert("Lỗi", "Không thể tải ảnh lên!", "False.gif");
         }
     }

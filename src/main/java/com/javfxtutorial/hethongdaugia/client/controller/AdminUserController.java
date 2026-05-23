@@ -167,14 +167,14 @@ public class AdminUserController implements  ResponseListener {
             stage.setScene(scene);
             stage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Lỗi mở popup reset password: {}", e.getMessage(), e);
         }
     }
 
     public void reLoad() {
         if (userCountBadge != null) userCountBadge.setText("Đang tải...");
         loadUserData();
-        System.out.println("Dữ liệu đã được cập nhật!");
+        log.info("Dữ liệu đã được cập nhật!");
     }
 
     @FXML

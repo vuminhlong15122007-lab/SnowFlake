@@ -6,8 +6,11 @@ import java.util.Map;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ListCell;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ParticipatedAuctionCell extends ListCell<Auction> {
+    private static final Logger log = LoggerFactory.getLogger(ParticipatedAuctionCell.class);
 
     // Cache controller theo auctionId → tránh tạo lại + reset countdown mỗi lần re-render
     private final Map<Integer, CachedCell> cellCache = new HashMap<>();
@@ -54,8 +57,7 @@ public class ParticipatedAuctionCell extends ListCell<Auction> {
             setText(null);
             setGraphic(root);
         } catch (Exception e) {
-            System.err.println("LỖI LOAD CELL: " + e.getMessage());
-            e.printStackTrace();
+            log.error("LỖI LOAD CELL: {}", e.getMessage(), e);
             setGraphic(null);
             setText(auction.getItem() != null ? auction.getItem().getName() : "Lỗi");
         }

@@ -4,8 +4,11 @@ import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.control.ListCell;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProductCell extends ListCell<Auction> {
+    private static final Logger log = LoggerFactory.getLogger(ProductCell.class);
 
     @Override
     protected void updateItem(Auction auction, boolean empty) {
@@ -27,8 +30,7 @@ public class ProductCell extends ListCell<Auction> {
             setText(null);
             setGraphic(root);
         } catch (Exception e) {
-            System.err.println("LỖI LOAD CELL: " + e.getMessage());
-            e.printStackTrace();
+            log.error("LỖI LOAD CELL: {}", e.getMessage(), e);
             setGraphic(null);
             setText(auction.getItem() != null ? auction.getItem().getName() : "Lỗi");
         }

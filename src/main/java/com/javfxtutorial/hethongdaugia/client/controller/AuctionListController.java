@@ -206,7 +206,7 @@ public class AuctionListController implements ResponseListener {
         try {
             changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Không thể chuyển về màn hình chính: {}", e.getMessage(), e);
         }
     }
 

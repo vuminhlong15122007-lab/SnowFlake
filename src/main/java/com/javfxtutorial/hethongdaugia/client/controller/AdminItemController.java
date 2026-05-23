@@ -27,8 +27,11 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AdminItemController implements ResponseListener {
+    private static final Logger log = LoggerFactory.getLogger(AdminItemController.class);
 
     @FXML private TableView<Auction> itemTable;
     @FXML private TableColumn<Auction, Integer> colId;
@@ -253,7 +256,11 @@ public class AdminItemController implements ResponseListener {
             Platform.runLater(() -> {
                 if (rp.isSuccess()) {
                     showAlert("Thành công", "Đã hủy phiên đấu giá.", "FunnyCat.gif");
-                    try { loadItemData(); } catch (Exception e) { e.printStackTrace(); }
+                    try {
+                        loadItemData();
+                    } catch (Exception e) {
+                        log.error("Không thể tải lại danh sách sản phẩm: {}", e.getMessage(), e);
+                    }
                 } else {
                     showAlert("Lỗi", rp.getMessage(), "Wrong.gif");
                 }

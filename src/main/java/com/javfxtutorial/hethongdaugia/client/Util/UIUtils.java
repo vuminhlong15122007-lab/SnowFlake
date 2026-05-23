@@ -16,8 +16,12 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UIUtils {
+    private static final Logger log = LoggerFactory.getLogger(UIUtils.class);
+
     public static void showAlert(String title, String message) {
         showAlert(
                 title,
@@ -47,7 +51,7 @@ public class UIUtils {
                 imageView.setPreserveRatio(true);
                 alert.setGraphic(imageView);
             } catch (Exception e) {
-                System.err.println("Khong load duoc meme tai: " + memePath);
+                log.warn("Khong load duoc meme tai: {}", memePath, e);
             }
         }
 
@@ -104,7 +108,7 @@ public class UIUtils {
                                                             UIUtils.class.getResourceAsStream(
                                                                     iconPath)));
                                 } catch (Exception e) {
-                                    System.err.println("Khong load duoc icon tai: " + iconPath);
+                                    log.warn("Khong load duoc icon tai: {}", iconPath, e);
                                 }
                             }
                         }
@@ -129,7 +133,7 @@ public class UIUtils {
             stage.getScene().setRoot(root);
             ThemeManager.apply(stage.getScene());
         } catch (IOException e) {
-            e.printStackTrace();
+            log.error("Không thể tải màn hình: {}", fxmlPath, e);
             showAlert("Lỗi", "Không thể tải màn hình: " + fxmlPath);
         }
     }
@@ -151,7 +155,7 @@ public class UIUtils {
             popupStage.setScene(scene);
             popupStage.show();
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("Không thể tải popup: {}", fxmlPath, e);
         }
     }
 }
