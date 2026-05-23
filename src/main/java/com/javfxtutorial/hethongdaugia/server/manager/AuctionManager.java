@@ -229,7 +229,7 @@ public class AuctionManager {
     public AuctionStatus refreshAuctionStatus(Auction auction) throws DataException {
         AuctionStatus previousStatus = auction.getStatus();
 
-        if (previousStatus == AuctionStatus.CANCELLED) {
+        if (previousStatus == AuctionStatus.CANCELLED || previousStatus == AuctionStatus.CANCELLED_BY_ADMIN) {
             return previousStatus;
         }
         if (LocalDateTime.now().isBefore(auction.getStartingTime())) {
