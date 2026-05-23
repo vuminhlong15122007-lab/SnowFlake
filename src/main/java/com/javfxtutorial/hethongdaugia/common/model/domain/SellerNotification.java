@@ -11,8 +11,7 @@ public class SellerNotification implements Serializable {
         CLOSED,
         PAID,
         CANCELLED,
-        CANCELLED_BY_ADMIN,
-        DELETED_BY_ADMIN
+        CANCELLED_BY_ADMIN
     }
 
     private int notificationId;
@@ -70,30 +69,23 @@ public class SellerNotification implements Serializable {
     public String getMessage() {
         return switch (type) {
             case CLOSED -> {
-                boolean noWinner = winnerName == null || winnerName.isBlank() ;
+                boolean noWinner = winnerName == null || winnerName.isBlank() || winnerName.equals("N/A");
                 if (noWinner) {
-                    yield String.format(
-                            "😞 Phiên \"%s\" kết thúc!\n Không có ai tham gia đấu giá.\nBạn có thể đăng lại phiên nếu muốn.",
-                            productName);
+                    yield String.format("😞 Phiên \"%s\" kết thúc!\n Không có ai tham gia đấu giá.", productName);
                 } else {
-                    String price = String.format("%,.0f", winningPrice);
-                    yield String.format(
-                            "🏆 Phiên \"%s\" kết thúc!\nNgười thắng: %s — Giá: %s VND\nĐang chờ họ thanh toán.",
+                    String price = (winningPrice != null) ? String.format("%,.0f", winningPrice) : "—";
+                    yield String.format("🏆 Phiên \"%s\" kết thúc!\nNgười thắng: %s — Giá: %s VND\nĐang chờ họ thanh toán.",
                             productName, winnerName, price);
                 }
             }
             case PAID -> {
                 String price = String.format("%,.0f", winningPrice);
-                yield String.format(
-                        "✅ Phiên \"%s\" đã được thanh toán!\n \"%s\"  đã thanh toán thành công  \"%s\" VND.\nChuẩn bị giao hàng cho họ nhé!",
+                yield String.format("✅ Phiên \"%s\" đã được thanh toán!\n \"%s\"  đã thanh toán thành công  \"%s\" VND.\nChuẩn bị giao hàng cho họ nhé!",
                         productName, winnerName, price);
             }
             case CANCELLED ->
-                    String.format(
-                            "❌ Phiên \"%s\" bị hủy!\n \"%s\" không thanh toán trong 24h.\nBạn có thể kiện nếu cần.",
+                    String.format("❌ Phiên \"%s\" bị hủy!\n \"%s\" không thanh toán trong 24h.\nBạn có thể kiện nếu cần.",
                             productName, winnerName);
-            case DELETED_BY_ADMIN ->
-                    String.format("🚫 Sản phẩm \"%s\" đã bị admin xóa!\n Lý do: Vi phạm tiêu chuẩn cộng đồng...", productName);
             case CANCELLED_BY_ADMIN ->
                     String.format("⚠️ Phiên đấu giá \"%s\" đã bị admin hủy!\n Lý do: Phiên có dấu nghi vấn gian lận hoặc \n vi phạm tiêu chuẩn cộng đồng", productName);
         };

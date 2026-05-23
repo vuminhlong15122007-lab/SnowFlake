@@ -40,7 +40,7 @@ public class DeleteAuctionCommand extends Command {
                 String productName = (auction.getItem() != null) ? auction.getItem().getName() : String.valueOf(auction.getAuctionId());
                 SellerNotification notif = new SellerNotification(
                         auction.getAuctionId(),
-                        SellerNotification.Type.DELETED_BY_ADMIN,
+                        SellerNotification.Type.CANCELLED,
                         productName,
                         null,
                         null

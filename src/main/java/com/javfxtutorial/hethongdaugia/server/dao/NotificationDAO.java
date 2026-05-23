@@ -35,8 +35,7 @@ public class NotificationDAO {
             case PAID -> 2;
             case CANCELLED -> 1;
             case CLOSED -> 0;
-            case CANCELLED_BY_ADMIN -> 4;
-            case DELETED_BY_ADMIN -> 3;
+            case CANCELLED_BY_ADMIN -> 3;
         };
     }
 

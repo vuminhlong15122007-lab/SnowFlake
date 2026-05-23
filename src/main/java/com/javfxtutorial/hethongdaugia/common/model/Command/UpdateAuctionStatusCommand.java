@@ -29,16 +29,24 @@ public class UpdateAuctionStatusCommand extends Command {
             }
             int result1 = AuctionDAO.getInstance().update(auction);
             if (result1 > 0) {
-                if (auction.getStatus() == AuctionStatus.CANCELLED)  {
-                    // Cập nhật lại RAM trong AuctionManager
-                    AuctionManager.getInstance().updateAuctionStatus(
-                            auction.getAuctionId(), AuctionStatus.CANCELLED
-                    );
-                    // Gửi notification CANCELLED_BY_ADMIN về đúng seller
-                    String productName = (auction.getItem() != null) ? auction.getItem().getName() : String.valueOf(auction.getAuctionId());
+                AuctionStatus status = auction.getStatus();
+
+                // Cập nhật RAM trong AuctionManager cho mọi status
+                AuctionManager.getInstance().updateAuctionStatus(auction.getAuctionId(), status);
+
+                // Gửi notification về seller tương ứng với từng loại hủy
+                if (status == AuctionStatus.CANCELLED || status == AuctionStatus.CANCELLED_BY_ADMIN) {
+                    String productName = (auction.getItem() != null)
+                            ? auction.getItem().getName()
+                            : String.valueOf(auction.getAuctionId());
+
+                    SellerNotification.Type notifType = (status == AuctionStatus.CANCELLED_BY_ADMIN)
+                            ? SellerNotification.Type.CANCELLED_BY_ADMIN
+                            : SellerNotification.Type.CANCELLED;
+
                     SellerNotification notif = new SellerNotification(
                             auction.getAuctionId(),
-                            SellerNotification.Type.CANCELLED_BY_ADMIN,
+                            notifType,
                             productName,
                             null,
                             null

@@ -42,8 +42,7 @@ public class NotificationCellController {
                 case CLOSED -> "#16c784"; // xanh lá (có người thắng)
                 case PAID -> "#2980b9";   // xanh dương
                 case CANCELLED -> "#dc3545"; // đỏ
-                case DELETED_BY_ADMIN -> "#6c3483"; // tím
-                case CANCELLED_BY_ADMIN -> "#e67e22"; // cam 
+                case CANCELLED_BY_ADMIN -> "#e67e22"; // cam
             };
         }
 
@@ -59,7 +58,6 @@ public class NotificationCellController {
                     case CLOSED -> "#f0fdf8";   // xanh lá nhạt
                     case PAID -> "#eff6ff";     // xanh dương nhạt
                     case CANCELLED -> "#fff5f5"; // đỏ nhạt
-                    case DELETED_BY_ADMIN -> "#f5eef8"; // tím nhạt
                     case CANCELLED_BY_ADMIN -> "#fef9e7"; // cam nhạt
                 };
             }
@@ -67,17 +65,8 @@ public class NotificationCellController {
 
         // Apply style màu cho cả row
         if (rootHBox != null) {
-            rootHBox.setStyle(
-                    "-fx-background-color: "
-                            + bgColor
-                            + ";"
-                            + "-fx-background-radius: 12;"
-                            + "-fx-border-color: "
-                            + borderColor
-                            + ";"
-                            + "-fx-border-width: 0 0 0 4;"
-                            + "-fx-border-radius: 0 12 12 0;"
-                            + "-fx-cursor: hand;"
+            rootHBox.setStyle("-fx-background-color: " + bgColor + ";" + "-fx-background-radius: 12;" + "-fx-border-color: " + borderColor + ";"
+                            + "-fx-border-width: 0 0 0 4;" + "-fx-border-radius: 0 12 12 0;" + "-fx-cursor: hand;"
                             + (notif.isRead() ? "-fx-opacity: 0.55;" : ""));
             rootHBox.setOnMouseClicked(e -> markRead(notif));
         }
@@ -92,7 +81,6 @@ public class NotificationCellController {
                             case CLOSED -> "🏆";
                             case PAID -> "✅";
                             case CANCELLED -> "❌";
-                            case DELETED_BY_ADMIN -> "🚫";
                             case CANCELLED_BY_ADMIN -> "⚠️";
                         });
             }
