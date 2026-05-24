@@ -16,6 +16,8 @@ import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -34,16 +36,25 @@ import org.slf4j.LoggerFactory;
 public class AuctionListController implements ResponseListener {
     private static final Logger log = LoggerFactory.getLogger(AuctionListController.class);
 
+    // Nhóm trạng thái "đã kết thúc" gộp chung vào 1 nút
+    private static final Set<AuctionStatus> ENDED_GROUP = EnumSet.of(
+            AuctionStatus.CLOSED,
+            AuctionStatus.CANCELLED,
+            AuctionStatus.CANCELLED_BY_ADMIN,
+            AuctionStatus.PAID
+    );
+
     @FXML private ListView<Auction> featuredProductList;
     @FXML private TextField searchField;
     @FXML private Label sectionTitle;
     @FXML private Button btnAll, btnUpcoming, btnRunning, btnEnded;
     @FXML private ComboBox<String> categoryFilter;
 
-    // Lấy observable list từ ClientModel để dùng chung toàn app (Doc 1)
     private ObservableList<Auction> observable;
     private FilteredList<Auction> filterData;
-    private AuctionStatus currentStatus = null; // null = Tất cả
+    // null = Tất cả (NOT_START, RUNNING, ENDED_SENTINEL (dùng riêng))
+    private AuctionStatus currentStatus = null;
+    private boolean filterEndedGroup = false;
     private ScheduledExecutorService statusRefreshScheduler;
 
 
@@ -58,8 +69,6 @@ public class AuctionListController implements ResponseListener {
 
         filterData = new FilteredList<>(observable, _ -> true);
         featuredProductList.setItems(filterData);
-        currentStatus = null;
-        applyFilters();
 
         // Tìm kiếm theo tên
         searchField.textProperty().addListener((_, _, _) -> applyFilters());
@@ -72,34 +81,35 @@ public class AuctionListController implements ResponseListener {
         categoryFilter.valueProperty().addListener((_, _, _) -> applyFilters());
 
         // Lọc theo trạng thái
-        btnAll.setOnAction(
-                _ -> {
-                    currentStatus = null;
-                    sectionTitle.setText("📋  TẤT CẢ PHIÊN ĐẤU GIÁ");
-                    setActiveButton(btnAll);
-                    applyFilters();
-                });
-        btnUpcoming.setOnAction(
-                _ -> {
-                    currentStatus = AuctionStatus.NOT_START;
-                    sectionTitle.setText("📋  PHIÊN SẮP DIỄN RA");
-                    setActiveButton(btnUpcoming);
-                    applyFilters();
-                });
-        btnRunning.setOnAction(
-                _ -> {
-                    currentStatus = AuctionStatus.RUNNING;
-                    sectionTitle.setText("📋  PHIÊN ĐANG DIỄN RA");
-                    setActiveButton(btnRunning);
-                    applyFilters();
-                });
-        btnEnded.setOnAction(
-                _ -> {
-                    currentStatus = AuctionStatus.CLOSED;
-                    sectionTitle.setText("📋  PHIÊN ĐÃ KẾT THÚC");
-                    setActiveButton(btnEnded);
-                    applyFilters();
-                });
+        btnAll.setOnAction(_ -> {
+            currentStatus = null;
+            filterEndedGroup = false;
+            sectionTitle.setText("📋  TẤT CẢ PHIÊN ĐẤU GIÁ");
+            setActiveButton(btnAll);
+            applyFilters();
+        });
+        btnUpcoming.setOnAction(_ -> {
+            currentStatus = AuctionStatus.NOT_START;
+            filterEndedGroup = false;
+            sectionTitle.setText("📋  PHIÊN SẮP DIỄN RA");
+            setActiveButton(btnUpcoming);
+            applyFilters();
+        });
+        btnRunning.setOnAction(_ -> {
+            currentStatus = AuctionStatus.RUNNING;
+            filterEndedGroup = false;
+            sectionTitle.setText("📋  PHIÊN ĐANG DIỄN RA");
+            setActiveButton(btnRunning);
+            applyFilters();
+        });
+        // Nút "Kết thúc" gom tất cả: CLOSED, CANCELLED, CANCELLED_BY_ADMIN, DELETED_BY_ADMIN, PAID
+        btnEnded.setOnAction(_ -> {
+            currentStatus = null;
+            filterEndedGroup = true;
+            sectionTitle.setText("📋  PHIÊN ĐÃ KẾT THÚC");
+            setActiveButton(btnEnded);
+            applyFilters();
+        });
 
         setActiveButton(btnAll);
         if (!AuctionModificationManager.getInstance().isAllAuctionsLoaded) {
@@ -122,34 +132,44 @@ public class AuctionListController implements ResponseListener {
 
     // Áp dụng tất cả bộ lọc
     private void applyFilters() {
-        filterData.setPredicate(
-                auction -> {
-                    if (auction == null || auction.getItem() == null) return false;
-                    if (auction.getStatus().equals(AuctionStatus.CANCELLED_BY_ADMIN) || auction.getStatus().equals(AuctionStatus.CANCELLED) || auction.getStatus().equals(AuctionStatus.PAID)) return false;
-                    // 1. Tìm kiếm theo tên
-                    String search = searchField.getText();
-                    if (search != null && !search.isBlank()) {
-                        String name = auction.getItem().getName();
-                        if (name == null || !name.toLowerCase().contains(search.toLowerCase())) {
-                            return false;
-                        }
-                    }
+        filterData.setPredicate(auction -> {
+            if (auction == null || auction.getItem() == null)
+                return false;
 
-                    // 2. Lọc theo trạng thái
-                    if (currentStatus != null && auction.getStatus() != currentStatus) {
-                        return false;
-                    }
+            // 1. Tìm kiếm theo tên
+            String search = searchField.getText();
+            if (search != null && !search.isBlank()) {
+                String name = auction.getItem().getName();
+                if (name == null || !name.toLowerCase().contains(search.toLowerCase())) {
+                    return false;
+                }
+            }
 
-                    // 3. Lọc theo loại sản phẩm
-                    // Các else-if sau if đầu không bao giờ chạy được (logic bug ở cả 2 doc),
-                    // đã sửa lại thành một điều kiện duy nhất cho gọn và đúng
-                    String selectedCategory = categoryFilter.getValue();
-                    if (selectedCategory != null && !selectedCategory.equals("All Products Type")) {
-                        return selectedCategory.equals(getCategoryName(auction));
-                    }
+            // 2. Lọc theo trạng thái
+          /* LOGIC LỌC
+          filterEndedGroup = true   →  bấm nút "Kết thúc"
+          currentStatus = null      →  bấm nút "Tất cả"
+          currentStatus = NOT_START →  bấm nút "Sắp diễn ra"
+          currentStatus = RUNNING   →  bấm nút "Đang diễn ra"
+           */
 
-                    return true;
-                });
+            if (filterEndedGroup) {
+                if (!ENDED_GROUP.contains(auction.getStatus()))
+                    return false;
+            } else if (currentStatus != null) {
+                if (auction.getStatus() != currentStatus)  // chỉ giữ lại nhưng cái có Status trungf vs nút mk bấm ko=> bỏ
+                    return false;  // nếu status cuat auction khác nút => bỏ
+            }
+
+
+            // 3. Lọc theo loại sản phẩm
+            String selectedCategory = categoryFilter.getValue();
+            if (selectedCategory != null && !selectedCategory.equals("All Products Type")) {
+                return selectedCategory.equals(getCategoryName(auction));
+            }
+
+            return true;
+        });
     }
 
     // Lấy tên loại từ enum Category của Item
@@ -163,8 +183,6 @@ public class AuctionListController implements ResponseListener {
         };
     }
 
-    // Đổi class CSS cho nút đang active — dùng cách sạch của Doc 2,
-    // thêm reset setStyle("") của Doc 1 để tránh inline style đè lên CSS class
     private void setActiveButton(Button active) {
         Button[] buttons = {btnAll, btnUpcoming, btnRunning, btnEnded};
         for (Button b : buttons) {
@@ -175,7 +193,6 @@ public class AuctionListController implements ResponseListener {
         }
     }
 
-    // Gửi request lấy danh sách đấu giá — dùng networkManager.sendRequest() của Doc 1
     public void loadData() throws ConnectionFailedException {
         Command cmd = new GetAllAuctionsCommand();
         new Thread(() -> {
@@ -229,7 +246,6 @@ public class AuctionListController implements ResponseListener {
                 observable.setAll(auctions);
                 AuctionModificationManager.getInstance().isAllAuctionsLoaded = true;
             });
-            // Mỗi lần sendRequest tạo requestId mới → listener tự clean sau mỗi lần
         }
         if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
             Auction updated = (Auction) rp.getPayLoad();
@@ -237,10 +253,11 @@ public class AuctionListController implements ResponseListener {
             Platform.runLater(() -> {
                 for (Auction a : observable) {
                     if (a.getAuctionId() == updated.getAuctionId()) {
-                        a.setStatus(updated.getStatus()); //  dùng status từ payload
+                        a.setStatus(updated.getStatus());
                         break;
                     }
                 }
             });
+        }
     }
-}}
+}

@@ -75,22 +75,82 @@ public class AuctionSessionController {
             case CLOSED:
                 statusBadge.setText("ĐÃ KẾT THÚC");
                 setStatusBadgeClass("sf-status-ended");
-                lbPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
-                lbCategory.setText(
-                        ""
-                                + (auction.getItem().getCategory() != null
-                                        ? auction.getItem().getCategory()
-                                        : "Khác"));
-                lbWinner.setText(
-                        auction.getWinnerName() != null
-                                ? auction.getWinnerName()
-                                : "Không có người tham gia đấu giá");
-                if (lbWinner != null) lbWinner.setText("" + auction.getWinnerName());
+                lbCategory.setText("" + (auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
+                if (auction.getWinnerName() == null){
+                    lbWinner.setText("Không có người tham gia đấu giá");
+                    lbPrice.setText(String.format("%,.0f VND", auction.getInitPrice()));
+                    gia.setText("Giá khởi điểm:");
+
+                }else{
+                    lbWinner.setText(auction.getWinnerName());
+                    lbPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
+                }
+
                 if (actionButton != null) {
                     actionButton.setText("ĐÃ KẾT THÚC");
                     setActionButtonClass(actionButton, "sf-auction-action-neutral");
                 }
                 break;
+
+            case PAID:
+                statusBadge.setText("ĐÃ KẾT THÚC");
+                setStatusBadgeClass("sf-status-ended");
+                lbPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
+                lbCategory.setText("" + (auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
+                if (nguoidandau != null) nguoidandau.setText("Người thắng:");
+                lbWinner.setText(auction.getWinnerName() != null ? auction.getWinnerName() : "—");
+                if (actionButton != null) {
+                    actionButton.setDisable(true);
+                    actionButton.setText("ĐÃ KẾT THÚC");
+                    setActionButtonClass(actionButton, "sf-auction-action-neutral");
+                }
+                break;
+
+
+            case CANCELLED_BY_ADMIN:
+                statusBadge.setText("ĐÃ KẾT THÚC");
+                setStatusBadgeClass("sf-status-cancelled");
+                gia.setText("Giá khởi điểm:");
+                lbPrice.setText(String.format("%,.0f VND", auction.getInitPrice()));
+                if (nguoidandau != null) nguoidandau.setText("Lý do:");
+                lbWinner.setText("Quản trị viên hủy phiên");
+                if (actionButton != null) {
+                    actionButton.setDisable(true);
+                    actionButton.setText("ĐÃ KẾT THÚC");
+                    setActionButtonClass(actionButton, "sf-auction-action-neutral");
+                }
+                break;
+
+            case CANCELLED:
+                if (auction.getWinnerName() == null) {
+                    statusBadge.setText("ĐÃ KẾT THÚC");
+                    setStatusBadgeClass("sf-status-cancelled");
+                    gia.setText("Giá khởi điểm:");
+                    lbPrice.setText(String.format("%,.0f VND", auction.getInitPrice()));
+                    if (nguoidandau != null) nguoidandau.setText("Lý do:");
+                    lbCategory.setText("" + (auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
+                    if (lbWinner != null) lbWinner.setText("Không có người tham gia đấu giá");
+                    if (actionButton != null) {
+                        actionButton.setDisable(true);
+                        actionButton.setText("ĐÃ KẾT THÚC");
+                        setActionButtonClass(actionButton, "sf-auction-action-neutral");
+                    }
+                    break;
+                }else{
+                    statusBadge.setText("ĐÃ KẾT THÚC");
+                    setStatusBadgeClass("sf-status-ended");
+                    lbPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
+                    lbCategory.setText("" + (auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
+                    if (lbWinner != null) lbWinner.setText(auction.getWinnerName());
+                    if (actionButton != null) {
+                        actionButton.setDisable(true);
+                        actionButton.setText("ĐÃ KẾT THÚC");
+                        setActionButtonClass(actionButton, "sf-auction-action-neutral");
+                    }
+                    break;
+                }
+
+
 
         }
     }
