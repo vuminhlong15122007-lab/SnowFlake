@@ -173,24 +173,45 @@ class AuctionManagerBehaviorTest {
         }
 
         @Test
-        @DisplayName("chuyen CLOSED qua han thanh toan sang CANCELLED va cap nhat DB")
-        void refreshAuctionStatus_movesClosedPastPaymentWindowToCancelledAndUpdatesDatabase()
+        @DisplayName("chuyen CLOSED co winner qua han thanh toan sang CANCELLED va cap nhat DB")
+        void refreshAuctionStatus_movesUnpaidWinnerPastPaymentWindowToCancelledAndUpdatesDatabase()
             throws DataException {
             Auction auction =
                 auctionWithTime(
                     LocalDateTime.now().minusDays(2),
                     LocalDateTime.now().minusHours(25),
                     AuctionStatus.CLOSED);
+            auction.setWinnerName("winner");
             AuctionDAO auctionDAO = mock(AuctionDAO.class);
             when(auctionDAO.update(auction)).thenReturn(1);
 
             try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class)) {
                 mockedAuctionDAO.when(AuctionDAO::getInstance).thenReturn(auctionDAO);
 
+                // Logic hiện tại chỉ hủy phiên quá hạn thanh toán khi đã có người thắng.
                 assertEquals(AuctionStatus.CANCELLED, manager.refreshAuctionStatus(auction));
 
                 assertEquals(AuctionStatus.CANCELLED, auction.getStatus());
                 verify(auctionDAO).update(auction);
+            }
+        }
+
+        @Test
+        @DisplayName("giu CLOSED qua han thanh toan khi khong co winner")
+        void refreshAuctionStatus_keepsClosedPastPaymentWindowWhenAuctionHasNoWinner()
+            throws DataException {
+            Auction auction =
+                auctionWithTime(
+                    LocalDateTime.now().minusDays(2),
+                    LocalDateTime.now().minusHours(25),
+                    AuctionStatus.CLOSED);
+
+            try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class)) {
+                // Phiên không có người thắng không có bước thanh toán cần timeout.
+                assertEquals(AuctionStatus.CLOSED, manager.refreshAuctionStatus(auction));
+
+                assertEquals(AuctionStatus.CLOSED, auction.getStatus());
+                mockedAuctionDAO.verifyNoInteractions();
             }
         }
 

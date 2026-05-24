@@ -18,7 +18,7 @@
             <Button styleClass="sf-btn-primary" text="🔍 Search" />
         </HBox>
     </top>
-
+    
     <!-- ==================== MENU TRÁI ==================== -->
     <left>
         <VBox prefWidth="246.0" spacing="14" styleClass="sf-history-sidebar">
