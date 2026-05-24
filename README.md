@@ -66,17 +66,38 @@ ELECTRONICS, ART, VEHICLE, OTHER
 
 ```mermaid
 flowchart LR
-    UI["JavaFX FXML + Controller"] --> NM["NetworkManager"]
-    NM --> SC["ServerConnection"]
-    SC --> CH["ClientHandler"]
-    CH --> M["Manager Layer"]
-    M --> DAO["DAO Layer"]
-    DAO --> DB[("MySQL / TiDB")]
+    subgraph CLIENT["Client JavaFX"]
+        UI["FXML + Controller"]
+        RL["ResponseListener"]
+        NM["NetworkManager"]
+        SC["ServerConnection"]
 
-    M --> OBS["Observer / Subscriber"]
-    OBS --> CH
-    CH --> SC
-    SC --> UI
+        UI -->|sendRequest| NM
+        NM -->|send Command| SC
+        NM -->|dispatch Response| RL
+        RL --> UI
+    end
+
+    subgraph SERVER["Socket Server"]
+        SA["ServerApp"]
+        CH["ClientHandler"]
+        CMD["Command.handle()"]
+        M["Manager Layer"]
+        DAO["DAO Layer"]
+        OBS["BidListener subscribers"]
+
+        SA -.->|accept socket| CH
+        CH -->|read Command| CMD
+        CMD --> M
+        CMD --> DAO
+        M --> DAO
+        CMD -->|register live view| OBS
+        M -->|notify bid subscribers| OBS
+        OBS -->|push bid Response| CH
+    end
+
+    SC <-->|Object streams over socket| CH
+    DAO --> DB[("MySQL / TiDB")]
 
     classDef client fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#0f172a
     classDef socket fill:#ede9fe,stroke:#7c3aed,stroke-width:2px,color:#1e1b4b
@@ -84,9 +105,9 @@ flowchart LR
     classDef data fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#052e16
     classDef realtime fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#451a03
 
-    class UI,NM client
-    class SC,CH socket
-    class M server
+    class UI,RL,NM client
+    class SC socket
+    class SA,CH,CMD,M server
     class DAO,DB data
     class OBS realtime
 ```
@@ -94,19 +115,21 @@ flowchart LR
 | Tầng | Thành phần chính |
 | --- | --- |
 | Client UI | FXML, CSS, controller trong `src/main/java/com/javfxtutorial/hethongdaugia/client/controller`. |
-| Client network | `NetworkManager`, `ServerConnection`, `ResponseListener`. |
-| Common | `Command`, `Response`, model domain, enum, exception dùng chung. |
-| Server network | `ServerApp`, `ClientHandler`, `BidListener`, `ClientHandlerContextHolder`. |
-| Server business | `AuctionManager`, `UserManager`, `PasswordHasher`. |
+| Client network | `NetworkManager` gửi request và dispatch `Response`; `ServerConnection` giữ socket/ObjectStream; controller nhận kết quả qua `ResponseListener`. |
+| Common command/response | `Command`, `Response`, model domain, enum, exception dùng chung giữa client và server. |
+| Server network | `ServerApp` mở `ServerSocket`; mỗi client được xử lý bằng một `ClientHandler` riêng. |
+| Server command | `ClientHandler` gọi `Command.handle()`; command gọi manager hoặc DAO tùy nghiệp vụ. |
+| Server business | `AuctionManager`, `UserManager`, `PasswordHasher`; realtime bid dùng `BidListener` và subscriber theo `auctionId`. |
 | Data access | `UserDAO`, `ItemDAO`, `AuctionDAO`, `BidDAO`, `ParticipatedAuctionDAO`, `NotificationDAO`, `JDBCUtil`. |
 
 Luồng chính:
 
-1. Client gửi object kế thừa `Command` qua `ObjectOutputStream`.
-2. `ClientHandler` nhận command, gọi `cmd.handle()`.
-3. Command gọi manager hoặc DAO tương ứng.
-4. Server trả `Response` về client.
-5. Với bid realtime, server dùng `BidListener` và broadcast qua các `ClientHandler` đang theo dõi phiên.
+1. Controller tạo `Command` và gọi `NetworkManager.sendRequest()`.
+2. `ServerConnection` gửi command qua socket bằng `ObjectOutputStream`.
+3. `ServerApp` accept kết nối, `ClientHandler` đọc command và gọi `cmd.handle()`.
+4. Trong `handle()`, command gọi manager hoặc DAO tương ứng rồi tạo `Response`.
+5. `ClientHandler` ghi `Response` về socket; `NetworkManager` đọc response và dispatch theo `requestId` hoặc class của command.
+6. Với đấu giá realtime, client gửi `RegisterToAuctionCommand`; server lưu `ClientHandler` vào subscriber của `AuctionManager`, sau đó push bid mới qua `BidListener.onPlaceBid()`.
 
 ---
 
