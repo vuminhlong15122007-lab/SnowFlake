@@ -76,9 +76,7 @@
                 </HBox>
 
                 <!-- Panel thông tin người thắng (ẩn mặc định) -->
-                <VBox fx:id="winnerInfoBox" managed="false" visible="false" spacing="16.0"
-                      style="-fx-background-color: linear-gradient(to bottom right, -sf-surface-soft, -sf-surface); -fx-background-radius: 16; -fx-border-color: -sf-border-soft; -fx-border-radius: 16; -fx-padding: 20;"
-                      VBox.vgrow="ALWAYS">
+                <VBox fx:id="winnerInfoBox" managed="false" spacing="16.0" style="-fx-background-color: linear-gradient(to bottom right, -sf-surface-soft, -sf-surface); -fx-background-radius: 16; -fx-border-color: -sf-border-soft; -fx-border-radius: 16; -fx-padding: 20;" visible="false" VBox.vgrow="ALWAYS">
                     <HBox alignment="CENTER_LEFT" spacing="10.0">
                         <Label style="-fx-font-size: 22px;" text="🏆" />
                         <VBox spacing="2.0">
@@ -125,9 +123,7 @@
 
                     <Region VBox.vgrow="ALWAYS" />
 
-                    <Button onAction="#onBackToForm" prefHeight="36.0" prefWidth="160.0"
-                            style="-fx-background-color: -sf-surface; -fx-text-fill: -sf-text; -fx-font-weight: bold; -fx-background-radius: 10; -fx-border-color: -sf-border-soft; -fx-border-radius: 10; -fx-cursor: hand;"
-                            text="← Quay lại" />
+                    <Button onAction="#onBackToForm" prefHeight="36.0" prefWidth="160.0" style="-fx-background-color: -sf-surface; -fx-text-fill: -sf-text; -fx-font-weight: bold; -fx-background-radius: 10; -fx-border-color: -sf-border-soft; -fx-border-radius: 10; -fx-cursor: hand;" text="← Quay lại" />
                 </VBox>
 
                 <VBox fx:id="detailFormBox" spacing="0" VBox.vgrow="ALWAYS">
@@ -226,7 +222,9 @@
                             </VBox>
 
                             <HBox alignment="CENTER_RIGHT" spacing="10.0">
-                                <Region HBox.hgrow="ALWAYS" />
+                                <TextArea fx:id="message" editable="false" prefHeight="200.0" prefWidth="615.0"
+                                          style="-fx-font-family: 'Segoe UI', Arial, sans-serif; -fx-font-size: 16px; -fx-text-fill: #B8860B; -fx-border-color: #FFC107; -fx-border-width: 2px;
+                                          -fx-border-radius: 8px; -fx-background-radius: 8px; -fx-background-color: #FFFDF0; -fx-padding: 10px; -fx-alignment: top-left;" />                                <Region HBox.hgrow="ALWAYS" />
                                 <Button fx:id="saveButton" onAction="#onSaveButton" prefHeight="38.0" prefWidth="132.0" style="-fx-background-color: linear-gradient(to right, -sf-accent-2, -sf-accent); -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-background-radius: 13; -fx-cursor: hand;" text="Lưu" />
                             </HBox>
                         </VBox>
