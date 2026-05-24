@@ -264,7 +264,7 @@ public class SellerManagementController implements ResponseListener {
     private void handleGeneralCancelledAuction(Auction auction) {
         if (auction.getStatus() == AuctionStatus.CANCELLED){
             setMessageCancelledAuction(auction);
-        } else if (auction.getStatus() == AuctionStatus.CANCELLED){
+        } else if (auction.getStatus() == AuctionStatus.CANCELLED_BY_ADMIN){
             setMessageCancelledByAdminAuction(auction);
         }
         selectedAuction = auction;
@@ -517,7 +517,7 @@ public class SellerManagementController implements ResponseListener {
             showAlert("Lỗi", "Vui lòng chọn sản phẩm cần sửa!", "Wait.gif");
             return;
         }
-        if (selectedAuction.getStatus() == AuctionStatus.CANCELLED) {
+        if (selectedAuction.getStatus() == AuctionStatus.CANCELLED_BY_ADMIN) {
             showAlert("Không thể sửa", "Sản phẩm này đã bị admin hủy, không thể chỉnh sửa.", "Wrong.gif");
             return;
         }
@@ -988,7 +988,7 @@ public class SellerManagementController implements ResponseListener {
             Platform.runLater(() -> {
                 for (int i = 0; i < observable.size(); i++) {
                     if (observable.get(i).getAuctionId() == adminNotif.getAuctionId()) {
-                        observable.get(i).setStatus(AuctionStatus.CANCELLED);
+                        observable.get(i).setStatus(AuctionStatus.CANCELLED_BY_ADMIN);
                         observable.set(i, observable.get(i)); // trigger refresh
                         break;
                     }

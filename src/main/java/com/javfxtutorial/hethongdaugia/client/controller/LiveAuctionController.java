@@ -357,15 +357,6 @@ public class LiveAuctionController implements ResponseListener {
         if (rp.getCommand().getClass() == PlaceBidCommand.class) {
             BidTransaction bid = (BidTransaction) rp.getPayLoad();
             if (!rp.isSuccess()) {
-                if (rp.getMessage().equals("AUCTION_CANCELLED")){
-                    Platform.runLater(() -> {
-                    if (timer != null) timer.stop();
-                    showAlert("Thông báo", "Phiên đấu giá đã bị admin hủy.");
-                    changeScene(new ActionEvent(placeBidButton, null),
-                            "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml");
-                });
-                    return;
-                }
                 Platform.runLater(() -> showAlert("Trạng thái đặt bid", rp.getMessage()));
                 return;
             }
@@ -483,14 +474,14 @@ public class LiveAuctionController implements ResponseListener {
             Platform.runLater(() -> UIUtils.showAlert("Hệ thống AutoBid", rp.getMessage()));
         }
 
-//        if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
-//            if ("AUCTION_CANCELLED".equals(rp.getMessage())) {
-//                Platform.runLater(() -> {
-//                    if (timer != null) timer.stop();
-//                    showAlert("Thông báo", "Phiên đấu giá đã bị admin hủy.");
-//                    changeScene(new ActionEvent(placeBidButton, null),
-//                            "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml");
-//                });
-//            }
+        if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
+            if ("ADMIN_CANCELLED_AUCTION".equals(rp.getMessage())) {
+                Platform.runLater(() -> {
+                    if (timer != null) timer.stop();
+                    showAlert("Thông báo", "Phiên đấu giá đã bị admin hủy.");
+                    changeScene(new ActionEvent(placeBidButton, null),
+                            "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml");
+                });
+            }
     }
-}
+}}
