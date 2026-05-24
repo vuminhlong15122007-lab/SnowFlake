@@ -66,38 +66,31 @@ ELECTRONICS, ART, VEHICLE, OTHER
 
 ```mermaid
 flowchart LR
-    subgraph CLIENT["Client JavaFX"]
-        UI["FXML + Controller"]
-        RL["ResponseListener"]
-        NM["NetworkManager"]
-        SC["ServerConnection"]
+    UI["FXML + Controller"]
+    RL["ResponseListener"]
+    NM["NetworkManager"]
+    SC["ServerConnection"]
+    SA["ServerApp"]
+    CH["ClientHandler"]
+    CMD["Command.handle()"]
+    M["Manager Layer"]
+    DAO["DAO Layer"]
+    DB[("MySQL / TiDB")]
+    OBS["BidListener subscribers"]
 
-        UI -->|sendRequest| NM
-        NM -->|send Command| SC
-        NM -->|dispatch Response| RL
-        RL --> UI
-    end
-
-    subgraph SERVER["Socket Server"]
-        SA["ServerApp"]
-        CH["ClientHandler"]
-        CMD["Command.handle()"]
-        M["Manager Layer"]
-        DAO["DAO Layer"]
-        OBS["BidListener subscribers"]
-
-        SA -.->|accept socket| CH
-        CH -->|read Command| CMD
-        CMD --> M
-        CMD --> DAO
-        M --> DAO
-        CMD -->|register live view| OBS
-        M -->|notify bid subscribers| OBS
-        OBS -->|push bid Response| CH
-    end
-
-    SC <-->|Object streams over socket| CH
-    DAO --> DB[("MySQL / TiDB")]
+    UI <--> NM
+    RL <--> NM
+    NM <--> SC
+    SC <--> CH
+    SA -.-> CH
+    CH <--> CMD
+    CMD <--> M
+    CMD <--> DAO
+    M <--> DAO
+    DAO --> DB
+    CMD --> OBS
+    M --> OBS
+    OBS --> CH
 
     classDef client fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#0f172a
     classDef socket fill:#ede9fe,stroke:#7c3aed,stroke-width:2px,color:#1e1b4b
