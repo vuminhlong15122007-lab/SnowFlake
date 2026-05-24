@@ -66,8 +66,7 @@ ELECTRONICS, ART, VEHICLE, OTHER
 
 ```mermaid
 flowchart LR
-    UI["FXML + Controller"]
-    RL["ResponseListener"]
+    UI["FXML + Controller<br/>implements ResponseListener"]
     NM["NetworkManager"]
     SC["ServerConnection"]
     SA["ServerApp"]
@@ -79,7 +78,6 @@ flowchart LR
     OBS["BidListener subscribers"]
 
     UI <--> NM
-    RL <--> NM
     NM <--> SC
     SC <--> CH
     SA -.-> CH
@@ -98,7 +96,7 @@ flowchart LR
     classDef data fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#052e16
     classDef realtime fill:#fef3c7,stroke:#f59e0b,stroke-width:2px,color:#451a03
 
-    class UI,RL,NM client
+    class UI,NM client
     class SC socket
     class SA,CH,CMD,M server
     class DAO,DB data
@@ -107,8 +105,8 @@ flowchart LR
 
 | Tầng | Thành phần chính |
 | --- | --- |
-| Client UI | FXML, CSS, controller trong `src/main/java/com/javfxtutorial/hethongdaugia/client/controller`. |
-| Client network | `NetworkManager` gửi request và dispatch `Response`; `ServerConnection` giữ socket/ObjectStream; controller nhận kết quả qua `ResponseListener`. |
+| Client UI | FXML, CSS, controller trong `src/main/java/com/javfxtutorial/hethongdaugia/client/controller`; nhiều controller `implements ResponseListener` để nhận `onResponse()`. |
+| Client network | `NetworkManager` gửi request và dispatch `Response` về controller; `ServerConnection` giữ socket/ObjectStream. |
 | Common command/response | `Command`, `Response`, model domain, enum, exception dùng chung giữa client và server. |
 | Server network | `ServerApp` mở `ServerSocket`; mỗi client được xử lý bằng một `ClientHandler` riêng. |
 | Server command | `ClientHandler` gọi `Command.handle()`; command gọi manager hoặc DAO tùy nghiệp vụ. |
