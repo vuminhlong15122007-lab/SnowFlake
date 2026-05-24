@@ -187,7 +187,7 @@ public class AuctionDAO implements DAOInterface<Auction> {
                 rs.getInt("auction_id"),
                 item,
                 rs.getInt("seller_id"),
-                rs.getString("auction_winner_name"),  // ← dùng alias mới
+                rs.getString("winner_name"),  // ← dùng alias mới
                 rs.getBigDecimal("init_price"),
                 rs.getBigDecimal("current_price"),
                 rs.getBigDecimal("step_price"),

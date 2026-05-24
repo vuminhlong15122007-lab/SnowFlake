@@ -226,6 +226,17 @@ public class ParticipatedAuctionCellController implements ResponseListener {
                 }
                 break;
 
+            case CANCELLED_BY_ADMIN:
+                hideCountdown();
+                lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
+                lbWinnerName.setText("Phiên bị hủy");
+                if (actionButton != null) {
+                    actionButton.setDisable(true);
+                    actionButton.setText("ĐÃ HỦY");
+                    setActionButtonClass("sf-auction-action-danger");
+                }
+                break;
+
             case PAID:
                 hideCountdown();
                 lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));

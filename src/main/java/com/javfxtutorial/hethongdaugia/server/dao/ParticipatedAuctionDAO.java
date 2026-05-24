@@ -83,7 +83,7 @@ public class ParticipatedAuctionDAO {
                 "SELECT \n"
                         + "    a.*, \n"
                         + "    pa.bidderId, \n"
-                        + "    i.name, \n"
+                        + "    i.name AS item_name, \n"
                         + "    i.description, \n"
                         + "    i.imagepath, \n"
                         + "    i.idseller AS seller_id, \n"
