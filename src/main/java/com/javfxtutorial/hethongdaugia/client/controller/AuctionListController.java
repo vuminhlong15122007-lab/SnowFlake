@@ -58,6 +58,8 @@ public class AuctionListController implements ResponseListener {
 
         filterData = new FilteredList<>(observable, _ -> true);
         featuredProductList.setItems(filterData);
+        currentStatus = null;
+        applyFilters();
 
         // Tìm kiếm theo tên
         searchField.textProperty().addListener((_, _, _) -> applyFilters());
