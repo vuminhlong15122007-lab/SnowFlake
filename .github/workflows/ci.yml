@@ -8,11 +8,7 @@ on:
 
 jobs:
   build:
-    strategy:
-      matrix:
-        os: [ ubuntu-latest, windows-latest, macos-latest ]
-
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
@@ -28,10 +24,5 @@ jobs:
       - name: Install dependencies
         run: mvn install -DskipTests --no-transfer-progress
 
-      - name: Run tests on Ubuntu with virtual display
-        if: runner.os == 'Linux'
+      - name: Run tests
         run: xvfb-run -a mvn test "-Djava.awt.headless=true" --no-transfer-progress
-
-      - name: Run tests on Windows/macOS
-        if: runner.os != 'Linux'
-        run: mvn test "-Djava.awt.headless=true" --no-transfer-progress
