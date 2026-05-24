@@ -66,29 +66,35 @@ ELECTRONICS, ART, VEHICLE, OTHER
 
 ```mermaid
 flowchart LR
-    UI["FXML + Controller<br/>implements ResponseListener"]
-    NM["NetworkManager"]
-    SC["ServerConnection"]
-    SA["ServerApp"]
-    CH["ClientHandler"]
-    CMD["Command.handle()"]
-    M["Manager Layer"]
-    DAO["DAO Layer"]
-    DB[("MySQL / TiDB")]
-    OBS["BidListener subscribers"]
+    subgraph CLIENT["Client"]
+        UI["FXML + Controller<br/>implements ResponseListener"]
+        NM["NetworkManager"]
+        SC["ServerConnection"]
 
-    UI <--> NM
-    NM <--> SC
+        UI <--> NM
+        NM <--> SC
+    end
+
+    subgraph SERVER["Server"]
+        SA["ServerApp"]
+        CH["ClientHandler"]
+        CMD["Command.handle()"]
+        M["Manager Layer"]
+        DAO["DAO Layer"]
+        OBS["BidListener subscribers"]
+
+        SA -.-> CH
+        CH <--> CMD
+        CMD <--> M
+        CMD <--> DAO
+        M <--> DAO
+        CMD --> OBS
+        M --> OBS
+        OBS --> CH
+    end
+
     SC <--> CH
-    SA -.-> CH
-    CH <--> CMD
-    CMD <--> M
-    CMD <--> DAO
-    M <--> DAO
-    DAO --> DB
-    CMD --> OBS
-    M --> OBS
-    OBS --> CH
+    DAO --> DB[("MySQL / TiDB")]
 
     classDef client fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#0f172a
     classDef socket fill:#ede9fe,stroke:#7c3aed,stroke-width:2px,color:#1e1b4b
@@ -101,6 +107,9 @@ flowchart LR
     class SA,CH,CMD,M server
     class DAO,DB data
     class OBS realtime
+
+    style CLIENT fill:#ffffff,stroke:#94a3b8,stroke-width:1px,stroke-dasharray: 6 4
+    style SERVER fill:#ffffff,stroke:#94a3b8,stroke-width:1px,stroke-dasharray: 6 4
 ```
 
 | Tầng | Thành phần chính |
