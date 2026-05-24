@@ -12,7 +12,6 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 
 public class AuctionSessionController {
-    // ── Dùng chung cho tất cả cell ──
     @FXML private Label lbProductName;
     @FXML private Label lbSellerName;
     @FXML private Label lbPrice, lbWinner;
@@ -55,7 +54,7 @@ public class AuctionSessionController {
                     setActionButtonClass(actionButton, "sf-auction-action-primary");
                 }
                 if (nguoidandau != null) nguoidandau.setText("ID dẫn đầu : ");
-                if (lbWinner != null) lbWinner.setText("" + auction.getWinnerName());
+                if (lbWinner != null) lbWinner.setText(auction.getWinnerName() != null ? auction.getWinnerName() : "Chưa có người dẫn đầu");
                 gia.setText("Giá hiện tại : ");
                 break;
 
@@ -75,17 +74,9 @@ public class AuctionSessionController {
             case CLOSED:
                 statusBadge.setText("ĐÃ KẾT THÚC");
                 setStatusBadgeClass("sf-status-ended");
+                lbPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
                 lbCategory.setText("" + (auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
-                if (auction.getWinnerName() == null){
-                    lbWinner.setText("Không có người tham gia đấu giá");
-                    lbPrice.setText(String.format("%,.0f VND", auction.getInitPrice()));
-                    gia.setText("Giá khởi điểm:");
-
-                }else{
-                    lbWinner.setText(auction.getWinnerName());
-                    lbPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
-                }
-
+                lbWinner.setText(auction.getWinnerName() != null ? auction.getWinnerName() : "Không có người tham gia đấu giá");
                 if (actionButton != null) {
                     actionButton.setText("ĐÃ KẾT THÚC");
                     setActionButtonClass(actionButton, "sf-auction-action-neutral");
@@ -125,7 +116,6 @@ public class AuctionSessionController {
                 if (auction.getWinnerName() == null) {
                     statusBadge.setText("ĐÃ KẾT THÚC");
                     setStatusBadgeClass("sf-status-cancelled");
-                    gia.setText("Giá khởi điểm:");
                     lbPrice.setText(String.format("%,.0f VND", auction.getInitPrice()));
                     if (nguoidandau != null) nguoidandau.setText("Lý do:");
                     lbCategory.setText("" + (auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
