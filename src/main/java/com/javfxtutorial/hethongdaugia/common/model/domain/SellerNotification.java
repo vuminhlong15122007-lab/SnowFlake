@@ -8,10 +8,7 @@ public class SellerNotification implements Serializable {
     private static int idCounter = 0;
 
     public enum Type {
-        CLOSED,
-        PAID,
-        CANCELLED,
-        CANCELLED_BY_ADMIN
+        CLOSED, PAID, CANCELLED, CANCELLED_BY_ADMIN
     }
 
     private int notificationId;
