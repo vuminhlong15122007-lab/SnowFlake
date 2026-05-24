@@ -252,7 +252,9 @@ public class AuctionListController implements ResponseListener {
             });
         }
         if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
-            Auction updated = (Auction) rp.getPayLoad();
+            Object payload = rp.getPayLoad();
+            if (!(payload instanceof Auction)) return;
+            Auction updated = (Auction) payload;;
             if (updated == null) return;
             Platform.runLater(() -> {
                 for (Auction a : observable) {

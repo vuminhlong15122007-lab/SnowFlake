@@ -125,4 +125,12 @@ public class ClientHandler extends Thread implements BidListener {
         return cmd.getClass().getPackageName()
                 .equals("com.javfxtutorial.hethongdaugia.common.model.Command");
     }
+    public static void broadcastExcept(int excludeUserId, Response rp) {
+        for (ClientHandler ch : allClients) {
+            if (ch.currentUser != null && ch.currentUser.getId() != excludeUserId) {
+                ch.sendResponse(rp);
+            }
+        }
+        log.info("Da gui broadcast (ngoai tru user id={}) xong", excludeUserId);
+    }
 }

@@ -53,6 +53,9 @@ public class UpdateAuctionStatusCommand extends Command {
                     );
                     Response notifResponse = new Response(true, "ADMIN_CANCELLED_AUCTION", notif, this);
                     ClientHandler.broadcastToSeller(auction.getSellerId(), notifResponse);
+                    ClientHandler.broadcastExcept(auction.getSellerId(),
+                            new Response(false, "ADMIN_CANCELLED_AUCTION", auction, this)
+                    );
                 }
                 Response rp = new Response(true, "Cập nhật status thành công", auction, this);
                 ClientHandler.broadcast(rp);

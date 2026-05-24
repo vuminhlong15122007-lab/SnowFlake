@@ -212,7 +212,7 @@ public class AdminItemController implements ResponseListener {
   public void onResponse(Response rp) {
     // ── Cập nhật trạng thái phiên (hủy) ──
     if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
-            if ("AUCTION_CANCELLED".equals(rp.getMessage())) return;
+            if ("ADMIN_CANCELLED_AUCTION".equals(rp.getMessage())) return;
 
       NetworkManager.getInstance().unregister(UpdateAuctionStatusCommand.class, this);
       Platform.runLater(() -> {

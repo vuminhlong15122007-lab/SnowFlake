@@ -507,7 +507,7 @@ public class SellerManagementController implements ResponseListener {
             return;
         }
         if (!(selectedAuction.getStatus() == AuctionStatus.NOT_START)) {
-            showAlert("Không thể sửa", "Không thể sửa sản pẩm đang chạy hoặc đã kết thúc", "Wrong.gif");
+            showAlert("Không thể sửa", "Không thể sửa sản phẩm đang chạy hoặc đã kết thúc", "Wrong.gif");
             return;
         }
 
