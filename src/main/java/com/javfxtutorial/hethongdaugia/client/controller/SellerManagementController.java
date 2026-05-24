@@ -506,10 +506,11 @@ public class SellerManagementController implements ResponseListener {
             showAlert("Lỗi", "Vui lòng chọn sản phẩm cần sửa!", "Wait.gif");
             return;
         }
-        if (selectedAuction.getStatus() == AuctionStatus.CANCELLED_BY_ADMIN) {
-            showAlert("Không thể sửa", "Sản phẩm này đã bị admin hủy, không thể chỉnh sửa.", "Wrong.gif");
+        if (!(selectedAuction.getStatus() == AuctionStatus.NOT_START)) {
+            showAlert("Không thể sửa", "Không thể sửa sản pẩm đang chạy hoặc đã kết thúc", "Wrong.gif");
             return;
         }
+
         Auction auction = getInfo();
         if (auction == null) return;
         auction.setAuctionId(selectedAuction.getAuctionId());

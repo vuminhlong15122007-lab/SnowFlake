@@ -79,6 +79,8 @@ public class AuctionListController implements ResponseListener {
                 .addAll("All Products Type", "Art", "Vehicle", "Electronics", "Orther");
         categoryFilter.setValue("All Products Type");
         categoryFilter.valueProperty().addListener((_, _, _) -> applyFilters());
+        currentStatus = null;
+        applyFilters();
 
         // Lọc theo trạng thái
         btnAll.setOnAction(_ -> {
@@ -135,6 +137,7 @@ public class AuctionListController implements ResponseListener {
         filterData.setPredicate(auction -> {
             if (auction == null || auction.getItem() == null)
                 return false;
+            if (auction.getStatus().equals(AuctionStatus.CANCELLED_BY_ADMIN) || auction.getStatus().equals(AuctionStatus.CANCELLED) || auction.getStatus().equals(AuctionStatus.PAID)) return false;
 
             // 1. Tìm kiếm theo tên
             String search = searchField.getText();
@@ -146,12 +149,13 @@ public class AuctionListController implements ResponseListener {
             }
 
             // 2. Lọc theo trạng thái
-          /* LOGIC LỌC
+          /** LOGIC LỌC
           filterEndedGroup = true   →  bấm nút "Kết thúc"
           currentStatus = null      →  bấm nút "Tất cả"
           currentStatus = NOT_START →  bấm nút "Sắp diễn ra"
           currentStatus = RUNNING   →  bấm nút "Đang diễn ra"
-           */
+           **/
+
 
             if (filterEndedGroup) {
                 if (!ENDED_GROUP.contains(auction.getStatus()))

@@ -97,53 +97,8 @@ public class AuctionSessionController {
                 }
                 break;
 
-
-            case CANCELLED_BY_ADMIN:
-                statusBadge.setText("ĐÃ KẾT THÚC");
-                setStatusBadgeClass("sf-status-cancelled");
-                gia.setText("Giá khởi điểm:");
-                lbPrice.setText(String.format("%,.0f VND", auction.getInitPrice()));
-                if (nguoidandau != null) nguoidandau.setText("Lý do:");
-                lbWinner.setText("Quản trị viên hủy phiên");
-                if (actionButton != null) {
-                    actionButton.setDisable(true);
-                    actionButton.setText("ĐÃ KẾT THÚC");
-                    setActionButtonClass(actionButton, "sf-auction-action-neutral");
                 }
-                break;
-
-            case CANCELLED:
-                if (auction.getWinnerName() == null) {
-                    statusBadge.setText("ĐÃ KẾT THÚC");
-                    setStatusBadgeClass("sf-status-cancelled");
-                    lbPrice.setText(String.format("%,.0f VND", auction.getInitPrice()));
-                    if (nguoidandau != null) nguoidandau.setText("Lý do:");
-                    lbCategory.setText("" + (auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
-                    if (lbWinner != null) lbWinner.setText("Không có người tham gia đấu giá");
-                    if (actionButton != null) {
-                        actionButton.setDisable(true);
-                        actionButton.setText("ĐÃ KẾT THÚC");
-                        setActionButtonClass(actionButton, "sf-auction-action-neutral");
-                    }
-                    break;
-                }else{
-                    statusBadge.setText("ĐÃ KẾT THÚC");
-                    setStatusBadgeClass("sf-status-ended");
-                    lbPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));
-                    lbCategory.setText("" + (auction.getItem().getCategory() != null ? auction.getItem().getCategory() : "Khác"));
-                    if (lbWinner != null) lbWinner.setText(auction.getWinnerName());
-                    if (actionButton != null) {
-                        actionButton.setDisable(true);
-                        actionButton.setText("ĐÃ KẾT THÚC");
-                        setActionButtonClass(actionButton, "sf-auction-action-neutral");
-                    }
-                    break;
-                }
-
-
-
         }
-    }
 
     private void setActionButtonClass(Button button, String styleClass) {
         if (button == null) return;
