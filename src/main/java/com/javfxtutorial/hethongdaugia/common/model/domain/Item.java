@@ -21,21 +21,6 @@ public class Item implements Serializable {
     }
 
     public Item(
-            int itemId,
-            int sellerId,
-            String name,
-            String description,
-            String image,
-            String sellerName) {
-        this.sellerId = sellerId;
-        this.itemId = itemId;
-        this.name = name;
-        this.description = description;
-        this.image = image;
-        this.sellerName = sellerName;
-    }
-
-    public Item(
             String sellerName,
             int sellerId,
             int itemId,

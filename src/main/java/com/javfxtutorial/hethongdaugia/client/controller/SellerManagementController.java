@@ -371,7 +371,7 @@ public class SellerManagementController implements ResponseListener {
         categoryComboBox.setValue(null);
         Image.setImage(null);
         productList.getSelectionModel().clearSelection();
-        image = "";
+        image = "/9j/4gHYSUNDX1BST0ZJTEUAAQEAAAHIAAAAAAQwAABtbnRyUkdCIFhZWiAH4AABAAEAAAAAAABhY3NwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAA9tYAAQAAAADTLQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAlkZXNjAAAA8AAAACRyWFlaAAABFAAAABRnWFlaAAABKAAAABRiWFlaAAABPAAAABR3dHB0AAABUAAAABRyVFJDAAABZAAAAChnVFJDAAABZAAAAChiVFJDAAABZAAAAChjcHJ0AAABjAAAADxtbHVjAAAAAAAAAAEAAAAMZW5VUwAAAAgAAAAcAHMAUgBHAEI=";
         hideVbox(artFields); hideVbox(vehicleFields); hideVbox(electronicsFields);
         artTitleField.clear(); artistField.clear(); yearCreatedField.clear();
         licensePlateField.clear(); vehicleYearField.clear(); brandVehicleField.clear(); colorField.clear();
@@ -395,6 +395,7 @@ public class SellerManagementController implements ResponseListener {
     }
 
     public Auction getInfo() throws Exception {
+        //Các thông tin cơ bản của phiên đấu giá
         String rawPrice2 = priceField.getText().replaceAll("[^0-9.]", "");
         if (rawPrice2.isEmpty()) { showAlert("Lỗi", "Vui lòng nhập giá khởi điểm."); return null; }
         BigDecimal initPrice = new BigDecimal(rawPrice2);
@@ -425,48 +426,27 @@ public class SellerManagementController implements ResponseListener {
             throw new InvalidInputException("startTime", String.valueOf(tGianBD), "Thời gian bắt đầu phải sau thời gian hiện tại");
         }
 
-        int sellerId = ClientModel.getInstance().getCurrentUser().getId();
+        //Lấy thông tin Item cơ bản
+        int sellerId      = ClientModel.getInstance().getCurrentUser().getId();
+        String sellerName = ClientModel.getInstance().getCurrentUser().getName();
         int itemId   = (selectedAuction == null) ? 0 : selectedAuction.getItem().getItemId();
-
+        String name = nameField.getText();
+        String description = descriptionField.getText();
         String category = categoryComboBox.getValue();
         if (category == null) { showAlert("Lỗi", "Vui lòng chọn danh mục sản phẩm!", "Wait.gif"); return null; }
 
+
+        Item baseItem = new Item( sellerName, sellerId, itemId, name, description, image, ItemCategory.valueOf(category));
         ItemFactory factory = switch (category) {
-            case "ART"         -> new ArtFactory();
-            case "VEHICLE"     -> new VehicleFactory();
-            case "ELECTRONICS" -> new ElectronicsFactory();
-            default            -> new OtherItemFactory();
+            case "ART"         -> new ArtFactory( baseItem, artTitleField, artistField, yearCreatedField);
+            case "VEHICLE"     -> new VehicleFactory( baseItem, licensePlateField, vehicleYearField, brandVehicleField, colorField);
+            case "ELECTRONICS" -> new ElectronicsFactory( baseItem, brandElecField, modelField);
+            default            -> new OtherItemFactory(baseItem);
         };
-        Item item = factory.createItem(collectFormData());
-        item.setItemId(itemId);
+        Item item = factory.createItemFromForm();
         return new Auction(item, sellerId, initPrice, stepPrice, tGianBD, tGianKT, AuctionStatus.NOT_START);
     }
 
-    private Map<String, String> collectFormData() {
-        Map<String, String> data = new HashMap<>();
-        int sellerId      = ClientModel.getInstance().getCurrentUser().getId();
-        String sellerName = ClientModel.getInstance().getCurrentUser().getName();
-        data.put("sellerId",   String.valueOf(sellerId));
-        data.put("sellerName", sellerName);
-        data.put("name",        nameField.getText().trim());
-        data.put("description", descriptionField.getText().trim());
-        data.put("image",       this.image);
-        String category = categoryComboBox.getValue();
-        if ("ART".equals(category)) {
-            data.put("title",       artTitleField.getText().trim());
-            data.put("artist",      artistField.getText().trim());
-            data.put("yearCreated", yearCreatedField.getText().trim());
-        } else if ("ELECTRONICS".equals(category)) {
-            data.put("brand", brandElecField.getText().trim());
-            data.put("model", modelField.getText().trim());
-        } else if ("VEHICLE".equals(category)) {
-            data.put("brand",        brandVehicleField.getText().trim());
-            data.put("licensePlate", licensePlateField.getText().trim());
-            data.put("year",         vehicleYearField.getText().trim());
-            data.put("color",        colorField.getText().trim());
-        }
-        return data;
-    }
 
     // ── Network actions ───────────────────────────────────────────────────────
 
@@ -640,8 +620,9 @@ public class SellerManagementController implements ResponseListener {
     // ── Detail form population ────────────────────────────────────────────────
 
     public void hienThiChiTietSanPham(Auction auction) {
-        nameField.setText(auction.getItem().getName());
-        descriptionField.setText(auction.getItem().getDescription());
+        Item item = auction.getItem();
+        nameField.setText(item.getName());
+        descriptionField.setText(item.getDescription());
         priceField.setText(String.valueOf(auction.getCurrentPrice()));
         tfstepPrice.setText(String.valueOf(auction.getStepPrice()));
         saveButton.setText("Sửa");
@@ -659,31 +640,25 @@ public class SellerManagementController implements ResponseListener {
             endMinuteSpinner.getValueFactory().setValue(end.getMinute());
         }
 
-        Item item = auction.getItem();
         String base64 = item.getImage();
         if (base64 != null && !base64.isEmpty()) {
             byte[] imgBytes = Base64.getDecoder().decode(base64);
             Image.setImage(new Image(new ByteArrayInputStream(imgBytes)));
         }
-
         ItemCategory cate = item.getCategory();
         categoryComboBox.getSelectionModel().select(String.valueOf(cate));
         showCategoryFields(String.valueOf(cate));
-        populateCategoryFields(item, cate);
+
+
+        ItemFactory factory = switch (cate) {
+            case ItemCategory.ART         -> new ArtFactory( item, artTitleField, artistField, yearCreatedField);
+            case ItemCategory.VEHICLE     -> new VehicleFactory( item, licensePlateField, vehicleYearField, brandVehicleField, colorField);
+            case ItemCategory.ELECTRONICS -> new ElectronicsFactory( item, brandElecField, modelField);
+            default            -> new OtherItemFactory(item);
+        };
+        factory.showData();
     }
 
-    private void populateCategoryFields(Item item, ItemCategory cate) {
-        if (cate == ItemCategory.ELECTRONICS) {
-            if (item instanceof Electronics e) { brandElecField.setText(e.getBrand()); modelField.setText(e.getModel()); }
-            else { brandElecField.clear(); modelField.clear(); }
-        } else if (cate == ItemCategory.ART) {
-            if (item instanceof Art a) { artTitleField.setText(a.getTitle()); artistField.setText(a.getArtist()); yearCreatedField.setText(String.valueOf(a.getYearCreated())); }
-            else { artTitleField.clear(); artistField.clear(); yearCreatedField.clear(); }
-        } else if (cate == ItemCategory.VEHICLE) {
-            if (item instanceof Vehicle v) { licensePlateField.setText(v.getLicensePlate()); vehicleYearField.setText(String.valueOf(v.getYear())); brandVehicleField.setText(v.getBrand()); colorField.setText(v.getColor()); }
-            else { licensePlateField.clear(); vehicleYearField.clear(); brandVehicleField.clear(); colorField.clear(); }
-        }
-    }
 
     // ── Filter ────────────────────────────────────────────────────────────────
 
