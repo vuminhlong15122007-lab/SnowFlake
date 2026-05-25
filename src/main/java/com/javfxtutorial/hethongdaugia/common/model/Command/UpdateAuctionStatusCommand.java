@@ -8,6 +8,7 @@ import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
+import com.javfxtutorial.hethongdaugia.server.dao.NotificationDAO;
 import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import org.slf4j.Logger;
@@ -36,13 +37,9 @@ public class UpdateAuctionStatusCommand extends Command {
 
                 // Gửi notification về seller tương ứng với từng loại hủy
                 if (status == AuctionStatus.CANCELLED || status == AuctionStatus.CANCELLED_BY_ADMIN) {
-                    String productName = (auction.getItem() != null)
-                            ? auction.getItem().getName()
-                            : String.valueOf(auction.getAuctionId());
+                    String productName = (auction.getItem() != null) ? auction.getItem().getName() : String.valueOf(auction.getAuctionId());
 
-                    SellerNotification.Type notifType = (status == AuctionStatus.CANCELLED_BY_ADMIN)
-                            ? SellerNotification.Type.CANCELLED_BY_ADMIN
-                            : SellerNotification.Type.CANCELLED;
+                    SellerNotification.Type notifType = (status == AuctionStatus.CANCELLED_BY_ADMIN) ? SellerNotification.Type.CANCELLED_BY_ADMIN : SellerNotification.Type.CANCELLED;
 
                     SellerNotification notif = new SellerNotification(
                             auction.getAuctionId(),
@@ -51,6 +48,8 @@ public class UpdateAuctionStatusCommand extends Command {
                             null,
                             null
                     );
+                    // Lưu vào DB để seller load lại sau khi tắt/mở app
+                    NotificationDAO.getInstance().insertOrReplace(notif, auction.getSellerId());
                     Response notifResponse = new Response(true, "ADMIN_CANCELLED_AUCTION", notif, this);
                     ClientHandler.broadcastToSeller(auction.getSellerId(), notifResponse);
                     ClientHandler.broadcastExcept(auction.getSellerId(),

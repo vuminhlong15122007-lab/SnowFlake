@@ -7,6 +7,7 @@ import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
+import com.javfxtutorial.hethongdaugia.server.dao.NotificationDAO;
 import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ public class DeleteAuctionCommand extends Command {
                 if (result1 <= 0) {
                     return new Response(false, "Không thể xóa phiên đấu giá", null, this);
                 }
-        
+
                 String productName = (auction.getItem() != null) ? auction.getItem().getName() : String.valueOf(auction.getAuctionId());
                 SellerNotification notif = new SellerNotification(
                         auction.getAuctionId(),
@@ -46,6 +47,8 @@ public class DeleteAuctionCommand extends Command {
                         null
                 );
                 Response notifResponse = new Response(true, "ADMIN_DELETED_PRODUCT", notif, this);
+                // Lưu vào DB (auction đã xóa nên dùng auctionId làm key tham chiếu)
+                NotificationDAO.getInstance().insertOrReplace(notif, auction.getSellerId());
                 ClientHandler.broadcastToSeller(auction.getSellerId(), notifResponse);
 
                 Response rp = new Response(true, "xóa phiên đấu giá thành công", null, this);
