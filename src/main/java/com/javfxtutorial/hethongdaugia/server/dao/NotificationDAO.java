@@ -47,8 +47,8 @@ public class NotificationDAO {
         int result = 0;
 
         try (Connection connection = JDBCUtil.getConnection();
-                PreparedStatement pst =
-                        connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pst =
+                     connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             LocalDateTime now = LocalDateTime.now();
             LocalDateTime expires = now.plusDays(2);
@@ -83,7 +83,7 @@ public class NotificationDAO {
         int result = 0;
 
         try (Connection connection = JDBCUtil.getConnection();
-                PreparedStatement pst = connection.prepareStatement(sql)) {
+             PreparedStatement pst = connection.prepareStatement(sql)) {
 
             pst.setInt(1, notificationId);
             result = pst.executeUpdate();
@@ -105,7 +105,7 @@ public class NotificationDAO {
                         + " WHERE auction_id = ? AND seller_id = ? LIMIT 1";
 
         try (Connection connection = JDBCUtil.getConnection();
-                PreparedStatement pst = connection.prepareStatement(sql)) {
+             PreparedStatement pst = connection.prepareStatement(sql)) {
 
             pst.setInt(1, notification.getAuctionId());
             pst.setInt(2, sellerId);
@@ -152,12 +152,12 @@ public class NotificationDAO {
         List<SellerNotification> list = new ArrayList<>();
 
         try (Connection conn = JDBCUtil.getConnection();
-                PreparedStatement pst = conn.prepareStatement(sql)) {
+             PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setInt(1, sellerId);
 
             try (ResultSet rs =
-                    pst.executeQuery()) { // BUG FIX: bỏ executeUpdate, dùng executeQuery
+                         pst.executeQuery()) { // BUG FIX: bỏ executeUpdate, dùng executeQuery
                 while (rs.next()) {
                     SellerNotification n =
                             new SellerNotification(
@@ -181,16 +181,31 @@ public class NotificationDAO {
         return list;
     }
 
-    public int markAsRead(int notificationId) {
-        String sql = "UPDATE seller_notification SET is_read = 1 WHERE notification_id = ?";
+    public int deleteExpired() {
+        String sql = "DELETE FROM seller_notification WHERE is_read = 1 AND expires_at <= NOW()";
+        try (Connection conn = JDBCUtil.getConnection();
+             PreparedStatement pst = conn.prepareStatement(sql)) {
+            int deleted = pst.executeUpdate();
+            if (deleted > 0) {
+                log.info("Đã xóa {} notification đã đọc hết hạn", deleted);
+            }
+            return deleted;
+        } catch (SQLException | DatabaseConnectionException e) {
+            log.error("Lỗi deleteExpired: {}", e.getMessage(), e);
+            return 0;
+        }
+    }
+
+    public int markAsRead(int auctionId) {
+        String sql = "UPDATE seller_notification SET is_read = 1 WHERE auction_id = ?";
 
         try (Connection conn = JDBCUtil.getConnection();
-                PreparedStatement pst = conn.prepareStatement(sql)) {
+             PreparedStatement pst = conn.prepareStatement(sql)) {
 
-            pst.setInt(1, notificationId);
+            pst.setInt(1, auctionId);
             int result = pst.executeUpdate();
             if (result > 0) {
-                log.info("Đã đọc notification_id={}, rows={}", notificationId, result);
+                log.info("Đã đọc auction_id={}, rows={}", auctionId, result);
             }
             return result;
 

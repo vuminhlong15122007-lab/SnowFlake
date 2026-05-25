@@ -32,8 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ParticipatedAuctionCellController implements ResponseListener {
-    private static final Logger log =
-            LoggerFactory.getLogger(ParticipatedAuctionCellController.class);
+    private static final Logger log = LoggerFactory.getLogger(ParticipatedAuctionCellController.class);
     @FXML private Button actionButton;
     @FXML private Label lbCategory;
     @FXML private Label lbCurrentPrice;
