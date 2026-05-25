@@ -230,18 +230,14 @@ public class SellerManagementController implements ResponseListener {
         cancelledSubtitle.setText(subtitle);
 
         if (showUserCard && auction != null) {
-            cancelledUserCard.setStyle(String.format(
-                    "-fx-background-color: linear-gradient(to right, %s-soft, -sf-surface);" +
-                            "-fx-background-radius: 14; -fx-border-color: %s;" +
-                            "-fx-border-radius: 14; -fx-border-width: 1.5; -fx-padding: 16;",
-                    cardColor, cardColor));
-            cancelledCardTitle.setStyle(
-                    "-fx-font-size: 13px; -fx-font-weight: bold; -fx-padding: 0 0 4 0;" +
-                            "-fx-text-fill: " + cardColor + ";");
+            cancelledUserCard.setStyle(String.format("-fx-background-color: linear-gradient(to right, %s-soft, -sf-surface);" +
+                            "-fx-background-radius: 14; -fx-border-color: %s;" + "-fx-border-radius: 14; -fx-border-width: 1.5; -fx-padding: 16;", cardColor, cardColor));
+            cancelledCardTitle.setStyle("-fx-font-size: 13px; -fx-font-weight: bold; -fx-padding: 0 0 4 0;" + "-fx-text-fill: " + cardColor + ";");
+
             cancelledCardTitle.setText(cardTitle);
-            cancelledUserName.setText(nullOrEmpty(auction.getWinnerName())  ? "—"        : auction.getWinnerName());
-            cancelledUserSdt.setText(nullOrEmpty(auction.getWinnerSdt())    ? "Chưa có"  : auction.getWinnerSdt());
-            cancelledUserEmail.setText(nullOrEmpty(auction.getWinnerEmail()) ? "Chưa có" : auction.getWinnerEmail());
+            cancelledUserName.setText(nullOrEmpty(auction.getWinnerName())  ? "Null"        : auction.getWinnerName());
+            cancelledUserSdt.setText(nullOrEmpty(auction.getWinnerSdt())    ? "Null"  : auction.getWinnerSdt());
+            cancelledUserEmail.setText(nullOrEmpty(auction.getWinnerEmail()) ? "Null" : auction.getWinnerEmail());
             cancelledUserCard.setVisible(true);
             cancelledUserCard.setManaged(true);
         } else {
@@ -253,11 +249,14 @@ public class SellerManagementController implements ResponseListener {
         cancelledInfoBox.setManaged(true);
     }
 
+    private static boolean nullOrEmpty(String s) {
+        return s == null || s.isBlank();
+    }
+
 
     /**
      * Luồng xử lý khi chọn phiên:
      *  CANCELLED (có winner)    → cancelledInfoBox với thông tin người vi phạm
-     *  CANCELLED (không winner) → cancelledInfoBox không có user card
      *  CANCELLED_BY_ADMIN       → cancelledInfoBox không có user card
      *  CLOSED có winner         → winnerInfoBox (chờ thanh toán)
      *  CLOSED không winner      → cancelledInfoBox "không ai tham gia"
@@ -372,6 +371,20 @@ public class SellerManagementController implements ResponseListener {
         String pName = auction.getItem() != null ? auction.getItem().getName() : String.valueOf(auction.getAuctionId());
         String wName = !nullOrEmpty(auction.getWinnerName()) ? auction.getWinnerName() : "N/A";
         addOrReplaceNotification(new SellerNotification(auction.getAuctionId(), type, pName, wName, auction.getWinningPrice()));
+    }
+
+    private void addOrReplaceNotification(SellerNotification notif) {
+        SellerNotification existing = notifications.stream().filter(n -> n.getAuctionId() == notif.getAuctionId()).findFirst().orElse(null);
+
+        if (existing == null) {
+            if (ClientModel.getInstance().isNotificationRead(notif.getNotificationId())) notif.setRead(true);
+            notifications.add(0, notif);
+        } else if (priority(notif.getType()) > priority(existing.getType())) {
+            notif.setRead(false);
+            ClientModel.getInstance().markNotificationUnread(notif.getAuctionId());
+            notifications.remove(existing);
+            notifications.add(0, notif);
+        }
     }
 
 
@@ -635,9 +648,7 @@ public class SellerManagementController implements ResponseListener {
         showWinnerPanel();
     }
 
-    private static boolean nullOrEmpty(String s) {
-        return s == null || s.isBlank();
-    }
+
 
     @FXML
     public void onBackToForm() {
@@ -721,21 +732,7 @@ public class SellerManagementController implements ResponseListener {
 
 
 
-    private void addOrReplaceNotification(SellerNotification notif) {
-        SellerNotification existing = notifications.stream()
-                .filter(n -> n.getAuctionId() == notif.getAuctionId())
-                .findFirst().orElse(null);
 
-        if (existing == null) {
-            if (ClientModel.getInstance().isNotificationRead(notif.getNotificationId())) notif.setRead(true);
-            notifications.add(0, notif);
-        } else if (priority(notif.getType()) > priority(existing.getType())) {
-            notif.setRead(false);
-            ClientModel.getInstance().markNotificationUnread(notif.getAuctionId());
-            notifications.remove(existing);
-            notifications.add(0, notif);
-        }
-    }
 
     private static int priority(SellerNotification.Type type) {
         return switch (type) {

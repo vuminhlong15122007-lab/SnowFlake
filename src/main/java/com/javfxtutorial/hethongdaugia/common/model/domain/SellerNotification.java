@@ -49,13 +49,10 @@ public class SellerNotification implements Serializable {
     public void setType(Type type) { this.type = type; }
 
     public String getProductName() { return productName; }
-    public void setProductName(String v) { productName = v; }
 
     public String getWinnerName() { return winnerName; }
-    public void setWinnerName(String v) { winnerName = v; }
 
     public BigDecimal getWinningPrice() { return winningPrice; }
-    public void setWinningPrice(BigDecimal v) { winningPrice = v; }
 
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime v) { createdAt = v; }

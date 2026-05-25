@@ -20,10 +20,10 @@ public class ServerApp {
 
     public static void main(String[] args) {
         GlobalExceptionHandler.register();
-
-        // Dọn notification hết hạn mỗi 12 tiếng
-        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-        scheduler.scheduleAtFixedRate(() -> NotificationDAO.getInstance().deleteExpired(), 0, 12, TimeUnit.HOURS);
+//
+//        // Dọn notification hết hạn mỗi 12 tiếng
+//        ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
+//        scheduler.scheduleAtFixedRate(() -> NotificationDAO.getInstance().deleteExpired(), 0, 12, TimeUnit.HOURS);
 
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             log.info("Server đã khởi động, đang lắng nghe trên cổng {}", PORT);
