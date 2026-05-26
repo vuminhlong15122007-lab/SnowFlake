@@ -11,6 +11,7 @@ import com.javfxtutorial.hethongdaugia.common.Exception.bid.SelfBidException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DuplicateKeyException;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.QueryExecutionException;
+import com.javfxtutorial.hethongdaugia.common.model.Command.AutoBidCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.domain.AntiSnipeExtender;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
@@ -41,6 +42,7 @@ public class AuctionManager {
     private static final long ANTI_SNIPE_X_SECONDS = 60;
     private static final long ANTI_SNIPE_Y_SECONDS = 60;
     private static final BigDecimal MAX_BID_AMOUNT = new BigDecimal("999999999999.99");
+    private static final String AUTO_BID_TIE_ALERT = "AUTO_BID_TIE_ALERT";
 
     private final AntiSnipeExtender antiSnipeExtender =
             new AntiSnipeExtender(ANTI_SNIPE_X_SECONDS, ANTI_SNIPE_Y_SECONDS);
@@ -360,6 +362,7 @@ public class AuctionManager {
 
             if (winnerBot.getMaxPrice().compareTo(secondMax) == 0) {
                 // Hai bot cùng maxBid: người đăng ký trước thắng ở đúng maxBid
+                notifySameMaxAutoBidUsers(eligibleBots, winnerBot, winnerBot.getMaxPrice(), auction);
                 finalAmount = winnerBot.getMaxPrice();
             } else {
                 // Bot thắng chỉ cần hơn bot thứ hai một bước giá,
@@ -415,6 +418,49 @@ public class AuctionManager {
 
         persistBidTransaction(historyBid);
         notifySubscribers(auction.getAuctionId(), historyBid, null);
+    }
+
+    private void notifySameMaxAutoBidUsers(
+            List<AutoBidConfig> eligibleBots,
+            AutoBidConfig winnerBot,
+            BigDecimal tiedMaxPrice,
+            Auction auction) {
+        List<AutoBidConfig> tiedBots =
+                eligibleBots.stream()
+                        .filter(bot -> bot.getMaxPrice().compareTo(tiedMaxPrice) == 0)
+                        .toList();
+        if (tiedBots.size() < 2) {
+            return;
+        }
+
+        String formattedPrice = String.format("%,.0f VND", tiedMaxPrice);
+        String reason = tieBreakReason(winnerBot, auction);
+        for (AutoBidConfig bot : tiedBots) {
+            boolean winner = bot.getUserId() == winnerBot.getUserId();
+            String message =
+                    winner
+                            ? "AutoBid của bạn bằng với người khác ở mức "
+                                    + formattedPrice
+                                    + ". Bạn được ưu tiên vì "
+                                    + reason
+                                    + "."
+                            : "AutoBid của bạn bằng với người khác ở mức "
+                                    + formattedPrice
+                                    + ". Hệ thống ưu tiên người "
+                                    + reason
+                                    + ".";
+            ClientHandler.broadcastToUserId(
+                    new Response(true, AUTO_BID_TIE_ALERT, message, new AutoBidCommand()),
+                    bot.getUserId());
+        }
+    }
+
+    private String tieBreakReason(AutoBidConfig winnerBot, Auction auction) {
+        if (winnerBot.getUserName() != null
+                && winnerBot.getUserName().equals(auction.getWinnerName())) {
+            return "đang dẫn đầu";
+        }
+        return "đăng ký AutoBid sớm hơn";
     }
 
     public List<Auction> getParticipatedAuctionsByBidder(int userId)

@@ -109,11 +109,16 @@ public class ClientHandler extends Thread implements BidListener {
             ch.sendResponse(rp);
         }
     }
-    public static void broadcastToUserId(Response rp, int userId){
+    public static void broadcastToUserId(Response rp, int userId) {
+        boolean sent = false;
         for (ClientHandler ch : allClients) {
-            if (ch.currentUser.getId() == userId) {
-              ch.sendResponse(rp);
+            if (ch.currentUser != null && ch.currentUser.getId() == userId) {
+                ch.sendResponse(rp);
+                sent = true;
             }
+        }
+        if (!sent) {
+            log.warn("User id={} khong online, bo qua thong bao", userId);
         }
     }
 

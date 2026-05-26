@@ -80,6 +80,8 @@ public class LiveAuctionController implements ResponseListener {
         running = false;
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.unregister(PlaceBidCommand.class, this);
+        networkManager.unregister(AutoBidCommand.class, this);
+        networkManager.unregister(UpdateAuctionStatusCommand.class, this);
         if (isAdmin) {
             changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_ProductManagement.fxml");
         } else {
@@ -92,6 +94,8 @@ public class LiveAuctionController implements ResponseListener {
         timer.stop();
         running = false;
         networkManager.unregister(PlaceBidCommand.class, this);
+        networkManager.unregister(AutoBidCommand.class, this);
+        networkManager.unregister(UpdateAuctionStatusCommand.class, this);
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionInformation.fxml");
     }
 
@@ -177,6 +181,7 @@ public class LiveAuctionController implements ResponseListener {
         // register để nhận command của người khác nữa
         NetworkManager networkManager = NetworkManager.getInstance();
         networkManager.register(PlaceBidCommand.class, this);
+        networkManager.register(AutoBidCommand.class, this);
         networkManager.register(UpdateAuctionStatusCommand.class, this);
         // khi vào auction thì register
         currentAuction = ClientModel.getInstance().getCurrentAuction();
@@ -472,9 +477,11 @@ public class LiveAuctionController implements ResponseListener {
             }
         }
         if (rp.getCommand().getClass() == AutoBidCommand.class) {
-            NetworkManager networkManager = NetworkManager.getInstance();
-            networkManager.unregister(AutoBidCommand.class, this);
-            Platform.runLater(() -> UIUtils.showAlert("Hệ thống AutoBid", rp.getMessage()));
+            String message =
+                    "AUTO_BID_TIE_ALERT".equals(rp.getMessage())
+                            ? String.valueOf(rp.getPayLoad())
+                            : rp.getMessage();
+            Platform.runLater(() -> UIUtils.showAlert("Hệ thống AutoBid", message));
         }
 
         if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
