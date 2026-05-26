@@ -1,5 +1,7 @@
 package com.javfxtutorial.hethongdaugia.common.network;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
+
 import java.io.Serializable;
 import java.util.HashMap;
 
@@ -32,5 +34,5 @@ public abstract class Command implements Serializable {
         this.requestId = requestId;
     }
 
-    public abstract Response handle();
+    public abstract Response handle() throws DataException;
 }

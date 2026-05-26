@@ -16,7 +16,7 @@ public class GetSellerNotificationsCommand extends Command {
         try {
             int sellerId = (int) this.getData("sellerId");
             List<SellerNotification> notifications = NotificationDAO.getInstance().findBySellerId(sellerId);
-            return new Response(true, "Thành công", (java.io.Serializable) notifications, this);
+            return new Response(true, "Thành công",  notifications, this);
         } catch (ClassCastException | NullPointerException e) {
             return new Response(false, "Dữ liệu đầu vào không hợp lệ", null, this);
         } catch (Exception e) {

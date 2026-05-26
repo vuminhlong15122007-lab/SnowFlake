@@ -23,54 +23,45 @@ public class UpdateAuctionStatusCommand extends Command {
     }
 
     @Override
-    public Response handle() {
-        try {
+    public Response handle() throws DataException {
             if (auction == null) {
                 return new Response(false, "Du lieu dau vao khong hop le", null, this);
             }
             int result1 = AuctionDAO.getInstance().update(auction);
             if (result1 > 0) {
                 AuctionStatus status = auction.getStatus();
-
-                // Cập nhật RAM trong AuctionManager cho mọi status
                 AuctionManager.getInstance().updateAuctionStatus(auction.getAuctionId(), status);
 
-                // Gửi notification về seller tương ứng với từng loại hủy
                 if (status == AuctionStatus.CANCELLED || status == AuctionStatus.CANCELLED_BY_ADMIN) {
-                    ClientHandler.broadcast(
-                        new Response(false, "ADMIN_CANCELLED_AUCTION", auction, this)
-                    );
-                    String productName = (auction.getItem() != null) ? auction.getItem().getName() : String.valueOf(auction.getAuctionId());
+                    String productName = (auction.getItem() != null)
+                            ? auction.getItem().getName()
+                            : String.valueOf(auction.getAuctionId());
 
-                    SellerNotification.Type notifType = (status == AuctionStatus.CANCELLED_BY_ADMIN) ? SellerNotification.Type.CANCELLED_BY_ADMIN : SellerNotification.Type.CANCELLED;
+                    SellerNotification.Type notifType = (status == AuctionStatus.CANCELLED_BY_ADMIN)
+                            ? SellerNotification.Type.CANCELLED_BY_ADMIN
+                            : SellerNotification.Type.CANCELLED;
 
                     SellerNotification notif = new SellerNotification(
-                            auction.getAuctionId(),
-                            notifType,
-                            productName,
-                            null,
-                            null
+                            auction.getAuctionId(), notifType, productName, null, null
                     );
-                    // Lưu vào DB để seller load lại sau khi tắt/mở app
-                    NotificationDAO.getInstance().insertOrReplace(notif, auction.getSellerId());
-                    Response notifResponse = new Response(true, "ADMIN_CANCELLED_AUCTION", notif, this);
 
-                    ClientHandler.broadcastToSeller(auction.getSellerId(), notifResponse);
+                    try {
+                        NotificationDAO.getInstance().insertOrReplace(notif, auction.getSellerId());
+                        ClientHandler.broadcastToSeller(auction.getSellerId(),
+                                new Response(true, "ADMIN_CANCELLED_AUCTION", notif, this));
+                    } catch (Exception e) {
+                        log.warn("Gửi notification thất bại, bỏ qua: {}", e.getMessage());
+                    }
+
+                    ClientHandler.broadcast(new Response(false, "ADMIN_CANCELLED_AUCTION", auction, this));
                 }
+
                 Response rp = new Response(true, "Cập nhật status thành công", auction, this);
                 ClientHandler.broadcast(rp);
-                return rp;
+                return rp; // ← thêm return ở đây
             }
+
             return new Response(false, "Cập nhật status thất bại", null, this);
-        } catch (DataUpdateException e) {
-            log.error("Lỗi cập nhật trạng thái: {}", e.getMessage(), e);
-            return new Response(false, "Lỗi cập nhật: " + e.getMessage(), null, this);
-        } catch (DataException e) {
-            log.error("Lỗi dữ liệu khi cập nhật trạng thái: {}", e.getMessage(), e);
-            return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);
-        } catch (Exception e) {
-            log.error("Lỗi không xác định khi cập nhật trạng thái: {}", e.getMessage(), e);
-            return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);
-        }
+
     }
 }
