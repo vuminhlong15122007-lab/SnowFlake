@@ -119,12 +119,24 @@ public class AuctionManager {
         AuctionAlreadyEndedException, LowerThanCurrentBidException, SelfBidException,
         InsufficientIncrementException, DataException, BidAmountExceedsLimitException, AuctionCancelledException {
 
+        return placeBid(bid, senderThread, Collections.emptyList());
+    }
+
+    private boolean placeBid(
+            BidTransaction bid,
+            ClientHandler senderThread,
+            List<BidTransaction> pendingHistoryBids)
+        throws AuctionNotFoundException, AuctionNotStartedException,
+        AuctionAlreadyEndedException, LowerThanCurrentBidException, SelfBidException,
+        InsufficientIncrementException, DataException, BidAmountExceedsLimitException, AuctionCancelledException {
+
         if (bid == null || bid.getAmount() == null) {
             return false;
         }
         ReentrantLock lock = getAuctionLock(bid.getAuctionId());
         lock.lock();
         BidTransaction acceptedBid;
+        List<BidTransaction> acceptedHistoryBids;
         LocalDateTime endTimeNew;
         Auction auction;
         try {
@@ -192,6 +204,7 @@ public class AuctionManager {
 
             AuctionDAO.getInstance().update(auction);
             persistBidTransaction(bid);
+            acceptedHistoryBids = persistPendingHistoryBids(pendingHistoryBids);
 
             log.info("Đã lưu vào database");
             acceptedBid = bid;
@@ -202,6 +215,9 @@ public class AuctionManager {
         }
 
         // 6. Thông báo cho tất cả subscriber của auction này
+        for (BidTransaction historyBid : acceptedHistoryBids) {
+            notifySubscribers(historyBid.getAuctionId(), historyBid, null);
+        }
         notifySubscribers(acceptedBid.getAuctionId(), acceptedBid, senderThread);
         ClientHandler.broadcast(
                 new Response(true, "giá thay đổi", auction, new UpdateAuctionCommand(auction)));
@@ -352,6 +368,7 @@ public class AuctionManager {
         //        giá thắng = maxBid đó
 
         BigDecimal finalAmount;
+        BidTransaction pendingHistoryBid = null;
 
         if (eligibleBots.size() == 1) {
             if (winnerBot.getUserName().equals(auction.getWinnerName())) return;
@@ -379,7 +396,7 @@ public class AuctionManager {
             }
 
             if (winnerBot.getMaxPrice().compareTo(secondMax) != 0) {
-                persistAndNotifyAutoBidHistory(auction, secondBot, secondMax);
+                pendingHistoryBid = createAutoBidHistoryBid(auction, secondBot, secondMax);
             }
         }
 
@@ -391,7 +408,10 @@ public class AuctionManager {
         autoBid.setBidderName(winnerBot.getUserName());
 
         // Gọi lại placeBid — dùng sender = null vì là bot
-        this.placeBid(autoBid, null);
+        this.placeBid(
+                autoBid,
+                null,
+                pendingHistoryBid == null ? Collections.emptyList() : List.of(pendingHistoryBid));
     }
 
     private void persistBidTransaction(BidTransaction bid) throws DataException {
@@ -406,18 +426,36 @@ public class AuctionManager {
         }
     }
 
-    private void persistAndNotifyAutoBidHistory(
-            Auction auction, AutoBidConfig config, BigDecimal amount)
-            throws DataException {
+    private List<BidTransaction> persistPendingHistoryBids(List<BidTransaction> pendingHistoryBids) {
+        if (pendingHistoryBids == null || pendingHistoryBids.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        List<BidTransaction> persistedHistoryBids = new ArrayList<>();
+        for (BidTransaction historyBid : pendingHistoryBids) {
+            try {
+                persistBidTransaction(historyBid);
+                persistedHistoryBids.add(historyBid);
+            } catch (DataException e) {
+                log.warn(
+                        "Khong luu duoc bid phu AutoBid auctionId={}, userId={}",
+                        historyBid.getAuctionId(),
+                        historyBid.getBidderId(),
+                        e);
+            }
+        }
+        return persistedHistoryBids;
+    }
+
+    private BidTransaction createAutoBidHistoryBid(
+            Auction auction, AutoBidConfig config, BigDecimal amount) {
         BidTransaction historyBid = new BidTransaction();
         historyBid.setBidderId(config.getUserId());
         historyBid.setBidderName(config.getUserName());
         historyBid.setAuctionId(auction.getAuctionId());
         historyBid.setAmount(amount);
         historyBid.setTimestamp(LocalDateTime.now());
-
-        persistBidTransaction(historyBid);
-        notifySubscribers(auction.getAuctionId(), historyBid, null);
+        return historyBid;
     }
 
     private void notifySameMaxAutoBidUsers(
