@@ -52,7 +52,8 @@ public class UpdateAuctionStatusCommand extends Command {
                                 new Response(true, "ADMIN_CANCELLED_AUCTION", notif, this));
 
                     } catch (Exception e) {
-                        log.warn("Gửi notification thất bại, bỏ qua: {}", e.getMessage());}
+                        log.error("Lỗi lưu/gửi notification cho seller id={}, auctionId={}: {}",
+                                auction.getSellerId(), auction.getAuctionId(), e.getMessage(), e);}
 
                     return  new Response(true, "ADMIN_CANCELLED_AUCTION", notif, this);
 

@@ -25,7 +25,7 @@ public class GetParticipatedAuctionsByBidderCommand extends Command {
                         try {
                             AuctionManager.getInstance().refreshAuctionStatus(auction);
                         } catch (DataException e) {
-                            log.error("Chị Lan thêm lỗi cho t với");
+                            log.error("Lỗi refresh status auction id={}: {}", auction.getAuctionId(), e.getMessage(), e);
                         }
                     });
             return new Response(
