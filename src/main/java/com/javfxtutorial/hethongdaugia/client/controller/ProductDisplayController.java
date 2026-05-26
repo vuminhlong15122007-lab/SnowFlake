@@ -113,11 +113,15 @@ public class ProductDisplayController implements ResponseListener {
         updateUI(auction.getStatus());
 
         if (timer == null) return;
+
         timer.setOnFinished(() -> {
+
             if (auction.getStatus() == AuctionStatus.NOT_START) { // hết countdown running → chuyển CLOSED
                 auction.setStatus(AuctionStatus.RUNNING);
                 Platform.runLater(
                         () -> {
+                            updateUI(auction.getStatus());
+                            if (timer != null) timer.start();
                             try {
                                 Command cmd = new UpdateAuctionStatusCommand(auction);
                                 NetworkManager.getInstance().sendRequest(cmd, this);
@@ -133,6 +137,7 @@ public class ProductDisplayController implements ResponseListener {
                 auction.setStatus(AuctionStatus.CLOSED);
                 Platform.runLater(
                         () -> {
+                            updateUI(auction.getStatus());
                             try {
                                 Command cmd = new UpdateAuctionStatusCommand(auction);
                                 NetworkManager.getInstance().sendRequest(cmd, this);
@@ -151,10 +156,20 @@ public class ProductDisplayController implements ResponseListener {
 
 
     private void updateUI(AuctionStatus status) {
+        // Dừng timer cũ trước khi tạo cái mới
+        if (timer != null) {
+            timer.stop();
+            timer = null;
+        }
         switch (status) {
             case RUNNING -> {
-
+                UI01.setText("THỜI GIAN CÒN LẠI");
+                UI01.setStyle("-fx-text-fill: -sf-success; -fx-alignment: CENTER;");  // ← đổi màu xanh
+                UI02.setStyle("-fx-background-color: -sf-surface; -fx-background-radius: 10; "
+                        + "-fx-border-radius: 10; -fx-border-color: -sf-success; -fx-alignment: CENTER;"); // ← viền xanh
+                lbtimeLeft.setStyle("-fx-text-fill: -sf-success;");
                 ThamGiaDauGiaBtn.setText("Tham gia");
+                ThamGiaDauGiaBtn.setStyle("");
                 timer = new TimeLeft(lbtimeLeft, auction.getEndingTime());
 
 
@@ -165,6 +180,7 @@ public class ProductDisplayController implements ResponseListener {
                         + "-fx-border-radius: 10; -fx-border-color: -sf-warning; -fx-alignment: CENTER;");
                 lbtimeLeft.setStyle("-fx-text-fill: -sf-warning;");
                 ThamGiaDauGiaBtn.setText("Chưa thể tham gia");
+                UI01.setText("THỜI GIAN CÒN LẠI ĐỂ BẮT ĐẦU");
                 ThamGiaDauGiaBtn.setStyle("-fx-background-color: linear-gradient(to right, -sf-danger, -sf-warning); "
                         + "-fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
                 timer = new TimeLeft(lbtimeLeft, auction.getStartingTime());
