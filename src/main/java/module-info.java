@@ -22,8 +22,6 @@ module com.javfxtutorial.hethongdaugia {
 
 
     exports com.javfxtutorial.hethongdaugia.client;
-
-    opens com.javfxtutorial.hethongdaugia.client.Util to
-            javafx.fxml;
+    opens com.javfxtutorial.hethongdaugia.client.Util to javafx.base, javafx.fxml;
 
 }

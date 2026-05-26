@@ -9,8 +9,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class MainApplication extends Application {
+    static Stage stage;
     @Override
     public void start(Stage stage) throws IOException {
+        MainApp.stage = stage;
         GlobalExceptionHandler.register();
         GlobalExceptionHandler.registerForJavaFX();
         FXMLLoader fxmlLoader =

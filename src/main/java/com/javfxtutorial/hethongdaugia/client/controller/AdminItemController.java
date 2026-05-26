@@ -3,15 +3,13 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
-import com.javfxtutorial.hethongdaugia.common.model.domain.AuctionModificationManager;
+import com.javfxtutorial.hethongdaugia.client.Util.AuctionModificationManager;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
-import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;

@@ -5,6 +5,7 @@ import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.manager.UserManager;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,7 +22,9 @@ public class DeleteUserCommand extends Command {
 
             boolean success = UserManager.getInstance().deleteUser(userId, username, email, phone);
             if (success) {
-                return new Response(true, "Xóa user thành công", null, this);
+                Response rp = new Response(true, "Xóa user thành công", userId, this);
+                ClientHandler.broadcastToUserId(rp, userId);
+                return rp;
             }
             return new Response(false, "Xóa thất bại", null, this);
         } catch (ClassCastException | NullPointerException e) {

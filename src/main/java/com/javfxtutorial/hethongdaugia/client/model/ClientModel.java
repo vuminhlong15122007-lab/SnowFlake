@@ -1,7 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.model;
 
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.domain.AuctionModificationManager;
 import com.javfxtutorial.hethongdaugia.common.model.domain.SellerNotification;
 import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import java.util.HashSet;
