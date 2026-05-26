@@ -37,6 +37,9 @@ public class UpdateAuctionStatusCommand extends Command {
 
                 // Gửi notification về seller tương ứng với từng loại hủy
                 if (status == AuctionStatus.CANCELLED || status == AuctionStatus.CANCELLED_BY_ADMIN) {
+                    ClientHandler.broadcast(
+                        new Response(false, "ADMIN_CANCELLED_AUCTION", auction, this)
+                    );
                     String productName = (auction.getItem() != null) ? auction.getItem().getName() : String.valueOf(auction.getAuctionId());
 
                     SellerNotification.Type notifType = (status == AuctionStatus.CANCELLED_BY_ADMIN) ? SellerNotification.Type.CANCELLED_BY_ADMIN : SellerNotification.Type.CANCELLED;
@@ -51,9 +54,7 @@ public class UpdateAuctionStatusCommand extends Command {
                     // Lưu vào DB để seller load lại sau khi tắt/mở app
                     NotificationDAO.getInstance().insertOrReplace(notif, auction.getSellerId());
                     Response notifResponse = new Response(true, "ADMIN_CANCELLED_AUCTION", notif, this);
-                    ClientHandler.broadcast(
-                        new Response(false, "ADMIN_CANCELLED_AUCTION", auction, this)
-                    );
+
                     ClientHandler.broadcastToSeller(auction.getSellerId(), notifResponse);
                 }
                 Response rp = new Response(true, "Cập nhật status thành công", auction, this);
