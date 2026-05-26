@@ -8,8 +8,10 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class MainTestApp extends Application {
+    static Stage stage;
     @Override
     public void start(Stage stage) throws IOException {
+        MainApp.stage = stage;
         FXMLLoader fxmlLoader =
                 new FXMLLoader(
                         MainTestApp.class.getResource(

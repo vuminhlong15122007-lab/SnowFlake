@@ -3,15 +3,13 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
-import com.javfxtutorial.hethongdaugia.common.model.domain.AuctionModificationManager;
+import com.javfxtutorial.hethongdaugia.client.Util.AuctionModificationManager;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
-import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
@@ -212,14 +210,25 @@ public class AdminItemController implements ResponseListener {
   public void onResponse(Response rp) {
     // ── Cập nhật trạng thái phiên (hủy) ──
     if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
-            if ("AUCTION_CANCELLED".equals(rp.getMessage())) return;
+        if ("ADMIN_CANCELLED_AUCTION".equals(rp.getMessage())) return;
 
       NetworkManager.getInstance().unregister(UpdateAuctionStatusCommand.class, this);
       Platform.runLater(() -> {
         if (rp.isSuccess()) {
                     showAlert("Thành công", "Đã hủy phiên đấu giá.", "FunnyCat.gif");
           try {
-            loadItemData();
+              Object payload = rp.getPayLoad();
+              if (!(payload instanceof Auction)) return;
+              Auction updated = (Auction) payload;;
+              if (updated == null) return;
+              Platform.runLater(() -> {
+                for (Auction a : observableList) {
+                  if (a.getAuctionId() == updated.getAuctionId()) {
+                    a.setStatus(updated.getStatus());
+                    break;
+                  }
+                }
+              });
           } catch (Exception e) {
             log.error("Không thể tải lại danh sách sản phẩm: {}", e.getMessage(), e);
           }

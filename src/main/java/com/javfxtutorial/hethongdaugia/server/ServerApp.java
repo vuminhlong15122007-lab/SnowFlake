@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.server;
 
+
 import com.javfxtutorial.hethongdaugia.server.handler.GlobalExceptionHandler;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 
@@ -16,6 +17,8 @@ public class ServerApp {
 
     public static void main(String[] args) {
         GlobalExceptionHandler.register();
+
+
         try (ServerSocket serverSocket = new ServerSocket(PORT)) {
             log.info("Server đã khởi động, đang lắng nghe trên cổng {}", PORT);
             while (true) {

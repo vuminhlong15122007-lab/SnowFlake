@@ -3,13 +3,14 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
-import com.javfxtutorial.hethongdaugia.common.model.domain.AuctionModificationManager;
+import com.javfxtutorial.hethongdaugia.client.Util.AuctionModificationManager;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.Command.AddAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
@@ -61,6 +62,7 @@ public class AuctionListController implements ResponseListener {
     @FXML
     public void initialize() throws ConnectionFailedException {
         NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
+        NetworkManager.getInstance().register(AddAuctionCommand.class, this);
         observable = ClientModel.getInstance().getAllAuctions();
 
         VBox.setVgrow(featuredProductList, Priority.ALWAYS);
@@ -149,12 +151,12 @@ public class AuctionListController implements ResponseListener {
             }
 
             // 2. Lọc theo trạng thái
-          /** LOGIC LỌC
-          filterEndedGroup = true   →  bấm nút "Kết thúc"
-          currentStatus = null      →  bấm nút "Tất cả"
-          currentStatus = NOT_START →  bấm nút "Sắp diễn ra"
-          currentStatus = RUNNING   →  bấm nút "Đang diễn ra"
-           **/
+            /** LOGIC LỌC
+             filterEndedGroup = true   →  bấm nút "Kết thúc"
+             currentStatus = null      →  bấm nút "Tất cả"
+             currentStatus = NOT_START →  bấm nút "Sắp diễn ra"
+             currentStatus = RUNNING   →  bấm nút "Đang diễn ra"
+             **/
 
 
             if (filterEndedGroup) {
@@ -240,6 +242,11 @@ public class AuctionListController implements ResponseListener {
 
     @Override
     public void onResponse(Response rp) {
+        if (rp.getCommand().getClass() == AddAuctionCommand.class) {
+            if (!rp.isSuccess() || !(rp.getPayLoad() instanceof Auction)) return;
+            Auction newAuction = (Auction) rp.getPayLoad();
+            Platform.runLater(() -> observable.add(0, newAuction));
+        }
         if (rp.getCommand().getClass() == GetAllAuctionsCommand.class) {
             Platform.runLater(() -> {
                 if (!rp.isSuccess()) {
@@ -252,7 +259,9 @@ public class AuctionListController implements ResponseListener {
             });
         }
         if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
-            Auction updated = (Auction) rp.getPayLoad();
+            Object payload = rp.getPayLoad();
+            if (!(payload instanceof Auction)) return;
+            Auction updated = (Auction) payload;;
             if (updated == null) return;
             Platform.runLater(() -> {
                 for (Auction a : observable) {

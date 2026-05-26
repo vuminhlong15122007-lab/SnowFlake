@@ -8,12 +8,16 @@ import com.javfxtutorial.hethongdaugia.client.Util.TimeLeft;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
+import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.domain.*;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
+import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -32,24 +36,42 @@ import org.slf4j.LoggerFactory;
 
 public class ProductDisplayController implements ResponseListener {
 
-    @FXML private Label EndingtimeLabel;
-    @FXML private Label ItemNameLabel;
-    @FXML private Label ItemPriceLabel;
-    @FXML private Label LbMotasp;
-    @FXML private Label StartTimeLabel;
-    @FXML private ImageView itemImageView;
-    @FXML private Label lbTenngban;
-    @FXML private Label lbtimeLeft;
-    @FXML private Label UI01;
-    @FXML private VBox UI02;
-    @FXML private Button ThamGiaDauGiaBtn;
-    @FXML private Label lbLoaisp;
-    @FXML private VBox artInfoBox, vehicleInfoBox, electronicsInfoBox;
-    @FXML private Label artTitleValue, artistValue, yearCreatedValue;
-    @FXML private Label licensePlateValue, vehicleYearValue, brandValue, colorValue;
-    @FXML private Label elecBrandValue, modelValue;
-    @FXML private Label initPriceLabel, stepPriceLabel;
-    @FXML private Label detailTitle;
+    @FXML
+    private Label EndingtimeLabel;
+    @FXML
+    private Label ItemNameLabel;
+    @FXML
+    private Label ItemPriceLabel;
+    @FXML
+    private Label LbMotasp;
+    @FXML
+    private Label StartTimeLabel;
+    @FXML
+    private ImageView itemImageView;
+    @FXML
+    private Label lbTenngban;
+    @FXML
+    private Label lbtimeLeft;
+    @FXML
+    private Label UI01;
+    @FXML
+    private VBox UI02;
+    @FXML
+    private Button ThamGiaDauGiaBtn;
+    @FXML
+    private Label lbLoaisp;
+    @FXML
+    private VBox artInfoBox, vehicleInfoBox, electronicsInfoBox;
+    @FXML
+    private Label artTitleValue, artistValue, yearCreatedValue;
+    @FXML
+    private Label licensePlateValue, vehicleYearValue, brandValue, colorValue;
+    @FXML
+    private Label elecBrandValue, modelValue;
+    @FXML
+    private Label initPriceLabel, stepPriceLabel;
+    @FXML
+    private Label detailTitle;
 
     private final Item item = ClientModel.getInstance().getCurrentAuction().getItem();
     private final Auction auction = ClientModel.getInstance().getCurrentAuction();
@@ -59,7 +81,6 @@ public class ProductDisplayController implements ResponseListener {
     private final NetworkManager networkManager = NetworkManager.getInstance();
     private TimeLeft timer;
     private ScheduledExecutorService statusRefreshScheduler;
-
 
 
     public void setData() {
@@ -81,70 +102,89 @@ public class ProductDisplayController implements ResponseListener {
     public void initialize() {
         setData();
         showCategoryInfo();
-        if (auction == null) return;
+        auction.statusProperty().addListener(((_, _, newVal) -> {
+            updateUI(newVal);
+        })); // thay đổi UI nếu có status mơid
 
         // Register lắng nghe bid mới CHỈ khi đang RUNNING — 1 lần duy nhất
         if (auction.getStatus() == AuctionStatus.RUNNING) {
             networkManager.register(PlaceBidCommand.class, this);
         }
+        updateUI(auction.getStatus());
 
-        setUpStatus(auction.getStatus());
+        if (timer == null) return;
 
-        // Cứ 30 giây hỏi server 1 lần để cập nhật status + giá
-        statusRefreshScheduler = Executors.newSingleThreadScheduledExecutor(r -> {
-            Thread t = new Thread(r, "product-display-status-refresh");
-            t.setDaemon(true);
-            return t;
-        });
-        statusRefreshScheduler.scheduleAtFixedRate(() -> {
-            try {
-                NetworkManager.getInstance().sendRequest(
-                        new GetAuctionStatusCommand(auction),
-                        rp -> {
-                            if (!rp.isSuccess() || rp.getPayLoad() == null) return;
-                            AuctionStatus newStatus = (AuctionStatus) rp.getPayLoad();
-                            if (newStatus != auction.getStatus()) {
-                                auction.setStatus(newStatus);
-                                // Nếu vừa chuyển sang RUNNING thì register
-                                if (newStatus == AuctionStatus.RUNNING) {
-                                    networkManager.register(PlaceBidCommand.class, this);
-                                }
-                                Platform.runLater(() -> {
-                                    setData();
-                                    setUpStatus(newStatus);
-                                });
+        timer.setOnFinished(() -> {
+
+            if (auction.getStatus() == AuctionStatus.NOT_START) { // hết countdown running → chuyển CLOSED
+                auction.setStatus(AuctionStatus.RUNNING);
+                Platform.runLater(
+                        () -> {
+                            updateUI(auction.getStatus());
+                            if (timer != null) timer.start();
+                            try {
+                                Command cmd = new UpdateAuctionStatusCommand(auction);
+                                NetworkManager.getInstance().sendRequest(cmd, this);
+                            } catch (ConnectionFailedException e) {
+                                log.error("Không kết nối được server");
+                                showAlert("Lỗi", e.getMessage());
+                            } catch (SendFailedException e) {
+                                log.error("Không gửi được command");
+                                showAlert("Lỗi", e.getMessage());
                             }
                         });
-            } catch (Exception e) {
-                log.warn("Auto-refresh thất bại: {}", e.getMessage());
+            } else if (auction.getStatus() == AuctionStatus.RUNNING) { // hết countdown chờ thanh toán → CANCELLED
+                auction.setStatus(AuctionStatus.CLOSED);
+                Platform.runLater(
+                        () -> {
+                            updateUI(auction.getStatus());
+                            try {
+                                Command cmd = new UpdateAuctionStatusCommand(auction);
+                                NetworkManager.getInstance().sendRequest(cmd, this);
+                            } catch (ConnectionFailedException e) {
+                                log.error("Không kết nối được server");
+                                showAlert("Lỗi", e.getMessage());
+                            } catch (SendFailedException e) {
+                                log.error("Không gửi được command");
+                                showAlert("Lỗi", e.getMessage());
+                            }
+                        });
             }
-        }, 30, 30, TimeUnit.SECONDS);
+        });
+        timer.start();
     }
 
-    public void setUpStatus(AuctionStatus status) {
-        if (status == null) return;
 
-        // Dừng timer cũ trước khi setup mới
+    private void updateUI(AuctionStatus status) {
+        // Dừng timer cũ trước khi tạo cái mới
         if (timer != null) {
             timer.stop();
             timer = null;
         }
-
         switch (status) {
             case RUNNING -> {
-                startTimer(auction.getEndingTime());
+                UI01.setText("THỜI GIAN CÒN LẠI");
+                UI01.setStyle("-fx-text-fill: -sf-success; -fx-alignment: CENTER;");  // ← đổi màu xanh
+                UI02.setStyle("-fx-background-color: -sf-surface; -fx-background-radius: 10; "
+                        + "-fx-border-radius: 10; -fx-border-color: -sf-success; -fx-alignment: CENTER;"); // ← viền xanh
+                lbtimeLeft.setStyle("-fx-text-fill: -sf-success;");
+                ThamGiaDauGiaBtn.setText("Tham gia");
+                ThamGiaDauGiaBtn.setStyle("");
+                timer = new TimeLeft(lbtimeLeft, auction.getEndingTime());
+
+
             }
             case NOT_START -> {
-                lbtimeLeft.setText("CHƯA BẮT ĐẦU");
                 UI01.setStyle("-fx-text-fill: -sf-warning; -fx-alignment: CENTER;");
                 UI02.setStyle("-fx-background-color: -sf-surface; -fx-background-radius: 10; "
                         + "-fx-border-radius: 10; -fx-border-color: -sf-warning; -fx-alignment: CENTER;");
                 lbtimeLeft.setStyle("-fx-text-fill: -sf-warning;");
                 ThamGiaDauGiaBtn.setText("Chưa thể tham gia");
+                UI01.setText("THỜI GIAN CÒN LẠI ĐỂ BẮT ĐẦU");
                 ThamGiaDauGiaBtn.setStyle("-fx-background-color: linear-gradient(to right, -sf-danger, -sf-warning); "
                         + "-fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
-                // Đếm ngược đến giờ bắt đầu — khi hết hỏi server
-                startTimer(auction.getStartingTime());
+                timer = new TimeLeft(lbtimeLeft, auction.getStartingTime());
+
             }
             default -> { // CLOSED
                 lbtimeLeft.setText("ĐÃ KẾT THÚC");
@@ -160,67 +200,8 @@ public class ProductDisplayController implements ResponseListener {
     }
 
 
-    private void startTimer(LocalDateTime endTime) {
-        if (timer != null) timer.stop();
-        timer = new TimeLeft(lbtimeLeft, endTime); // dùng đúng tham số truyền vào
-        timer.setOnFinished(this::fetchStatusFromServer);
-        timer.start();
-    }
-
-    private void fetchStatusFromServer() {
-        try {
-            NetworkManager.getInstance().sendRequest(
-                    new GetAuctionStatusCommand(auction),
-                    rp -> {
-                        if (!rp.isSuccess() || rp.getPayLoad() == null) return;
-                        AuctionStatus newStatus = (AuctionStatus) rp.getPayLoad();
-                        auction.setStatus(newStatus);
-                        if (newStatus == AuctionStatus.RUNNING) {
-                            networkManager.register(PlaceBidCommand.class, this);
-                        }
-                        Platform.runLater(() -> {
-                            setData();
-                            setUpStatus(newStatus);
-                        });
-                    });
-        } catch (Exception e) {
-            log.error("Lỗi gửi GetAuctionStatusCommand: {}", e.getMessage(), e);
-        }
-    }
-
-    @Override
-    public void onResponse(Response rp) {
-        if (!rp.isSuccess() || rp.getPayLoad() == null) return;
-        if (!(rp.getPayLoad() instanceof BidTransaction bid)) return;
-        if (bid.getAuctionId() != auction.getAuctionId()) return;
-
-        auction.setCurrentPrice(bid.getAmount());
-        if (bid.getNewEndingTime() != null) {
-            auction.setEndingTime(bid.getNewEndingTime());
-        }
-
-        Platform.runLater(() -> {
-            ItemPriceLabel.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
-            EndingtimeLabel.setText(auction.getEndingTime().format(TIME_FMT));
-            startTimer(auction.getEndingTime()); // restart với endingTime mới nếu anti-snipe
-        });
-    }
-
-
-    private void cleanup() {
-        networkManager.unregister(PlaceBidCommand.class, this);
-        if (timer != null) {
-            timer.stop();
-            timer = null;
-        }
-        if (statusRefreshScheduler != null) {
-            statusRefreshScheduler.shutdown();
-        }
-    }
-
     @FXML
     public void QuaylaiMenu(ActionEvent event) {
-        cleanup();
         changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml");
     }
 
@@ -232,7 +213,6 @@ public class ProductDisplayController implements ResponseListener {
             return;
         }
         if (auction.getStatus() == AuctionStatus.RUNNING) {
-            cleanup();
             changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/LiveAuction.fxml");
         } else {
             if (auction.getStatus() == AuctionStatus.CLOSED) {
@@ -277,5 +257,10 @@ public class ProductDisplayController implements ResponseListener {
 
     private void showBox(VBox box) {
         if (box != null) { box.setVisible(true); box.setManaged(true); }
+    }
+
+    @Override
+    public void onResponse(Response rp) {
+
     }
 }

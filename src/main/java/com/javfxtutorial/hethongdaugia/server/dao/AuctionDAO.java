@@ -203,7 +203,8 @@ public class AuctionDAO implements DAOInterface<Auction> {
     @Override
     public ArrayList<Auction> selectAll() throws DataException {
         ArrayList<Auction> list = new ArrayList<>();
-        String sql = BASE_QUERY;
+        String sql = BASE_QUERY + " ORDER BY a.auction_id DESC";
+
 
         try (Connection conn = JDBCUtil.getConnection();
              PreparedStatement ps = conn.prepareStatement(sql);

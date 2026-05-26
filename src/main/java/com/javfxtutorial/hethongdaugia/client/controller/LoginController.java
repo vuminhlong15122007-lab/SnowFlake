@@ -2,7 +2,8 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 
-import com.javfxtutorial.hethongdaugia.common.model.domain.AuctionModificationManager;
+import com.javfxtutorial.hethongdaugia.client.Util.AuctionModificationManager;
+import com.javfxtutorial.hethongdaugia.client.Util.UserManager;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
@@ -36,6 +37,7 @@ public class LoginController implements ResponseListener, Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         NetworkManager.getInstance().start();
         AuctionModificationManager.getInstance().start();
+        UserManager.getInstance().start();
         Username.setOnAction(event -> Password.requestFocus());
         Password.setOnAction(this::clickLogin);
     }

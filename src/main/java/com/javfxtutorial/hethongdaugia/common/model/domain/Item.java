@@ -21,21 +21,6 @@ public class Item implements Serializable {
     }
 
     public Item(
-            int itemId,
-            int sellerId,
-            String name,
-            String description,
-            String image,
-            String sellerName) {
-        this.sellerId = sellerId;
-        this.itemId = itemId;
-        this.name = name;
-        this.description = description;
-        this.image = image;
-        this.sellerName = sellerName;
-    }
-
-    public Item(
             String sellerName,
             int sellerId,
             int itemId,
@@ -58,9 +43,7 @@ public class Item implements Serializable {
         this.itemId = itemId;
     }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() {return name;}
 
     public void setName(String name) {
         this.name = name;

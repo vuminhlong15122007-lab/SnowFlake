@@ -29,6 +29,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -199,7 +202,7 @@ public class LiveAuctionController implements ResponseListener {
             autoMaxPrice_tf.setDisable(true);
         });
         timer.start();
-        if (currentAuction.getStatus() == AuctionStatus.CANCELLED) {
+        if (currentAuction.getStatus() == AuctionStatus.CANCELLED_BY_ADMIN) {
             timer.stop();
             lbTimeLeft.setText("00:00:00");
             placeBidButton.setDisable(true);
@@ -475,12 +478,19 @@ public class LiveAuctionController implements ResponseListener {
         }
 
         if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
+            NetworkManager.getInstance().unregister(UpdateAuctionStatusCommand.class, this);
             if ("ADMIN_CANCELLED_AUCTION".equals(rp.getMessage())) {
                 Platform.runLater(() -> {
                     if (timer != null) timer.stop();
+                    Stage stage = (Stage) lbTimeLeft.getScene().getWindow();
                     showAlert("Thông báo", "Phiên đấu giá đã bị admin hủy.");
-                    changeScene(new ActionEvent(placeBidButton, null),
-                            "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml");
+                    try {
+                        Parent root = FXMLLoader.load(getClass().getResource(
+                                "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml"));
+                        stage.setScene(new Scene(root));
+                    } catch (Exception e) {
+                        log.error("Lỗi chuyển scene: {}", e.getMessage());
+                    }
                 });
             }
     }

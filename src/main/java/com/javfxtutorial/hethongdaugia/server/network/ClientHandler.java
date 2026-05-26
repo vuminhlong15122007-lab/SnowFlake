@@ -109,6 +109,13 @@ public class ClientHandler extends Thread implements BidListener {
             ch.sendResponse(rp);
         }
     }
+    public static void broadcastToUserId(Response rp, int userId){
+        for (ClientHandler ch : allClients) {
+            if (ch.currentUser.getId() == userId) {
+              ch.sendResponse(rp);
+            }
+        }
+    }
 
     public static void broadcastToSeller(int sellerId, Response rp) {
         for (ClientHandler ch : allClients) {
@@ -125,4 +132,5 @@ public class ClientHandler extends Thread implements BidListener {
         return cmd.getClass().getPackageName()
                 .equals("com.javfxtutorial.hethongdaugia.common.model.Command");
     }
+
 }

@@ -42,16 +42,16 @@ public class NotificationDAO {
     public int insert(SellerNotification notification, int sellerId) throws DataInsertException {
         String sql =
                 "INSERT INTO seller_notification"
-                        + "(auction_id, seller_id, type, product_name, winner_name, winning_price, is_read, created_at, expires_at)"
-                        + " VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?)";
+                        + "(auction_id, seller_id, type, product_name, winner_name, winning_price, is_read, created_at)"
+                        + " VALUES (?, ?, ?, ?, ?, ?, 0, ?)";
         int result = 0;
 
         try (Connection connection = JDBCUtil.getConnection();
-                PreparedStatement pst =
-                        connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+             PreparedStatement pst =
+                     connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             LocalDateTime now = LocalDateTime.now();
-            LocalDateTime expires = now.plusDays(2);
+
 
             pst.setInt(1, notification.getAuctionId());
             pst.setInt(2, sellerId);
@@ -60,7 +60,6 @@ public class NotificationDAO {
             pst.setString(5, notification.getWinnerName());
             pst.setBigDecimal(6, notification.getWinningPrice());
             pst.setTimestamp(7, Timestamp.valueOf(now));
-            pst.setTimestamp(8, Timestamp.valueOf(expires));
 
             result = pst.executeUpdate();
             if (result > 0) {
@@ -72,7 +71,12 @@ public class NotificationDAO {
                 log.info("Tạo Notification thành công, ID: {}", notification.getNotificationId());
             }
         } catch (SQLException | DatabaseConnectionException e) {
-            log.error("Lỗi SQL khi insert Notification: {}", e.getMessage(), e);
+            if (e instanceof SQLException se) {
+                log.error("Lỗi SQL insert Notification - SQLState: {}, ErrorCode: {}, Message: {}",
+                        se.getSQLState(), se.getErrorCode(), se.getMessage());
+            } else {
+                log.error("Lỗi insert Notification: {}", e.getMessage(), e);
+            }
             throw new DataInsertException("SellerNotification");
         }
         return result;
@@ -83,7 +87,7 @@ public class NotificationDAO {
         int result = 0;
 
         try (Connection connection = JDBCUtil.getConnection();
-                PreparedStatement pst = connection.prepareStatement(sql)) {
+             PreparedStatement pst = connection.prepareStatement(sql)) {
 
             pst.setInt(1, notificationId);
             result = pst.executeUpdate();
@@ -105,12 +109,12 @@ public class NotificationDAO {
                         + " WHERE auction_id = ? AND seller_id = ? LIMIT 1";
 
         try (Connection connection = JDBCUtil.getConnection();
-                PreparedStatement pst = connection.prepareStatement(sql)) {
+             PreparedStatement pst = connection.prepareStatement(sql)) {
 
             pst.setInt(1, notification.getAuctionId());
             pst.setInt(2, sellerId);
 
-            try (ResultSet rs = pst.executeQuery()) { // BUG FIX: executeQuery thay executeUpdate
+            try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
                     int existingId = rs.getInt("notification_id");
                     String typeStr = rs.getString("type");
@@ -132,7 +136,6 @@ public class NotificationDAO {
                                 priority(notification.getType()));
                     }
                 } else {
-                    // BUG FIX: nhánh else bị thiếu - chưa có notification -> insert mới
                     insert(notification, sellerId);
                 }
             }
@@ -146,18 +149,18 @@ public class NotificationDAO {
                 "SELECT notification_id, auction_id, type, product_name, winner_name,"
                         + " winning_price, is_read, created_at"
                         + " FROM seller_notification"
-                        + " WHERE seller_id = ? AND expires_at > NOW()"
+                        + " WHERE seller_id = ?"
                         + " ORDER BY is_read ASC, created_at DESC";
 
         List<SellerNotification> list = new ArrayList<>();
 
         try (Connection conn = JDBCUtil.getConnection();
-                PreparedStatement pst = conn.prepareStatement(sql)) {
+             PreparedStatement pst = conn.prepareStatement(sql)) {
 
             pst.setInt(1, sellerId);
 
             try (ResultSet rs =
-                    pst.executeQuery()) { // BUG FIX: bỏ executeUpdate, dùng executeQuery
+                         pst.executeQuery()) { // BUG FIX: bỏ executeUpdate, dùng executeQuery
                 while (rs.next()) {
                     SellerNotification n =
                             new SellerNotification(
@@ -181,16 +184,18 @@ public class NotificationDAO {
         return list;
     }
 
-    public int markAsRead(int notificationId) {
-        String sql = "UPDATE seller_notification SET is_read = 1 WHERE notification_id = ?";
+
+
+    public int markAsRead(int auctionId) {
+        String sql = "UPDATE seller_notification SET is_read = 1 WHERE auction_id = ?";
 
         try (Connection conn = JDBCUtil.getConnection();
-                PreparedStatement pst = conn.prepareStatement(sql)) {
+             PreparedStatement pst = conn.prepareStatement(sql)) {
 
-            pst.setInt(1, notificationId);
+            pst.setInt(1, auctionId);
             int result = pst.executeUpdate();
             if (result > 0) {
-                log.info("Đã đọc notification_id={}, rows={}", notificationId, result);
+                log.info("Đã đọc auction_id={}, rows={}", auctionId, result);
             }
             return result;
 
