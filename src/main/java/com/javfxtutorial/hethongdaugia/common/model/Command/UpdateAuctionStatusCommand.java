@@ -33,6 +33,7 @@ public class UpdateAuctionStatusCommand extends Command {
                 AuctionManager.getInstance().updateAuctionStatus(auction.getAuctionId(), status);
 
                 if (status == AuctionStatus.CANCELLED || status == AuctionStatus.CANCELLED_BY_ADMIN) {
+                    ClientHandler.broadcast(new Response(false, "ADMIN_CANCELLED_AUCTION", auction, this));
                     String productName = (auction.getItem() != null)
                             ? auction.getItem().getName()
                             : String.valueOf(auction.getAuctionId());
@@ -49,16 +50,18 @@ public class UpdateAuctionStatusCommand extends Command {
                         NotificationDAO.getInstance().insertOrReplace(notif, auction.getSellerId());
                         ClientHandler.broadcastToSeller(auction.getSellerId(),
                                 new Response(true, "ADMIN_CANCELLED_AUCTION", notif, this));
-                    } catch (Exception e) {
-                        log.warn("Gửi notification thất bại, bỏ qua: {}", e.getMessage());
-                    }
 
-                    ClientHandler.broadcast(new Response(false, "ADMIN_CANCELLED_AUCTION", auction, this));
+                    } catch (Exception e) {
+                        log.warn("Gửi notification thất bại, bỏ qua: {}", e.getMessage());}
+
+                    return  new Response(true, "ADMIN_CANCELLED_AUCTION", notif, this);
+
+
                 }
 
                 Response rp = new Response(true, "Cập nhật status thành công", auction, this);
                 ClientHandler.broadcast(rp);
-                return rp; // ← thêm return ở đây
+                return rp;
             }
 
             return new Response(false, "Cập nhật status thất bại", null, this);

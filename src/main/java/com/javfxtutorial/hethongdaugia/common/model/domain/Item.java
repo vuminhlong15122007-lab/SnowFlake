@@ -43,9 +43,7 @@ public class Item implements Serializable {
         this.itemId = itemId;
     }
 
-    public String getName() {
-        return name;
-    }
+    public String getName() {return name;}
 
     public void setName(String name) {
         this.name = name;
