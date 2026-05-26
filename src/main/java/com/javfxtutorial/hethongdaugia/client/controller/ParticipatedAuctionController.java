@@ -132,7 +132,7 @@ public class ParticipatedAuctionController implements ResponseListener {
 
                     // 2. Lọc theo trạng thái
                   if (currentStatus == AuctionStatus.CANCELLED){
-                    return auction.getStatus() == AuctionStatus.CANCELLED_BY_ADMIN;
+                    return auction.getStatus() == AuctionStatus.CANCELLED_BY_ADMIN  || auction.getStatus() == AuctionStatus.CANCELLED;
                   }
                     if (currentStatus != null && auction.getStatus() != currentStatus) {
                         return false;

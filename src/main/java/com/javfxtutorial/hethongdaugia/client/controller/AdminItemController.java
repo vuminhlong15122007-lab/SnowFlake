@@ -219,7 +219,18 @@ public class AdminItemController implements ResponseListener {
         if (rp.isSuccess()) {
                     showAlert("Thành công", "Đã hủy phiên đấu giá.", "FunnyCat.gif");
           try {
-            loadItemData();
+              Object payload = rp.getPayLoad();
+              if (!(payload instanceof Auction)) return;
+              Auction updated = (Auction) payload;;
+              if (updated == null) return;
+              Platform.runLater(() -> {
+                for (Auction a : observableList) {
+                  if (a.getAuctionId() == updated.getAuctionId()) {
+                    a.setStatus(updated.getStatus());
+                    break;
+                  }
+                }
+              });
           } catch (Exception e) {
             log.error("Không thể tải lại danh sách sản phẩm: {}", e.getMessage(), e);
           }
