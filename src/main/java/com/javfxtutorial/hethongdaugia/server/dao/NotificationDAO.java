@@ -42,8 +42,8 @@ public class NotificationDAO {
     public int insert(SellerNotification notification, int sellerId) throws DataInsertException {
         String sql =
                 "INSERT INTO seller_notification"
-                        + "(auction_id, seller_id, type, product_name, winner_name, winning_price, is_read, created_at, expires_at)"
-                        + " VALUES (?, ?, ?, ?, ?, ?, 0, ?, ?)";
+                        + "(auction_id, seller_id, type, product_name, winner_name, winning_price, is_read, created_at)"
+                        + " VALUES (?, ?, ?, ?, ?, ?, 0, ?)";
         int result = 0;
 
         try (Connection connection = JDBCUtil.getConnection();
@@ -51,7 +51,7 @@ public class NotificationDAO {
                      connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
 
             LocalDateTime now = LocalDateTime.now();
-            LocalDateTime expires = now.plusDays(2);
+
 
             pst.setInt(1, notification.getAuctionId());
             pst.setInt(2, sellerId);
@@ -60,7 +60,6 @@ public class NotificationDAO {
             pst.setString(5, notification.getWinnerName());
             pst.setBigDecimal(6, notification.getWinningPrice());
             pst.setTimestamp(7, Timestamp.valueOf(now));
-            pst.setTimestamp(8, Timestamp.valueOf(expires));
 
             result = pst.executeUpdate();
             if (result > 0) {
@@ -132,7 +131,6 @@ public class NotificationDAO {
                                 priority(notification.getType()));
                     }
                 } else {
-                    // BUG FIX: nhánh else bị thiếu - chưa có notification -> insert mới
                     insert(notification, sellerId);
                 }
             }
@@ -146,7 +144,7 @@ public class NotificationDAO {
                 "SELECT notification_id, auction_id, type, product_name, winner_name,"
                         + " winning_price, is_read, created_at"
                         + " FROM seller_notification"
-                        + " WHERE seller_id = ? AND expires_at > NOW()"
+                        + " WHERE seller_id = ?"
                         + " ORDER BY is_read ASC, created_at DESC";
 
         List<SellerNotification> list = new ArrayList<>();
@@ -181,20 +179,7 @@ public class NotificationDAO {
         return list;
     }
 
-    public int deleteExpired() {
-        String sql = "DELETE FROM seller_notification WHERE is_read = 1 AND expires_at <= NOW()";
-        try (Connection conn = JDBCUtil.getConnection();
-             PreparedStatement pst = conn.prepareStatement(sql)) {
-            int deleted = pst.executeUpdate();
-            if (deleted > 0) {
-                log.info("Đã xóa {} notification đã đọc hết hạn", deleted);
-            }
-            return deleted;
-        } catch (SQLException | DatabaseConnectionException e) {
-            log.error("Lỗi deleteExpired: {}", e.getMessage(), e);
-            return 0;
-        }
-    }
+
 
     public int markAsRead(int auctionId) {
         String sql = "UPDATE seller_notification SET is_read = 1 WHERE auction_id = ?";
