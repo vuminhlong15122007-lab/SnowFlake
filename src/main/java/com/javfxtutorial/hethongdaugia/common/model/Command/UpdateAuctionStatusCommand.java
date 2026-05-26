@@ -51,10 +51,10 @@ public class UpdateAuctionStatusCommand extends Command {
                     // Lưu vào DB để seller load lại sau khi tắt/mở app
                     NotificationDAO.getInstance().insertOrReplace(notif, auction.getSellerId());
                     Response notifResponse = new Response(true, "ADMIN_CANCELLED_AUCTION", notif, this);
-                    ClientHandler.broadcastToSeller(auction.getSellerId(), notifResponse);
                     ClientHandler.broadcast(
-                            new Response(false, "ADMIN_CANCELLED_AUCTION", auction, this)
+                        new Response(false, "ADMIN_CANCELLED_AUCTION", auction, this)
                     );
+                    ClientHandler.broadcastToSeller(auction.getSellerId(), notifResponse);
                 }
                 Response rp = new Response(true, "Cập nhật status thành công", auction, this);
                 ClientHandler.broadcast(rp);
