@@ -937,7 +937,7 @@ public class SellerManagementController implements ResponseListener {
         }).start();
     }
 
-    @SuppressWarnings("unchecked")
+
     private void handleGetNotificationsResponse(Response rp) {
         NetworkManager.getInstance().unregister(GetSellerNotificationsCommand.class, this);
         if (!rp.isSuccess() || rp.getPayLoad() == null) return;

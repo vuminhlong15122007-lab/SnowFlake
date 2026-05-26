@@ -103,10 +103,7 @@ public class UIUtils {
                             if (iconPath != null) {
                                 try {
                                     stage.getIcons()
-                                            .add(
-                                                    new Image(
-                                                            UIUtils.class.getResourceAsStream(
-                                                                    iconPath)));
+                                            .add(new Image(UIUtils.class.getResourceAsStream(iconPath)));
                                 } catch (Exception e) {
                                     log.warn("Khong load duoc icon tai: {}", iconPath, e);
                                 }
@@ -138,10 +135,6 @@ public class UIUtils {
         }
     }
 
-    public static void closeCurrentWindow(Node node) {
-        Stage stage = (Stage) node.getScene().getWindow();
-        stage.close();
-    }
 
     public static void changePopup(ActionEvent event, String fxmlPath, String typePopUp) {
         try {

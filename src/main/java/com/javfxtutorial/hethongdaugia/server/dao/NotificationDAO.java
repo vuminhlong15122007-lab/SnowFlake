@@ -71,7 +71,12 @@ public class NotificationDAO {
                 log.info("Tạo Notification thành công, ID: {}", notification.getNotificationId());
             }
         } catch (SQLException | DatabaseConnectionException e) {
-            log.error("Lỗi SQL khi insert Notification: {}", e.getMessage(), e);
+            if (e instanceof SQLException se) {
+                log.error("Lỗi SQL insert Notification - SQLState: {}, ErrorCode: {}, Message: {}",
+                        se.getSQLState(), se.getErrorCode(), se.getMessage());
+            } else {
+                log.error("Lỗi insert Notification: {}", e.getMessage(), e);
+            }
             throw new DataInsertException("SellerNotification");
         }
         return result;
@@ -109,7 +114,7 @@ public class NotificationDAO {
             pst.setInt(1, notification.getAuctionId());
             pst.setInt(2, sellerId);
 
-            try (ResultSet rs = pst.executeQuery()) { // BUG FIX: executeQuery thay executeUpdate
+            try (ResultSet rs = pst.executeQuery()) {
                 if (rs.next()) {
                     int existingId = rs.getInt("notification_id");
                     String typeStr = rs.getString("type");
