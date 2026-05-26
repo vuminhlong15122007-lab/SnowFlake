@@ -6,6 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -17,6 +18,8 @@ import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.BidDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.ParticipatedAuctionDAO;
+import com.javfxtutorial.hethongdaugia.server.network.BidListener;
+import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -95,7 +98,7 @@ class AutoBidResolverTest {
 
             AutoBidResult result = runAutoBid(auction, List.of(lower, higher));
 
-            assertBid(result, 2, "210");
+            assertBidSequence(result, List.of(expectedBid(1, "200"), expectedBid(2, "210")));
             assertEquals("bob", auction.getWinnerName());
             assertEquals(new BigDecimal("210"), auction.getCurrentPrice());
         }
@@ -129,6 +132,20 @@ class AutoBidResolverTest {
         }
 
         @Test
+        @DisplayName("nguoi dang dan dau giu loi the cung maxBid du dang ky muon hon")
+        void sameMaxBidCurrentWinnerKeepsLeadEvenWithLaterRegistration() throws Exception {
+            Auction auction = auction("100", "10", "alice");
+            AutoBidConfig challenger = bot(2, "bob", "300", true, EARLY);
+            AutoBidConfig currentWinner = bot(1, "alice", "300", true, LATE);
+
+            AutoBidResult result = runAutoBid(auction, List.of(currentWinner, challenger));
+
+            assertBid(result, 1, "300");
+            assertEquals("alice", auction.getWinnerName());
+            assertEquals(new BigDecimal("300"), auction.getCurrentPrice());
+        }
+
+        @Test
         @DisplayName("giá auto-bid không vượt maxBid của bot thắng")
         void finalAmountIsClampedToWinnerMaxBid() throws Exception {
             Auction auction = auction("100", "10", "carol");
@@ -137,7 +154,7 @@ class AutoBidResolverTest {
 
             AutoBidResult result = runAutoBid(auction, List.of(winner, second));
 
-            assertBid(result, 1, "205");
+            assertBidSequence(result, List.of(expectedBid(2, "200"), expectedBid(1, "205")));
             assertEquals("alice", auction.getWinnerName());
             assertEquals(new BigDecimal("205"), auction.getCurrentPrice());
         }
@@ -174,6 +191,8 @@ class AutoBidResolverTest {
         TestStateSupport.activeAuctions(manager).put(auction.getAuctionId(), auction);
         TestStateSupport.autoBidRegistry(manager)
             .put(auction.getAuctionId(), new ArrayList<>(configs));
+        RecordingBidListener listener = new RecordingBidListener();
+        manager.registerToAuction(listener, auction.getAuctionId());
 
         AuctionDAO auctionDAO = mock(AuctionDAO.class);
         BidDAO bidDAO = mock(BidDAO.class);
@@ -190,7 +209,8 @@ class AutoBidResolverTest {
             TestStateSupport.executeAutoBidCheck(manager, auction);
         }
 
-        return new AutoBidResult(auctionDAO, bidDAO, bidCaptor.getAllValues());
+        return new AutoBidResult(
+                auctionDAO, bidDAO, bidCaptor.getAllValues(), listener.receivedBids);
     }
 
     private void assertBid(AutoBidResult result, int expectedUserId, String expectedAmount)
@@ -200,12 +220,33 @@ class AutoBidResolverTest {
 
         assertEquals(expectedUserId, bid.getBidderId());
         assertEquals(new BigDecimal(expectedAmount), bid.getAmount());
+        assertBidSequence(result.notifiedBids(), expectedBid(expectedUserId, expectedAmount));
         verify(result.auctionDAO()).update(any(Auction.class));
         verify(result.bidDAO()).insertBid(any(BidTransaction.class));
     }
 
+    private void assertBidSequence(AutoBidResult result, List<ExpectedBid> expectedBids)
+        throws DataException {
+        assertEquals(expectedBids.size(), result.capturedBids().size());
+        assertBidSequence(result.capturedBids(), expectedBids.toArray(ExpectedBid[]::new));
+        assertBidSequence(result.notifiedBids(), expectedBids.toArray(ExpectedBid[]::new));
+        verify(result.auctionDAO()).update(any(Auction.class));
+        verify(result.bidDAO(), times(expectedBids.size())).insertBid(any(BidTransaction.class));
+    }
+
+    private void assertBidSequence(List<BidTransaction> actualBids, ExpectedBid... expectedBids) {
+        assertEquals(expectedBids.length, actualBids.size());
+        for (int i = 0; i < expectedBids.length; i++) {
+            ExpectedBid expected = expectedBids[i];
+            BidTransaction actual = actualBids.get(i);
+            assertEquals(expected.userId(), actual.getBidderId());
+            assertEquals(new BigDecimal(expected.amount()), actual.getAmount());
+        }
+    }
+
     private void assertNoBid(AutoBidResult result) throws DataException {
         assertTrue(result.capturedBids().isEmpty());
+        assertTrue(result.notifiedBids().isEmpty());
         verify(result.auctionDAO(), never()).update(any(Auction.class));
         verify(result.bidDAO(), never()).insertBid(any(BidTransaction.class));
     }
@@ -257,6 +298,24 @@ class AutoBidResolverTest {
         return config;
     }
 
+    private ExpectedBid expectedBid(int userId, String amount) {
+        return new ExpectedBid(userId, amount);
+    }
+
+    private record ExpectedBid(int userId, String amount) {}
+
+    private static final class RecordingBidListener implements BidListener {
+        private final List<BidTransaction> receivedBids = new ArrayList<>();
+
+        @Override
+        public void onPlaceBid(BidTransaction bid, ClientHandler senderThread) {
+            receivedBids.add(bid);
+        }
+    }
+
     private record AutoBidResult(
-        AuctionDAO auctionDAO, BidDAO bidDAO, List<BidTransaction> capturedBids) {}
+        AuctionDAO auctionDAO,
+        BidDAO bidDAO,
+        List<BidTransaction> capturedBids,
+        List<BidTransaction> notifiedBids) {}
 }

@@ -13,13 +13,17 @@ import org.slf4j.LoggerFactory;
 public class UserManager {
     private static final Logger log = LoggerFactory.getLogger(UserManager.class);
 
-    private static UserManager instance;
+    private static volatile UserManager instance;
 
     private UserManager() {}
 
     public static UserManager getInstance() {
         if (instance == null) {
-            instance = new UserManager();
+            synchronized (UserManager.class) {
+                if (instance == null) {
+                    instance = new UserManager();
+                }
+            }
         }
         return instance;
     }
@@ -37,11 +41,9 @@ public class UserManager {
                 throw new InvalidCredentialsException();
             }
 
-            if (user != null && PasswordHasher.matches(password, user.getPassWord())) {
-                if (!PasswordHasher.isHashed(user.getPassWord())) {
-                    user.setPassWord(PasswordHasher.hash(password));
-                    UserDAO.getInstance().update(user);
-                }
+            if (!PasswordHasher.isHashed(user.getPassWord())) {
+                user.setPassWord(PasswordHasher.hash(password));
+                UserDAO.getInstance().update(user);
             }
             log.info("Xác thực thành công: {}", username);
             return user;
@@ -61,12 +63,9 @@ public class UserManager {
                 return null;
             }
 
-            String resolvedName =
-                    username == null || username.isBlank() ? oldUser.getName() : username.trim();
-            String resolvedEmail =
-                    email == null || email.isBlank() ? oldUser.getEmail() : email.trim();
-            String resolvedPhone =
-                    phone == null || phone.isBlank() ? oldUser.getSdt() : phone.trim();
+            String resolvedName = mergeText(oldUser.getName(), username);
+            String resolvedEmail = mergeText(oldUser.getEmail(), email);
+            String resolvedPhone = mergeText(oldUser.getSdt(), phone);
             String resolvedAvatar = avt == null ? oldUser.getImagePath() : avt;
 
             User updateUser =
@@ -136,5 +135,9 @@ public class UserManager {
             log.warn("Không tìm thấy user để reset password: id={}", userId);
             throw new UserNotFoundException(userId);
         }
+    }
+
+    private static String mergeText(String currentValue, String newValue) {
+        return newValue == null || newValue.isBlank() ? currentValue : newValue.trim();
     }
 }

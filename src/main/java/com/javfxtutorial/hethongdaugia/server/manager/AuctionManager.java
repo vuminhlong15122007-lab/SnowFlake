@@ -24,7 +24,6 @@ import com.javfxtutorial.hethongdaugia.server.dao.ParticipatedAuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.network.BidListener;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import java.math.BigDecimal;
-import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -41,7 +40,8 @@ public class AuctionManager {
 
     private static final long ANTI_SNIPE_X_SECONDS = 60;
     private static final long ANTI_SNIPE_Y_SECONDS = 60;
-    
+    private static final BigDecimal MAX_BID_AMOUNT = new BigDecimal("999999999999.99");
+
     private final AntiSnipeExtender antiSnipeExtender =
             new AntiSnipeExtender(ANTI_SNIPE_X_SECONDS, ANTI_SNIPE_Y_SECONDS);
 
@@ -85,11 +85,10 @@ public class AuctionManager {
             log.warn("Không thể đăng ký auction {} vì listener null", auctionId);
             return;
         }
-        auctionSubscribers.computeIfAbsent(auctionId, k -> new CopyOnWriteArrayList<>());
-
-        List<BidListener> list = auctionSubscribers.get(auctionId);
-        if (!list.contains(listener)) {
-            list.add(listener);
+        List<BidListener> listeners =
+                auctionSubscribers.computeIfAbsent(auctionId, k -> new CopyOnWriteArrayList<>());
+        if (!listeners.contains(listener)) {
+            listeners.add(listener);
         }
 
         log.info("Đã thêm {} vào phòng auction id: {}", listener, auctionId);
@@ -97,7 +96,9 @@ public class AuctionManager {
 
     public void unregisterFromAuction(BidListener listener, int auctionId) {
         List<BidListener> list = auctionSubscribers.get(auctionId);
-        if (list != null) list.remove(listener);
+        if (list != null) {
+            list.remove(listener);
+        }
         log.info("Client hủy đăng ký auction #{}", auctionId);
     }
 
@@ -105,7 +106,9 @@ public class AuctionManager {
     // PLACE BID — logic chính
     // ─────────────────────────────────────────────────
     public void unregisterListenerFromAll(BidListener listener) {
-        if (listener == null) return;
+        if (listener == null) {
+            return;
+        }
         auctionSubscribers.values().forEach(list -> list.remove(listener));
     }
 
@@ -114,7 +117,9 @@ public class AuctionManager {
         AuctionAlreadyEndedException, LowerThanCurrentBidException, SelfBidException,
         InsufficientIncrementException, DataException, BidAmountExceedsLimitException, AuctionCancelledException {
 
-        if (bid == null || bid.getAmount() == null) {return false;}
+        if (bid == null || bid.getAmount() == null) {
+            return false;
+        }
         ReentrantLock lock = getAuctionLock(bid.getAuctionId());
         lock.lock();
         BidTransaction acceptedBid;
@@ -134,7 +139,7 @@ public class AuctionManager {
             }
             log.info("Đã lấy xong auction từ bidAuctionId");
 
-            if (auction.getStatus().equals(AuctionStatus.CANCELLED_BY_ADMIN)){
+            if (auction.getStatus() == AuctionStatus.CANCELLED_BY_ADMIN) {
                 throw new AuctionCancelledException(auction.getAuctionId());
             }
             // KIỂM TRA NGƯỜI BÁN KHÔNG ĐƯỢC ĐẶT GIÁ
@@ -163,9 +168,9 @@ public class AuctionManager {
                         auction.getStepPrice().doubleValue(),
                         bid.getAmount().subtract(auction.getCurrentPrice()).doubleValue());
             }
-            if (bid.getAmount().compareTo(new BigDecimal("999999999999.99")) > 0) {
+            if (bid.getAmount().compareTo(MAX_BID_AMOUNT) > 0) {
                 throw new BidAmountExceedsLimitException(
-                        999999999999.99, bid.getAmount().doubleValue());
+                        MAX_BID_AMOUNT.doubleValue(), bid.getAmount().doubleValue());
             }
 
             log.info("Bid hợp lệ");
@@ -183,17 +188,8 @@ public class AuctionManager {
             // Logic gia hạn phiên đấu giá
             endTimeNew = antiSnipeExtender.applyIfNeeded(auction);
 
-            // 5. Lưu DB
             AuctionDAO.getInstance().update(auction);
-            BidDAO.getInstance().insertBid(bid);
-            try {
-                ParticipatedAuctionDAO.getInstance().insert(bid);
-            } catch (DuplicateKeyException e) {
-                log.info(
-                        "User {} đã tham gia auction {} rồi, bỏ qua",
-                        bid.getBidderId(),
-                        bid.getAuctionId());
-            }
+            persistBidTransaction(bid);
 
             log.info("Đã lưu vào database");
             acceptedBid = bid;
@@ -205,7 +201,8 @@ public class AuctionManager {
 
         // 6. Thông báo cho tất cả subscriber của auction này
         notifySubscribers(acceptedBid.getAuctionId(), acceptedBid, senderThread);
-        ClientHandler.broadcast(new Response(true, "giá thay đổi", auction, new UpdateAuctionCommand(auction)));
+        ClientHandler.broadcast(
+                new Response(true, "giá thay đổi", auction, new UpdateAuctionCommand(auction)));
 
         // 7. Kích hoạt AutoBid nếu có
         checkAndExecuteAutoBids(activeAuctions.get(acceptedBid.getAuctionId()));
@@ -225,6 +222,9 @@ public class AuctionManager {
     // CHECK VALID BID
     // ─────────────────────────────────────────────────
     public boolean checkValidBid(Auction auction, BigDecimal amount) {
+        if (auction == null || amount == null) {
+            return false;
+        }
         return amount.compareTo(auction.getCurrentPrice().add(auction.getStepPrice())) >= 0;
     }
 
@@ -232,17 +232,18 @@ public class AuctionManager {
 
     public AuctionStatus refreshAuctionStatus(Auction auction) throws DataException {
         AuctionStatus previousStatus = auction.getStatus();
+        LocalDateTime now = LocalDateTime.now();
 
         if (previousStatus == AuctionStatus.CANCELLED || previousStatus == AuctionStatus.CANCELLED_BY_ADMIN) {
             return previousStatus;
         }
-        if (LocalDateTime.now().isBefore(auction.getStartingTime())) {
+        if (now.isBefore(auction.getStartingTime())) {
             auction.setStatus(AuctionStatus.NOT_START);
         } else if (previousStatus == AuctionStatus.PAID) {
             return previousStatus;
-        } else if (LocalDateTime.now().isAfter(auction.getEndingTime().plusHours(24))) {
+        } else if (now.isAfter(auction.getEndingTime().plusHours(24))) {
             auction.setStatus(checkPaymentStatus(auction));
-        } else if (LocalDateTime.now().isAfter(auction.getEndingTime())) {
+        } else if (now.isAfter(auction.getEndingTime())) {
             auction.setStatus(AuctionStatus.CLOSED);
         } else {
             auction.setStatus(AuctionStatus.RUNNING);
@@ -266,6 +267,9 @@ public class AuctionManager {
         AuctionNotStartedException,
         AuctionAlreadyEndedException,
         BidAmountExceedsLimitException, AuctionCancelledException {
+        if (config == null) {
+            return false;
+        }
         config.setRegisteredAt(LocalDateTime.now());
         List<AutoBidConfig> configs =
                 autoBidRegistry.computeIfAbsent(
@@ -322,10 +326,20 @@ public class AuctionManager {
                     int cmp = b2.getMaxPrice().compareTo(b1.getMaxPrice());
                     if (cmp != 0) return cmp;
 
+                    boolean b1IsCurrentWinner =
+                            b1.getUserName() != null
+                                    && b1.getUserName().equals(auction.getWinnerName());
+                    boolean b2IsCurrentWinner =
+                            b2.getUserName() != null
+                                    && b2.getUserName().equals(auction.getWinnerName());
+                    if (b1IsCurrentWinner != b2IsCurrentWinner) {
+                        return b1IsCurrentWinner ? -1 : 1;
+                    }
+
                     return b1.getRegisteredAt().compareTo(b2.getRegisteredAt());
                 });
 
-        AutoBidConfig winnerBot = eligibleBots.getFirst();
+        AutoBidConfig winnerBot = eligibleBots.get(0);
 
         // logic của autobid đây hehe
         //        Nếu max cao nhất > max cao thứ hai:
@@ -360,6 +374,10 @@ public class AuctionManager {
             if (finalAmount.compareTo(minRequired) < 0) {
                 return;
             }
+
+            if (winnerBot.getMaxPrice().compareTo(secondMax) != 0) {
+                persistAndNotifyAutoBidHistory(auction, secondBot, secondMax);
+            }
         }
 
         BidTransaction autoBid = new BidTransaction();
@@ -373,6 +391,32 @@ public class AuctionManager {
         this.placeBid(autoBid, null);
     }
 
+    private void persistBidTransaction(BidTransaction bid) throws DataException {
+        BidDAO.getInstance().insertBid(bid);
+        try {
+            ParticipatedAuctionDAO.getInstance().insert(bid);
+        } catch (DuplicateKeyException e) {
+            log.info(
+                    "User {} đã tham gia auction {} rồi, bỏ qua",
+                    bid.getBidderId(),
+                    bid.getAuctionId());
+        }
+    }
+
+    private void persistAndNotifyAutoBidHistory(
+            Auction auction, AutoBidConfig config, BigDecimal amount)
+            throws DataException {
+        BidTransaction historyBid = new BidTransaction();
+        historyBid.setBidderId(config.getUserId());
+        historyBid.setBidderName(config.getUserName());
+        historyBid.setAuctionId(auction.getAuctionId());
+        historyBid.setAmount(amount);
+        historyBid.setTimestamp(LocalDateTime.now());
+
+        persistBidTransaction(historyBid);
+        notifySubscribers(auction.getAuctionId(), historyBid, null);
+    }
+
     public List<Auction> getParticipatedAuctionsByBidder(int userId)
             throws QueryExecutionException {
         ArrayList<Auction> auctionList = new ArrayList<>();
@@ -384,10 +428,9 @@ public class AuctionManager {
     }
 
     public AuctionStatus checkPaymentStatus(Auction auction) throws DataException {
-        if (auction.getWinnerName() == null || auction.getWinnerName().isBlank()){
+        if (auction.getWinnerName() == null || auction.getWinnerName().isBlank()) {
             auction.setStatus(AuctionStatus.CLOSED);
-        }
-        else if (LocalDateTime.now().isAfter(auction.getEndingTime().plusHours(24))) {
+        } else if (LocalDateTime.now().isAfter(auction.getEndingTime().plusHours(24))) {
             if (auction.getStatus() != AuctionStatus.PAID) {
                 auction.setStatus(AuctionStatus.CANCELLED);
             }

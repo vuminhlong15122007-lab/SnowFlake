@@ -92,32 +92,13 @@
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.3.1</version>
-                <configuration>
-                    <configLocation>google_checks.xml</configLocation>
-                    <consoleOutput>true</consoleOutput>
-                    <failsOnError>true</failsOnError>
-                </configuration>
-                <executions>
-                    <execution>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
                 <groupId>com.diffplug.spotless</groupId>
                 <artifactId>spotless-maven-plugin</artifactId>
-                <version>2.44.0</version> <!-- Giữ đúng bản ông đang có trên máy -->
+                <version>${spotless.version}</version>
                 <configuration>
                     <java>
                         <googleJavaFormat>
-                            <!-- Ép lên bản 1.22.0 hoặc 1.24.0 để hỗ trợ JDK đời mới -->
-                            <version>1.24.0</version>
+                            <version>${google-java-format.version}</version>
                             <style>GOOGLE</style>
                         </googleJavaFormat>
                         <!-- Cấu hình file nào được format -->
@@ -237,22 +218,6 @@
             </plugin>
 
             <plugin>
-                <groupId>com.diffplug.spotless</groupId>
-                <artifactId>spotless-maven-plugin</artifactId>
-                <version>${spotless.version}</version>
-                <configuration>
-                    <java>
-                        <googleJavaFormat>
-                            <version>${google-java-format.version}</version>
-                            <style>AOSP</style>
-                        </googleJavaFormat>
-                        <removeUnusedImports/>
-                        <formatAnnotations/>
-                    </java>
-                </configuration>
-            </plugin>
-
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-checkstyle-plugin</artifactId>
                 <version>${maven-checkstyle-plugin.version}</version>
@@ -271,8 +236,8 @@
                 </configuration>
                 <executions>
                     <execution>
-                        <id>checkstyle-verify</id>
-                        <phase>verify</phase>
+                        <id>checkstyle-validate</id>
+                        <phase>validate</phase>
                         <goals>
                             <goal>check</goal>
                         </goals>

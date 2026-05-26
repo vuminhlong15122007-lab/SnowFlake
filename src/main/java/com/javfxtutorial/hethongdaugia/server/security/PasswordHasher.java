@@ -12,6 +12,7 @@ public final class PasswordHasher {
     private static final int ITERATIONS = 120_000;
     private static final int SALT_BYTES = 16;
     private static final int KEY_BITS = 256;
+    private static final int HASH_PARTS = 4;
     private static final SecureRandom RANDOM = new SecureRandom();
 
     private PasswordHasher() {}
@@ -47,7 +48,13 @@ public final class PasswordHasher {
 
         try {
             String[] parts = storedPassword.split("\\$");
+            if (parts.length != HASH_PARTS || !PREFIX.equals(parts[0])) {
+                return false;
+            }
             int iterations = Integer.parseInt(parts[1]);
+            if (iterations <= 0) {
+                return false;
+            }
             byte[] salt = Base64.getDecoder().decode(parts[2]);
             byte[] expectedHash = Base64.getDecoder().decode(parts[3]);
             byte[] actualHash =
