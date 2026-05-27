@@ -41,6 +41,7 @@
                         <Label style="-fx-font-size: 11px; -fx-text-fill: -sf-muted;" text="Chọn sản phẩm để sửa hoặc xóa" />
                     </VBox>
                     <Region HBox.hgrow="ALWAYS" />
+                    <Button onAction="#onReloadButton" prefHeight="30.0" prefWidth="30.0" styleClass="sf-btn-primary" text="↺" style="-fx-font-size: 16px; -fx-font-weight: bold;" />
                 </HBox>
                 <ComboBox fx:id="filterComboBox" maxWidth="Infinity" prefHeight="32.0" promptText="Trạng thái" style="-fx-background-color: -sf-surface; -fx-background-radius: 10; -fx-border-color: -sf-border-soft; -fx-border-radius: 10; -fx-font-size: 12px;" />
                 <ListView fx:id="productList" prefHeight="500.0" prefWidth="306.0" styleClass="sf-transparent-list" VBox.vgrow="ALWAYS" />
