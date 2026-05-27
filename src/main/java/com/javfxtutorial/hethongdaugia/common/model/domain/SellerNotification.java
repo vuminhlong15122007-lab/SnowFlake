@@ -19,6 +19,7 @@ public class SellerNotification implements Serializable {
     private BigDecimal winningPrice;
     private LocalDateTime createdAt;
     private boolean read;
+    private LocalDateTime closedAt; // thời điểm đạt trạng thái cuối
 
     public SellerNotification() {}
 
@@ -37,7 +38,19 @@ public class SellerNotification implements Serializable {
         this.createdAt = LocalDateTime.now();
         this.read = false;
         this.notificationId = idCounter;
+        boolean isFinal = switch (type) {
+            case CANCELLED, PAID, CANCELLED_BY_ADMIN -> true;
+            case CLOSED -> winnerName == null
+                    || winnerName.isBlank()
+                    || winnerName.equals("N/A");
+        };
+        this.closedAt = isFinal ? LocalDateTime.now() : null;
     }
+
+
+    public LocalDateTime getClosedAt() { return closedAt; }
+
+
 
     public int getNotificationId() { return notificationId; }
     public void setNotificationId(int v) { notificationId = v; }
@@ -46,7 +59,21 @@ public class SellerNotification implements Serializable {
     public void setAuctionId(int v) { auctionId = v; }
 
     public Type getType() { return type; }
-    public void setType(Type type) { this.type = type; }
+    public void setType(Type type) {
+        this.type = type;
+
+        // Cập nhật lại closedAt khi type thay đổi
+        boolean isFinal = switch (type) {
+            case CANCELLED, PAID, CANCELLED_BY_ADMIN -> true;
+            case CLOSED -> winnerName == null
+                    || winnerName.isBlank()
+                    || winnerName.equals("N/A");
+        };
+
+        if (isFinal && this.closedAt == null) {
+            this.closedAt = LocalDateTime.now(); // chỉ set lần đầu, không ghi đè
+        }
+    }
 
     public String getProductName() { return productName; }
 
