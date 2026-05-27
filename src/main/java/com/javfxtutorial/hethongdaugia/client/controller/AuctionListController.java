@@ -242,11 +242,6 @@ public class AuctionListController implements ResponseListener {
 
     @Override
     public void onResponse(Response rp) {
-        if (rp.getCommand().getClass() == AddAuctionCommand.class) {
-            if (!rp.isSuccess() || !(rp.getPayLoad() instanceof Auction)) return;
-            Auction newAuction = (Auction) rp.getPayLoad();
-            Platform.runLater(() -> observable.add(0, newAuction));
-        }
         if (rp.getCommand().getClass() == GetAllAuctionsCommand.class) {
             Platform.runLater(() -> {
                 if (!rp.isSuccess()) {

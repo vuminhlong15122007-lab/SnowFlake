@@ -33,7 +33,7 @@ public class AuctionModificationManager implements ResponseListener {
     @Override
     public void onResponse(Response rp) {
         // luu sp
-        if (rp.getCommand().getClass() == AddAuctionCommand.class) {
+        if (rp.getCommand().getClass().equals(AddAuctionCommand.class)) {
             if (rp.isSuccess()) {
                 Auction savedAuction = (Auction) rp.getPayLoad();
                 Platform.runLater(
@@ -44,7 +44,7 @@ public class AuctionModificationManager implements ResponseListener {
         }
 
         // delete
-        if (rp.getCommand().getClass() == DeleteAuctionCommand.class) {
+        if (rp.getCommand().getClass().equals(DeleteAuctionCommand.class)) {
             if (rp.isSuccess()) {
                 DeleteAuctionCommand command = (DeleteAuctionCommand) rp.getCommand();
                 Auction selectedAuction =
@@ -64,7 +64,7 @@ public class AuctionModificationManager implements ResponseListener {
         }
 
         // suaSp
-        if (rp.getCommand().getClass() == UpdateAuctionCommand.class
+        if (rp.getCommand().getClass().equals(UpdateAuctionCommand.class)
                 || rp.getCommand().getClass().equals(UpdateAuctionStatusCommand.class)) {
             if (rp.isSuccess()) {
                 Auction selectedAuction = (Auction) rp.getPayLoad();
