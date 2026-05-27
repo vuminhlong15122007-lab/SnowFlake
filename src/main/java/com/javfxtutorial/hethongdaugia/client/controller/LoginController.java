@@ -81,6 +81,7 @@ public class LoginController implements ResponseListener, Initializable {
             ClientModel.getInstance().setCurrentUser(user);
             // Load trạng thái đã đọc của user này từ disk ngay sau khi đăng nhập
             ClientModel.getInstance().loadReadNotificationIds(user.getId());
+            ClientModel.getInstance().startPruneScheduler();
             Platform.runLater(
                     () -> {
                         if (user.getAccountType() == AccountType.USER) {
