@@ -56,7 +56,7 @@ public class ProductDisplayController implements ResponseListener {
   @FXML private Label initPriceLabel, stepPriceLabel;
   @FXML private Label detailTitle;
 
-  private final Item item = ClientModel.getInstance().getCurrentAuction().getItem();
+  private Item item;
   private Auction auction;
   private static final DateTimeFormatter TIME_FMT = DateTimeFormatter.ofPattern("HH:mm dd/MM/yyyy");
   private static final Logger log = LoggerFactory.getLogger(ProductDisplayController.class);
@@ -65,6 +65,8 @@ public class ProductDisplayController implements ResponseListener {
   private TimeLeft timer;
 
   public void setData(Auction auction) {
+    this.auction = auction;
+    this.item = auction.getItem();
     LbMotasp.setText(item.getDescription());
     StartTimeLabel.setText(auction.getStartingTime().format(TIME_FMT));
     EndingtimeLabel.setText(auction.getEndingTime().format(TIME_FMT));
@@ -81,6 +83,7 @@ public class ProductDisplayController implements ResponseListener {
   @FXML
   public void initialize() {
     auction = ClientModel.getInstance().getCurrentAuction();
+    item = auction.getItem();
     NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
     NetworkManager.getInstance().register(UpdateAuctionCommand.class, this);
     setData(auction);
@@ -269,13 +272,15 @@ public class ProductDisplayController implements ResponseListener {
     if (rp.getCommand().getClass().equals(UpdateAuctionCommand.class)
         || rp.getCommand().getClass().equals(UpdateAuctionStatusCommand.class)) {
       if (rp.isSuccess()) {
-        Auction auction = (Auction) rp.getPayLoad();
-        ClientModel.getInstance().setCurrentAuction(auction);
+        auction = (Auction) rp.getPayLoad();
         Platform.runLater(
             () -> {
               setData(auction);
-              if (auction.getStatus() == AuctionStatus.NOT_START) {
+              showCategoryInfo();
+              if (auction.getStatus().equals(AuctionStatus.NOT_START)) {
+                if(timer != null) timer.stop();
                 timer = new TimeLeft(lbtimeLeft, auction.getStartingTime());
+                timer.start();
               }
             });
       }

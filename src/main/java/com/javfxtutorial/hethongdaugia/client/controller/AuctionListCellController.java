@@ -11,7 +11,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 
-public class AuctionSessionController {
+public class AuctionListCellController {
   @FXML private Label lbProductName;
   @FXML private Label lbSellerName;
   @FXML private Label lbPrice, lbWinner;
