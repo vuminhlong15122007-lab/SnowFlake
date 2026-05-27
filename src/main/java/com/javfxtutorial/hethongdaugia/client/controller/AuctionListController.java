@@ -60,11 +60,7 @@ public class AuctionListController implements ResponseListener {
 
   @FXML
   public void initialize() throws ConnectionFailedException {
-    if (!isLoaded){
-      isLoaded = true;
-    }
     NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
-    NetworkManager.getInstance().register(AddAuctionCommand.class, this);
     observable = ClientModel.getInstance().getAllAuctions();
 
     VBox.setVgrow(featuredProductList, Priority.ALWAYS);
@@ -146,6 +142,7 @@ public class AuctionListController implements ResponseListener {
           30,
           30,
           TimeUnit.SECONDS);
+      isLoaded = true;
     }
   }
 
@@ -168,11 +165,7 @@ public class AuctionListController implements ResponseListener {
           }
 
           // 2. Lọc theo trạng thái
-          /**
-           * LOGIC LỌC filterEndedGroup = true → bấm nút "Kết thúc" currentStatus = null → bấm nút
-           * "Tất cả" currentStatus = NOT_START → bấm nút "Sắp diễn ra" currentStatus = RUNNING →
-           * bấm nút "Đang diễn ra"
-           */
+
           if (filterEndedGroup) {
             if (!ENDED_GROUP.contains(auction.getStatus())) return false;
           } else if (currentStatus != null) {
