@@ -85,6 +85,7 @@ public class LiveAuctionController implements ResponseListener {
     NetworkManager networkManager = NetworkManager.getInstance();
     networkManager.unregister(PlaceBidCommand.class, this);
     networkManager.unregister(AutoBidCommand.class, this);
+    networkManager.unregister(UpdateAuctionCommand.class, this);
     networkManager.unregister(UpdateAuctionStatusCommand.class, this);
     if (isAdmin) {
       changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_ProductManagement.fxml");
@@ -101,6 +102,7 @@ public class LiveAuctionController implements ResponseListener {
     running = false;
     networkManager.unregister(PlaceBidCommand.class, this);
     networkManager.unregister(AutoBidCommand.class, this);
+    networkManager.unregister(UpdateAuctionCommand.class, this);
     networkManager.unregister(UpdateAuctionStatusCommand.class, this);
     changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionInformation.fxml");
   }
@@ -198,6 +200,7 @@ public class LiveAuctionController implements ResponseListener {
     NetworkManager networkManager = NetworkManager.getInstance();
     networkManager.register(PlaceBidCommand.class, this);
     networkManager.register(AutoBidCommand.class, this);
+    networkManager.register(UpdateAuctionCommand.class, this);
     networkManager.register(UpdateAuctionStatusCommand.class, this);
     // khi vào auction thì register
     Command cmd = new RegisterToAuctionCommand();
@@ -571,6 +574,12 @@ public class LiveAuctionController implements ResponseListener {
           });
     }
 
+    if (rp.getCommand().getClass() == UpdateAuctionCommand.class) {
+      if (rp.isSuccess() && rp.getPayLoad() instanceof Auction updatedAuction) {
+        Platform.runLater(() -> applyAuctionSnapshot(updatedAuction));
+      }
+    }
+
     if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
       NetworkManager.getInstance().unregister(UpdateAuctionStatusCommand.class, this);
       if ("ADMIN_CANCELLED_AUCTION".equals(rp.getMessage())) {
@@ -591,6 +600,38 @@ public class LiveAuctionController implements ResponseListener {
               }
             });
       }
+    }
+  }
+
+  private void applyAuctionSnapshot(Auction updatedAuction) {
+    if (updatedAuction == null || currentAuction == null) {
+      return;
+    }
+    if (updatedAuction.getAuctionId() != currentAuction.getAuctionId()) {
+      return;
+    }
+
+    BigDecimal oldPrice = currentAuction.getCurrentPrice();
+    BigDecimal newPrice = updatedAuction.getCurrentPrice();
+    LocalDateTime oldEndingTime = currentAuction.getEndingTime();
+    currentAuction = updatedAuction;
+    ClientModel.getInstance().setCurrentAuction(updatedAuction);
+
+    if (newPrice != null) {
+      currentPrice_tf.setText(String.format("%,.0f VND", newPrice));
+      if (oldPrice == null || newPrice.compareTo(oldPrice) > 0) {
+        int bidSequenceNumber = priceSeries.getData().size() + 1;
+        priceSeries.getData().add(new XYChart.Data<>(bidSequenceNumber, newPrice));
+        updatePriceChartXAxis();
+      }
+    }
+    highestPayer_tf.setText(updatedAuction.getWinnerName());
+    if (updatedAuction.getEndingTime() != null
+        && timer != null
+        && !updatedAuction.getEndingTime().equals(oldEndingTime)) {
+      timer.stop();
+      timer = new TimeLeft(lbTimeLeft, updatedAuction.getEndingTime());
+      timer.start();
     }
   }
 }
