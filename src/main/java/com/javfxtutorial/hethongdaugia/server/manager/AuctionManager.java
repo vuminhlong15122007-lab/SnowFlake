@@ -41,7 +41,7 @@ public class AuctionManager {
 
   private static final long ANTI_SNIPE_X_SECONDS = 60;
   private static final long ANTI_SNIPE_Y_SECONDS = 60;
-  private static final BigDecimal MAX_BID_AMOUNT = new BigDecimal("999999999999.99");
+  private static final BigDecimal MAX_BID_AMOUNT = new BigDecimal("1000000000000000.00");
   private static final String AUTO_BID_TIE_ALERT = "AUTO_BID_TIE_ALERT";
 
   private final AntiSnipeExtender antiSnipeExtender =
