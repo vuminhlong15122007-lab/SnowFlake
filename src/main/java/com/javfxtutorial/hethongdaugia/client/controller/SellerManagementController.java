@@ -1124,4 +1124,8 @@ public class SellerManagementController implements ResponseListener {
           }
         });
   }
+
+  public void onReloadButton(ActionEvent event) {
+    loadMyProducts();
+  }
 }
