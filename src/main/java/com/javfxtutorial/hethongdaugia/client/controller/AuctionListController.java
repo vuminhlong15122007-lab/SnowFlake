@@ -55,10 +55,14 @@ public class AuctionListController implements ResponseListener {
   // null = Tất cả (NOT_START, RUNNING, ENDED_SENTINEL (dùng riêng))
   private AuctionStatus currentStatus = null;
   private boolean filterEndedGroup = false;
-  private ScheduledExecutorService statusRefreshScheduler;
+  private static boolean isLoaded = false;
+  private static ScheduledExecutorService statusRefreshScheduler;
 
   @FXML
   public void initialize() throws ConnectionFailedException {
+    if (!isLoaded){
+      isLoaded = true;
+    }
     NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
     NetworkManager.getInstance().register(AddAuctionCommand.class, this);
     observable = ClientModel.getInstance().getAllAuctions();
@@ -121,25 +125,28 @@ public class AuctionListController implements ResponseListener {
     if (!AuctionModificationManager.getInstance().isAllAuctionsLoaded) {
       loadData();
     }
-    // Cứ 30 giây refresh lại status từ server 1 lần
-    statusRefreshScheduler =
-        Executors.newSingleThreadScheduledExecutor(
-            r -> {
-              Thread t = new Thread(r, "auction-status-refresh");
-              t.setDaemon(true);
-              return t;
-            });
-    statusRefreshScheduler.scheduleAtFixedRate(
-        () -> {
-          try {
-            NetworkManager.getInstance().sendRequest(new GetAllAuctionsCommand(), this);
-          } catch (Exception e) {
-            log.warn("Auto-refresh thất bại: {}", e.getMessage());
-          }
-        },
-        30,
-        30,
-        TimeUnit.SECONDS);
+
+    if (!isLoaded) {
+      // Cứ 30 giây refresh lại status từ server 1 lần
+      statusRefreshScheduler =
+          Executors.newSingleThreadScheduledExecutor(
+              r -> {
+                Thread t = new Thread(r, "auction-status-refresh");
+                t.setDaemon(true);
+                return t;
+              });
+      statusRefreshScheduler.scheduleAtFixedRate(
+          () -> {
+            try {
+              NetworkManager.getInstance().sendRequest(new GetAllAuctionsCommand(), this);
+            } catch (Exception e) {
+              log.warn("Auto-refresh thất bại: {}", e.getMessage());
+            }
+          },
+          30,
+          30,
+          TimeUnit.SECONDS);
+    }
   }
 
   // Áp dụng tất cả bộ lọc
