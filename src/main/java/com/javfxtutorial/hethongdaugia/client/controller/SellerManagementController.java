@@ -68,6 +68,7 @@ public class SellerManagementController implements ResponseListener {
     @FXML private ListView<Auction> productList;
     @FXML private ComboBox<String> categoryComboBox;
     @FXML private VBox artFields;
+    @FXML private Button viewAuctionButton;
     @FXML private TextField artTitleField, artistField, yearCreatedField;
     @FXML private VBox vehicleFields;
     @FXML private TextField licensePlateField, vehicleYearField, brandVehicleField, colorField;
@@ -139,7 +140,6 @@ public class SellerManagementController implements ResponseListener {
 
         if (!isLoaded) {
             loadMyProducts();
-            loadNotificationsFromServer();
             isLoaded = true;
         }
         updateBadge();
@@ -321,26 +321,47 @@ public class SellerManagementController implements ResponseListener {
         }
         maybeAddNotification(auction);
     }
-
     private void handleEditableAuction(Auction auction) {
         selectedAuction = auction;
         hienThiChiTietSanPham(auction);
         showDetailForm();
         detailFormBox.setDisable(false);
+
+        if (viewAuctionButton != null) {
+            viewAuctionButton.setVisible(false);
+            viewAuctionButton.setManaged(false);
+        }
+
         setupEditButton();
         maybeAddNotification(auction);
     }
 
-    /** RUNNING → hiển thị form nhưng không cho sửa */
     private void handleReadOnlyAuction(Auction auction) {
         selectedAuction = auction;
         hienThiChiTietSanPham(auction);
         showDetailForm();
         detailFormBox.setDisable(true);
+
         saveButton.setVisible(false);
         saveButton.setManaged(false);
+
+        if (viewAuctionButton != null) {
+            viewAuctionButton.setVisible(true);
+            viewAuctionButton.setManaged(true);
+            viewAuctionButton.setOnAction(event -> {
+                log.info(">>> Nút xem phiên được nhấn, auctionId = {}", selectedAuction.getAuctionId());
+                try {
+                    ClientModel.getInstance().setCurrentAuction(selectedAuction);
+                    changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/LiveAuction.fxml");
+                } catch (Exception e) {
+                    log.error(">>> Lỗi khi chuyển scene: {}", e.getMessage(), e);
+                    Platform.runLater(() -> showAlert("Lỗi", "Không thể mở phiên: " + e.getMessage()));
+                }
+            });
+        }
         maybeAddNotification(auction);
     }
+
 
     /** Thiết lập nút Save sang chế độ "Sửa". */
     private void setupEditButton() {
@@ -413,6 +434,12 @@ public class SellerManagementController implements ResponseListener {
     @FXML
     public void onAddButton(ActionEvent event) {
         showDetailForm();
+        detailFormBox.setDisable(false);
+
+        if (viewAuctionButton != null) {
+            viewAuctionButton.setVisible(false);
+            viewAuctionButton.setManaged(false);
+        }
         saveButton.setVisible(true);
         saveButton.setManaged(true);
         saveButton.setStyle(
@@ -725,7 +752,6 @@ public class SellerManagementController implements ResponseListener {
             VBox popupRoot = loader.load();
             popupController = loader.getController();
             popupController.setOnMarkRead(notif -> {
-                markNotificationReadOnServer(notif.getAuctionId());
                 Platform.runLater(this::updateBadge);
             });
             notificationPopup = new Popup();
@@ -768,8 +794,6 @@ public class SellerManagementController implements ResponseListener {
         else if (cmdClass == DeleteAuctionCommand.class)                 handleDeleteAuctionResponse(rp);
         else if (cmdClass == UpdateAuctionCommand.class)                 handleUpdateAuctionResponse(rp);
         else if (cmdClass == UpdateAuctionStatusCommand.class)           handleAuctionStatusPushResponse(rp);
-        else if (cmdClass == GetSellerNotificationsCommand.class)        handleGetNotificationsResponse(rp);
-        else if (cmdClass == MarkNotificationReadCommand.class)          handleMarkNotificationReadResponse(rp);
     }
 
     private void handleAddAuctionResponse(Response rp) {
@@ -901,12 +925,12 @@ public class SellerManagementController implements ResponseListener {
             return;
 
         SellerNotification.Type type = switch (status) {
-            case CLOSED          -> SellerNotification.Type.CLOSED;
-            case PAID            -> SellerNotification.Type.PAID;
+            case CLOSED -> SellerNotification.Type.CLOSED;
+            case PAID -> SellerNotification.Type.PAID;
             case CANCELLED_BY_ADMIN -> SellerNotification.Type.CANCELLED_BY_ADMIN;
-            default              -> SellerNotification.Type.CANCELLED;
+            default -> SellerNotification.Type.CANCELLED;
         };
-        String productName  = auction.getItem() != null ? auction.getItem().getName() : String.valueOf(auction.getAuctionId());
+        String productName = auction.getItem() != null ? auction.getItem().getName() : String.valueOf(auction.getAuctionId());
         String winnerNameStr = !nullOrEmpty(auction.getWinnerName()) ? auction.getWinnerName() : "N/A";
         SellerNotification notif = new SellerNotification(
                 auction.getAuctionId(), type, productName, winnerNameStr, auction.getWinningPrice());
@@ -922,60 +946,4 @@ public class SellerManagementController implements ResponseListener {
         });
     }
 
-    // ── Notification từ DB ────────────────────────────────────────────────────
-
-    private void loadNotificationsFromServer() {
-        int sellerId = ClientModel.getInstance().getCurrentUser().getId();
-        new Thread(() -> {
-            try {
-                Command cmd = new GetSellerNotificationsCommand();
-                cmd.addData("sellerId", sellerId);
-                NetworkManager.getInstance().sendRequest(cmd, this);
-            } catch (Exception e) {
-                log.error("Lỗi load notifications từ server: {}", e.getMessage(), e);
-            }
-        }).start();
-    }
-
-
-    private void handleGetNotificationsResponse(Response rp) {
-        NetworkManager.getInstance().unregister(GetSellerNotificationsCommand.class, this);
-        if (!rp.isSuccess() || rp.getPayLoad() == null) return;
-        Platform.runLater(() -> {
-            List<SellerNotification> fromDb = (List<SellerNotification>) rp.getPayLoad();
-            for (SellerNotification n : fromDb) {
-                // Đồng bộ trạng thái is_read từ DB vào local Preferences
-                if (n.isRead()) {
-                    ClientModel.getInstance().markNotificationReadByAuction(n.getAuctionId());
-                }
-                Optional<SellerNotification> existing = notifications.stream()
-                        .filter(x -> x.getAuctionId() == n.getAuctionId()).findFirst();
-                if (existing.isEmpty()) {
-                    notifications.add(n);
-                }
-            }
-            sortNotifications();
-            updateBadge();
-        });
-    }
-
-    private void handleMarkNotificationReadResponse(Response rp) {
-        NetworkManager.getInstance().unregister(MarkNotificationReadCommand.class, this);
-        if (!rp.isSuccess()) {
-            log.warn("markAsRead thất bại: {}", rp.getMessage());
-        }
-    }
-
-    /** Gửi markAsRead lên server khi seller click vào notification */
-    private void markNotificationReadOnServer(int auctionId) {
-        new Thread(() -> {
-            try {
-                Command cmd = new MarkNotificationReadCommand();
-                cmd.addData("auctionId", auctionId);
-                NetworkManager.getInstance().sendRequest(cmd, this);
-            } catch (Exception e) {
-                log.error("Lỗi gửi markAsRead: {}", e.getMessage(), e);
-            }
-        }).start();
-    }
 }

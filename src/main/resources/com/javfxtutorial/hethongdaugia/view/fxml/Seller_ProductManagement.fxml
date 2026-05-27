@@ -235,19 +235,34 @@
                                     <Label style="-fx-font-size: 12px; -fx-text-fill: -sf-muted;" text="phút" />
                                 </HBox>
                             </VBox>
-
-                            <HBox alignment="CENTER_RIGHT" spacing="10.0">
-                                <Region HBox.hgrow="ALWAYS" />
-                                <Button fx:id="saveButton" onAction="#onSaveButton" prefHeight="38.0" prefWidth="132.0" style="-fx-background-color: linear-gradient(to right, -sf-accent-2, -sf-accent); -fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-background-radius: 13; -fx-cursor: hand;" text="Lưu" />
-                            </HBox>
+                            <!-- KHÔNG còn HBox nút ở đây nữa -->
                         </VBox>
                     </HBox>
                 </VBox>
+                <!-- ↑ detailFormBox đóng ở đây ↑ -->
+
+                <!-- HBox nút nằm NGOÀI detailFormBox, vẫn trong sf-card -->
+                <HBox alignment="CENTER_RIGHT" spacing="10.0">
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Button fx:id="viewAuctionButton"
+                            prefHeight="38.0" prefWidth="180.0"
+                            managed="false" visible="false"
+                            style="-fx-background-color: linear-gradient(to right, #27ae60, #2ecc71);
+                                   -fx-text-fill: white; -fx-font-weight: bold;
+                                   -fx-background-radius: 13; -fx-cursor: hand;
+                                   -fx-effect: dropshadow(gaussian, rgba(46,204,113,0.35), 8, 0.3, 0, 2);"
+                            text="▶  Xem phiên đấu giá" />
+                    <Button fx:id="saveButton" onAction="#onSaveButton"
+                            prefHeight="38.0" prefWidth="132.0"
+                            style="-fx-background-color: linear-gradient(to right, -sf-accent-2, -sf-accent);
+                                   -fx-text-fill: -sf-on-accent; -fx-font-weight: bold;
+                                   -fx-background-radius: 13; -fx-cursor: hand;"
+                            text="Lưu" />
+                </HBox>
 
             </VBox>
         </HBox>
     </center>
-
     <bottom>
         <HBox alignment="CENTER" prefHeight="26.0" style="-fx-background-color: linear-gradient(to right, -sf-border, -sf-accent-2);">
             <Label style="-fx-text-fill: -sf-on-accent; -fx-font-size: 11px; -fx-font-weight: bold;" text="© 2026 SnowFox - Studio SnowFlake" />

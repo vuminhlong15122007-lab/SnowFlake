@@ -7,7 +7,6 @@ import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
-import com.javfxtutorial.hethongdaugia.server.dao.NotificationDAO;
 import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import org.slf4j.Logger;
@@ -43,7 +42,6 @@ public class DeleteAuctionCommand extends Command {
                 Response notifResponse = new Response(true, "ADMIN_DELETED_PRODUCT", notif, this);
 
                 try {
-                    NotificationDAO.getInstance().insertOrReplace(notif, auction.getSellerId());
                     ClientHandler.broadcastToSeller(auction.getSellerId(), notifResponse);
                 } catch (Exception e) {
                     log.warn("Gửi notification thất bại, bỏ qua: {}", e.getMessage());

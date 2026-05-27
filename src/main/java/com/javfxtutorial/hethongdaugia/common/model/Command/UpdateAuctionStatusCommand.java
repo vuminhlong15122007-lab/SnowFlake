@@ -1,14 +1,12 @@
 package com.javfxtutorial.hethongdaugia.common.model.Command;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
-import com.javfxtutorial.hethongdaugia.common.Exception.data.DataUpdateException;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.domain.SellerNotification;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
-import com.javfxtutorial.hethongdaugia.server.dao.NotificationDAO;
 import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import org.slf4j.Logger;
@@ -47,7 +45,6 @@ public class UpdateAuctionStatusCommand extends Command {
                     );
 
                     try {
-                        NotificationDAO.getInstance().insertOrReplace(notif, auction.getSellerId());
                         ClientHandler.broadcastToSeller(auction.getSellerId(),
                                 new Response(true, "ADMIN_CANCELLED_AUCTION", notif, this));
 
