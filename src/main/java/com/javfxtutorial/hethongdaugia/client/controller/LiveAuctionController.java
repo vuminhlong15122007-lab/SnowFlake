@@ -24,6 +24,10 @@ import com.javfxtutorial.hethongdaugia.common.network.Response;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+
+import javafx.animation.FadeTransition;
+import javafx.animation.PauseTransition;
+import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -37,7 +41,9 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +71,8 @@ public class LiveAuctionController implements ResponseListener {
   @FXML private ToggleButton autoBidToggle; // Nút bật/tắt chế độ tự động
   @FXML private Label auctionStatusLabel; // Nhãn trạng thái phiên (chỉ hiện cho admin)
   @FXML private Button btnToInformation;
+  @FXML private HBox notificationBox;
+  @FXML private Label notificationLabel;
 
   private boolean isAdmin = false;
   private boolean isSeller = false;
@@ -413,21 +421,38 @@ public class LiveAuctionController implements ResponseListener {
     NetworkManager.getInstance().sendRequest(cmd, this);
   }
 
+  public void showNotification(String message) {
+    notificationLabel.setText(message);
+    notificationBox.setVisible(true);
+
+    FadeTransition fadeIn = new FadeTransition(Duration.millis(300), notificationBox);
+    fadeIn.setFromValue(0); fadeIn.setToValue(1);
+
+    PauseTransition pause = new PauseTransition(Duration.seconds(2));
+
+    FadeTransition fadeOut = new FadeTransition(Duration.millis(400), notificationBox);
+    fadeOut.setFromValue(1); fadeOut.setToValue(0);
+    fadeOut.setOnFinished(e -> notificationBox.setVisible(false));
+
+    new SequentialTransition(fadeIn, pause, fadeOut).play();
+  }
+
   @Override
   public void onResponse(Response rp) {
     if (rp.getCommand().getClass() == PlaceBidCommand.class) {
       BidTransaction bid = (BidTransaction) rp.getPayLoad();
+
       if (!rp.isSuccess()) {
         Platform.runLater(() -> showAlert("Trạng thái đặt bid", rp.getMessage()));
         return;
       }
+      if (bid.getBidderId() == ClientModel.getInstance().getCurrentUser().getId()){
+        Platform.runLater(() -> showNotification(rp.getMessage()));
+      }
 
       // Từ đây bid chắc chắn không null (vì success)
       if (bid == null) return;
-      // nếu là người gửi thì hiện popup thông báo
-      if (ClientModel.getInstance().getCurrentUser().getName().equals(bid.getBidderName())) {
-        Platform.runLater(() -> showAlert("Trạng thái đặt bid", rp.getMessage()));
-      }
+
 
       // nếu đặt giá thành công thì set up lại view
       if (rp.isSuccess()) {

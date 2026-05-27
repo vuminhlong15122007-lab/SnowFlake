@@ -38,7 +38,7 @@ public class AuctionModificationManager implements ResponseListener {
         Auction savedAuction = (Auction) rp.getPayLoad();
         Platform.runLater(
             () -> {
-              ClientModel.getInstance().getAllAuctions().add(savedAuction);
+              ClientModel.getInstance().getAllAuctions().add(0, savedAuction);
             });
       }
     }
