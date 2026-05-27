@@ -96,10 +96,14 @@ public class PasswordResetController implements ResponseListener {
 
       // load lai man hinh
       loadUserInfo();
-      showAlert("Thành công", "Cập nhật mật khẩu thành công", "FunnyCat.gif");
+      Platform.runLater(() -> {
+        showAlert("Thành công", "Cập nhật mật khẩu thành công", "FunnyCat.gif");
+      });
 
     } else {
-      showAlert("Thất bại", rp.getMessage(), "Wait.gif");
+      Platform.runLater(() -> {
+        showAlert("Thất bại", rp.getMessage(), "Wait.gif");
+      });
     }
     NetworkManager networkManager = NetworkManager.getInstance();
     networkManager.unregister(ResetPassWordCommand.class, this);
