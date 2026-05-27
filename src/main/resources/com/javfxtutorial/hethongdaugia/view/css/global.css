@@ -97,20 +97,8 @@
     -fx-border-color: -sf-surface;
 }
 
-.theme-switcher.theme-blue {
+.theme-switcher.theme-light {
     -fx-background-color: linear-gradient(to right, #38BDF8, #2563EB);
-}
-
-.theme-switcher.theme-swiss-red {
-    -fx-background-color: linear-gradient(to right, #FF5A6A, #E30613);
-}
-
-.theme-switcher.theme-mint {
-    -fx-background-color: linear-gradient(to right, #5EDFC0, #0F9F7C);
-}
-
-.theme-switcher.theme-autumn {
-    -fx-background-color: linear-gradient(to right, #F5B642, #D97706);
 }
 
 .theme-switcher.theme-dark {
@@ -1346,7 +1334,7 @@
     -fx-opacity: 0.58;
 }
 
-/* ==================== Admin screens: follow the 5 shared color modes ==================== */
+/* ==================== Admin screens: follow the shared light/dark modes ==================== */
 .admin-theme {
     -sf-text-primary: -sf-heading;
     -sf-text-secondary: -sf-muted;

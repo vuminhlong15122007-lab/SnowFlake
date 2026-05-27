@@ -18,27 +18,8 @@ import javafx.stage.Window;
 
 public final class ThemeManager {
   private static final String GLOBAL_CSS = "/com/javfxtutorial/hethongdaugia/view/css/global.css";
-  private static final String SWISS_RED_CSS =
-      "/com/javfxtutorial/hethongdaugia/view/css/swissredmode.css";
-  private static final String MINT_CSS = "/com/javfxtutorial/hethongdaugia/view/css/mintmode.css";
-  private static final String AUTUMN_CSS =
-      "/com/javfxtutorial/hethongdaugia/view/css/autumnmode.css";
   private static final String DARK_CSS = "/com/javfxtutorial/hethongdaugia/view/css/darkmode.css";
 
-  // Old theme paths are kept only to remove stale stylesheets from already-open scenes.
-  private static final List<String> LEGACY_THEME_CSS =
-      List.of(
-          "/com/javfxtutorial/hethongdaugia/view/css/auroramode.css",
-          "/com/javfxtutorial/hethongdaugia/view/css/royalmode.css",
-          "/com/javfxtutorial/hethongdaugia/view/css/frostmode.css",
-          "/com/javfxtutorial/hethongdaugia/view/css/embermode.css",
-          "/com/javfxtutorial/hethongdaugia/view/css/oceanmode.css",
-          "/com/javfxtutorial/hethongdaugia/view/css/graphitemode.css",
-          "/com/javfxtutorial/hethongdaugia/view/css/lavendermode.css",
-          "/com/javfxtutorial/hethongdaugia/view/css/forestmode.css",
-          "/com/javfxtutorial/hethongdaugia/view/css/sunsetmode.css",
-          "/com/javfxtutorial/hethongdaugia/view/css/blossommode.css",
-          "/com/javfxtutorial/hethongdaugia/view/css/cybermode.css");
   private static final String THEME_PROPERTY = "snowfox.theme";
   private static final String THEME_ENV = "SNOWFOX_THEME";
   private static final String SWITCHER_ID = "themeModeSwitcher";
@@ -75,13 +56,7 @@ public final class ThemeManager {
   }
 
   private static void removeThemeStyles(List<String> stylesheets) {
-    removeIfPresent(stylesheets, SWISS_RED_CSS);
-    removeIfPresent(stylesheets, MINT_CSS);
-    removeIfPresent(stylesheets, AUTUMN_CSS);
     removeIfPresent(stylesheets, DARK_CSS);
-    for (String legacyCss : LEGACY_THEME_CSS) {
-      removeIfPresent(stylesheets, legacyCss);
-    }
   }
 
   private static void removeIfPresent(List<String> stylesheets, String resourcePath) {
@@ -89,6 +64,9 @@ public final class ThemeManager {
     if (stylesheet != null) {
       stylesheets.remove(stylesheet);
     }
+    String resourceSuffix = resourcePath.startsWith("/") ? resourcePath.substring(1) : resourcePath;
+    stylesheets.removeIf(
+        existing -> existing != null && existing.replace('\\', '/').endsWith(resourceSuffix));
   }
 
   private static void addIfMissing(List<String> stylesheets, String resourcePath) {
@@ -169,9 +147,7 @@ public final class ThemeManager {
     switcher.setPrefHeight(28);
     switcher.setMaxHeight(28);
     switcher.getStyleClass().add("theme-switcher");
-    switcher.setTooltip(
-        new Tooltip(
-            "Change color mode: Xanh nguyên bản, Đỏ Thụy Sĩ, Xanh lá mint, Mùa thu lá vàng, Darkmode"));
+    switcher.setTooltip(new Tooltip("Đổi chế độ màu: Sáng / Tối"));
     switcher.setOnAction(
         _ -> {
           currentMode = currentMode.next();
@@ -235,11 +211,8 @@ public final class ThemeManager {
   }
 
   private enum ColorMode {
-    BLUE("blue", "Xanh nguyên bản", null, "theme-blue"),
-    SWISS_RED("swiss-red", "Đỏ Thụy Sĩ", SWISS_RED_CSS, "theme-swiss-red"),
-    MINT("mint", "Xanh lá mint", MINT_CSS, "theme-mint"),
-    AUTUMN("autumn", "Mùa thu lá vàng", AUTUMN_CSS, "theme-autumn"),
-    DARK("dark", "Darkmode", DARK_CSS, "theme-dark");
+    LIGHT("light", "Sáng", null, "theme-light"),
+    DARK("dark", "Tối", DARK_CSS, "theme-dark");
 
     private final String id;
     private final String label;
@@ -276,59 +249,25 @@ public final class ThemeManager {
 
     private static ColorMode from(String raw) {
       if (raw == null || raw.isBlank()) {
-        return BLUE;
+        return LIGHT;
       }
       if ("true".equalsIgnoreCase(raw)) {
         return DARK;
       }
       String normalized = raw.trim().toLowerCase();
-      if (normalized.equals("light")
-          || normalized.equals("blue")
-          || normalized.equals("ocean")
-          || normalized.equals("frost")) {
-        return BLUE;
-      }
-      if (normalized.equals("red")
-          || normalized.equals("swiss")
-          || normalized.equals("swissred")
-          || normalized.equals("blossom")) {
-        return SWISS_RED;
-      }
-      if (normalized.equals("green") || normalized.equals("forest")) {
-        return MINT;
-      }
-      if (normalized.equals("yellow")
-          || normalized.equals("ember")
-          || normalized.equals("sunset")) {
-        return AUTUMN;
+      if (normalized.equals("darkmode")) {
+        return DARK;
       }
       for (ColorMode mode : values()) {
         if (mode.id.equalsIgnoreCase(raw) || mode.label.equalsIgnoreCase(raw)) {
           return mode;
         }
       }
-      return BLUE;
+      return LIGHT;
     }
 
     private static List<String> styleClasses() {
-      return List.of(
-          BLUE.styleClass,
-          SWISS_RED.styleClass,
-          MINT.styleClass,
-          AUTUMN.styleClass,
-          DARK.styleClass,
-          "theme-light",
-          "theme-frost",
-          "theme-ocean",
-          "theme-aurora",
-          "theme-royal",
-          "theme-lavender",
-          "theme-blossom",
-          "theme-sunset",
-          "theme-ember",
-          "theme-forest",
-          "theme-graphite",
-          "theme-cyber");
+      return List.of(LIGHT.styleClass, DARK.styleClass);
     }
   }
 }
