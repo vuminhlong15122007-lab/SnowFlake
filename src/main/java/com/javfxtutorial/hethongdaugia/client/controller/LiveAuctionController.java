@@ -381,7 +381,10 @@ public class LiveAuctionController implements ResponseListener {
       // Từ đây bid chắc chắn không null (vì success)
       if (bid == null) return;
       // nếu là người gửi thì hiện popup thông báo
-      if (ClientModel.getInstance().getCurrentUser().getName().equals(bid.getBidderName())) {
+      boolean isCurrentUserId = ClientModel.getInstance().getCurrentUser().getId() == bid.getBidderId();
+      boolean isDirectResponse = rp.getRequestId() != null;
+
+      if(isCurrentUserId && isDirectResponse){
         Platform.runLater(() -> showAlert("Trạng thái đặt bid", rp.getMessage()));
       }
 
