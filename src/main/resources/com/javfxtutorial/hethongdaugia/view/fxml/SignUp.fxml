@@ -64,5 +64,7 @@
                 </VBox>
             </children>
         </AnchorPane>
+
+        <fx:include fx:id="notificationToast" source="NotificationToast.fxml" />
     </children>
 </StackPane>

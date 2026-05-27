@@ -1677,3 +1677,117 @@
 .admin-theme .admin-btn-delete:pressed {
     -fx-background-color: derive(-sf-danger-soft, -14%);
 }
+.sf-toast {
+    -fx-background-color: #ffffff;
+    -fx-background-radius: 6;
+    -fx-border-color: #eef2f7;
+    -fx-border-radius: 6;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(15, 23, 42, 0.14), 10, 0.12, 0, 2);
+    -fx-translate-x: -20;
+    -fx-translate-y: 70;
+}
+
+.sf-toast-content {
+    -fx-padding: 7 8 7 10;
+}
+
+.sf-toast-icon {
+    -fx-background-radius: 999;
+    -fx-alignment: center;
+    -fx-min-width: 20;
+    -fx-min-height: 20;
+    -fx-pref-width: 20;
+    -fx-pref-height: 20;
+    -fx-max-width: 20;
+    -fx-max-height: 20;
+}
+
+.sf-toast-status-icon {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+}
+
+.sf-toast-text {
+    -fx-font-size: 12px;
+    -fx-text-fill: #747b86;
+    -fx-font-weight: 600;
+    -fx-line-spacing: 1;
+}
+
+.sf-toast-close {
+    -fx-font-size: 18px;
+    -fx-text-fill: #a6adb8;
+    -fx-font-weight: 300;
+    -fx-cursor: hand;
+    -fx-padding: 0 1 1 4;
+}
+
+.sf-toast-close:hover {
+    -fx-text-fill: #64748b;
+}
+
+.sf-toast-success .sf-toast-icon {
+    -fx-background-color: #22c55e;
+}
+
+.sf-toast-error .sf-toast-icon {
+    -fx-background-color: #ef4444;
+}
+
+.sf-toast-warning .sf-toast-icon {
+    -fx-background-color: #f59e0b;
+}
+
+.sf-toast-info .sf-toast-icon {
+    -fx-background-color: #3b82f6;
+}
+
+.sf-toast-success .sf-toast-text {
+    -fx-text-fill: #747b86;
+}
+
+.sf-toast-error .sf-toast-text {
+    -fx-text-fill: #dc2626;
+}
+
+.sf-toast-warning .sf-toast-text {
+    -fx-text-fill: #b45309;
+}
+
+.sf-toast-info .sf-toast-text {
+    -fx-text-fill: #2563eb;
+}
+
+.sf-toast-success .sf-toast-progress-track {
+    -fx-background-color: #dcfce7;
+}
+
+.sf-toast-error .sf-toast-progress-track {
+    -fx-background-color: #fee2e2;
+}
+
+.sf-toast-warning .sf-toast-progress-track {
+    -fx-background-color: #fef3c7;
+}
+
+.sf-toast-info .sf-toast-progress-track {
+    -fx-background-color: #dbeafe;
+}
+
+.sf-toast-success .sf-toast-progress-bar {
+    -fx-fill: #22c55e;
+}
+
+.sf-toast-error .sf-toast-progress-bar {
+    -fx-fill: #ef4444;
+}
+
+.sf-toast-warning .sf-toast-progress-bar {
+    -fx-fill: #f59e0b;
+}
+
+.sf-toast-info .sf-toast-progress-bar {
+    -fx-fill: #3b82f6;
+}

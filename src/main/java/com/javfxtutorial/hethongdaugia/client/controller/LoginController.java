@@ -3,6 +3,7 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 
 import com.javfxtutorial.hethongdaugia.client.Util.AuctionModificationManager;
+import com.javfxtutorial.hethongdaugia.client.Util.ToastNotifier;
 import com.javfxtutorial.hethongdaugia.client.Util.UserManager;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
@@ -14,6 +15,7 @@ import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.animation.PauseTransition;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,6 +23,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import javafx.util.Duration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,6 +32,7 @@ public class LoginController implements ResponseListener, Initializable {
   @FXML private TextField Username;
   @FXML private PasswordField Password;
   @FXML private Label message;
+  @FXML private NotificationToastController notificationToastController;
   ActionEvent loginEvent;
   @FXML private TextField PasswordVisible;
   private boolean passwordShown = false;
@@ -58,7 +62,11 @@ public class LoginController implements ResponseListener, Initializable {
                 NetworkManager.getInstance().sendRequest(cmd, this);
               } catch (Exception e) {
                 log.error("Lỗi khi gửi login request: {}", e.getMessage(), e);
-                Platform.runLater(() -> message.setText("Lỗi kết nối: " + e.getMessage()));
+                Platform.runLater(
+                    () -> {
+                      message.setText("Lỗi kết nối: " + e.getMessage());
+                      toast().error("Đăng nhập thất bại");
+                    });
               }
             })
         .start();
@@ -80,24 +88,34 @@ public class LoginController implements ResponseListener, Initializable {
       ClientModel.getInstance().startPruneScheduler();
       Platform.runLater(
           () -> {
-            if (user.getAccountType() == AccountType.USER) {
-              log.info(rp.getMessage());
-              changeScene(loginEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
-              new HomeController().checkUnpaidAuction();
-            } else if (user.getAccountType() == AccountType.ADMIN) {
-              log.info(rp.getMessage());
-              changeScene(
-                  loginEvent,
-                  "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UserManagement.fxml");
-            }
+            toast().success("Đăng nhập thành công");
+            PauseTransition delay = new PauseTransition(Duration.seconds(1));
+            delay.setOnFinished(event -> openHomeScene(user, rp));
+            delay.play();
           });
     } else {
       Platform.runLater(
           () -> {
             message.setText("Sai tên hoặc mật khẩu!");
+            toast().error("Đăng nhập thất bại");
             log.info(rp.getMessage());
           });
     }
+  }
+
+  private void openHomeScene(User user, Response rp) {
+    if (user.getAccountType() == AccountType.USER) {
+      log.info(rp.getMessage());
+      changeScene(loginEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
+      new HomeController().checkUnpaidAuction();
+    } else if (user.getAccountType() == AccountType.ADMIN) {
+      log.info(rp.getMessage());
+      changeScene(loginEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UserManagement.fxml");
+    }
+  }
+
+  private ToastNotifier toast() {
+    return ToastNotifier.of(notificationToastController);
   }
 
   // ẩn hiện mkh

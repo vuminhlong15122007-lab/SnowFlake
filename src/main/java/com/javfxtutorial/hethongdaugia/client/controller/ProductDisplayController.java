@@ -5,6 +5,7 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.Util.TimeLeft;
+import com.javfxtutorial.hethongdaugia.client.Util.ToastNotifier;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
@@ -55,6 +56,7 @@ public class ProductDisplayController implements ResponseListener {
   @FXML private Label elecBrandValue, modelValue;
   @FXML private Label initPriceLabel, stepPriceLabel;
   @FXML private Label detailTitle;
+  @FXML private NotificationToastController notificationToastController;
 
   private Item item;
   private Auction auction;
@@ -118,10 +120,10 @@ public class ProductDisplayController implements ResponseListener {
                     connection.sendCommand(cmd);
                   } catch (ConnectionFailedException e) {
                     log.error("Không kết nối được server");
-                    showAlert("Lỗi", e.getMessage());
+                    notifyError(e.getMessage());
                   } catch (SendFailedException e) {
                     log.error("Không gửi được command");
-                    showAlert("Lỗi", e.getMessage());
+                    notifyError(e.getMessage());
                   }
                 });
           } else if (auction.getStatus()
@@ -136,10 +138,10 @@ public class ProductDisplayController implements ResponseListener {
                     connection.sendCommand(cmd);
                   } catch (ConnectionFailedException e) {
                     log.error("Không kết nối được server");
-                    showAlert("Lỗi", e.getMessage());
+                    notifyError(e.getMessage());
                   } catch (SendFailedException e) {
                     log.error("Không gửi được command");
-                    showAlert("Lỗi", e.getMessage());
+                    notifyError(e.getMessage());
                   }
                 });
           }
@@ -204,16 +206,16 @@ public class ProductDisplayController implements ResponseListener {
   public void goToManHinhDauGiaTrucTiep(ActionEvent event) {
     AccountType type = ClientModel.getInstance().getCurrentUser().getAccountType();
     if (type == AccountType.ADMIN) {
-      showAlert("KHông thể tham gia", "Bạn không thể tham gia phin đấu giá");
+      notifyWarning("Admin không thể tham gia phiên đấu giá");
       return;
     }
     if (auction.getStatus() == AuctionStatus.RUNNING) {
       changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/LiveAuction.fxml");
     } else {
       if (auction.getStatus() == AuctionStatus.CLOSED) {
-        showAlert("Không thể vào phiên đấu giá", "Đã hết phiên đấu giá");
+        notifyWarning("Đã hết phiên đấu giá");
       } else if (auction.getStatus() == AuctionStatus.NOT_START) {
-        showAlert("Không thể vào phiên đấu giá", "Chưa bắt đầu phiên đấu giá");
+        notifyWarning("Chưa bắt đầu phiên đấu giá");
       }
     }
   }
@@ -307,5 +309,17 @@ public class ProductDisplayController implements ResponseListener {
             });
       }
     }
+  }
+
+  private void notifyWarning(String message) {
+    toast().warning(message);
+  }
+
+  private void notifyError(String message) {
+    toast().error(message);
+  }
+
+  private ToastNotifier toast() {
+    return ToastNotifier.of(notificationToastController);
   }
 }

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Rectangle?>
+
+<StackPane fx:id="root"
+           xmlns="http://javafx.com/javafx/25"
+           xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="com.javfxtutorial.hethongdaugia.client.controller.NotificationToastController"
+           StackPane.alignment="TOP_RIGHT"
+           visible="false"
+           opacity="0"
+           minWidth="230"
+           minHeight="42"
+           prefWidth="270"
+           prefHeight="46"
+           maxWidth="290"
+           maxHeight="58"
+           pickOnBounds="false"
+           stylesheets="@../css/global.css"
+           styleClass="sf-toast">
+
+    <HBox alignment="CENTER_LEFT" spacing="8" styleClass="sf-toast-content">
+        <StackPane minWidth="20" minHeight="20"
+                   prefWidth="20" prefHeight="20"
+                   maxWidth="20" maxHeight="20"
+                   styleClass="sf-toast-icon">
+            <Label fx:id="statusIcon" text="✓" styleClass="sf-toast-status-icon"/>
+        </StackPane>
+
+        <Label fx:id="notificationLabel"
+               text="Cập nhật thành công!"
+               maxWidth="185"
+               wrapText="true"
+               styleClass="sf-toast-text"/>
+
+        <Region HBox.hgrow="ALWAYS"/>
+
+        <Label text="×"
+               onMouseClicked="#hide"
+               styleClass="sf-toast-close"/>
+    </HBox>
+
+    <Region prefHeight="2"
+            prefWidth="270"
+            maxWidth="Infinity"
+            maxHeight="2"
+            StackPane.alignment="BOTTOM_LEFT"
+            styleClass="sf-toast-progress-track"/>
+
+    <Rectangle fx:id="progressBar"
+               width="270"
+               height="2"
+               StackPane.alignment="BOTTOM_LEFT"
+               styleClass="sf-toast-progress-bar"/>
+</StackPane>

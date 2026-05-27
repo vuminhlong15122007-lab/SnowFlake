@@ -3,6 +3,7 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.*;
 
 import com.javfxtutorial.hethongdaugia.client.Util.ThemeManager;
+import com.javfxtutorial.hethongdaugia.client.Util.ToastNotifier;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
@@ -38,6 +39,7 @@ public class AdminUserController implements ResponseListener {
   @FXML private TableColumn<User, String> colRole;
   @FXML private TextField searchField;
   @FXML private Label userCountBadge;
+  @FXML private NotificationToastController notificationToastController;
 
   private User selectUser;
   private ObservableList<User> danhSach;
@@ -80,21 +82,21 @@ public class AdminUserController implements ResponseListener {
                 log.error("Lỗi kết nối: {}", e.getMessage());
                 Platform.runLater(
                     () -> {
-                      showAlert("Lỗi kết nối", "Không thể kết nối đến server");
+                      toast().error("Không thể kết nối đến server");
                       if (userCountBadge != null) userCountBadge.setText("Lỗi kết nối");
                     });
               } catch (SendFailedException e) {
                 log.error("Lỗi gửi: {}", e.getMessage());
                 Platform.runLater(
                     () -> {
-                      showAlert("Lỗi", "Không thể gửi yêu cầu");
+                      toast().error("Không thể gửi yêu cầu");
                       if (userCountBadge != null) userCountBadge.setText("Lỗi");
                     });
               } catch (Exception e) {
                 log.error("Lỗi tải user: {}", e.getMessage(), e);
                 Platform.runLater(
                     () -> {
-                      showAlert("Lỗi", "Tải dữ liệu thất bại");
+                      toast().error("Tải dữ liệu thất bại");
                       if (userCountBadge != null) userCountBadge.setText("Lỗi");
                     });
               }
@@ -121,7 +123,7 @@ public class AdminUserController implements ResponseListener {
   public void clickToDeleteUser() {
     selectUser = userTable.getSelectionModel().getSelectedItem();
     if (selectUser == null) {
-      showAlert("Lỗi", "Vui lòng chọn người dùng cần xóa", "WrongCat.gif");
+      toast().warning("Vui lòng chọn người dùng cần xóa");
       return;
     }
 
@@ -156,8 +158,7 @@ public class AdminUserController implements ResponseListener {
                 } catch (Exception e) {
                   log.error("Lỗi gửi DeleteUserCommand: {}", e.getMessage(), e);
                   NetworkManager.getInstance().unregister(DeleteUserCommand.class, this);
-                  Platform.runLater(
-                      () -> showAlert("Lỗi", "Không thể gửi yêu cầu", "WrongCat.gif"));
+                  Platform.runLater(() -> toast().error("Không thể gửi yêu cầu"));
                 }
               })
           .start();
@@ -182,6 +183,7 @@ public class AdminUserController implements ResponseListener {
       stage.show();
     } catch (Exception e) {
       log.error("Lỗi mở popup reset password: {}", e.getMessage(), e);
+      toast().error("Không thể mở cửa sổ đặt lại mật khẩu");
     }
   }
 
@@ -241,13 +243,13 @@ public class AdminUserController implements ResponseListener {
       Platform.runLater(
           () -> {
             if (rp.isSuccess()) {
-              showAlert("Xóa thành công", rp.getMessage(), "Kiss.gif");
+              toast().success(rp.getMessage());
               // Xóa khỏi cả danh sách gốc lẫn table
               userTable.getItems().remove(selectUser);
               if (danhSach != null) danhSach.remove(selectUser);
               updateCountBadge(); // cập nhật badge sau khi xóa
             } else {
-              showAlert("Lỗi", rp.getMessage(), "WrongCat.gif");
+              toast().error(rp.getMessage());
             }
           });
       NetworkManager.getInstance().unregister(DeleteUserCommand.class, this);
@@ -266,11 +268,15 @@ public class AdminUserController implements ResponseListener {
       } else {
         Platform.runLater(
             () -> {
-              showAlert("Lỗi", rp.getMessage());
+              toast().error(rp.getMessage());
               if (userCountBadge != null) userCountBadge.setText("0 người dùng");
             });
       }
       NetworkManager.getInstance().unregister(GetAllUsersCommand.class, this);
     }
+  }
+
+  private ToastNotifier toast() {
+    return ToastNotifier.of(notificationToastController);
   }
 }

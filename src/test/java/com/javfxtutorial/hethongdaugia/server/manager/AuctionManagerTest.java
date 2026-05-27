@@ -296,7 +296,9 @@ public class AuctionManagerTest {
     Auction auction = runningAuction(108, "100", "10");
     TestStateSupport.activeAuctions(auctionManager).put(auction.getAuctionId(), auction);
 
-    BidTransaction bid = bid(auction.getAuctionId(), 20, "alice", "1000000000000.00");
+    // MAX_BID_AMOUNT hiện là 1 triệu tỷ VND; giá này cao hơn đúng 0.01 để
+    // kiểm tra nhánh reject khi bid vượt giới hạn hệ thống.
+    BidTransaction bid = bid(auction.getAuctionId(), 20, "alice", "1000000000000000.01");
     AuctionDAO auctionDAO = mock(AuctionDAO.class);
     BidDAO bidDAO = mock(BidDAO.class);
     ParticipatedAuctionDAO participatedAuctionDAO = mock(ParticipatedAuctionDAO.class);
