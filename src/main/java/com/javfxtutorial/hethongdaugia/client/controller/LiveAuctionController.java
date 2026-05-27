@@ -67,6 +67,7 @@ public class LiveAuctionController implements ResponseListener {
   @FXML private Button btnToInformation;
 
   private boolean isAdmin = false;
+  private boolean isSeller = false;
   private final NetworkManager networkManager = NetworkManager.getInstance();
 
   private final ObservableList<BidTransaction> observable = FXCollections.observableArrayList();
@@ -182,8 +183,11 @@ public class LiveAuctionController implements ResponseListener {
 
   @FXML
   public void initialize() throws SendFailedException, ConnectionFailedException {
+    currentAuction = ClientModel.getInstance().getCurrentAuction();
     // Xác định xem người dùng hiện tại có phải admin không
     isAdmin = ClientModel.getInstance().getCurrentUser().getAccountType() == AccountType.ADMIN;
+    //Xac dinh có phải seller k
+    isSeller = ClientModel.getInstance().getCurrentUser().getId() == currentAuction.getSellerId();
 
     // register để nhận command của người khác nữa
     NetworkManager networkManager = NetworkManager.getInstance();
@@ -191,7 +195,6 @@ public class LiveAuctionController implements ResponseListener {
     networkManager.register(AutoBidCommand.class, this);
     networkManager.register(UpdateAuctionStatusCommand.class, this);
     // khi vào auction thì register
-    currentAuction = ClientModel.getInstance().getCurrentAuction();
     Command cmd = new RegisterToAuctionCommand();
     cmd.addData("currentAuction", currentAuction);
     connection.sendCommand(cmd);
@@ -203,7 +206,8 @@ public class LiveAuctionController implements ResponseListener {
 
     // Cài đặt giao diện dành cho admin
     setupAdminView();
-
+    //cai dat giao diện cho seller
+    setupSellerView();
     // thời gian còn lại
     timer = new TimeLeft(lbTimeLeft, currentAuction.getEndingTime());
     timer.setOnFinished(
@@ -272,6 +276,46 @@ public class LiveAuctionController implements ResponseListener {
     priceInput_tf.setDisable(true);
     autoMaxPrice_tf.setDisable(true);
     btnToInformation.setDisable(true);
+  }
+  private void setupSellerView() {
+    if (!isSeller) return;
+    AuctionStatus status = currentAuction.getStatus();
+
+    // Hiện nhãn trạng thái phiên
+    if (auctionStatusLabel != null) {
+      auctionStatusLabel.setVisible(true);
+      String statusText;
+      String statusStyle;
+      switch (status) {
+        case RUNNING -> {
+          statusText = "ĐANG DIỄN RA";
+          statusStyle = "-fx-text-fill: #27ae60; -fx-font-weight: bold; -fx-font-size: 13px;";
+        }
+        case NOT_START -> {
+          statusText = "CHƯA BẮT ĐẦU";
+          statusStyle = "-fx-text-fill: -sf-accent; -fx-font-weight: bold; -fx-font-size: 13px;";
+        }
+        case CLOSED -> {
+          statusText = "ĐÃ KẾT THÚC";
+          statusStyle = "-fx-text-fill: -sf-text; -fx-font-weight: bold; -fx-font-size: 13px;";
+        }
+        case CANCELLED -> {
+          statusText = "ĐÃ BỊ HỦY";
+          statusStyle = "-fx-text-fill: -sf-danger; -fx-font-weight: bold; -fx-font-size: 13px;";
+        }
+        default -> {
+          statusText = "ĐÃ THÀNH CÔNG";
+          statusStyle = "-fx-text-fill: -sf-text; -fx-font-weight: bold; -fx-font-size: 13px;";
+        }
+      }
+      auctionStatusLabel.setText(statusText);
+      auctionStatusLabel.setStyle(statusStyle);
+    }
+    placeBidButton.setDisable(true);
+    placeBidButton.setText("Không được đặt");
+    autoBidToggle.setDisable(true);
+    priceInput_tf.setDisable(true);
+    autoMaxPrice_tf.setDisable(true);
   }
 
   private void initializePriceChart() {
