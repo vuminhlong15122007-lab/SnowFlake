@@ -35,6 +35,7 @@ public class LoginController implements ResponseListener, Initializable {
 
   @Override
   public void initialize(URL url, ResourceBundle resourceBundle) {
+    Password.textProperty().bindBidirectional(PasswordVisible.textProperty());
     NetworkManager.getInstance().start();
     AuctionModificationManager.getInstance().start();
     UserManager.getInstance().start();
@@ -47,11 +48,7 @@ public class LoginController implements ResponseListener, Initializable {
     loginEvent = event;
     String username = Username.getText();
     String password;
-    if (passwordShown) {
-      password = PasswordVisible.getText();
-    } else {
-      password = Password.getText();
-    }
+    password = Password.getText();
     new Thread(
             () -> {
               try {
@@ -108,11 +105,9 @@ public class LoginController implements ResponseListener, Initializable {
   public void togglePasswordVisibility(ActionEvent event) {
     passwordShown = !passwordShown;
     if (passwordShown) {
-      PasswordVisible.setText(Password.getText());
       PasswordVisible.setVisible(true);
       Password.setVisible(false);
     } else {
-      Password.setText(PasswordVisible.getText());
       Password.setVisible(true);
       PasswordVisible.setVisible(false);
     }

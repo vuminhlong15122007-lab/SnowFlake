@@ -46,6 +46,10 @@ public class RegisterController implements ResponseListener {
   private boolean confirmPasswordShown = false;
   ActionEvent signUpEvent;
 
+  @FXML public void initialize(){
+    Password.textProperty().bindBidirectional(PasswordVisible.textProperty());
+    Confirm_Password.textProperty().bindBidirectional(ConfirmPasswordVisible.textProperty());
+  }
   @FXML
   public void clickBackToLogin(ActionEvent event) {
     changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");
@@ -54,13 +58,7 @@ public class RegisterController implements ResponseListener {
   public void clickSignUp(ActionEvent event) {
     signUpEvent = event;
     String name = Username.getText();
-    String password;
-    if (passwordShown) {
-      password = PasswordVisible.getText();
-    } else {
-      password = Password.getText();
-    }
-    Password.getText();
+    String password = Password.getText();
     String email = Email.getText();
     String sdt = PhoneNumber.getText();
     String confirmPassword = Confirm_Password.getText();
@@ -151,11 +149,9 @@ public class RegisterController implements ResponseListener {
   public void toggleConfirmPasswordVisibility() {
     confirmPasswordShown = !confirmPasswordShown;
     if (confirmPasswordShown) {
-      ConfirmPasswordVisible.setText(Confirm_Password.getText());
       ConfirmPasswordVisible.setVisible(true);
       Confirm_Password.setVisible(false);
     } else {
-      Confirm_Password.setText(ConfirmPasswordVisible.getText());
       Confirm_Password.setVisible(true);
       ConfirmPasswordVisible.setVisible(false);
     }
