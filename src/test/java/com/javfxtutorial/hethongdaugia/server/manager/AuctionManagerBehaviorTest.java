@@ -402,7 +402,7 @@ class AuctionManagerBehaviorTest {
     private BidTransaction lastBid;
 
     @Override
-    public void onPlaceBid(BidTransaction bid, ClientHandler senderThread) {
+    public void onPlaceBid(BidTransaction bid) {
       callCount++;
       lastBid = bid;
     }

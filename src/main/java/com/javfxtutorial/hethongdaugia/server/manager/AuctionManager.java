@@ -130,7 +130,7 @@ public class AuctionManager {
     return placeBid(bid, Collections.emptyList());
   }
 
-  private boolean placeBid(
+  public boolean placeBid(
       BidTransaction bid, List<BidTransaction> pendingHistoryBids)
       throws AuctionNotFoundException,
           AuctionNotStartedException,
