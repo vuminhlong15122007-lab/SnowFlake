@@ -19,101 +19,99 @@ import javafx.stage.Window;
 import javafx.util.Duration;
 
 public class SignUpSuccessPopupController {
-    @FXML private StackPane rootPane;
-    @FXML private Pane confettiLayer;
+  @FXML private StackPane rootPane;
+  @FXML private Pane confettiLayer;
 
-    private final Random random = new Random();
-    private final String[] colors = {
-        "#66ccff", "#b3c6ff", "#f4b8ff", "#ffcf5c", "#9be7c7", "#ff8cc6"
-    };
-    private int runningConfettiAnimations;
-    private boolean burstFinished;
+  private final Random random = new Random();
+  private final String[] colors = {
+    "#66ccff", "#b3c6ff", "#f4b8ff", "#ffcf5c", "#9be7c7", "#ff8cc6"
+  };
+  private int runningConfettiAnimations;
+  private boolean burstFinished;
 
-    @FXML
-    private void initialize() {
-        Platform.runLater(this::playConfettiBurst);
+  @FXML
+  private void initialize() {
+    Platform.runLater(this::playConfettiBurst);
+  }
+
+  private void playConfettiBurst() {
+    Timeline burstTimeline =
+        new Timeline(
+            new KeyFrame(Duration.ZERO, _ -> createConfettiWave()),
+            new KeyFrame(Duration.millis(420), _ -> createConfettiWave()),
+            new KeyFrame(Duration.millis(840), _ -> createConfettiWave()));
+    burstTimeline.setOnFinished(
+        _ -> {
+          burstFinished = true;
+          closePopupIfConfettiFinished();
+        });
+    burstTimeline.play();
+  }
+
+  private void createConfettiWave() {
+    for (int i = 0; i < 26; i++) {
+      Node piece = createConfettiPiece();
+      confettiLayer.getChildren().add(piece);
+      animateConfetti(piece);
     }
+  }
 
-    private void playConfettiBurst() {
-        Timeline burstTimeline =
-                new Timeline(
-                        new KeyFrame(Duration.ZERO, _ -> createConfettiWave()),
-                        new KeyFrame(Duration.millis(420), _ -> createConfettiWave()),
-                        new KeyFrame(Duration.millis(840), _ -> createConfettiWave()));
-        burstTimeline.setOnFinished(
-                _ -> {
-                    burstFinished = true;
-                    closePopupIfConfettiFinished();
-                });
-        burstTimeline.play();
+  private Node createConfettiPiece() {
+    Color color = Color.web(colors[random.nextInt(colors.length)]);
+    if (random.nextBoolean()) {
+      Rectangle rectangle = new Rectangle(6 + random.nextInt(8), 10 + random.nextInt(12), color);
+      rectangle.setArcHeight(3);
+      rectangle.setArcWidth(3);
+      return rectangle;
     }
+    return new Circle(3 + random.nextInt(4), color);
+  }
 
-    private void createConfettiWave() {
-        for (int i = 0; i < 26; i++) {
-            Node piece = createConfettiPiece();
-            confettiLayer.getChildren().add(piece);
-            animateConfetti(piece);
-        }
+  private void animateConfetti(Node piece) {
+    double startX = 230 + randomOffset(42);
+    double startY = 90 + randomOffset(18);
+    double endX = randomOffset(210);
+    double endY = 120 + random.nextDouble() * 170;
+
+    piece.setLayoutX(startX);
+    piece.setLayoutY(startY);
+    piece.setOpacity(0.95);
+
+    TranslateTransition move =
+        new TranslateTransition(Duration.millis(1450 + random.nextInt(850)), piece);
+    move.setByX(endX);
+    move.setByY(endY);
+
+    RotateTransition spin = new RotateTransition(Duration.millis(900 + random.nextInt(900)), piece);
+    spin.setByAngle(random.nextBoolean() ? 420 : -420);
+
+    FadeTransition fade = new FadeTransition(Duration.millis(950), piece);
+    fade.setDelay(Duration.millis(900));
+    fade.setFromValue(0.95);
+    fade.setToValue(0.0);
+
+    ParallelTransition animation = new ParallelTransition(move, spin, fade);
+    runningConfettiAnimations++;
+    animation.setOnFinished(
+        _ -> {
+          confettiLayer.getChildren().remove(piece);
+          runningConfettiAnimations--;
+          closePopupIfConfettiFinished();
+        });
+    animation.play();
+  }
+
+  private double randomOffset(double maxAbsValue) {
+    return (random.nextDouble() * 2 - 1) * maxAbsValue;
+  }
+
+  private void closePopupIfConfettiFinished() {
+    if (!burstFinished || runningConfettiAnimations > 0 || rootPane.getScene() == null) {
+      return;
     }
-
-    private Node createConfettiPiece() {
-        Color color = Color.web(colors[random.nextInt(colors.length)]);
-        if (random.nextBoolean()) {
-            Rectangle rectangle =
-                    new Rectangle(6 + random.nextInt(8), 10 + random.nextInt(12), color);
-            rectangle.setArcHeight(3);
-            rectangle.setArcWidth(3);
-            return rectangle;
-        }
-        return new Circle(3 + random.nextInt(4), color);
+    Window window = rootPane.getScene().getWindow();
+    if (window != null) {
+      window.hide();
     }
-
-    private void animateConfetti(Node piece) {
-        double startX = 230 + randomOffset(42);
-        double startY = 90 + randomOffset(18);
-        double endX = randomOffset(210);
-        double endY = 120 + random.nextDouble() * 170;
-
-        piece.setLayoutX(startX);
-        piece.setLayoutY(startY);
-        piece.setOpacity(0.95);
-
-        TranslateTransition move =
-                new TranslateTransition(Duration.millis(1450 + random.nextInt(850)), piece);
-        move.setByX(endX);
-        move.setByY(endY);
-
-        RotateTransition spin =
-                new RotateTransition(Duration.millis(900 + random.nextInt(900)), piece);
-        spin.setByAngle(random.nextBoolean() ? 420 : -420);
-
-        FadeTransition fade = new FadeTransition(Duration.millis(950), piece);
-        fade.setDelay(Duration.millis(900));
-        fade.setFromValue(0.95);
-        fade.setToValue(0.0);
-
-        ParallelTransition animation = new ParallelTransition(move, spin, fade);
-        runningConfettiAnimations++;
-        animation.setOnFinished(
-                _ -> {
-                    confettiLayer.getChildren().remove(piece);
-                    runningConfettiAnimations--;
-                    closePopupIfConfettiFinished();
-                });
-        animation.play();
-    }
-
-    private double randomOffset(double maxAbsValue) {
-        return (random.nextDouble() * 2 - 1) * maxAbsValue;
-    }
-
-    private void closePopupIfConfettiFinished() {
-        if (!burstFinished || runningConfettiAnimations > 0 || rootPane.getScene() == null) {
-            return;
-        }
-        Window window = rootPane.getScene().getWindow();
-        if (window != null) {
-            window.hide();
-        }
-    }
+  }
 }

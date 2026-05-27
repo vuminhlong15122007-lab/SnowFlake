@@ -19,90 +19,90 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AdminUpdateController implements ResponseListener {
-    @FXML private TextField txtName;
-    @FXML private TextField txtEmail;
-    @FXML private TextField txtPhone;
-    @FXML private Button btnCancel;
-    private static final Logger log = LoggerFactory.getLogger(AdminUpdateController.class);
+  @FXML private TextField txtName;
+  @FXML private TextField txtEmail;
+  @FXML private TextField txtPhone;
+  @FXML private Button btnCancel;
+  private static final Logger log = LoggerFactory.getLogger(AdminUpdateController.class);
 
-    // lay du lieu tu login de hien thi
-    // ham tu dong chay khi load man hinh
-    @FXML
-    public void initialize() {
-        // gan su kien dong cua so cho nut huy
-        btnCancel.setOnAction(_ -> {
-                    // Llay va dong stage hien tai
-                    Stage stage = (Stage) btnCancel.getScene().getWindow();
-                    stage.close();
-                });
-        loadUserInfo();
-    }
-
-    // lay du lieu tu clientmodel de hien thi
-    @FXML
-    public void loadUserInfo() {
-        User currentUser = ClientModel.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            txtName.setText(currentUser.getName());
-            txtEmail.setText(currentUser.getEmail());
-            txtPhone.setText(currentUser.getSdt());
-        } else {
-            txtName.setText("");
-            txtEmail.setText("");
-            txtPhone.setText("");
-        }
-    }
-
-    // cap nhat thong tin
-    @FXML
-    public void handleUpdateInfo(){
-        // lay du lieu tu o nhap
-        String newName = txtName.getText();
-        String newEmail = txtEmail.getText();
-        String newPhone = txtPhone.getText();
-
-        // lay user hien tai
-
-        User currentUser = ClientModel.getInstance().getCurrentUser();
-        if (currentUser == null) {
-            showAlert("Lỗi", "Chưa đăng nhập");
-            return;
-        }
-
-        // tao command gui len server
-        UpdateProfileCommand cmd = new UpdateProfileCommand();
-        cmd.addData("userId", currentUser.getId());
-        cmd.addData("username", newName);
-        cmd.addData("email", newEmail);
-        cmd.addData("phone", newPhone);
-
-        NetworkManager networkManager = NetworkManager.getInstance();
-        new Thread(()->{
-            try {
-                networkManager.sendRequest(cmd, this);
-            } catch (ConnectionFailedException | SendFailedException e) {
-                log.error("Lỗi gửi UpdateProfileCommand: {}", e.getMessage(), e);
-                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "WrongCat.gif"));
-            }
-
+  // lay du lieu tu login de hien thi
+  // ham tu dong chay khi load man hinh
+  @FXML
+  public void initialize() {
+    // gan su kien dong cua so cho nut huy
+    btnCancel.setOnAction(
+        _ -> {
+          // Llay va dong stage hien tai
+          Stage stage = (Stage) btnCancel.getScene().getWindow();
+          stage.close();
         });
+    loadUserInfo();
+  }
 
+  // lay du lieu tu clientmodel de hien thi
+  @FXML
+  public void loadUserInfo() {
+    User currentUser = ClientModel.getInstance().getCurrentUser();
+    if (currentUser != null) {
+      txtName.setText(currentUser.getName());
+      txtEmail.setText(currentUser.getEmail());
+      txtPhone.setText(currentUser.getSdt());
+    } else {
+      txtName.setText("");
+      txtEmail.setText("");
+      txtPhone.setText("");
+    }
+  }
+
+  // cap nhat thong tin
+  @FXML
+  public void handleUpdateInfo() {
+    // lay du lieu tu o nhap
+    String newName = txtName.getText();
+    String newEmail = txtEmail.getText();
+    String newPhone = txtPhone.getText();
+
+    // lay user hien tai
+
+    User currentUser = ClientModel.getInstance().getCurrentUser();
+    if (currentUser == null) {
+      showAlert("Lỗi", "Chưa đăng nhập");
+      return;
     }
 
-    @Override
-    public void onResponse(Response rp) {
-        if (rp.isSuccess()) {
-            // cap nhat lai clientmodel voi user moi
-            User updateUser = (User) rp.getPayLoad();
-            ClientModel.getInstance().setCurrentUser(updateUser);
+    // tao command gui len server
+    UpdateProfileCommand cmd = new UpdateProfileCommand();
+    cmd.addData("userId", currentUser.getId());
+    cmd.addData("username", newName);
+    cmd.addData("email", newEmail);
+    cmd.addData("phone", newPhone);
 
-            // load lai man hinh
-            loadUserInfo();
-            showAlert("Thành công", "Cập nhật thông tin thành công", "FunnyCat.gif");
-        } else {
-            showAlert("Thất bại", rp.getMessage(), "WrongCat.gif");
-        }
-        NetworkManager networkManager = NetworkManager.getInstance();
-        networkManager.unregister(UpdateProfileCommand.class, this);
+    NetworkManager networkManager = NetworkManager.getInstance();
+    new Thread(
+        () -> {
+          try {
+            networkManager.sendRequest(cmd, this);
+          } catch (ConnectionFailedException | SendFailedException e) {
+            log.error("Lỗi gửi UpdateProfileCommand: {}", e.getMessage(), e);
+            Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "WrongCat.gif"));
+          }
+        });
+  }
+
+  @Override
+  public void onResponse(Response rp) {
+    if (rp.isSuccess()) {
+      // cap nhat lai clientmodel voi user moi
+      User updateUser = (User) rp.getPayLoad();
+      ClientModel.getInstance().setCurrentUser(updateUser);
+
+      // load lai man hinh
+      loadUserInfo();
+      showAlert("Thành công", "Cập nhật thông tin thành công", "FunnyCat.gif");
+    } else {
+      showAlert("Thất bại", rp.getMessage(), "WrongCat.gif");
     }
+    NetworkManager networkManager = NetworkManager.getInstance();
+    networkManager.unregister(UpdateProfileCommand.class, this);
+  }
 }

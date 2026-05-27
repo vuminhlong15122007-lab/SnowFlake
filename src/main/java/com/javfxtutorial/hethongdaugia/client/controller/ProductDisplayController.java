@@ -1,5 +1,8 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
+import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
+
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.Util.TimeLeft;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
@@ -17,6 +20,7 @@ import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import java.time.format.DateTimeFormatter;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -31,50 +35,26 @@ import javafx.stage.Stage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.format.DateTimeFormatter;
-import java.util.concurrent.ScheduledExecutorService;
-
-import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
-import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
-
 public class ProductDisplayController implements ResponseListener {
 
-  @FXML
-  private Label EndingtimeLabel;
-  @FXML
-  private Label ItemNameLabel;
-  @FXML
-  private Label ItemPriceLabel;
-  @FXML
-  private Label LbMotasp;
-  @FXML
-  private Label StartTimeLabel;
-  @FXML
-  private ImageView itemImageView;
-  @FXML
-  private Label lbTenngban;
-  @FXML
-  private Label lbtimeLeft;
-  @FXML
-  private Label UI01;
-  @FXML
-  private VBox UI02;
-  @FXML
-  private Button ThamGiaDauGiaBtn;
-  @FXML
-  private Label lbLoaisp;
-  @FXML
-  private VBox artInfoBox, vehicleInfoBox, electronicsInfoBox;
-  @FXML
-  private Label artTitleValue, artistValue, yearCreatedValue;
-  @FXML
-  private Label licensePlateValue, vehicleYearValue, brandValue, colorValue;
-  @FXML
-  private Label elecBrandValue, modelValue;
-  @FXML
-  private Label initPriceLabel, stepPriceLabel;
-  @FXML
-  private Label detailTitle;
+  @FXML private Label EndingtimeLabel;
+  @FXML private Label ItemNameLabel;
+  @FXML private Label ItemPriceLabel;
+  @FXML private Label LbMotasp;
+  @FXML private Label StartTimeLabel;
+  @FXML private ImageView itemImageView;
+  @FXML private Label lbTenngban;
+  @FXML private Label lbtimeLeft;
+  @FXML private Label UI01;
+  @FXML private VBox UI02;
+  @FXML private Button ThamGiaDauGiaBtn;
+  @FXML private Label lbLoaisp;
+  @FXML private VBox artInfoBox, vehicleInfoBox, electronicsInfoBox;
+  @FXML private Label artTitleValue, artistValue, yearCreatedValue;
+  @FXML private Label licensePlateValue, vehicleYearValue, brandValue, colorValue;
+  @FXML private Label elecBrandValue, modelValue;
+  @FXML private Label initPriceLabel, stepPriceLabel;
+  @FXML private Label detailTitle;
 
   private final Item item = ClientModel.getInstance().getCurrentAuction().getItem();
   private Auction auction;
@@ -83,7 +63,6 @@ public class ProductDisplayController implements ResponseListener {
 
   private final NetworkManager networkManager = NetworkManager.getInstance();
   private TimeLeft timer;
-
 
   public void setData(Auction auction) {
     LbMotasp.setText(item.getDescription());
@@ -99,7 +78,6 @@ public class ProductDisplayController implements ResponseListener {
     ImageHelper.loadBase64ToImageView(itemImageView, auction.getItem().getImage());
   }
 
-
   @FXML
   public void initialize() {
     auction = ClientModel.getInstance().getCurrentAuction();
@@ -107,9 +85,12 @@ public class ProductDisplayController implements ResponseListener {
     NetworkManager.getInstance().register(UpdateAuctionCommand.class, this);
     setData(auction);
     showCategoryInfo();
-    auction.statusProperty().addListener(((_, _, newVal) -> {
-      updateUI(newVal);
-    })); // thay đổi UI nếu có status mơid
+    auction
+        .statusProperty()
+        .addListener(
+            ((_, _, newVal) -> {
+              updateUI(newVal);
+            })); // thay đổi UI nếu có status mơid
 
     // Register lắng nghe bid mới CHỈ khi đang RUNNING — 1 lần duy nhất
     if (auction.getStatus() == AuctionStatus.RUNNING) {
@@ -119,48 +100,49 @@ public class ProductDisplayController implements ResponseListener {
 
     if (timer == null) return;
 
-    timer.setOnFinished(() -> {
-
-      if (auction.getStatus() == AuctionStatus.NOT_START) { // hết countdown running → chuyển CLOSED
-        auction.setStatus(AuctionStatus.RUNNING);
-        Platform.runLater(
-            () -> {
-              updateUI(auction.getStatus());
-              if (timer != null) timer.start();
-              try {
-                ServerConnection connection = NetworkManager.getConnection();
-                Command cmd = new UpdateAuctionStatusCommand(auction);
-                connection.sendCommand(cmd);
-              } catch (ConnectionFailedException e) {
-                log.error("Không kết nối được server");
-                showAlert("Lỗi", e.getMessage());
-              } catch (SendFailedException e) {
-                log.error("Không gửi được command");
-                showAlert("Lỗi", e.getMessage());
-              }
-            });
-      } else if (auction.getStatus() == AuctionStatus.RUNNING) { // hết countdown chờ thanh toán → CANCELLED
-        auction.setStatus(AuctionStatus.CLOSED);
-        Platform.runLater(
-            () -> {
-              updateUI(auction.getStatus());
-              try {
-                ServerConnection connection = NetworkManager.getConnection();
-                Command cmd = new UpdateAuctionStatusCommand(auction);
-                connection.sendCommand(cmd);
-              } catch (ConnectionFailedException e) {
-                log.error("Không kết nối được server");
-                showAlert("Lỗi", e.getMessage());
-              } catch (SendFailedException e) {
-                log.error("Không gửi được command");
-                showAlert("Lỗi", e.getMessage());
-              }
-            });
-      }
-    });
+    timer.setOnFinished(
+        () -> {
+          if (auction.getStatus()
+              == AuctionStatus.NOT_START) { // hết countdown running → chuyển CLOSED
+            auction.setStatus(AuctionStatus.RUNNING);
+            Platform.runLater(
+                () -> {
+                  updateUI(auction.getStatus());
+                  if (timer != null) timer.start();
+                  try {
+                    ServerConnection connection = NetworkManager.getConnection();
+                    Command cmd = new UpdateAuctionStatusCommand(auction);
+                    connection.sendCommand(cmd);
+                  } catch (ConnectionFailedException e) {
+                    log.error("Không kết nối được server");
+                    showAlert("Lỗi", e.getMessage());
+                  } catch (SendFailedException e) {
+                    log.error("Không gửi được command");
+                    showAlert("Lỗi", e.getMessage());
+                  }
+                });
+          } else if (auction.getStatus()
+              == AuctionStatus.RUNNING) { // hết countdown chờ thanh toán → CANCELLED
+            auction.setStatus(AuctionStatus.CLOSED);
+            Platform.runLater(
+                () -> {
+                  updateUI(auction.getStatus());
+                  try {
+                    ServerConnection connection = NetworkManager.getConnection();
+                    Command cmd = new UpdateAuctionStatusCommand(auction);
+                    connection.sendCommand(cmd);
+                  } catch (ConnectionFailedException e) {
+                    log.error("Không kết nối được server");
+                    showAlert("Lỗi", e.getMessage());
+                  } catch (SendFailedException e) {
+                    log.error("Không gửi được command");
+                    showAlert("Lỗi", e.getMessage());
+                  }
+                });
+          }
+        });
     timer.start();
   }
-
 
   private void updateUI(AuctionStatus status) {
     // Dừng timer cũ trước khi tạo cái mới
@@ -171,41 +153,42 @@ public class ProductDisplayController implements ResponseListener {
     switch (status) {
       case RUNNING -> {
         UI01.setText("THỜI GIAN CÒN LẠI");
-        UI01.setStyle("-fx-text-fill: -sf-success; -fx-alignment: CENTER;");  // ← đổi màu xanh
-        UI02.setStyle("-fx-background-color: -sf-surface; -fx-background-radius: 10; "
-            + "-fx-border-radius: 10; -fx-border-color: -sf-success; -fx-alignment: CENTER;"); // ← viền xanh
+        UI01.setStyle("-fx-text-fill: -sf-success; -fx-alignment: CENTER;"); // ← đổi màu xanh
+        UI02.setStyle(
+            "-fx-background-color: -sf-surface; -fx-background-radius: 10; "
+                + "-fx-border-radius: 10; -fx-border-color: -sf-success; -fx-alignment: CENTER;"); // ← viền xanh
         lbtimeLeft.setStyle("-fx-text-fill: -sf-success;");
         ThamGiaDauGiaBtn.setText("Tham gia");
         ThamGiaDauGiaBtn.setStyle("");
         timer = new TimeLeft(lbtimeLeft, auction.getEndingTime());
-
-
       }
       case NOT_START -> {
         UI01.setStyle("-fx-text-fill: -sf-warning; -fx-alignment: CENTER;");
-        UI02.setStyle("-fx-background-color: -sf-surface; -fx-background-radius: 10; "
-            + "-fx-border-radius: 10; -fx-border-color: -sf-warning; -fx-alignment: CENTER;");
+        UI02.setStyle(
+            "-fx-background-color: -sf-surface; -fx-background-radius: 10; "
+                + "-fx-border-radius: 10; -fx-border-color: -sf-warning; -fx-alignment: CENTER;");
         lbtimeLeft.setStyle("-fx-text-fill: -sf-warning;");
         ThamGiaDauGiaBtn.setText("Chưa thể tham gia");
         UI01.setText("THỜI GIAN CÒN LẠI ĐỂ BẮT ĐẦU");
-        ThamGiaDauGiaBtn.setStyle("-fx-background-color: linear-gradient(to right, -sf-danger, -sf-warning); "
-            + "-fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
+        ThamGiaDauGiaBtn.setStyle(
+            "-fx-background-color: linear-gradient(to right, -sf-danger, -sf-warning); "
+                + "-fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
         timer = new TimeLeft(lbtimeLeft, auction.getStartingTime());
-
       }
       default -> { // CLOSED
         lbtimeLeft.setText("ĐÃ KẾT THÚC");
         UI01.setStyle("-fx-text-fill: -sf-danger; -fx-alignment: CENTER;");
-        UI02.setStyle("-fx-background-color: -sf-surface; -fx-background-radius: 10; "
-            + "-fx-border-radius: 10; -fx-border-color: -sf-danger; -fx-alignment: CENTER;");
+        UI02.setStyle(
+            "-fx-background-color: -sf-surface; -fx-background-radius: 10; "
+                + "-fx-border-radius: 10; -fx-border-color: -sf-danger; -fx-alignment: CENTER;");
         lbtimeLeft.setStyle("-fx-text-fill: -sf-danger;");
         ThamGiaDauGiaBtn.setText("Phiên đấu giá đã đóng");
-        ThamGiaDauGiaBtn.setStyle("-fx-background-color: -sf-neutral; -fx-text-fill: -sf-on-accent; "
-            + "-fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
+        ThamGiaDauGiaBtn.setStyle(
+            "-fx-background-color: -sf-neutral; -fx-text-fill: -sf-on-accent; "
+                + "-fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
       }
     }
   }
-
 
   @FXML
   public void QuaylaiMenu(ActionEvent event) {
@@ -232,7 +215,6 @@ public class ProductDisplayController implements ResponseListener {
     }
   }
 
-
   private void showCategoryInfo() {
     hideBox(artInfoBox);
     hideBox(vehicleInfoBox);
@@ -242,22 +224,28 @@ public class ProductDisplayController implements ResponseListener {
     if (item instanceof Art art) {
       showBox(artInfoBox);
       if (detailTitle != null) detailTitle.setText("THÔNG TIN ART");
-      if (artTitleValue != null) artTitleValue.setText(art.getTitle() != null ? art.getTitle() : "...");
-      if (artistValue != null) artistValue.setText(art.getArtist() != null ? art.getArtist() : "...");
+      if (artTitleValue != null)
+        artTitleValue.setText(art.getTitle() != null ? art.getTitle() : "...");
+      if (artistValue != null)
+        artistValue.setText(art.getArtist() != null ? art.getArtist() : "...");
       if (yearCreatedValue != null) yearCreatedValue.setText(String.valueOf(art.getYearCreated()));
     } else if (item instanceof Vehicle vehicle) {
       showBox(vehicleInfoBox);
       if (detailTitle != null) detailTitle.setText("THÔNG TIN VEHICLE");
       if (licensePlateValue != null)
-        licensePlateValue.setText(vehicle.getLicensePlate() != null ? vehicle.getLicensePlate() : "...");
+        licensePlateValue.setText(
+            vehicle.getLicensePlate() != null ? vehicle.getLicensePlate() : "...");
       if (vehicleYearValue != null)
         vehicleYearValue.setText(vehicle.getYear() > 0 ? String.valueOf(vehicle.getYear()) : "...");
-      if (brandValue != null) brandValue.setText(vehicle.getBrand() != null ? vehicle.getBrand() : "...");
-      if (colorValue != null) colorValue.setText(vehicle.getColor() != null ? vehicle.getColor() : "...");
+      if (brandValue != null)
+        brandValue.setText(vehicle.getBrand() != null ? vehicle.getBrand() : "...");
+      if (colorValue != null)
+        colorValue.setText(vehicle.getColor() != null ? vehicle.getColor() : "...");
     } else if (item instanceof Electronics elec) {
       showBox(electronicsInfoBox);
       if (detailTitle != null) detailTitle.setText("THÔNG TIN ELECTRONICS");
-      if (elecBrandValue != null) elecBrandValue.setText(elec.getBrand() != null ? elec.getBrand() : "...");
+      if (elecBrandValue != null)
+        elecBrandValue.setText(elec.getBrand() != null ? elec.getBrand() : "...");
       if (modelValue != null) modelValue.setText(elec.getModel() != null ? elec.getModel() : "...");
     }
   }
@@ -278,32 +266,38 @@ public class ProductDisplayController implements ResponseListener {
 
   @Override
   public void onResponse(Response rp) {
-    if (rp.getCommand().getClass().equals(UpdateAuctionCommand.class )|| rp.getCommand().getClass().equals(UpdateAuctionStatusCommand.class)) {
+    if (rp.getCommand().getClass().equals(UpdateAuctionCommand.class)
+        || rp.getCommand().getClass().equals(UpdateAuctionStatusCommand.class)) {
       if (rp.isSuccess()) {
         Auction auction = (Auction) rp.getPayLoad();
         ClientModel.getInstance().setCurrentAuction(auction);
-        Platform.runLater(() -> {
-          setData(auction);
-          if (auction.getStatus() == AuctionStatus.NOT_START) {
-            timer = new TimeLeft(lbtimeLeft, auction.getStartingTime());
-          }
-        });
+        Platform.runLater(
+            () -> {
+              setData(auction);
+              if (auction.getStatus() == AuctionStatus.NOT_START) {
+                timer = new TimeLeft(lbtimeLeft, auction.getStartingTime());
+              }
+            });
       }
     }
     if (rp.getCommand().getClass().equals(UpdateAuctionStatusCommand.class)) {
       if ("ADMIN_CANCELLED_AUCTION".equals(rp.getMessage())) {
-        Platform.runLater(() -> {
-          if (timer != null) timer.stop();
-          Stage stage = (Stage) lbtimeLeft.getScene().getWindow();
-          showAlert("Thông báo", "Phiên đấu giá đã bị admin hủy.");
-          try {
-            Parent root = FXMLLoader.load(getClass().getResource(
-                "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml"));
-            stage.setScene(new Scene(root));
-          } catch (Exception e) {
-            log.error("Lỗi chuyển scene: {}", e.getMessage());
-          }
-        });
+        Platform.runLater(
+            () -> {
+              if (timer != null) timer.stop();
+              Stage stage = (Stage) lbtimeLeft.getScene().getWindow();
+              showAlert("Thông báo", "Phiên đấu giá đã bị admin hủy.");
+              try {
+                Parent root =
+                    FXMLLoader.load(
+                        getClass()
+                            .getResource(
+                                "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml"));
+                stage.setScene(new Scene(root));
+              } catch (Exception e) {
+                log.error("Lỗi chuyển scene: {}", e.getMessage());
+              }
+            });
       }
     }
   }

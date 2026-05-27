@@ -13,74 +13,73 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AddAccountCommand extends Command {
-    private static final Logger log = LoggerFactory.getLogger(AddAccountCommand.class);
+  private static final Logger log = LoggerFactory.getLogger(AddAccountCommand.class);
 
-    private static final int NOT_UNIQUE_USERNAME = -1;
-    private static final int NOT_UNIQUE_SDT = -2;
-    private static final int NOT_UNIQUE_EMAIL = -3;
+  private static final int NOT_UNIQUE_USERNAME = -1;
+  private static final int NOT_UNIQUE_SDT = -2;
+  private static final int NOT_UNIQUE_EMAIL = -3;
 
-    @Override
-    public Response handle() {
-        String username = (String) this.getData("username");
-        String password = (String) this.getData("password");
-        String email = (String) this.getData("email");
-        String sdt = (String) this.getData("sdt");
-        String type = (String) this.getData("accountType");
+  @Override
+  public Response handle() {
+    String username = (String) this.getData("username");
+    String password = (String) this.getData("password");
+    String email = (String) this.getData("email");
+    String sdt = (String) this.getData("sdt");
+    String type = (String) this.getData("accountType");
 
-        if (isBlank(username) || isBlank(password) || isBlank(email) || isBlank(sdt)) {
-            return new Response(false, "Du lieu dau vao khong hop le", null, this);
-        }
-
-        AccountType role;
-        try {
-            role = AccountType.valueOf(type);
-        } catch (IllegalArgumentException | NullPointerException e) {
-            log.warn("AccountType không hợp lệ: {}", type);
-            return new Response(false, "Vai trò không hợp lệ", null, this);
-        }
-        if (!canCreateRole(role)) {
-            log.warn("Tu choi tao tai khoan voi role dac quyen: {}", role);
-            return new Response(false, "Vai tro khong hop le", null, this);
-        }
-
-        try {
-            int result =
-                    UserDAO.getInstance().insert(new User(username, password, email, sdt, role));
-            if (result > 0) {
-                return new Response(true, "Tạo tài khoản thành công", null, this);
-            }
-            if (result == NOT_UNIQUE_USERNAME) {
-                return new Response(false, "Tên đăng nhập đã tồn tại", null, this);
-            }
-            if (result == NOT_UNIQUE_SDT) {
-                return new Response(false, "Số điện thoại đã tồn tại", null, this);
-            }
-            if (result == NOT_UNIQUE_EMAIL) {
-                return new Response(false, "Email đã tồn tại", null, this);
-            }
-            return new Response(false, "Không thể tạo tài khoản, vui lòng thử lại", null, this);
-        } catch (DuplicateKeyException e) {
-            log.warn("Tạo tài khoản thất bại: {}", e.getMessage());
-            return new Response(false, e.getMessage(), null, this);
-        } catch (DataInsertException e) {
-            log.error("Lỗi insert user: {}", e.getMessage(), e);
-            return new Response(false, "Không thể tạo tài khoản, vui lòng thử lại", null, this);
-        } catch (Exception e) {
-            log.error("Lỗi không xác định khi tạo tài khoản: {}", e.getMessage(), e);
-            return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);
-        }
+    if (isBlank(username) || isBlank(password) || isBlank(email) || isBlank(sdt)) {
+      return new Response(false, "Du lieu dau vao khong hop le", null, this);
     }
 
-    private static boolean isBlank(String value) {
-        return value == null || value.isBlank();
+    AccountType role;
+    try {
+      role = AccountType.valueOf(type);
+    } catch (IllegalArgumentException | NullPointerException e) {
+      log.warn("AccountType không hợp lệ: {}", type);
+      return new Response(false, "Vai trò không hợp lệ", null, this);
+    }
+    if (!canCreateRole(role)) {
+      log.warn("Tu choi tao tai khoan voi role dac quyen: {}", role);
+      return new Response(false, "Vai tro khong hop le", null, this);
     }
 
-    private static boolean canCreateRole(AccountType role) {
-        if (role == AccountType.USER) {
-            return true;
-        }
-        ClientHandler currentClient = ClientHandlerContextHolder.get();
-        User currentUser = currentClient == null ? null : currentClient.getCurrentUser();
-        return currentUser != null && currentUser.getAccountType() == AccountType.ADMIN;
+    try {
+      int result = UserDAO.getInstance().insert(new User(username, password, email, sdt, role));
+      if (result > 0) {
+        return new Response(true, "Tạo tài khoản thành công", null, this);
+      }
+      if (result == NOT_UNIQUE_USERNAME) {
+        return new Response(false, "Tên đăng nhập đã tồn tại", null, this);
+      }
+      if (result == NOT_UNIQUE_SDT) {
+        return new Response(false, "Số điện thoại đã tồn tại", null, this);
+      }
+      if (result == NOT_UNIQUE_EMAIL) {
+        return new Response(false, "Email đã tồn tại", null, this);
+      }
+      return new Response(false, "Không thể tạo tài khoản, vui lòng thử lại", null, this);
+    } catch (DuplicateKeyException e) {
+      log.warn("Tạo tài khoản thất bại: {}", e.getMessage());
+      return new Response(false, e.getMessage(), null, this);
+    } catch (DataInsertException e) {
+      log.error("Lỗi insert user: {}", e.getMessage(), e);
+      return new Response(false, "Không thể tạo tài khoản, vui lòng thử lại", null, this);
+    } catch (Exception e) {
+      log.error("Lỗi không xác định khi tạo tài khoản: {}", e.getMessage(), e);
+      return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);
     }
+  }
+
+  private static boolean isBlank(String value) {
+    return value == null || value.isBlank();
+  }
+
+  private static boolean canCreateRole(AccountType role) {
+    if (role == AccountType.USER) {
+      return true;
+    }
+    ClientHandler currentClient = ClientHandlerContextHolder.get();
+    User currentUser = currentClient == null ? null : currentClient.getCurrentUser();
+    return currentUser != null && currentUser.getAccountType() == AccountType.ADMIN;
+  }
 }

@@ -15,37 +15,37 @@ import javafx.scene.image.ImageView;
 import javafx.util.Duration;
 
 public class SellerProductController {
-    @FXML private ImageView itemImageView1;
-    @FXML private Label lbProductName;
-    @FXML private Label lbPrice;
-    @FXML private Label ItemID;
-    @FXML private Label lbStatus;
+  @FXML private ImageView itemImageView1;
+  @FXML private Label lbProductName;
+  @FXML private Label lbPrice;
+  @FXML private Label ItemID;
+  @FXML private Label lbStatus;
 
-    public void update(Auction auction) {
-        lbPrice.setText(String.format("%,.0f VNĐ", auction.getCurrentPrice()));
-        lbProductName.setText(auction.getItem().getName());
-        ItemID.setText(String.valueOf(auction.getItem().getItemId()));
-        String base64Data = auction.getItem().getImage();
-        ImageHelper.loadBase64ToImageView(itemImageView1, base64Data);
-        AuctionStatus status = auction.getStatus();
+  public void update(Auction auction) {
+    lbPrice.setText(String.format("%,.0f VNĐ", auction.getCurrentPrice()));
+    lbProductName.setText(auction.getItem().getName());
+    ItemID.setText(String.valueOf(auction.getItem().getItemId()));
+    String base64Data = auction.getItem().getImage();
+    ImageHelper.loadBase64ToImageView(itemImageView1, base64Data);
+    AuctionStatus status = auction.getStatus();
 
-        if (status == NOT_START) {
-            lbStatus.setStyle("-fx-text-fill: -sf-warning; -fx-font-size : 18px;");
-        } else if (status == RUNNING) {
-            lbStatus.setStyle("-fx-text-fill: -sf-success; -fx-font-size : 18px;");
-        } else {
-            lbStatus.setStyle("-fx-text-fill: -sf-danger; -fx-font-size : 18px;");
-        }
-        makeElementFlash(lbStatus);
+    if (status == NOT_START) {
+      lbStatus.setStyle("-fx-text-fill: -sf-warning; -fx-font-size : 18px;");
+    } else if (status == RUNNING) {
+      lbStatus.setStyle("-fx-text-fill: -sf-success; -fx-font-size : 18px;");
+    } else {
+      lbStatus.setStyle("-fx-text-fill: -sf-danger; -fx-font-size : 18px;");
     }
+    makeElementFlash(lbStatus);
+  }
 
-    // hiệu ứng nháy nháy nè
-    public void makeElementFlash(Node element) {
-        FadeTransition fadeTransition = new FadeTransition(Duration.millis(500), element);
-        fadeTransition.setFromValue(1.0);
-        fadeTransition.setToValue(0.1);
-        fadeTransition.setCycleCount(Animation.INDEFINITE);
-        fadeTransition.setAutoReverse(true);
-        fadeTransition.play();
-    }
+  // hiệu ứng nháy nháy nè
+  public void makeElementFlash(Node element) {
+    FadeTransition fadeTransition = new FadeTransition(Duration.millis(500), element);
+    fadeTransition.setFromValue(1.0);
+    fadeTransition.setToValue(0.1);
+    fadeTransition.setCycleCount(Animation.INDEFINITE);
+    fadeTransition.setAutoReverse(true);
+    fadeTransition.play();
+  }
 }

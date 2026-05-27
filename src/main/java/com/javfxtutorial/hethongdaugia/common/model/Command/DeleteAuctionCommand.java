@@ -13,62 +13,61 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DeleteAuctionCommand extends Command {
-    private static final Logger log = LoggerFactory.getLogger(DeleteAuctionCommand.class);
-    private final Auction auction;
+  private static final Logger log = LoggerFactory.getLogger(DeleteAuctionCommand.class);
+  private final Auction auction;
 
-    public DeleteAuctionCommand(Auction auction) {
-        this.auction = auction;
-    }
+  public DeleteAuctionCommand(Auction auction) {
+    this.auction = auction;
+  }
 
-    public Auction getAuction() {
-        return auction;
-    }
+  public Auction getAuction() {
+    return auction;
+  }
 
-    @Override
-    public Response handle() {
+  @Override
+  public Response handle() {
+    try {
+      AuctionStatus status = AuctionManager.getInstance().refreshAuctionStatus(auction);
+      if (status == AuctionStatus.NOT_START) {
+
+        String productName =
+            (auction.getItem() != null)
+                ? auction.getItem().getName()
+                : String.valueOf(auction.getAuctionId());
+
+        SellerNotification notif =
+            new SellerNotification(
+                auction.getAuctionId(), SellerNotification.Type.CANCELLED, productName, null, null);
+        Response notifResponse = new Response(true, "ADMIN_DELETED_PRODUCT", notif, this);
+
         try {
-            AuctionStatus status = AuctionManager.getInstance().refreshAuctionStatus(auction);
-            if (status == AuctionStatus.NOT_START) {
-
-                String productName = (auction.getItem() != null)
-                        ? auction.getItem().getName()
-                        : String.valueOf(auction.getAuctionId());
-
-                SellerNotification notif = new SellerNotification(
-                        auction.getAuctionId(),
-                        SellerNotification.Type.CANCELLED,
-                        productName, null, null
-                );
-                Response notifResponse = new Response(true, "ADMIN_DELETED_PRODUCT", notif, this);
-
-                try {
-                    ClientHandler.broadcastToSeller(auction.getSellerId(), notifResponse);
-                } catch (Exception e) {
-                    log.warn("Gửi notification thất bại, bỏ qua: {}", e.getMessage());
-                }
-
-                int result1 = ItemDAO.getInstance().delete(auction.getItem());
-                if (result1 <= 0) {
-                    return new Response(false, "Không thể xóa phiên đấu giá", null, this);
-                }
-
-                Response rp = new Response(true, "xóa phiên đấu giá thành công", null, this);
-                ClientHandler.broadcast(rp);
-                return rp;
-            }
-
-            if (status == AuctionStatus.RUNNING) {
-                return new Response(false, "Không thể xóa phiên đấu giá đang diễn ra", null, this);
-            } else {
-                return new Response(false, "Không thể xóa phiên đấu giá đã kết thúc", null, this);
-            }
-
-        } catch (DataDeleteException e) {
-            log.error("Lỗi xóa dữ liệu: {}", e.getMessage(), e);
-            return new Response(false, "Lỗi khi xóa: " + e.getMessage(), null, this);
+          ClientHandler.broadcastToSeller(auction.getSellerId(), notifResponse);
         } catch (Exception e) {
-            log.error("Lỗi không xác định: {}", e.getMessage(), e);
-            return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);
+          log.warn("Gửi notification thất bại, bỏ qua: {}", e.getMessage());
         }
+
+        int result1 = ItemDAO.getInstance().delete(auction.getItem());
+        if (result1 <= 0) {
+          return new Response(false, "Không thể xóa phiên đấu giá", null, this);
+        }
+
+        Response rp = new Response(true, "xóa phiên đấu giá thành công", null, this);
+        ClientHandler.broadcast(rp);
+        return rp;
+      }
+
+      if (status == AuctionStatus.RUNNING) {
+        return new Response(false, "Không thể xóa phiên đấu giá đang diễn ra", null, this);
+      } else {
+        return new Response(false, "Không thể xóa phiên đấu giá đã kết thúc", null, this);
+      }
+
+    } catch (DataDeleteException e) {
+      log.error("Lỗi xóa dữ liệu: {}", e.getMessage(), e);
+      return new Response(false, "Lỗi khi xóa: " + e.getMessage(), null, this);
+    } catch (Exception e) {
+      log.error("Lỗi không xác định: {}", e.getMessage(), e);
+      return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);
     }
+  }
 }

@@ -8,19 +8,19 @@ import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
 
 public class GetAuctionStatusCommand extends Command {
 
-    private Auction auction;
+  private Auction auction;
 
-    public GetAuctionStatusCommand(Auction auction) {
-        this.auction = auction;
-    }
+  public GetAuctionStatusCommand(Auction auction) {
+    this.auction = auction;
+  }
 
-    @Override
-    public Response handle() {
-        try {
-            AuctionStatus nowStatus = AuctionManager.getInstance().refreshAuctionStatus(auction);
-            return new Response(true, "Lấy trạng thái hiện tại thành công", nowStatus, this);
-        } catch (Exception e) {
-            return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);
-        }
+  @Override
+  public Response handle() {
+    try {
+      AuctionStatus nowStatus = AuctionManager.getInstance().refreshAuctionStatus(auction);
+      return new Response(true, "Lấy trạng thái hiện tại thành công", nowStatus, this);
+    } catch (Exception e) {
+      return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);
     }
+  }
 }

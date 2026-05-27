@@ -19,101 +19,89 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PasswordResetController implements ResponseListener {
-    private static final Logger log = LoggerFactory.getLogger(PasswordResetController.class);
-    @FXML private TextField txtNewPW;
-    @FXML private TextField txtConfirmPW;
-    @FXML private Button btnCancel;
+  private static final Logger log = LoggerFactory.getLogger(PasswordResetController.class);
+  @FXML private TextField txtNewPW;
+  @FXML private TextField txtConfirmPW;
+  @FXML private Button btnCancel;
 
-    @FXML
-    public void initialize() {
-        btnCancel.setOnAction(
-                _ -> {
-                    // Llay va dong stage hien tai
-                    Stage stage = (Stage) btnCancel.getScene().getWindow();
-                    stage.close();
-                });
-        loadUserInfo();
+  @FXML
+  public void initialize() {
+    btnCancel.setOnAction(
+        _ -> {
+          // Llay va dong stage hien tai
+          Stage stage = (Stage) btnCancel.getScene().getWindow();
+          stage.close();
+        });
+    loadUserInfo();
+  }
+
+  // lay du lieu tu clientmodel de hien thi
+  @FXML
+  public void loadUserInfo() {
+    User currentUser = ClientModel.getInstance().getCurrentUser();
+    if (currentUser != null) {
+      txtNewPW.setText("");
+      txtConfirmPW.setText("");
+    }
+  }
+
+  User currentUser;
+  String newPW;
+
+  @FXML
+  public void updatePW() {
+    // lay du lieu tu o nhap
+    newPW = txtNewPW.getText();
+
+    // lay user hien tai
+
+    currentUser = ClientModel.getInstance().getCurrentUser();
+    if (currentUser == null) {
+      showAlert("Lỗi", "Chưa đăng nhập", "Wait.gif");
+      return;
     }
 
-    // lay du lieu tu clientmodel de hien thi
-    @FXML
-    public void loadUserInfo() {
-        User currentUser = ClientModel.getInstance().getCurrentUser();
-        if (currentUser != null) {
-            txtNewPW.setText("");
-            txtConfirmPW.setText("");
-        }
+    // tao command gui len server
+    new Thread(
+            () -> {
+              try {
+                ResetPassWordCommand cmd = new ResetPassWordCommand();
+                cmd.addData("userId", currentUser.getId());
+                cmd.addData("passWord", newPW);
+
+                NetworkManager networkManager = NetworkManager.getInstance();
+                networkManager.sendRequest(cmd, this);
+              } catch (ConnectionFailedException e) {
+                log.error("Lỗi kết nối: {}", e.getMessage());
+                Platform.runLater(
+                    () -> showAlert("Lỗi kết nối", "Không thể kết nối đến server", "Wait.gif"));
+              } catch (SendFailedException e) {
+                log.error("Lỗi gửi: {}", e.getMessage());
+                Platform.runLater(
+                    () -> showAlert("Lỗi", "Không thể gửi yêu cầu đổi mật khẩu", "Wait.gif"));
+              } catch (Exception e) {
+                log.error("Lỗi reset password: {}", e.getMessage(), e);
+                Platform.runLater(
+                    () -> showAlert("Lỗi", "Đổi mật khẩu thất bại: " + e.getMessage(), "Wait.gif"));
+              }
+            })
+        .start();
+  }
+
+  @Override
+  public void onResponse(Response rp) {
+    if (rp.isSuccess()) {
+      currentUser.setPassWord(newPW);
+      // log.debug("PW từ server: {}", newUser.getPassWord());
+
+      // load lai man hinh
+      loadUserInfo();
+      showAlert("Thành công", "Cập nhật mật khẩu thành công", "FunnyCat.gif");
+
+    } else {
+      showAlert("Thất bại", rp.getMessage(), "Wait.gif");
     }
-
-    User currentUser;
-    String newPW;
-
-    @FXML
-    public void updatePW() {
-        // lay du lieu tu o nhap
-        newPW = txtNewPW.getText();
-
-        // lay user hien tai
-
-        currentUser = ClientModel.getInstance().getCurrentUser();
-        if (currentUser == null) {
-            showAlert("Lỗi", "Chưa đăng nhập", "Wait.gif");
-            return;
-        }
-
-        // tao command gui len server
-        new Thread(
-                        () -> {
-                            try {
-                                ResetPassWordCommand cmd = new ResetPassWordCommand();
-                                cmd.addData("userId", currentUser.getId());
-                                cmd.addData("passWord", newPW);
-
-                                NetworkManager networkManager = NetworkManager.getInstance();
-                                networkManager.sendRequest(cmd, this);
-                            } catch (ConnectionFailedException e) {
-                                log.error("Lỗi kết nối: {}", e.getMessage());
-                                Platform.runLater(
-                                        () ->
-                                                showAlert(
-                                                        "Lỗi kết nối",
-                                                        "Không thể kết nối đến server",
-                                                        "Wait.gif"));
-                            } catch (SendFailedException e) {
-                                log.error("Lỗi gửi: {}", e.getMessage());
-                                Platform.runLater(
-                                        () ->
-                                                showAlert(
-                                                        "Lỗi",
-                                                        "Không thể gửi yêu cầu đổi mật khẩu",
-                                                        "Wait.gif"));
-                            } catch (Exception e) {
-                                log.error("Lỗi reset password: {}", e.getMessage(), e);
-                                Platform.runLater(
-                                        () ->
-                                                showAlert(
-                                                        "Lỗi",
-                                                        "Đổi mật khẩu thất bại: " + e.getMessage(),
-                                                        "Wait.gif"));
-                            }
-                        })
-                .start();
-    }
-
-    @Override
-    public void onResponse(Response rp) {
-        if (rp.isSuccess()) {
-            currentUser.setPassWord(newPW);
-            // log.debug("PW từ server: {}", newUser.getPassWord());
-
-            // load lai man hinh
-            loadUserInfo();
-            showAlert("Thành công", "Cập nhật mật khẩu thành công", "FunnyCat.gif");
-
-        } else {
-            showAlert("Thất bại", rp.getMessage(), "Wait.gif");
-        }
-        NetworkManager networkManager = NetworkManager.getInstance();
-        networkManager.unregister(ResetPassWordCommand.class, this);
-    }
+    NetworkManager networkManager = NetworkManager.getInstance();
+    networkManager.unregister(ResetPassWordCommand.class, this);
+  }
 }

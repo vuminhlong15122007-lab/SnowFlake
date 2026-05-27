@@ -7,83 +7,83 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 
 public final class PasswordHasher {
-    private static final String ALGORITHM = "PBKDF2WithHmacSHA256";
-    private static final String PREFIX = "pbkdf2_sha256";
-    private static final int ITERATIONS = 120_000;
-    private static final int SALT_BYTES = 16;
-    private static final int KEY_BITS = 256;
-    private static final int HASH_PARTS = 4;
-    private static final SecureRandom RANDOM = new SecureRandom();
+  private static final String ALGORITHM = "PBKDF2WithHmacSHA256";
+  private static final String PREFIX = "pbkdf2_sha256";
+  private static final int ITERATIONS = 120_000;
+  private static final int SALT_BYTES = 16;
+  private static final int KEY_BITS = 256;
+  private static final int HASH_PARTS = 4;
+  private static final SecureRandom RANDOM = new SecureRandom();
 
-    private PasswordHasher() {}
+  private PasswordHasher() {}
 
-    public static String hash(String rawPassword) {
-        if (rawPassword == null) {
-            return null;
-        }
-        if (isHashed(rawPassword)) {
-            return rawPassword;
-        }
-
-        byte[] salt = new byte[SALT_BYTES];
-        RANDOM.nextBytes(salt);
-        byte[] hash = pbkdf2(rawPassword.toCharArray(), salt, ITERATIONS, KEY_BITS);
-
-        return PREFIX
-                + "$"
-                + ITERATIONS
-                + "$"
-                + Base64.getEncoder().encodeToString(salt)
-                + "$"
-                + Base64.getEncoder().encodeToString(hash);
+  public static String hash(String rawPassword) {
+    if (rawPassword == null) {
+      return null;
+    }
+    if (isHashed(rawPassword)) {
+      return rawPassword;
     }
 
-    public static boolean matches(String rawPassword, String storedPassword) {
-        if (rawPassword == null || storedPassword == null) {
-            return false;
-        }
-        if (!isHashed(storedPassword)) {
-            return storedPassword.equals(rawPassword);
-        }
+    byte[] salt = new byte[SALT_BYTES];
+    RANDOM.nextBytes(salt);
+    byte[] hash = pbkdf2(rawPassword.toCharArray(), salt, ITERATIONS, KEY_BITS);
 
-        try {
-            String[] parts = storedPassword.split("\\$");
-            if (parts.length != HASH_PARTS || !PREFIX.equals(parts[0])) {
-                return false;
-            }
-            int iterations = Integer.parseInt(parts[1]);
-            if (iterations <= 0) {
-                return false;
-            }
-            byte[] salt = Base64.getDecoder().decode(parts[2]);
-            byte[] expectedHash = Base64.getDecoder().decode(parts[3]);
-            byte[] actualHash =
-                    pbkdf2(rawPassword.toCharArray(), salt, iterations, expectedHash.length * 8);
-            return slowEquals(expectedHash, actualHash);
-        } catch (RuntimeException e) {
-            return false;
-        }
+    return PREFIX
+        + "$"
+        + ITERATIONS
+        + "$"
+        + Base64.getEncoder().encodeToString(salt)
+        + "$"
+        + Base64.getEncoder().encodeToString(hash);
+  }
+
+  public static boolean matches(String rawPassword, String storedPassword) {
+    if (rawPassword == null || storedPassword == null) {
+      return false;
+    }
+    if (!isHashed(storedPassword)) {
+      return storedPassword.equals(rawPassword);
     }
 
-    public static boolean isHashed(String password) {
-        return password != null && password.startsWith(PREFIX + "$");
+    try {
+      String[] parts = storedPassword.split("\\$");
+      if (parts.length != HASH_PARTS || !PREFIX.equals(parts[0])) {
+        return false;
+      }
+      int iterations = Integer.parseInt(parts[1]);
+      if (iterations <= 0) {
+        return false;
+      }
+      byte[] salt = Base64.getDecoder().decode(parts[2]);
+      byte[] expectedHash = Base64.getDecoder().decode(parts[3]);
+      byte[] actualHash =
+          pbkdf2(rawPassword.toCharArray(), salt, iterations, expectedHash.length * 8);
+      return slowEquals(expectedHash, actualHash);
+    } catch (RuntimeException e) {
+      return false;
     }
+  }
 
-    private static byte[] pbkdf2(char[] password, byte[] salt, int iterations, int keyBits) {
-        try {
-            KeySpec spec = new PBEKeySpec(password, salt, iterations, keyBits);
-            SecretKeyFactory factory = SecretKeyFactory.getInstance(ALGORITHM);
-            return factory.generateSecret(spec).getEncoded();
-        } catch (Exception e) {
-            throw new IllegalStateException("Cannot hash password", e);
-        }
-    }
+  public static boolean isHashed(String password) {
+    return password != null && password.startsWith(PREFIX + "$");
+  }
 
-    private static boolean slowEquals(byte[] left, byte[] right) {
-        int diff = left.length ^ right.length;
-        for (int i = 0; i < left.length && i < right.length; i++) {
-            diff |= left[i] ^ right[i];
-        }
-        return diff == 0;
+  private static byte[] pbkdf2(char[] password, byte[] salt, int iterations, int keyBits) {
+    try {
+      KeySpec spec = new PBEKeySpec(password, salt, iterations, keyBits);
+      SecretKeyFactory factory = SecretKeyFactory.getInstance(ALGORITHM);
+      return factory.generateSecret(spec).getEncoded();
+    } catch (Exception e) {
+      throw new IllegalStateException("Cannot hash password", e);
     }
+  }
+
+  private static boolean slowEquals(byte[] left, byte[] right) {
+    int diff = left.length ^ right.length;
+    for (int i = 0; i < left.length && i < right.length; i++) {
+      diff |= left[i] ^ right[i];
+    }
+    return diff == 0;
+  }
 }

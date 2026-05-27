@@ -8,20 +8,20 @@ import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
 
 public class RegisterToAuctionCommand extends Command {
-    @Override
-    public Response handle() {
-        Auction currentAuction = (Auction) this.getData("currentAuction");
-        if (currentAuction == null) {
-            return new Response(false, "Auction không hợp lệ", null, this);
-        }
-
-        ClientHandler listener = ClientHandlerContextHolder.get();
-
-        if (listener == null) {
-            return new Response(false, "Không xác định được client listener", null, this);
-        }
-
-        AuctionManager.getInstance().registerToAuction(listener, currentAuction.getAuctionId());
-        return new Response(true, "Đăng ký tham gia thành công", null, this);
+  @Override
+  public Response handle() {
+    Auction currentAuction = (Auction) this.getData("currentAuction");
+    if (currentAuction == null) {
+      return new Response(false, "Auction không hợp lệ", null, this);
     }
+
+    ClientHandler listener = ClientHandlerContextHolder.get();
+
+    if (listener == null) {
+      return new Response(false, "Không xác định được client listener", null, this);
+    }
+
+    AuctionManager.getInstance().registerToAuction(listener, currentAuction.getAuctionId());
+    return new Response(true, "Đăng ký tham gia thành công", null, this);
+  }
 }

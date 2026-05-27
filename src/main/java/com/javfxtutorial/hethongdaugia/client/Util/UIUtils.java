@@ -20,135 +20,133 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class UIUtils {
-    private static final Logger log = LoggerFactory.getLogger(UIUtils.class);
+  private static final Logger log = LoggerFactory.getLogger(UIUtils.class);
 
-    public static void showAlert(String title, String message) {
-        showAlert(
-                title,
-                message,
-                "/com/javfxtutorial/hethongdaugia/assets/Logo.png",
-                "/com/javfxtutorial/hethongdaugia/assets/Fox.gif");
+  public static void showAlert(String title, String message) {
+    showAlert(
+        title,
+        message,
+        "/com/javfxtutorial/hethongdaugia/assets/Logo.png",
+        "/com/javfxtutorial/hethongdaugia/assets/Fox.gif");
+  }
+
+  public static void showAlert(String title, String message, String meme) {
+    String memePath = "/com/javfxtutorial/hethongdaugia/assets/" + meme;
+    showAlert(title, message, "/com/javfxtutorial/hethongdaugia/assets/Logo.png", memePath);
+  }
+
+  public static void showAlert(String title, String message, String iconPath, String memePath) {
+    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(message);
+    styleAlert(alert, iconPath);
+
+    if (memePath != null) {
+      try {
+        Image memeImg = new Image(UIUtils.class.getResourceAsStream(memePath));
+        ImageView imageView = new ImageView(memeImg);
+        imageView.setFitHeight(118);
+        imageView.setFitWidth(118);
+        imageView.setPreserveRatio(true);
+        alert.setGraphic(imageView);
+      } catch (Exception e) {
+        log.warn("Khong load duoc meme tai: {}", memePath, e);
+      }
     }
 
-    public static void showAlert(String title, String message, String meme) {
-        String memePath = "/com/javfxtutorial/hethongdaugia/assets/" + meme;
-        showAlert(title, message, "/com/javfxtutorial/hethongdaugia/assets/Logo.png", memePath);
-    }
+    alert.showAndWait();
+  }
 
-    public static void showAlert(String title, String message, String iconPath, String memePath) {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        styleAlert(alert, iconPath);
+  public static void showError(String title, String message) {
+    Alert alert = new Alert(Alert.AlertType.ERROR);
+    alert.setTitle(title);
+    alert.setHeaderText(null);
+    alert.setContentText(message);
+    styleAlert(alert, "/com/javfxtutorial/hethongdaugia/assets/Logo.png");
+    alert.showAndWait();
+  }
 
-        if (memePath != null) {
-            try {
-                Image memeImg = new Image(UIUtils.class.getResourceAsStream(memePath));
-                ImageView imageView = new ImageView(memeImg);
-                imageView.setFitHeight(118);
-                imageView.setFitWidth(118);
-                imageView.setPreserveRatio(true);
-                alert.setGraphic(imageView);
-            } catch (Exception e) {
-                log.warn("Khong load duoc meme tai: {}", memePath, e);
-            }
-        }
+  private static void styleAlert(Alert alert, String iconPath) {
+    alert.initStyle(StageStyle.TRANSPARENT);
 
-        alert.showAndWait();
-    }
+    DialogPane dialogPane = alert.getDialogPane();
+    dialogPane.setPrefWidth(430);
+    dialogPane.setMinHeight(Region.USE_PREF_SIZE);
+    dialogPane.setStyle(
+        "-fx-background-color: linear-gradient(to bottom right, -sf-page-start, -sf-surface 50%, -sf-purple-soft);"
+            + "-fx-background-radius: 24;"
+            + "-fx-border-color: -sf-border;"
+            + "-fx-border-radius: 24;"
+            + "-fx-border-width: 1.4;"
+            + "-fx-padding: 22;");
 
-    public static void showError(String title, String message) {
-        Alert alert = new Alert(Alert.AlertType.ERROR);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        styleAlert(alert, "/com/javfxtutorial/hethongdaugia/assets/Logo.png");
-        alert.showAndWait();
-    }
+    Button okButton = (Button) dialogPane.lookupButton(ButtonType.OK);
+    okButton.setText("Đồng ý");
+    okButton.setStyle(
+        "-fx-background-color: linear-gradient(to right, -sf-accent-2, -sf-border);"
+            + "-fx-background-radius: 18;"
+            + "-fx-text-fill: -sf-text;"
+            + "-fx-font-weight: bold;"
+            + "-fx-padding: 8 28;"
+            + "-fx-cursor: hand;"
+            + "-fx-effect: dropshadow(gaussian, -sf-shadow, 12, 0.22, 0, 3);");
 
-    private static void styleAlert(Alert alert, String iconPath) {
-        alert.initStyle(StageStyle.TRANSPARENT);
-
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.setPrefWidth(430);
-        dialogPane.setMinHeight(Region.USE_PREF_SIZE);
-        dialogPane.setStyle(
-                "-fx-background-color: linear-gradient(to bottom right, -sf-page-start, -sf-surface 50%, -sf-purple-soft);"
-                        + "-fx-background-radius: 24;"
-                        + "-fx-border-color: -sf-border;"
-                        + "-fx-border-radius: 24;"
-                        + "-fx-border-width: 1.4;"
-                        + "-fx-padding: 22;");
-
-        Button okButton = (Button) dialogPane.lookupButton(ButtonType.OK);
-        okButton.setText("Đồng ý");
-        okButton.setStyle(
-                "-fx-background-color: linear-gradient(to right, -sf-accent-2, -sf-border);"
-                        + "-fx-background-radius: 18;"
-                        + "-fx-text-fill: -sf-text;"
-                        + "-fx-font-weight: bold;"
-                        + "-fx-padding: 8 28;"
-                        + "-fx-cursor: hand;"
-                        + "-fx-effect: dropshadow(gaussian, -sf-shadow, 12, 0.22, 0, 3);");
-
-        alert.setOnShowing(
-                _ -> {
-                    Scene scene = dialogPane.getScene();
-                    if (scene != null) {
-                        ThemeManager.apply(scene);
-                        scene.setFill(Color.TRANSPARENT);
-                        if (scene.getWindow() instanceof Stage stage) {
-                            stage.setResizable(false);
-                            if (iconPath != null) {
-                                try {
-                                    stage.getIcons()
-                                            .add(new Image(UIUtils.class.getResourceAsStream(iconPath)));
-                                } catch (Exception e) {
-                                    log.warn("Khong load duoc icon tai: {}", iconPath, e);
-                                }
-                            }
-                        }
-                    }
-
-                    Node contentLabel = dialogPane.lookup(".content.label");
-                    if (contentLabel != null) {
-                        contentLabel.setStyle(
-                                "-fx-font-size: 14px;"
-                                        + "-fx-text-fill: -sf-text;"
-                                        + "-fx-font-weight: bold;"
-                                        + "-fx-wrap-text: true;");
-                    }
-                });
-    }
-
-    public static void changeScene(ActionEvent event, String fxmlPath) {
-        try {
-            FXMLLoader loader = new FXMLLoader(UIUtils.class.getResource(fxmlPath));
-            Parent root = loader.load();
-            Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-            stage.getScene().setRoot(root);
-            ThemeManager.apply(stage.getScene());
-        } catch (IOException e) {
-            log.error("Không thể tải màn hình: {}", fxmlPath, e);
-            showAlert("Lỗi", "Không thể tải màn hình: " + fxmlPath);
-        }
-    }
-
-
-    public static void changePopup(ActionEvent event, String fxmlPath, String typePopUp) {
-        try {
-            FXMLLoader loader = new FXMLLoader(UIUtils.class.getResource(fxmlPath));
-            Parent root = loader.load();
-            Stage popupStage = new Stage();
-            popupStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
-            popupStage.setTitle(typePopUp);
-            Scene scene = new Scene(root);
+    alert.setOnShowing(
+        _ -> {
+          Scene scene = dialogPane.getScene();
+          if (scene != null) {
             ThemeManager.apply(scene);
-            popupStage.setScene(scene);
-            popupStage.show();
-        } catch (Exception e) {
-            log.error("Không thể tải popup: {}", fxmlPath, e);
-        }
+            scene.setFill(Color.TRANSPARENT);
+            if (scene.getWindow() instanceof Stage stage) {
+              stage.setResizable(false);
+              if (iconPath != null) {
+                try {
+                  stage.getIcons().add(new Image(UIUtils.class.getResourceAsStream(iconPath)));
+                } catch (Exception e) {
+                  log.warn("Khong load duoc icon tai: {}", iconPath, e);
+                }
+              }
+            }
+          }
+
+          Node contentLabel = dialogPane.lookup(".content.label");
+          if (contentLabel != null) {
+            contentLabel.setStyle(
+                "-fx-font-size: 14px;"
+                    + "-fx-text-fill: -sf-text;"
+                    + "-fx-font-weight: bold;"
+                    + "-fx-wrap-text: true;");
+          }
+        });
+  }
+
+  public static void changeScene(ActionEvent event, String fxmlPath) {
+    try {
+      FXMLLoader loader = new FXMLLoader(UIUtils.class.getResource(fxmlPath));
+      Parent root = loader.load();
+      Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+      stage.getScene().setRoot(root);
+      ThemeManager.apply(stage.getScene());
+    } catch (IOException e) {
+      log.error("Không thể tải màn hình: {}", fxmlPath, e);
+      showAlert("Lỗi", "Không thể tải màn hình: " + fxmlPath);
     }
+  }
+
+  public static void changePopup(ActionEvent event, String fxmlPath, String typePopUp) {
+    try {
+      FXMLLoader loader = new FXMLLoader(UIUtils.class.getResource(fxmlPath));
+      Parent root = loader.load();
+      Stage popupStage = new Stage();
+      popupStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+      popupStage.setTitle(typePopUp);
+      Scene scene = new Scene(root);
+      ThemeManager.apply(scene);
+      popupStage.setScene(scene);
+      popupStage.show();
+    } catch (Exception e) {
+      log.error("Không thể tải popup: {}", fxmlPath, e);
+    }
+  }
 }

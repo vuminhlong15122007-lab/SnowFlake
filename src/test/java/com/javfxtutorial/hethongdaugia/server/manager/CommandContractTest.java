@@ -14,8 +14,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
-import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.domain.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AddAccountCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AutoBidCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand;
@@ -26,6 +24,8 @@ import com.javfxtutorial.hethongdaugia.common.model.Command.RegisterToAuctionCom
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateProfileCommand;
+import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.domain.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Item;
 import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
@@ -36,7 +36,6 @@ import com.javfxtutorial.hethongdaugia.server.dao.ItemDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.UserDAO;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -49,452 +48,440 @@ import org.mockito.MockedStatic;
 
 @DisplayName("Contract xử lý command từ client")
 class CommandContractTest {
-    private AuctionManager manager;
+  private AuctionManager manager;
 
-    @BeforeEach
-    void setUp() throws Exception {
-        manager = AuctionManager.getInstance();
-        TestStateSupport.resetAuctionManager(manager);
+  @BeforeEach
+  void setUp() throws Exception {
+    manager = AuctionManager.getInstance();
+    TestStateSupport.resetAuctionManager(manager);
+  }
+
+  @AfterEach
+  void tearDown() throws Exception {
+    TestStateSupport.resetAuctionManager(manager);
+    ClientHandlerContextHolder.clear();
+  }
+
+  @Nested
+  @DisplayName("AutoBidCommand")
+  class AutoBidCommandTest {
+    @Test
+    @DisplayName("thiếu cấu hình auto-bid trả failure")
+    void handle_returnsFailureWhenConfigIsMissing() {
+      AutoBidCommand command = new AutoBidCommand();
+
+      Response response = command.handle();
+
+      assertFalse(response.isSuccess());
+      assertNull(response.getPayLoad());
     }
 
-    @AfterEach
-    void tearDown() throws Exception {
-        TestStateSupport.resetAuctionManager(manager);
-        ClientHandlerContextHolder.clear();
+    @Test
+    @DisplayName("cấu hình tắt auto-bid đăng ký thành công không cần DB")
+    void handle_returnsSuccessWhenInactiveConfigCanBeRegisteredWithoutDatabase() {
+      AutoBidCommand command = new AutoBidCommand();
+      AutoBidConfig config = new AutoBidConfig(1, "alice", 100, new BigDecimal("200"), false);
+      command.addData("autoBidConfig", config);
+
+      Response response = command.handle();
+
+      assertTrue(response.isSuccess());
+      assertSame(config, response.getPayLoad());
+    }
+  }
+
+  @Nested
+  @DisplayName("Auction commands")
+  class AuctionCommandTest {
+    @Test
+    @DisplayName("trả về trạng thái hiện tại của phiên")
+    void getAuctionStatusCommand_returnsCurrentStatus() {
+      Auction auction = runningAuction(AuctionStatus.RUNNING);
+      GetAuctionStatusCommand command = new GetAuctionStatusCommand(auction);
+
+      Response response = command.handle();
+
+      assertTrue(response.isSuccess());
+      assertEquals(AuctionStatus.RUNNING, response.getPayLoad());
     }
 
-    @Nested
-    @DisplayName("AutoBidCommand")
-    class AutoBidCommandTest {
-        @Test
-        @DisplayName("thiếu cấu hình auto-bid trả failure")
-        void handle_returnsFailureWhenConfigIsMissing() {
-            AutoBidCommand command = new AutoBidCommand();
+    @Test
+    @DisplayName("không xóa phiên đang chạy")
+    void deleteAuctionCommand_rejectsRunningAuctionBeforeDaoDelete() {
+      Auction auction = runningAuction(AuctionStatus.RUNNING);
+      DeleteAuctionCommand command = new DeleteAuctionCommand(auction);
 
-            Response response = command.handle();
+      Response response = command.handle();
 
-            assertFalse(response.isSuccess());
-            assertNull(response.getPayLoad());
-        }
-
-        @Test
-        @DisplayName("cấu hình tắt auto-bid đăng ký thành công không cần DB")
-        void handle_returnsSuccessWhenInactiveConfigCanBeRegisteredWithoutDatabase() {
-            AutoBidCommand command = new AutoBidCommand();
-            AutoBidConfig config = new AutoBidConfig(1, "alice", 100, new BigDecimal("200"), false);
-            command.addData("autoBidConfig", config);
-
-            Response response = command.handle();
-
-            assertTrue(response.isSuccess());
-            assertSame(config, response.getPayLoad());
-        }
+      assertFalse(response.isSuccess());
+      assertNull(response.getPayLoad());
     }
 
-    @Nested
-    @DisplayName("Auction commands")
-    class AuctionCommandTest {
-        @Test
-        @DisplayName("trả về trạng thái hiện tại của phiên")
-        void getAuctionStatusCommand_returnsCurrentStatus() {
-            Auction auction = runningAuction(AuctionStatus.RUNNING);
-            GetAuctionStatusCommand command = new GetAuctionStatusCommand(auction);
+    @Test
+    @DisplayName("xóa item khi phiên chưa bắt đầu")
+    void deleteAuctionCommand_deletesItemWhenAuctionHasNotStarted() throws Exception {
+      Auction auction = runningAuction(AuctionStatus.NOT_START);
+      auction.setStartingTime(LocalDateTime.now().plusMinutes(5));
+      Item item = new Item();
+      auction.setItem(item);
+      DeleteAuctionCommand command = new DeleteAuctionCommand(auction);
 
-            Response response = command.handle();
+      ItemDAO itemDAO = mock(ItemDAO.class);
+      when(itemDAO.delete(item)).thenReturn(1);
 
-            assertTrue(response.isSuccess());
-            assertEquals(AuctionStatus.RUNNING, response.getPayLoad());
-        }
+      try (MockedStatic<ItemDAO> mockedItemDAO = mockStatic(ItemDAO.class)) {
+        mockedItemDAO.when(ItemDAO::getInstance).thenReturn(itemDAO);
 
-        @Test
-        @DisplayName("không xóa phiên đang chạy")
-        void deleteAuctionCommand_rejectsRunningAuctionBeforeDaoDelete() {
-            Auction auction = runningAuction(AuctionStatus.RUNNING);
-            DeleteAuctionCommand command = new DeleteAuctionCommand(auction);
+        Response response = command.handle();
 
-            Response response = command.handle();
-
-            assertFalse(response.isSuccess());
-            assertNull(response.getPayLoad());
-        }
-
-        @Test
-        @DisplayName("xóa item khi phiên chưa bắt đầu")
-        void deleteAuctionCommand_deletesItemWhenAuctionHasNotStarted() throws Exception {
-            Auction auction = runningAuction(AuctionStatus.NOT_START);
-            auction.setStartingTime(LocalDateTime.now().plusMinutes(5));
-            Item item = new Item();
-            auction.setItem(item);
-            DeleteAuctionCommand command = new DeleteAuctionCommand(auction);
-
-            ItemDAO itemDAO = mock(ItemDAO.class);
-            when(itemDAO.delete(item)).thenReturn(1);
-
-            try (MockedStatic<ItemDAO> mockedItemDAO = mockStatic(ItemDAO.class)) {
-                mockedItemDAO.when(ItemDAO::getInstance).thenReturn(itemDAO);
-
-                Response response = command.handle();
-
-                assertTrue(response.isSuccess());
-                assertNull(response.getPayLoad());
-                verify(itemDAO).delete(item);
-            }
-        }
-
-        @Test
-        @DisplayName("không sửa phiên đang chạy")
-        void updateAuctionCommand_rejectsRunningAuctionBeforeDaoUpdate() {
-            Auction auction = runningAuction(AuctionStatus.RUNNING);
-            UpdateAuctionCommand command = new UpdateAuctionCommand(auction);
-
-            Response response = command.handle();
-
-            assertFalse(response.isSuccess());
-            assertNull(response.getPayLoad());
-        }
-
-        @Test
-        @DisplayName("sửa item và auction khi phiên chưa bắt đầu")
-        void updateAuctionCommand_updatesItemAndAuctionWhenAuctionHasNotStarted() throws Exception {
-            Auction auction = runningAuction(AuctionStatus.NOT_START);
-            auction.setStartingTime(LocalDateTime.now().plusMinutes(5));
-            Item item = new Item();
-            auction.setItem(item);
-            UpdateAuctionCommand command = new UpdateAuctionCommand(auction);
-
-            ItemDAO itemDAO = mock(ItemDAO.class);
-            AuctionDAO auctionDAO = mock(AuctionDAO.class);
-            when(itemDAO.update(item)).thenReturn(1);
-            when(auctionDAO.update(auction)).thenReturn(1);
-
-            try (MockedStatic<ItemDAO> mockedItemDAO = mockStatic(ItemDAO.class);
-                    MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class)) {
-                mockedItemDAO.when(ItemDAO::getInstance).thenReturn(itemDAO);
-                mockedAuctionDAO.when(AuctionDAO::getInstance).thenReturn(auctionDAO);
-
-                Response response = command.handle();
-
-                assertTrue(response.isSuccess());
-                assertSame(auction, response.getPayLoad());
-                verify(itemDAO).update(item);
-                verify(auctionDAO).update(auction);
-            }
-        }
-
-        @Test
-        @DisplayName("đăng ký listener hiện tại vào phòng auction")
-        void registerToAuctionCommand_registersCurrentContextListenerAndReturnsSuccessResponse()
-                throws Exception {
-            Auction auction = runningAuction(AuctionStatus.RUNNING);
-            auction.setAuctionId(123);
-            ClientHandler currentClient = new ClientHandler(null);
-            ClientHandlerContextHolder.set(currentClient);
-
-            RegisterToAuctionCommand command = new RegisterToAuctionCommand();
-            command.addData("currentAuction", auction);
-
-            Response response = command.handle();
-
-            assertNotNull(response);
-            assertTrue(response.isSuccess());
-            assertNull(response.getPayLoad());
-            assertEquals(1, TestStateSupport.auctionSubscribers(manager).get(123).size());
-            assertSame(currentClient, TestStateSupport.auctionSubscribers(manager).get(123).get(0));
-        }
-
-        @Test
-        @DisplayName("thiếu auction thì không đăng ký listener")
-        void registerToAuctionCommand_missingAuctionReturnsFailureWithoutRegisteringListener()
-                throws Exception {
-            RegisterToAuctionCommand command = new RegisterToAuctionCommand();
-
-            Response response = command.handle();
-
-            assertFalse(response.isSuccess());
-            assertNull(response.getPayLoad());
-            assertTrue(TestStateSupport.auctionSubscribers(manager).isEmpty());
-        }
-
-        @Test
-        @DisplayName("thiếu bid thì trả failure")
-        void placeBidCommand_missingBidReturnsFailureResponse() {
-            PlaceBidCommand command = new PlaceBidCommand();
-
-            Response response = command.handle();
-
-            assertFalse(response.isSuccess());
-            assertNull(response.getPayLoad());
-        }
-
-        @Test
-        @DisplayName("UpdateAuctionStatusCommand thieu auction thi khong goi DAO")
-        void updateAuctionStatusCommand_missingAuctionReturnsFailureBeforeDao()
-                throws DataException {
-            UpdateAuctionStatusCommand command = new UpdateAuctionStatusCommand(null);
-            AuctionDAO auctionDAO = mock(AuctionDAO.class);
-
-            try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class);
-                    MockedStatic<ClientHandler> mockedClientHandler =
-                            mockStatic(ClientHandler.class)) {
-                mockedAuctionDAO.when(AuctionDAO::getInstance).thenReturn(auctionDAO);
-
-                Response response = command.handle();
-
-                assertFalse(response.isSuccess());
-                assertNull(response.getPayLoad());
-                verify(auctionDAO, never()).update(any(Auction.class));
-                mockedClientHandler.verifyNoInteractions();
-            }
-        }
-
-        @Test
-        @DisplayName("UpdateAuctionStatusCommand update fail thi khong broadcast")
-        void updateAuctionStatusCommand_failedDaoUpdateDoesNotBroadcast() throws DataException {
-            Auction auction = runningAuction(AuctionStatus.CANCELLED);
-            UpdateAuctionStatusCommand command = new UpdateAuctionStatusCommand(auction);
-            AuctionDAO auctionDAO = mock(AuctionDAO.class);
-            when(auctionDAO.update(auction)).thenReturn(0);
-
-            try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class);
-                    MockedStatic<ClientHandler> mockedClientHandler =
-                            mockStatic(ClientHandler.class)) {
-                mockedAuctionDAO.when(AuctionDAO::getInstance).thenReturn(auctionDAO);
-
-                Response response = command.handle();
-
-                assertFalse(response.isSuccess());
-                assertNull(response.getPayLoad());
-                verify(auctionDAO).update(auction);
-                mockedClientHandler.verify(
-                        () -> ClientHandler.broadcast(any(Response.class)), never());
-            }
-        }
+        assertTrue(response.isSuccess());
+        assertNull(response.getPayLoad());
+        verify(itemDAO).delete(item);
+      }
     }
 
-    @Nested
-    @DisplayName("Account command")
-    class AccountCommandTest {
-        @Test
-        @DisplayName("tạo tài khoản khi DAO insert thành công")
-        void addAccountCommand_returnsSuccessOnlyWhenDaoInsertSucceeds() throws DataException {
-            AddAccountCommand command = validAddAccountCommand();
-            UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.insert(any(User.class))).thenReturn(1);
+    @Test
+    @DisplayName("không sửa phiên đang chạy")
+    void updateAuctionCommand_rejectsRunningAuctionBeforeDaoUpdate() {
+      Auction auction = runningAuction(AuctionStatus.RUNNING);
+      UpdateAuctionCommand command = new UpdateAuctionCommand(auction);
 
-            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+      Response response = command.handle();
 
-                Response response = command.handle();
-
-                assertTrue(response.isSuccess());
-                assertNull(response.getPayLoad());
-                verify(userDAO).insert(any(User.class));
-            }
-        }
-
-        @Test
-        @DisplayName("trả failure khi username bị trùng")
-        void addAccountCommand_duplicateUsernameReturnsFailure() throws DataException {
-            AddAccountCommand command = validAddAccountCommand();
-            UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.insert(any(User.class))).thenReturn(-1);
-
-            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
-
-                Response response = command.handle();
-
-                assertFalse(response.isSuccess());
-                assertNull(response.getPayLoad());
-            }
-        }
-
-        @Test
-        @DisplayName("role không hợp lệ bị chặn trước DAO")
-        void addAccountCommand_invalidRoleReturnsFailureBeforeDao() throws DataException {
-            AddAccountCommand command = validAddAccountCommand();
-            command.addData("accountType", "MANAGER");
-            UserDAO userDAO = mock(UserDAO.class);
-
-            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
-
-                Response response = command.handle();
-
-                assertFalse(response.isSuccess());
-                assertNull(response.getPayLoad());
-                verify(userDAO, never()).insert(any(User.class));
-            }
-        }
-
-        @Test
-        @DisplayName("khong cho client chua dang nhap admin tao tai khoan ADMIN")
-        void addAccountCommand_adminRoleWithoutAdminSessionReturnsFailureBeforeDao()
-                throws DataException {
-            AddAccountCommand command = validAddAccountCommand();
-            command.addData("accountType", "ADMIN");
-            UserDAO userDAO = mock(UserDAO.class);
-
-            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
-
-                Response response = command.handle();
-
-                assertFalse(response.isSuccess());
-                assertNull(response.getPayLoad());
-                verify(userDAO, never()).insert(any(User.class));
-            }
-        }
-
-        @Test
-        @DisplayName("admin da dang nhap duoc tao tai khoan ADMIN")
-        void addAccountCommand_adminRoleWithAdminSessionCanCreateAdminAccount()
-            throws DataException, IOException {
-            AddAccountCommand command = validAddAccountCommand();
-            command.addData("accountType", "ADMIN");
-            UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.insert(any(User.class))).thenReturn(1);
-            ClientHandler adminClient = new ClientHandler(null);
-            adminClient.setCurrentUser(
-                    new User(
-                            99,
-                            "admin",
-                            null,
-                            "admin@example.com",
-                            "0900000000",
-                            AccountType.ADMIN,
-                            null));
-            ClientHandlerContextHolder.set(adminClient);
-
-            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
-
-                Response response = command.handle();
-
-                assertTrue(response.isSuccess());
-                assertNull(response.getPayLoad());
-                verify(userDAO).insert(any(User.class));
-            }
-        }
-
-        @Test
-        @DisplayName("du lieu bat buoc blank bi chan truoc DAO")
-        void addAccountCommand_blankRequiredFieldReturnsFailureBeforeDao() throws DataException {
-            AddAccountCommand command = validAddAccountCommand();
-            command.addData("username", "   ");
-            UserDAO userDAO = mock(UserDAO.class);
-
-            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
-
-                Response response = command.handle();
-
-                assertFalse(response.isSuccess());
-                assertNull(response.getPayLoad());
-                verify(userDAO, never()).insert(any(User.class));
-            }
-        }
+      assertFalse(response.isSuccess());
+      assertNull(response.getPayLoad());
     }
 
-    @Nested
-    @DisplayName("Auth command")
-    class AuthCommandTest {
-        @Test
-        @DisplayName("LoginCommand thanh cong khong tra password ve client")
-        void loginCommand_successPayloadDoesNotExposePassword() throws Exception {
-            LoginCommand command = new LoginCommand();
-            command.addData("username", "alice");
-            command.addData("password", "pass123");
-            User user =
-                    new User(
-                            1,
-                            "alice",
-                            "pbkdf2-or-legacy-value",
-                            "alice@example.com",
-                            "0901234567",
-                            AccountType.USER,
-                            "alice.png");
-            UserManager userManager = mock(UserManager.class);
-            when(userManager.authenticate("alice", "pass123")).thenReturn(user);
-            ClientHandler currentClient = new ClientHandler(null);
-            ClientHandlerContextHolder.set(currentClient);
+    @Test
+    @DisplayName("sửa item và auction khi phiên chưa bắt đầu")
+    void updateAuctionCommand_updatesItemAndAuctionWhenAuctionHasNotStarted() throws Exception {
+      Auction auction = runningAuction(AuctionStatus.NOT_START);
+      auction.setStartingTime(LocalDateTime.now().plusMinutes(5));
+      Item item = new Item();
+      auction.setItem(item);
+      UpdateAuctionCommand command = new UpdateAuctionCommand(auction);
 
-            try (MockedStatic<UserManager> mockedUserManager = mockStatic(UserManager.class)) {
-                mockedUserManager.when(UserManager::getInstance).thenReturn(userManager);
+      ItemDAO itemDAO = mock(ItemDAO.class);
+      AuctionDAO auctionDAO = mock(AuctionDAO.class);
+      when(itemDAO.update(item)).thenReturn(1);
+      when(auctionDAO.update(auction)).thenReturn(1);
 
-                Response response = command.handle();
+      try (MockedStatic<ItemDAO> mockedItemDAO = mockStatic(ItemDAO.class);
+          MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class)) {
+        mockedItemDAO.when(ItemDAO::getInstance).thenReturn(itemDAO);
+        mockedAuctionDAO.when(AuctionDAO::getInstance).thenReturn(auctionDAO);
 
-                assertTrue(response.isSuccess());
-                User payload = (User) response.getPayLoad();
-                assertNotNull(payload);
-                assertNull(payload.getPassWord());
-                assertEquals(user.getId(), payload.getId());
-                assertEquals(user.getName(), payload.getName());
-                assertEquals(user.getEmail(), payload.getEmail());
-                assertEquals(user.getSdt(), payload.getSdt());
-                assertEquals(user.getAccountType(), payload.getAccountType());
-                assertEquals(user.getImagePath(), payload.getImagePath());
-                assertSame(user, currentClient.getCurrentUser());
-            }
-        }
+        Response response = command.handle();
+
+        assertTrue(response.isSuccess());
+        assertSame(auction, response.getPayLoad());
+        verify(itemDAO).update(item);
+        verify(auctionDAO).update(auction);
+      }
     }
 
-    @Nested
-    @DisplayName("Profile command")
-    class ProfileCommandTest {
-        @Test
-        @DisplayName("cập nhật profile thành công và giữ command để client dispatch")
-        void updateProfileCommand_successResponseKeepsCommandForClientDispatch()
-                throws DataException {
-            UpdateProfileCommand command = new UpdateProfileCommand();
-            command.addData("userId", 1);
-            command.addData("username", "Alice Nguyen");
-            command.addData("email", "alice.new@example.com");
-            command.addData("phone", "0999999999");
-            command.addData("avt", "avatar.png");
+    @Test
+    @DisplayName("đăng ký listener hiện tại vào phòng auction")
+    void registerToAuctionCommand_registersCurrentContextListenerAndReturnsSuccessResponse()
+        throws Exception {
+      Auction auction = runningAuction(AuctionStatus.RUNNING);
+      auction.setAuctionId(123);
+      ClientHandler currentClient = new ClientHandler(null);
+      ClientHandlerContextHolder.set(currentClient);
 
-            UserDAO userDAO = mock(UserDAO.class);
-            when(userDAO.selectById(1))
-                    .thenReturn(
-                            new User(
-                                    1,
-                                    "Alice",
-                                    "secret",
-                                    "alice@example.com",
-                                    "0900000000",
-                                    AccountType.USER,
-                                    "old.png"));
-            when(userDAO.update(any(User.class))).thenReturn(1);
+      RegisterToAuctionCommand command = new RegisterToAuctionCommand();
+      command.addData("currentAuction", auction);
 
-            try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
-                mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+      Response response = command.handle();
 
-                Response response = command.handle();
-
-                assertTrue(response.isSuccess());
-                assertSame(command, response.getCommand());
-            }
-        }
+      assertNotNull(response);
+      assertTrue(response.isSuccess());
+      assertNull(response.getPayLoad());
+      assertEquals(1, TestStateSupport.auctionSubscribers(manager).get(123).size());
+      assertSame(currentClient, TestStateSupport.auctionSubscribers(manager).get(123).get(0));
     }
 
-    private static Auction runningAuction(AuctionStatus status) {
-        Auction auction = new Auction();
-        auction.setAuctionId(100);
-        auction.setStartingTime(LocalDateTime.now().minusMinutes(5));
-        auction.setEndingTime(LocalDateTime.now().plusMinutes(5));
-        auction.setStatus(status);
-        auction.setCurrentPrice(new BigDecimal("100"));
-        auction.setStepPrice(new BigDecimal("10"));
-        return auction;
+    @Test
+    @DisplayName("thiếu auction thì không đăng ký listener")
+    void registerToAuctionCommand_missingAuctionReturnsFailureWithoutRegisteringListener()
+        throws Exception {
+      RegisterToAuctionCommand command = new RegisterToAuctionCommand();
+
+      Response response = command.handle();
+
+      assertFalse(response.isSuccess());
+      assertNull(response.getPayLoad());
+      assertTrue(TestStateSupport.auctionSubscribers(manager).isEmpty());
     }
 
-    private static AddAccountCommand validAddAccountCommand() {
-        AddAccountCommand command = new AddAccountCommand();
-        command.addData("username", "alice");
-        command.addData("password", "secret123");
-        command.addData("email", "alice@example.com");
-        command.addData("sdt", "0901234567");
-        command.addData("accountType", "USER");
-        return command;
+    @Test
+    @DisplayName("thiếu bid thì trả failure")
+    void placeBidCommand_missingBidReturnsFailureResponse() {
+      PlaceBidCommand command = new PlaceBidCommand();
+
+      Response response = command.handle();
+
+      assertFalse(response.isSuccess());
+      assertNull(response.getPayLoad());
     }
+
+    @Test
+    @DisplayName("UpdateAuctionStatusCommand thieu auction thi khong goi DAO")
+    void updateAuctionStatusCommand_missingAuctionReturnsFailureBeforeDao() throws DataException {
+      UpdateAuctionStatusCommand command = new UpdateAuctionStatusCommand(null);
+      AuctionDAO auctionDAO = mock(AuctionDAO.class);
+
+      try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class);
+          MockedStatic<ClientHandler> mockedClientHandler = mockStatic(ClientHandler.class)) {
+        mockedAuctionDAO.when(AuctionDAO::getInstance).thenReturn(auctionDAO);
+
+        Response response = command.handle();
+
+        assertFalse(response.isSuccess());
+        assertNull(response.getPayLoad());
+        verify(auctionDAO, never()).update(any(Auction.class));
+        mockedClientHandler.verifyNoInteractions();
+      }
+    }
+
+    @Test
+    @DisplayName("UpdateAuctionStatusCommand update fail thi khong broadcast")
+    void updateAuctionStatusCommand_failedDaoUpdateDoesNotBroadcast() throws DataException {
+      Auction auction = runningAuction(AuctionStatus.CANCELLED);
+      UpdateAuctionStatusCommand command = new UpdateAuctionStatusCommand(auction);
+      AuctionDAO auctionDAO = mock(AuctionDAO.class);
+      when(auctionDAO.update(auction)).thenReturn(0);
+
+      try (MockedStatic<AuctionDAO> mockedAuctionDAO = mockStatic(AuctionDAO.class);
+          MockedStatic<ClientHandler> mockedClientHandler = mockStatic(ClientHandler.class)) {
+        mockedAuctionDAO.when(AuctionDAO::getInstance).thenReturn(auctionDAO);
+
+        Response response = command.handle();
+
+        assertFalse(response.isSuccess());
+        assertNull(response.getPayLoad());
+        verify(auctionDAO).update(auction);
+        mockedClientHandler.verify(() -> ClientHandler.broadcast(any(Response.class)), never());
+      }
+    }
+  }
+
+  @Nested
+  @DisplayName("Account command")
+  class AccountCommandTest {
+    @Test
+    @DisplayName("tạo tài khoản khi DAO insert thành công")
+    void addAccountCommand_returnsSuccessOnlyWhenDaoInsertSucceeds() throws DataException {
+      AddAccountCommand command = validAddAccountCommand();
+      UserDAO userDAO = mock(UserDAO.class);
+      when(userDAO.insert(any(User.class))).thenReturn(1);
+
+      try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+        mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+        Response response = command.handle();
+
+        assertTrue(response.isSuccess());
+        assertNull(response.getPayLoad());
+        verify(userDAO).insert(any(User.class));
+      }
+    }
+
+    @Test
+    @DisplayName("trả failure khi username bị trùng")
+    void addAccountCommand_duplicateUsernameReturnsFailure() throws DataException {
+      AddAccountCommand command = validAddAccountCommand();
+      UserDAO userDAO = mock(UserDAO.class);
+      when(userDAO.insert(any(User.class))).thenReturn(-1);
+
+      try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+        mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+        Response response = command.handle();
+
+        assertFalse(response.isSuccess());
+        assertNull(response.getPayLoad());
+      }
+    }
+
+    @Test
+    @DisplayName("role không hợp lệ bị chặn trước DAO")
+    void addAccountCommand_invalidRoleReturnsFailureBeforeDao() throws DataException {
+      AddAccountCommand command = validAddAccountCommand();
+      command.addData("accountType", "MANAGER");
+      UserDAO userDAO = mock(UserDAO.class);
+
+      try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+        mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+        Response response = command.handle();
+
+        assertFalse(response.isSuccess());
+        assertNull(response.getPayLoad());
+        verify(userDAO, never()).insert(any(User.class));
+      }
+    }
+
+    @Test
+    @DisplayName("khong cho client chua dang nhap admin tao tai khoan ADMIN")
+    void addAccountCommand_adminRoleWithoutAdminSessionReturnsFailureBeforeDao()
+        throws DataException {
+      AddAccountCommand command = validAddAccountCommand();
+      command.addData("accountType", "ADMIN");
+      UserDAO userDAO = mock(UserDAO.class);
+
+      try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+        mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+        Response response = command.handle();
+
+        assertFalse(response.isSuccess());
+        assertNull(response.getPayLoad());
+        verify(userDAO, never()).insert(any(User.class));
+      }
+    }
+
+    @Test
+    @DisplayName("admin da dang nhap duoc tao tai khoan ADMIN")
+    void addAccountCommand_adminRoleWithAdminSessionCanCreateAdminAccount()
+        throws DataException, IOException {
+      AddAccountCommand command = validAddAccountCommand();
+      command.addData("accountType", "ADMIN");
+      UserDAO userDAO = mock(UserDAO.class);
+      when(userDAO.insert(any(User.class))).thenReturn(1);
+      ClientHandler adminClient = new ClientHandler(null);
+      adminClient.setCurrentUser(
+          new User(99, "admin", null, "admin@example.com", "0900000000", AccountType.ADMIN, null));
+      ClientHandlerContextHolder.set(adminClient);
+
+      try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+        mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+        Response response = command.handle();
+
+        assertTrue(response.isSuccess());
+        assertNull(response.getPayLoad());
+        verify(userDAO).insert(any(User.class));
+      }
+    }
+
+    @Test
+    @DisplayName("du lieu bat buoc blank bi chan truoc DAO")
+    void addAccountCommand_blankRequiredFieldReturnsFailureBeforeDao() throws DataException {
+      AddAccountCommand command = validAddAccountCommand();
+      command.addData("username", "   ");
+      UserDAO userDAO = mock(UserDAO.class);
+
+      try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+        mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+        Response response = command.handle();
+
+        assertFalse(response.isSuccess());
+        assertNull(response.getPayLoad());
+        verify(userDAO, never()).insert(any(User.class));
+      }
+    }
+  }
+
+  @Nested
+  @DisplayName("Auth command")
+  class AuthCommandTest {
+    @Test
+    @DisplayName("LoginCommand thanh cong khong tra password ve client")
+    void loginCommand_successPayloadDoesNotExposePassword() throws Exception {
+      LoginCommand command = new LoginCommand();
+      command.addData("username", "alice");
+      command.addData("password", "pass123");
+      User user =
+          new User(
+              1,
+              "alice",
+              "pbkdf2-or-legacy-value",
+              "alice@example.com",
+              "0901234567",
+              AccountType.USER,
+              "alice.png");
+      UserManager userManager = mock(UserManager.class);
+      when(userManager.authenticate("alice", "pass123")).thenReturn(user);
+      ClientHandler currentClient = new ClientHandler(null);
+      ClientHandlerContextHolder.set(currentClient);
+
+      try (MockedStatic<UserManager> mockedUserManager = mockStatic(UserManager.class)) {
+        mockedUserManager.when(UserManager::getInstance).thenReturn(userManager);
+
+        Response response = command.handle();
+
+        assertTrue(response.isSuccess());
+        User payload = (User) response.getPayLoad();
+        assertNotNull(payload);
+        assertNull(payload.getPassWord());
+        assertEquals(user.getId(), payload.getId());
+        assertEquals(user.getName(), payload.getName());
+        assertEquals(user.getEmail(), payload.getEmail());
+        assertEquals(user.getSdt(), payload.getSdt());
+        assertEquals(user.getAccountType(), payload.getAccountType());
+        assertEquals(user.getImagePath(), payload.getImagePath());
+        assertSame(user, currentClient.getCurrentUser());
+      }
+    }
+  }
+
+  @Nested
+  @DisplayName("Profile command")
+  class ProfileCommandTest {
+    @Test
+    @DisplayName("cập nhật profile thành công và giữ command để client dispatch")
+    void updateProfileCommand_successResponseKeepsCommandForClientDispatch() throws DataException {
+      UpdateProfileCommand command = new UpdateProfileCommand();
+      command.addData("userId", 1);
+      command.addData("username", "Alice Nguyen");
+      command.addData("email", "alice.new@example.com");
+      command.addData("phone", "0999999999");
+      command.addData("avt", "avatar.png");
+
+      UserDAO userDAO = mock(UserDAO.class);
+      when(userDAO.selectById(1))
+          .thenReturn(
+              new User(
+                  1,
+                  "Alice",
+                  "secret",
+                  "alice@example.com",
+                  "0900000000",
+                  AccountType.USER,
+                  "old.png"));
+      when(userDAO.update(any(User.class))).thenReturn(1);
+
+      try (MockedStatic<UserDAO> mockedUserDAO = mockStatic(UserDAO.class)) {
+        mockedUserDAO.when(UserDAO::getInstance).thenReturn(userDAO);
+
+        Response response = command.handle();
+
+        assertTrue(response.isSuccess());
+        assertSame(command, response.getCommand());
+      }
+    }
+  }
+
+  private static Auction runningAuction(AuctionStatus status) {
+    Auction auction = new Auction();
+    auction.setAuctionId(100);
+    auction.setStartingTime(LocalDateTime.now().minusMinutes(5));
+    auction.setEndingTime(LocalDateTime.now().plusMinutes(5));
+    auction.setStatus(status);
+    auction.setCurrentPrice(new BigDecimal("100"));
+    auction.setStepPrice(new BigDecimal("10"));
+    return auction;
+  }
+
+  private static AddAccountCommand validAddAccountCommand() {
+    AddAccountCommand command = new AddAccountCommand();
+    command.addData("username", "alice");
+    command.addData("password", "secret123");
+    command.addData("email", "alice@example.com");
+    command.addData("sdt", "0901234567");
+    command.addData("accountType", "USER");
+    return command;
+  }
 }
