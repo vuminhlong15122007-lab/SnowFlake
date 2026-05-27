@@ -1,11 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.Image?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="720.0" prefWidth="1280.0" styleClass="admin-theme" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminUserController">
+<BorderPane prefHeight="720.0" prefWidth="1280.0" styleClass="admin-theme" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminUserController">
 
     <top>
         <HBox alignment="CENTER_LEFT" prefHeight="64.0" prefWidth="1280.0" spacing="12.0" styleClass="admin-header-bar" BorderPane.alignment="CENTER">
@@ -78,7 +88,7 @@
 
             <Button fx:id="btnAddUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToAddUser" styleClass="admin-btn-add" text="➕ Thêm người dùng" />
             <Button fx:id="btnEditUser" maxWidth="Infinity" mnemonicParsing="false" onAction="#getUpdateAdmin" styleClass="admin-btn-edit" text="📝  Cập nhật thông tin Admin" />
-            <Button fx:id="btnResetPassword" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToResetPW" styleClass="admin-btn-reset" text="🔓  Đặt lại mật khẩu" />
+            <Button fx:id="btnResetPassword" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToResetPW" styleClass="admin-btn-reset" text="🔓  Đặt lại mật khẩu Admin" />
             <Button fx:id="reload" maxWidth="Infinity" mnemonicParsing="false" onAction="#reLoad" styleClass="admin-btn-reload" text="🔄  Tải lại dữ liệu" />
             <Button fx:id="deleteButton" maxWidth="Infinity" mnemonicParsing="false" onAction="#clickToDeleteUser" styleClass="admin-btn-delete" text="🗑️  Xóa tài khoản" />
 

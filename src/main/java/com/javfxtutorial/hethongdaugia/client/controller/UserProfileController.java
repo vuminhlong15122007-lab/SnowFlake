@@ -22,6 +22,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.ImageView;
 import javafx.stage.FileChooser;
@@ -35,7 +36,7 @@ public class UserProfileController implements ResponseListener {
   @FXML private TextField updateEmailText;
   @FXML private TextField updatePhoneText;
   @FXML private ImageView myImageView;
-
+  @FXML private Label message;
   @FXML
   public void initialize() {
     loadUserInfo();
@@ -94,6 +95,22 @@ public class UserProfileController implements ResponseListener {
     String newPhone = safeTrim(updatePhoneText.getText());
     if (newName.isEmpty() || newEmail.isEmpty() || newPhone.isEmpty()) {
       showAlert("Loi", "Vui long nhap day du ten, email va so dien thoai.", "Wait.gif");
+      return;
+    }
+    // check so dien thoai
+    if (newPhone.length() != 10) {
+      message.setText("Số điện thoại phải đủ 10 số!");
+      return;
+    }
+    try {
+      Long.parseLong(newPhone);
+    } catch (NumberFormatException e) {
+      message.setText("Số điện thoại chỉ bao gồm các số!");
+      return;
+    }
+    // check email
+    if (!newEmail.endsWith("@gmail.com")) {
+      message.setText(" Email phải có đuôi @gmail.com!");
       return;
     }
     new Thread(
