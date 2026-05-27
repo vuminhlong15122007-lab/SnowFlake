@@ -290,7 +290,9 @@ public class ProductDisplayController implements ResponseListener {
         Platform.runLater(
             () -> {
               if (timer != null) timer.stop();
-              Stage stage = (Stage) lbtimeLeft.getScene().getWindow();
+              Scene scene = lbtimeLeft.getScene();
+              if (scene == null || scene.getWindow() == null) return;
+              Stage stage = (Stage) scene.getWindow();
               showAlert("Thông báo", "Phiên đấu giá đã bị admin hủy.");
               try {
                 Parent root =
