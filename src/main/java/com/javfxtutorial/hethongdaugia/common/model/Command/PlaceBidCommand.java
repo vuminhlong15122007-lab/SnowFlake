@@ -24,7 +24,7 @@ public class PlaceBidCommand extends Command {
   public Response handle() {
     BidTransaction bid = (BidTransaction) this.getData("bid");
     try {
-      if (AuctionManager.getInstance().placeBid(bid, ClientHandlerContextHolder.get())) {
+      if (AuctionManager.getInstance().placeBid(bid)) {
         return new Response(true, "Đặt giá thành công", bid, this);
       }
       return new Response(false, "Cần đặt giá lớn hơn giá hiện tại + bước giá", bid, this);

@@ -74,7 +74,9 @@ public class ClientHandler extends Thread implements BidListener {
               e);
           rp = new Response(false, "Lỗi server: " + e.getMessage(), null, cmd);
         }
-
+        if (rp.getCommand().getClass().equals(PlaceBidCommand.class)) {
+          continue;
+        }
         if (rp != null) {
           sendResponse(rp);
         }
@@ -106,9 +108,8 @@ public class ClientHandler extends Thread implements BidListener {
   }
 
   @Override
-  public void onPlaceBid(BidTransaction bid, ClientHandler senderThread) {
-    if (senderThread == this) return;
-    Response rp = new Response(true, "Co nguoi moi dat gia", bid, new PlaceBidCommand());
+  public void onPlaceBid(BidTransaction bid) {
+    Response rp = new Response(true, "Đặt giá thành công", bid, new PlaceBidCommand());
     sendResponse(rp);
     log.info("Da gui PlaceBidCommand ve cho luong {}", this.getName());
   }

@@ -116,7 +116,7 @@ public class AuctionManager {
     auctionSubscribers.values().forEach(list -> list.remove(listener));
   }
 
-  public boolean placeBid(BidTransaction bid, ClientHandler senderThread)
+  public boolean placeBid(BidTransaction bid)
       throws AuctionNotFoundException,
           AuctionNotStartedException,
           AuctionAlreadyEndedException,
@@ -127,11 +127,11 @@ public class AuctionManager {
           BidAmountExceedsLimitException,
           AuctionCancelledException {
 
-    return placeBid(bid, senderThread, Collections.emptyList());
+    return placeBid(bid, Collections.emptyList());
   }
 
   private boolean placeBid(
-      BidTransaction bid, ClientHandler senderThread, List<BidTransaction> pendingHistoryBids)
+      BidTransaction bid, List<BidTransaction> pendingHistoryBids)
       throws AuctionNotFoundException,
           AuctionNotStartedException,
           AuctionAlreadyEndedException,
@@ -227,9 +227,9 @@ public class AuctionManager {
 
     // 6. Thông báo cho tất cả subscriber của auction này
     for (BidTransaction historyBid : acceptedHistoryBids) {
-      notifySubscribers(historyBid.getAuctionId(), historyBid, null);
+      notifySubscribers(historyBid.getAuctionId(), historyBid);
     }
-    notifySubscribers(acceptedBid.getAuctionId(), acceptedBid, senderThread);
+    notifySubscribers(acceptedBid.getAuctionId(), acceptedBid);
     ClientHandler.broadcast(
         new Response(true, "giá thay đổi", auction, new UpdateAuctionCommand(auction)));
 
@@ -241,10 +241,10 @@ public class AuctionManager {
   // ─────────────────────────────────────────────────
   // NOTIFY — thông báo cho tất cả subscriber
 
-  private void notifySubscribers(int auctionId, BidTransaction bid, ClientHandler sender) {
+  private void notifySubscribers(int auctionId, BidTransaction bid) {
     List<BidListener> list = auctionSubscribers.get(auctionId);
     if (list == null || list.isEmpty()) return;
-    list.forEach(listener -> listener.onPlaceBid(bid, sender));
+    list.forEach(listener -> listener.onPlaceBid(bid));
   }
 
   // ─────────────────────────────────────────────────
@@ -420,7 +420,6 @@ public class AuctionManager {
     // Gọi lại placeBid — dùng sender = null vì là bot
     this.placeBid(
         autoBid,
-        ClientHandlerContextHolder.get(),
         pendingHistoryBid == null ? Collections.emptyList() : List.of(pendingHistoryBid));
   }
 
