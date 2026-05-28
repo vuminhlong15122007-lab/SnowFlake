@@ -9,8 +9,6 @@ public class OtherItemFactory extends ItemFactory {
     this.baseItem = baseItem;
   }
 
-  @Override
-  public void showData() {}
 
   @Override
   public Item createItemFromForm() {
