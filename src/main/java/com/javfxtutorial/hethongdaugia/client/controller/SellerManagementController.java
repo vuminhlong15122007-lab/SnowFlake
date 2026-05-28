@@ -1038,7 +1038,13 @@ public class SellerManagementController implements ResponseListener {
         && rp.getPayLoad() instanceof SellerNotification adminNotif) {
       Platform.runLater(
           () -> {
-            observable.removeIf(a -> a.getAuctionId() == adminNotif.getAuctionId());
+            for (int i = 0; i < observable.size(); i++) {
+              if (observable.get(i).getAuctionId() == adminNotif.getAuctionId()) {
+                observable.get(i).setStatus(AuctionStatus.CANCELLED_BY_ADMIN);
+                observable.set(i, observable.get(i)); // trigger refresh
+                break;
+              }
+            }
             addOrReplaceNotification(adminNotif);
           });
       return;
