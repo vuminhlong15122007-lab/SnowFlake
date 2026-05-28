@@ -26,15 +26,52 @@
 
     <Separator />
 
-    <!-- QR Code -->
-    <Label style="-fx-font-weight: bold; -fx-font-size: 13; -fx-text-fill: -sf-text;" text="QUÉT MÃ QR ĐỂ THANH TOÁN TRƯỚC " />
-    <Label fx:id="lbTime" style="-fx-font-weight: bold; -fx-font-size: 13; -fx-text-fill: -sf-danger;" text="TIME" />
-    <ImageView fx:id="qrImageView" fitHeight="220.0" fitWidth="220.0" pickOnBounds="true" preserveRatio="true">
-        <image>
-            <Image url="@../../assets/anh_qr_popup.png" />
-        </image></ImageView>
-    <Label style="-fx-font-size: 12px; -fx-text-fill: -sf-muted;" text="Nội dung: Thanh toán đấu giá SnowFox" />
+    <!-- Phần thanh toán (hiện khi còn thời gian) -->
+    <VBox fx:id="paymentSection" alignment="CENTER" spacing="10">
+        <Label style="-fx-font-weight: bold; -fx-font-size: 13; -fx-text-fill: -sf-text;" text="QUÉT MÃ QR ĐỂ THANH TOÁN TRƯỚC " />
+        <Label fx:id="lbTime" style="-fx-font-weight: bold; -fx-font-size: 13; -fx-text-fill: -sf-danger;" text="TIME" />
+        <ImageView fx:id="qrImageView" fitHeight="220.0" fitWidth="220.0" pickOnBounds="true" preserveRatio="true">
+            <image>
+                <Image url="@../../assets/anh_qr_popup.png" />
+            </image>
+        </ImageView>
+        <Label style="-fx-font-size: 12px; -fx-text-fill: -sf-muted;" text="Nội dung: Thanh toán đấu giá SnowFox" />
+        <Button fx:id="onIdentify" mnemonicParsing="false" onAction="#confirmPayment" style="-fx-padding: 8 30;" styleClass="sf-btn-danger" text="Xác nhận đã thanh toán" />
+    </VBox>
 
-    <!-- Nút đóng -->
-    <Button fx:id="onIdentify" mnemonicParsing="false" onAction="#confirmPayment" style="-fx-padding: 8 30;" styleClass="sf-btn-danger" text="Xác nhận đã thanh toán" />
+    <!-- Phần cảnh báo kiện (hiện khi hết 24h, mặc định ẩn) -->
+    <VBox fx:id="lawsuitSection" alignment="CENTER" spacing="14" visible="false" managed="false"
+          style="-fx-background-color: -sf-danger-soft;
+                 -fx-background-radius: 14;
+                 -fx-border-color: -sf-danger-2;
+                 -fx-border-radius: 14;
+                 -fx-border-width: 1.5;
+                 -fx-padding: 28;
+                 -fx-effect: dropshadow(gaussian, rgba(215,46,91,0.18), 16, 0.2, 0, 4);">
+
+        <!-- Icon cảnh báo -->
+        <Label text="!"
+               style="-fx-font-size: 38px;
+                      -fx-text-fill: -sf-on-accent;
+                      -fx-background-color: linear-gradient(to bottom right, -sf-danger-2, -sf-danger);
+                      -fx-background-radius: 50;
+                      -fx-padding: 6 16;" />
+
+        <!-- Tiêu đề chính -->
+        <Label text="BẠN SẼ BỊ KIỆN !!!"
+               style="-fx-font-size: 20px;
+                      -fx-font-weight: bold;
+                      -fx-text-fill: -sf-danger;" />
+
+        <!-- Đường kẻ -->
+        <Separator style="-fx-background-color: -sf-danger-2; -fx-opacity: 0.4;" maxWidth="200" />
+
+        <!-- Mô tả -->
+        <Label text="Thời gian thanh toán đã hết. Bộ phận pháp lý sẽ liên hệ với bạn."
+               style="-fx-font-size: 12px;
+                      -fx-text-fill: -sf-muted;
+                      -fx-text-alignment: center;"
+               wrapText="true" maxWidth="240" />
+    </VBox>
+
 </VBox>
