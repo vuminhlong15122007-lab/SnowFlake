@@ -214,8 +214,8 @@ public class AuctionManager {
       endTimeNew = antiSnipeExtender.applyIfNeeded(auction);
 
       AuctionDAO.getInstance().update(auction);
-      persistBidTransaction(bid);
       acceptedHistoryBids = persistPendingHistoryBids(pendingHistoryBids);
+      persistBidTransaction(bid);
 
       log.info("Đã lưu vào database");
       acceptedBid = bid;
