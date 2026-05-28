@@ -40,19 +40,16 @@ public class PaymentPopupController {
 
     // Đếm ngược 24h kể từ endingTime của phiên
     if (lbTime != null && auction.getEndingTime() != null) {
-      LocalDateTime deadline = auction.getEndingTime().plusHours(24);
+      LocalDateTime deadline = auction.getEndingTime().plusMinutes(1);
       TimeLeft timer = new TimeLeft(lbTime, deadline);
       timer.setOnFinished(() -> {
         UIUtils.showError(
                 "Hết thời hạn thanh toán",
-                "Bạn đã hết thời hạn thanh toán!\n"
+                "Phiên \"" + auction.getItem().getName() + "\" đã hết thời hạn thanh toán \n"
                         + "Bạn có thể bị kiện vì không thực hiện nghĩa vụ thanh toán.");
         closePopup();
       });
       timer.start();
-      timer.setOnFinished(() -> {
-        lbTime.setText("Bạn đã quá hạn thanh toán");
-      });
     }
 
   }
