@@ -39,10 +39,14 @@ public class PaymentPopupController {
 
     // Đếm ngược 24h kể từ endingTime của phiên
     if (lbTime != null && auction.getEndingTime() != null) {
-      LocalDateTime deadline = auction.getEndingTime().plusHours(24);
+      LocalDateTime deadline = auction.getEndingTime().plusMinutes(1);
       TimeLeft timer = new TimeLeft(lbTime, deadline);
       timer.start();
+      timer.setOnFinished(() -> {
+        lbTime.setText("Bạn đã quá hạn thanh toán");
+      });
     }
+
   }
 
   @FXML
