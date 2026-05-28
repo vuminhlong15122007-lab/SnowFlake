@@ -10,6 +10,8 @@ import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusC
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.application.Platform;
+import javafx.beans.Observable;
+import javafx.collections.ObservableList;
 
 public class AuctionModificationManager implements ResponseListener {
   private static AuctionModificationManager instance;
@@ -38,7 +40,16 @@ public class AuctionModificationManager implements ResponseListener {
         Auction savedAuction = (Auction) rp.getPayLoad();
         Platform.runLater(
             () -> {
-              ClientModel.getInstance().getAllAuctions().add(0, savedAuction);
+              ObservableList<Auction> all = ClientModel.getInstance().getAllAuctions();
+              boolean exists = false;
+              for(Auction auction : all) {
+                if (auction.getAuctionId() == savedAuction.getAuctionId() ) {
+                  exists = true;
+                }
+              }
+              if (!exists) {
+                ClientModel.getInstance().getAllAuctions().add(0, savedAuction);
+              }
             });
       }
     }

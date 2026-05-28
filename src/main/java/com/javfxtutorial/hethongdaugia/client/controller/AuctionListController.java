@@ -9,7 +9,6 @@ import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
-import com.javfxtutorial.hethongdaugia.common.model.Command.AddAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
