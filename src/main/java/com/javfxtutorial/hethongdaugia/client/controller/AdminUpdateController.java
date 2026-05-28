@@ -1,7 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
-import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
-
+import com.javfxtutorial.hethongdaugia.client.Util.ToastNotifier;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
@@ -23,6 +22,7 @@ public class AdminUpdateController implements ResponseListener {
   @FXML private TextField txtEmail;
   @FXML private TextField txtPhone;
   @FXML private Button btnCancel;
+  @FXML private NotificationToastController notificationToastController;
   private static final Logger log = LoggerFactory.getLogger(AdminUpdateController.class);
 
   // lay du lieu tu login de hien thi
@@ -66,7 +66,11 @@ public class AdminUpdateController implements ResponseListener {
 
     User currentUser = ClientModel.getInstance().getCurrentUser();
     if (currentUser == null) {
-      showAlert("Lỗi", "Chưa đăng nhập");
+      toast().error("Chưa đăng nhập");
+      return;
+    }
+    if (newName.isBlank() || newEmail.isBlank() || newPhone.isBlank()) {
+      toast().warning("Vui lòng nhập đầy đủ thông tin");
       return;
     }
 
@@ -84,25 +88,33 @@ public class AdminUpdateController implements ResponseListener {
             networkManager.sendRequest(cmd, this);
           } catch (ConnectionFailedException | SendFailedException e) {
             log.error("Lỗi gửi UpdateProfileCommand: {}", e.getMessage(), e);
-            Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu", "WrongCat.gif"));
+            Platform.runLater(() -> toast().error("Không thể gửi yêu cầu"));
           }
-        });
+        })
+        .start();
   }
 
   @Override
   public void onResponse(Response rp) {
-    if (rp.isSuccess()) {
-      // cap nhat lai clientmodel voi user moi
-      User updateUser = (User) rp.getPayLoad();
-      ClientModel.getInstance().setCurrentUser(updateUser);
+    Platform.runLater(
+        () -> {
+          if (rp.isSuccess()) {
+            // cap nhat lai clientmodel voi user moi
+            User updateUser = (User) rp.getPayLoad();
+            ClientModel.getInstance().setCurrentUser(updateUser);
 
-      // load lai man hinh
-      loadUserInfo();
-      showAlert("Thành công", "Cập nhật thông tin thành công", "FunnyCat.gif");
-    } else {
-      showAlert("Thất bại", rp.getMessage(), "WrongCat.gif");
-    }
+            // load lai man hinh
+            loadUserInfo();
+            toast().success("Cập nhật thông tin thành công");
+          } else {
+            toast().error(rp.getMessage());
+          }
+        });
     NetworkManager networkManager = NetworkManager.getInstance();
     networkManager.unregister(UpdateProfileCommand.class, this);
+  }
+
+  private ToastNotifier toast() {
+    return ToastNotifier.of(notificationToastController);
   }
 }

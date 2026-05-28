@@ -1,10 +1,10 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
-import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.Util.ThemeManager;
+import com.javfxtutorial.hethongdaugia.client.Util.ToastNotifier;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
@@ -37,6 +37,7 @@ public class UserProfileController implements ResponseListener {
   @FXML private TextField updatePhoneText;
   @FXML private ImageView myImageView;
   @FXML private Label message;
+  @FXML private NotificationToastController notificationToastController;
   @FXML
   public void initialize() {
     loadUserInfo();
@@ -86,7 +87,7 @@ public class UserProfileController implements ResponseListener {
   public void handleUpdateInfo() {
     User currentUser = ClientModel.getInstance().getCurrentUser();
     if (currentUser == null) {
-      showAlert("Loi", "Chua dang nhap");
+      notifyError("Chưa đăng nhập");
       return;
     }
 
@@ -94,23 +95,23 @@ public class UserProfileController implements ResponseListener {
     String newEmail = safeTrim(updateEmailText.getText());
     String newPhone = safeTrim(updatePhoneText.getText());
     if (newName.isEmpty() || newEmail.isEmpty() || newPhone.isEmpty()) {
-      showAlert("Loi", "Vui long nhap day du ten, email va so dien thoai.", "Wait.gif");
+      notifyWarning("Vui lòng nhập đầy đủ tên, email và số điện thoại.");
       return;
     }
     // check so dien thoai
     if (newPhone.length() != 10) {
-      message.setText("Số điện thoại phải đủ 10 số!");
+      showInlineWarning("Số điện thoại phải đủ 10 số!");
       return;
     }
     try {
       Long.parseLong(newPhone);
     } catch (NumberFormatException e) {
-      message.setText("Số điện thoại chỉ bao gồm các số!");
+      showInlineWarning("Số điện thoại chỉ bao gồm các số!");
       return;
     }
     // check email
     if (!newEmail.endsWith("@gmail.com")) {
-      message.setText(" Email phải có đuôi @gmail.com!");
+      showInlineWarning("Email phải có đuôi @gmail.com!");
       return;
     }
     new Thread(
@@ -127,13 +128,13 @@ public class UserProfileController implements ResponseListener {
                 networkManager.sendRequest(cmd, this);
               } catch (ConnectionFailedException e) {
                 log.error("Lỗi kết nối: {}", e.getMessage());
-                Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối đến server"));
+                Platform.runLater(() -> notifyError("Không thể kết nối đến server"));
               } catch (SendFailedException e) {
                 log.error("Lỗi gửi: {}", e.getMessage());
-                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu cập nhật"));
+                Platform.runLater(() -> notifyError("Không thể gửi yêu cầu cập nhật"));
               } catch (Exception e) {
                 log.error("Lỗi cập nhật: {}", e.getMessage(), e);
-                Platform.runLater(() -> showAlert("Lỗi", "Cập nhật thất bại: " + e.getMessage()));
+                Platform.runLater(() -> notifyError("Cập nhật thất bại: " + e.getMessage()));
               }
             })
         .start();
@@ -154,7 +155,7 @@ public class UserProfileController implements ResponseListener {
       stage.show();
     } catch (Exception e) {
       log.error("Lỗi mở popup reset password: {}", e.getMessage(), e);
-      showAlert("Lỗi", "Không thể mở cửa sổ đổi mật khẩu");
+      notifyError("Không thể mở cửa sổ đổi mật khẩu");
     }
   }
 
@@ -181,7 +182,7 @@ public class UserProfileController implements ResponseListener {
       }
     } catch (Exception e) {
       log.error("Lỗi chọn ảnh: {}", e.getMessage(), e);
-      showAlert("Lỗi", "Không thể tải ảnh lên");
+      notifyError("Không thể tải ảnh lên");
     }
   }
 
@@ -200,13 +201,34 @@ public class UserProfileController implements ResponseListener {
               && response.getPayLoad() instanceof User updatedUser) {
             ClientModel.getInstance().setCurrentUser(updatedUser);
             loadUserInfo();
-            showAlert("Thành công", "Cập nhật thông tin thành công", "Happy.gif");
+            notifySuccess("Cập nhật thông tin thành công");
             return;
           }
 
           String message =
               response == null ? "Khong nhan duoc phan hoi tu server." : response.getMessage();
-          showAlert("That bai", message, "False.gif");
+          notifyError(message);
         });
+  }
+
+  private void showInlineWarning(String text) {
+    message.setText(text);
+    notifyWarning(text);
+  }
+
+  private void notifySuccess(String text) {
+    toast().success(text);
+  }
+
+  private void notifyWarning(String text) {
+    toast().warning(text);
+  }
+
+  private void notifyError(String text) {
+    toast().error(text);
+  }
+
+  private ToastNotifier toast() {
+    return ToastNotifier.of(notificationToastController);
   }
 }

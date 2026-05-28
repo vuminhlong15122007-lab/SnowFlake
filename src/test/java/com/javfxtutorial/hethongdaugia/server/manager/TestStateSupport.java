@@ -4,7 +4,6 @@ import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.domain.AutoBidConfig;
 import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
 import com.javfxtutorial.hethongdaugia.server.network.BidListener;
-import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -38,14 +37,12 @@ final class TestStateSupport {
     return (Map<Integer, List<AutoBidConfig>>) getField(manager, "autoBidRegistry");
   }
 
-  static void notifySubscribers(
-      AuctionManager manager, int auctionId, BidTransaction bid, ClientHandler sender)
+  static void notifySubscribers(AuctionManager manager, int auctionId, BidTransaction bid)
       throws Exception {
     Method method =
-        AuctionManager.class.getDeclaredMethod(
-            "notifySubscribers", int.class, BidTransaction.class, ClientHandler.class);
+        AuctionManager.class.getDeclaredMethod("notifySubscribers", int.class, BidTransaction.class);
     method.setAccessible(true);
-    method.invoke(manager, auctionId, bid, sender);
+    method.invoke(manager, auctionId, bid);
   }
 
   static void executeAutoBidCheck(AuctionManager manager, Auction auction) throws Exception {

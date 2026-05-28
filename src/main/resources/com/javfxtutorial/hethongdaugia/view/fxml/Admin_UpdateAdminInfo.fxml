@@ -7,7 +7,9 @@
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.*?>
 
-<VBox prefWidth="420.0" spacing="20.0" style="-fx-background-color: -sf-surface; -fx-border-color: -sf-border-soft;" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminUpdateController">
+<StackPane prefWidth="420.0" stylesheets="@../css/global.css" xmlns="http://javafx.com/javafx/17.0.12" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.javfxtutorial.hethongdaugia.client.controller.AdminUpdateController">
+
+<VBox prefWidth="420.0" spacing="20.0" style="-fx-background-color: -sf-surface; -fx-border-color: -sf-border-soft;">
    <styleClass>
       <String fx:value="admin-theme" />
       <String fx:value="admin-popup-card" />
@@ -73,3 +75,6 @@
       </HBox>
    </children>
 </VBox>
+
+   <fx:include fx:id="notificationToast" source="NotificationToast.fxml" />
+</StackPane>

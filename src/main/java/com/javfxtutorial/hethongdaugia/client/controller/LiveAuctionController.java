@@ -5,6 +5,7 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.Util.TimeLeft;
+import com.javfxtutorial.hethongdaugia.client.Util.ToastNotifier;
 import com.javfxtutorial.hethongdaugia.client.Util.UIUtils;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
@@ -25,9 +26,6 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
-import javafx.animation.FadeTransition;
-import javafx.animation.PauseTransition;
-import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -41,9 +39,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 import javafx.util.StringConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,8 +67,7 @@ public class LiveAuctionController implements ResponseListener {
   @FXML private ToggleButton autoBidToggle; // Nút bật/tắt chế độ tự động
   @FXML private Label auctionStatusLabel; // Nhãn trạng thái phiên (chỉ hiện cho admin)
   @FXML private Button btnToInformation;
-  @FXML private HBox notificationBox;
-  @FXML private Label notificationLabel;
+  @FXML private NotificationToastController notificationToastController;
 
   private boolean isAdmin = false;
   private boolean isSeller = false;
@@ -90,11 +85,14 @@ public class LiveAuctionController implements ResponseListener {
     NetworkManager networkManager = NetworkManager.getInstance();
     networkManager.unregister(PlaceBidCommand.class, this);
     networkManager.unregister(AutoBidCommand.class, this);
+    networkManager.unregister(UpdateAuctionCommand.class, this);
     networkManager.unregister(UpdateAuctionStatusCommand.class, this);
     if (isAdmin) {
       changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_ProductManagement.fxml");
+    } else if (isSeller) {
+      changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Seller_ProductManagement.fxml");
     } else {
-      changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/MainScene.fxml");
+      changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml");
     }
   }
 
@@ -104,6 +102,7 @@ public class LiveAuctionController implements ResponseListener {
     running = false;
     networkManager.unregister(PlaceBidCommand.class, this);
     networkManager.unregister(AutoBidCommand.class, this);
+    networkManager.unregister(UpdateAuctionCommand.class, this);
     networkManager.unregister(UpdateAuctionStatusCommand.class, this);
     changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionInformation.fxml");
   }
@@ -201,6 +200,7 @@ public class LiveAuctionController implements ResponseListener {
     NetworkManager networkManager = NetworkManager.getInstance();
     networkManager.register(PlaceBidCommand.class, this);
     networkManager.register(AutoBidCommand.class, this);
+    networkManager.register(UpdateAuctionCommand.class, this);
     networkManager.register(UpdateAuctionStatusCommand.class, this);
     // khi vào auction thì register
     Command cmd = new RegisterToAuctionCommand();
@@ -394,12 +394,14 @@ public class LiveAuctionController implements ResponseListener {
         autoMaxPrice_tf.setDisable(true);
         autoBidToggle.setText("Autobid");
       } catch (NumberFormatException e) {
-        UIUtils.showAlert("Lỗi nhập liệu", "Vui lòng nhập một số tiền hợp lệ!");
+        toast().warning("Vui lòng nhập một số tiền hợp lệ!");
         autoBidToggle.setSelected(false);
       } catch (SendFailedException e) {
         log.error(e.getMessage());
+        toast().error("Không thể gửi yêu cầu AutoBid");
       } catch (ConnectionFailedException e) {
         log.error(e.getMessage());
+        toast().error("Không thể kết nối server");
       }
     } else {
       // Xử lý khi người dùng tắt Bot
@@ -407,6 +409,7 @@ public class LiveAuctionController implements ResponseListener {
       autoBidToggle.setText("AutoBid");
 
       stopAutoBid();
+      toast().info("Đã tắt AutoBid");
     }
   }
 
@@ -422,19 +425,11 @@ public class LiveAuctionController implements ResponseListener {
   }
 
   public void showNotification(String message) {
-    notificationLabel.setText(message);
-    notificationBox.setVisible(true);
+    toast().success(message);
+  }
 
-    FadeTransition fadeIn = new FadeTransition(Duration.millis(300), notificationBox);
-    fadeIn.setFromValue(0); fadeIn.setToValue(1);
-
-    PauseTransition pause = new PauseTransition(Duration.seconds(2));
-
-    FadeTransition fadeOut = new FadeTransition(Duration.millis(400), notificationBox);
-    fadeOut.setFromValue(1); fadeOut.setToValue(0);
-    fadeOut.setOnFinished(e -> notificationBox.setVisible(false));
-
-    new SequentialTransition(fadeIn, pause, fadeOut).play();
+  private ToastNotifier toast() {
+    return ToastNotifier.of(notificationToastController);
   }
 
   @Override
@@ -443,15 +438,15 @@ public class LiveAuctionController implements ResponseListener {
       BidTransaction bid = (BidTransaction) rp.getPayLoad();
 
       if (!rp.isSuccess()) {
-        Platform.runLater(() -> showAlert("Trạng thái đặt bid", rp.getMessage()));
+        Platform.runLater(() -> toast().error(rp.getMessage()));
         return;
-      }
-      if (bid.getBidderId() == ClientModel.getInstance().getCurrentUser().getId()){
-        Platform.runLater(() -> showNotification(rp.getMessage()));
       }
 
       // Từ đây bid chắc chắn không null (vì success)
       if (bid == null) return;
+      if (bid.getBidderId() == ClientModel.getInstance().getCurrentUser().getId()) {
+        Platform.runLater(() -> showNotification(rp.getMessage()));
+      }
 
 
       // nếu đặt giá thành công thì set up lại view
@@ -567,7 +562,22 @@ public class LiveAuctionController implements ResponseListener {
           "AUTO_BID_TIE_ALERT".equals(rp.getMessage())
               ? String.valueOf(rp.getPayLoad())
               : rp.getMessage();
-      Platform.runLater(() -> UIUtils.showAlert("Hệ thống AutoBid", message));
+      Platform.runLater(
+          () -> {
+            if ("AUTO_BID_TIE_ALERT".equals(rp.getMessage())) {
+              toast().warning(message);
+            } else if (rp.isSuccess()) {
+              toast().info(message);
+            } else {
+              toast().error(message);
+            }
+          });
+    }
+
+    if (rp.getCommand().getClass() == UpdateAuctionCommand.class) {
+      if (rp.isSuccess() && rp.getPayLoad() instanceof Auction updatedAuction) {
+        Platform.runLater(() -> applyAuctionSnapshot(updatedAuction));
+      }
     }
 
     if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
@@ -590,6 +600,38 @@ public class LiveAuctionController implements ResponseListener {
               }
             });
       }
+    }
+  }
+
+  private void applyAuctionSnapshot(Auction updatedAuction) {
+    if (updatedAuction == null || currentAuction == null) {
+      return;
+    }
+    if (updatedAuction.getAuctionId() != currentAuction.getAuctionId()) {
+      return;
+    }
+
+    BigDecimal oldPrice = currentAuction.getCurrentPrice();
+    BigDecimal newPrice = updatedAuction.getCurrentPrice();
+    LocalDateTime oldEndingTime = currentAuction.getEndingTime();
+    currentAuction = updatedAuction;
+    ClientModel.getInstance().setCurrentAuction(updatedAuction);
+
+    if (newPrice != null) {
+      currentPrice_tf.setText(String.format("%,.0f VND", newPrice));
+      if (oldPrice == null || newPrice.compareTo(oldPrice) > 0) {
+        int bidSequenceNumber = priceSeries.getData().size() + 1;
+        priceSeries.getData().add(new XYChart.Data<>(bidSequenceNumber, newPrice));
+        updatePriceChartXAxis();
+      }
+    }
+    highestPayer_tf.setText(updatedAuction.getWinnerName());
+    if (updatedAuction.getEndingTime() != null
+        && timer != null
+        && !updatedAuction.getEndingTime().equals(oldEndingTime)) {
+      timer.stop();
+      timer = new TimeLeft(lbTimeLeft, updatedAuction.getEndingTime());
+      timer.start();
     }
   }
 }

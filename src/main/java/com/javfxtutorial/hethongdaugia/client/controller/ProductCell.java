@@ -25,7 +25,7 @@ public class ProductCell extends ListCell<Auction> {
       fxmlFile = "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionCell.fxml";
       FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlFile));
       Parent root = loader.load();
-      AuctionSessionController controller = loader.getController();
+      AuctionListCellController controller = loader.getController();
       controller.setData(auction);
       setText(null);
       setGraphic(root);

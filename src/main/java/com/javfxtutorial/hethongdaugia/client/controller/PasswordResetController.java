@@ -1,8 +1,7 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
-import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
-
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
+import com.javfxtutorial.hethongdaugia.client.Util.ToastNotifier;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
@@ -23,6 +22,7 @@ public class PasswordResetController implements ResponseListener {
   @FXML private TextField txtNewPW;
   @FXML private TextField txtConfirmPW;
   @FXML private Button btnCancel;
+  @FXML private NotificationToastController notificationToastController;
 
   @FXML
   public void initialize() {
@@ -52,12 +52,22 @@ public class PasswordResetController implements ResponseListener {
   public void updatePW() {
     // lay du lieu tu o nhap
     newPW = txtNewPW.getText();
+    String confirmPW = txtConfirmPW.getText();
+
+    if (newPW == null || newPW.isBlank() || confirmPW == null || confirmPW.isBlank()) {
+      notifyWarning("Vui lòng nhập đầy đủ mật khẩu");
+      return;
+    }
+    if (!newPW.equals(confirmPW)) {
+      notifyWarning("Mật khẩu xác nhận không khớp");
+      return;
+    }
 
     // lay user hien tai
 
     currentUser = ClientModel.getInstance().getCurrentUser();
     if (currentUser == null) {
-      showAlert("Lỗi", "Chưa đăng nhập", "Wait.gif");
+      notifyError("Chưa đăng nhập");
       return;
     }
 
@@ -73,16 +83,13 @@ public class PasswordResetController implements ResponseListener {
                 networkManager.sendRequest(cmd, this);
               } catch (ConnectionFailedException e) {
                 log.error("Lỗi kết nối: {}", e.getMessage());
-                Platform.runLater(
-                    () -> showAlert("Lỗi kết nối", "Không thể kết nối đến server", "Wait.gif"));
+                Platform.runLater(() -> notifyError("Không thể kết nối đến server"));
               } catch (SendFailedException e) {
                 log.error("Lỗi gửi: {}", e.getMessage());
-                Platform.runLater(
-                    () -> showAlert("Lỗi", "Không thể gửi yêu cầu đổi mật khẩu", "Wait.gif"));
+                Platform.runLater(() -> notifyError("Không thể gửi yêu cầu đổi mật khẩu"));
               } catch (Exception e) {
                 log.error("Lỗi reset password: {}", e.getMessage(), e);
-                Platform.runLater(
-                    () -> showAlert("Lỗi", "Đổi mật khẩu thất bại: " + e.getMessage(), "Wait.gif"));
+                Platform.runLater(() -> notifyError("Đổi mật khẩu thất bại: " + e.getMessage()));
               }
             })
         .start();
@@ -96,16 +103,28 @@ public class PasswordResetController implements ResponseListener {
 
       // load lai man hinh
       loadUserInfo();
-      Platform.runLater(() -> {
-        showAlert("Thành công", "Cập nhật mật khẩu thành công", "FunnyCat.gif");
-      });
+      Platform.runLater(() -> notifySuccess("Cập nhật mật khẩu thành công"));
 
     } else {
-      Platform.runLater(() -> {
-        showAlert("Thất bại", rp.getMessage(), "Wait.gif");
-      });
+      Platform.runLater(() -> notifyError(rp.getMessage()));
     }
     NetworkManager networkManager = NetworkManager.getInstance();
     networkManager.unregister(ResetPassWordCommand.class, this);
+  }
+
+  private void notifySuccess(String message) {
+    toast().success(message);
+  }
+
+  private void notifyWarning(String message) {
+    toast().warning(message);
+  }
+
+  private void notifyError(String message) {
+    toast().error(message);
+  }
+
+  private ToastNotifier toast() {
+    return ToastNotifier.of(notificationToastController);
   }
 }

@@ -353,3 +353,11 @@ CI trong `.github/workflows/ci.yml` hiện chạy trên Ubuntu, Windows và macO
 mvn install -DskipTests --no-transfer-progress
 mvn test -Djava.awt.headless=true --no-transfer-progress
 ```
+
+---
+
+## 8. Tài liệu và liên kết nộp bài
+
+| Nội dung | Link |
+| --- | --- |
+| Google Drive tổng hợp | [Mở tài liệu](https://drive.google.com/file/d/1o0IBh6RRVxtZIC6QR3hcssDfC_f8ynxJ/view?usp=sharing) |

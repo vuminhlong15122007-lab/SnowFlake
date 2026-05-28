@@ -18,7 +18,6 @@ import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.model.enums.ItemCategory;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.network.BidListener;
-import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -278,7 +277,7 @@ class AuctionManagerBehaviorTest {
       manager.registerToAuction(first, 100);
       manager.registerToAuction(second, 100);
 
-      TestStateSupport.notifySubscribers(manager, 100, bid, null);
+      TestStateSupport.notifySubscribers(manager, 100, bid);
 
       assertEquals(1, first.callCount);
       assertEquals(1, second.callCount);
@@ -402,7 +401,7 @@ class AuctionManagerBehaviorTest {
     private BidTransaction lastBid;
 
     @Override
-    public void onPlaceBid(BidTransaction bid, ClientHandler senderThread) {
+    public void onPlaceBid(BidTransaction bid) {
       callCount++;
       lastBid = bid;
     }

@@ -1,9 +1,9 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
-import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 import com.javfxtutorial.hethongdaugia.client.Util.AuctionModificationManager;
+import com.javfxtutorial.hethongdaugia.client.Util.ToastNotifier;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
@@ -43,6 +43,7 @@ public class AdminItemController implements ResponseListener {
 
   /** Badge "X sản phẩm" trên header bảng — inject từ FXML */
   @FXML private Label itemCountBadge;
+  @FXML private NotificationToastController notificationToastController;
 
   private ObservableList<Auction> observableList;
 
@@ -128,7 +129,7 @@ public class AdminItemController implements ResponseListener {
   public void clickToGoAuction(ActionEvent event) {
     Auction selected = itemTable.getSelectionModel().getSelectedItem();
     if (selected == null) {
-      showAlert("Thông báo", "Vui lòng chọn một sản phẩm.");
+      toast().warning("Vui lòng chọn một sản phẩm.");
       return;
     }
     ClientModel.getInstance().setCurrentAuction(selected);
@@ -139,7 +140,7 @@ public class AdminItemController implements ResponseListener {
   public void clickToCancelAuction(ActionEvent event) {
     Auction selected = itemTable.getSelectionModel().getSelectedItem();
     if (selected == null) {
-      showAlert("Thông báo", "Vui lòng chọn một phiên đấu giá.");
+      toast().warning("Vui lòng chọn một phiên đấu giá.");
       return;
     }
     if (selected.getStatus().equals(AuctionStatus.RUNNING)
@@ -163,12 +164,12 @@ public class AdminItemController implements ResponseListener {
                     NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
                     NetworkManager.getConnection().sendCommand(cmd);
                   } catch (Exception e) {
-                    showAlert("Lỗi", "Không thể hủy phiên: " + e.getMessage());
+                    toast().error("Không thể hủy phiên: " + e.getMessage());
                   }
                 }
               });
     } else {
-      showAlert("Thông báo", "Phiên này đã kết thúc hoặc đã bị hủy.");
+      toast().info("Phiên này đã kết thúc hoặc đã bị hủy.");
     }
   }
 
@@ -221,7 +222,7 @@ public class AdminItemController implements ResponseListener {
       Platform.runLater(
           () -> {
             if (rp.isSuccess()) {
-              showAlert("Thành công", "Đã hủy phiên đấu giá.", "FunnyCat.gif");
+              toast().success("Đã hủy phiên đấu giá.");
               try {
                 Object payload = rp.getPayLoad();
                 if (!(payload instanceof Auction)) return;
@@ -241,7 +242,7 @@ public class AdminItemController implements ResponseListener {
                 log.error("Không thể tải lại danh sách sản phẩm: {}", e.getMessage(), e);
               }
             } else {
-              showAlert("Lỗi", rp.getMessage(), "Wrong.gif");
+              toast().error(rp.getMessage());
             }
           });
     }
@@ -260,10 +261,15 @@ public class AdminItemController implements ResponseListener {
       } else {
         Platform.runLater(
             () -> {
+              toast().error(rp.getMessage());
               if (itemCountBadge != null) itemCountBadge.setText("0 sản phẩm");
             });
       }
       NetworkManager.getInstance().unregister(GetAllAuctionsCommand.class, this);
     }
+  }
+
+  private ToastNotifier toast() {
+    return ToastNotifier.of(notificationToastController);
   }
 }

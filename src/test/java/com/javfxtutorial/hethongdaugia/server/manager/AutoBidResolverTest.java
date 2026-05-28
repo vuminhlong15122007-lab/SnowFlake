@@ -297,7 +297,7 @@ class AutoBidResolverTest {
     private final List<BidTransaction> receivedBids = new ArrayList<>();
 
     @Override
-    public void onPlaceBid(BidTransaction bid, ClientHandler senderThread) {
+    public void onPlaceBid(BidTransaction bid) {
       receivedBids.add(bid);
     }
   }

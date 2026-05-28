@@ -115,7 +115,7 @@ public class SellerNotification implements Serializable {
   public String getMessage() {
     return switch (type) {
       case CLOSED -> {
-        boolean noWinner = winnerName == null || winnerName.isBlank() || winnerName.equals("N/A");
+        boolean noWinner = winnerName == null || winnerName.isBlank() ;
         if (noWinner) {
           yield String.format(
               "😞 Phiên \"%s\" kết thúc!\n Không có ai tham gia đấu giá.", productName);
@@ -134,12 +134,14 @@ public class SellerNotification implements Serializable {
       }
       case CANCELLED ->
           String.format(
-              "❌ Phiên \"%s\" bị hủy!\n \"%s\" không thanh toán trong 24h.\nBạn có thể kiện nếu cần.",
-              productName, winnerName);
+                  "❌ Phiên \"%s\" bị hủy!\n \"%s\" không thanh toán trong 24h.\nBạn có thể kiện nếu cần.",
+                  productName, winnerName);
+
       case CANCELLED_BY_ADMIN ->
           String.format(
               "⚠️ Phiên đấu giá \"%s\" đã bị admin hủy!\n Lý do: Phiên có dấu nghi vấn gian lận hoặc \n vi phạm tiêu chuẩn cộng đồng",
               productName);
+
     };
   }
 }

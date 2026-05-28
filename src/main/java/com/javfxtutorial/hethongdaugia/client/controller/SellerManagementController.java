@@ -2,9 +2,9 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.ImageHelper.base64ToImage;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
-import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
+import com.javfxtutorial.hethongdaugia.client.Util.ToastNotifier;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
@@ -95,6 +95,7 @@ public class SellerManagementController implements ResponseListener {
   @FXML private Label winnerBidPrice;
   @FXML private Label winnerEmail;
   @FXML private Label winnerSdt;
+  @FXML private NotificationToastController notificationToastController;
 
   private ObservableList<Auction> observable;
   private FilteredList<Auction> filteredList;
@@ -436,7 +437,7 @@ public class SellerManagementController implements ResponseListener {
               changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/LiveAuction.fxml");
             } catch (Exception e) {
               log.error(">>> Lỗi khi chuyển scene: {}", e.getMessage(), e);
-              Platform.runLater(() -> showAlert("Lỗi", "Không thể mở phiên: " + e.getMessage()));
+              Platform.runLater(() -> notifyError("Không thể mở phiên: " + e.getMessage()));
             }
           });
     }
@@ -570,14 +571,14 @@ public class SellerManagementController implements ResponseListener {
     // Các thông tin cơ bản của phiên đấu giá
     String rawPrice2 = priceField.getText().replaceAll("[^0-9.]", "");
     if (rawPrice2.isEmpty()) {
-      showAlert("Lỗi", "Vui lòng nhập giá khởi điểm.");
+      notifyWarning("Vui lòng nhập giá khởi điểm.");
       return null;
     }
     BigDecimal initPrice = new BigDecimal(rawPrice2);
 
     String rawStep = tfstepPrice.getText().replaceAll("[^0-9.]", "");
     if (rawStep.isEmpty()) {
-      showAlert("Lỗi", "Vui lòng nhập bước giá.");
+      notifyWarning("Vui lòng nhập bước giá.");
       return null;
     }
     BigDecimal stepPrice = new BigDecimal(rawStep);
@@ -590,11 +591,11 @@ public class SellerManagementController implements ResponseListener {
     int endMinu = (int) endMinuteSpinner.getValue();
 
     if (ngayBD == null) {
-      showAlert("Lỗi", "Vui lòng chọn ngày bắt đầu.");
+      notifyWarning("Vui lòng chọn ngày bắt đầu.");
       return null;
     }
     if (ngayKT == null) {
-      showAlert("Lỗi", "Vui lòng chọn ngày kết thúc.");
+      notifyWarning("Vui lòng chọn ngày kết thúc.");
       return null;
     }
 
@@ -602,14 +603,14 @@ public class SellerManagementController implements ResponseListener {
     LocalDateTime tGianKT = LocalDateTime.of(ngayKT, LocalTime.of(endHour, endMinu));
 
     if (tGianBD.isAfter(tGianKT)) {
-      showAlert("Lỗi", "Thời gian bắt đầu không được sau thời gian kết thúc");
+      notifyWarning("Thời gian bắt đầu không được sau thời gian kết thúc");
       throw new InvalidInputException(
           "startTime",
           String.valueOf(tGianBD),
           "Thời gian bắt đầu không được sau thời gian kết thúc");
     }
     if (tGianBD.isBefore(LocalDateTime.now())) {
-      showAlert("Lỗi", "Thời gian bắt đầu phải sau thời gian bây giờ");
+      notifyWarning("Thời gian bắt đầu phải sau thời gian bây giờ");
       throw new InvalidInputException(
           "startTime", String.valueOf(tGianBD), "Thời gian bắt đầu phải sau thời gian hiện tại");
     }
@@ -622,7 +623,7 @@ public class SellerManagementController implements ResponseListener {
     String description = descriptionField.getText();
     String category = categoryComboBox.getValue();
     if (category == null) {
-      showAlert("Lỗi", "Vui lòng chọn danh mục sản phẩm!", "Wait.gif");
+      notifyWarning("Vui lòng chọn danh mục sản phẩm!");
       return null;
     }
 
@@ -658,19 +659,18 @@ public class SellerManagementController implements ResponseListener {
                   connection.sendCommand(cm);
                 } catch (ConnectionFailedException e) {
                   log.error("Lỗi kết nối: {}", e.getMessage());
-                  Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối server"));
+                  Platform.runLater(() -> notifyError("Không thể kết nối server"));
                 } catch (SendFailedException e) {
                   log.error("Lỗi gửi: {}", e.getMessage());
-                  Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu"));
+                  Platform.runLater(() -> notifyError("Không thể gửi yêu cầu"));
                 } catch (Exception e) {
                   log.error("Lỗi: {}", e.getMessage(), e);
-                  Platform.runLater(
-                      () -> showAlert("Lỗi", "Thêm sản phẩm thất bại: " + e.getMessage()));
+                  Platform.runLater(() -> notifyError("Thêm sản phẩm thất bại: " + e.getMessage()));
                 }
               })
           .start();
     } catch (NumberFormatException e) {
-      showAlert("Lỗi định dạng", "Vui lòng nhập số hợp lệ");
+      notifyWarning("Vui lòng nhập số hợp lệ");
     } catch (Exception e) {
       log.error("Lỗi: {}", e.getMessage(), e);
     }
@@ -679,11 +679,11 @@ public class SellerManagementController implements ResponseListener {
   @FXML
   public void suaSp(ActionEvent event) throws Exception {
     if (selectedAuction == null) {
-      showAlert("Lỗi", "Vui lòng chọn sản phẩm cần sửa!", "Wait.gif");
+      notifyWarning("Vui lòng chọn sản phẩm cần sửa!");
       return;
     }
     if (!(selectedAuction.getStatus() == AuctionStatus.NOT_START)) {
-      showAlert("Không thể sửa", "Không thể sửa sản phẩm đang chạy hoặc đã kết thúc", "Wrong.gif");
+      notifyWarning("Không thể sửa sản phẩm đang chạy hoặc đã kết thúc");
       return;
     }
 
@@ -699,13 +699,13 @@ public class SellerManagementController implements ResponseListener {
                 connection.sendCommand(new UpdateAuctionCommand(auction));
               } catch (ConnectionFailedException e) {
                 log.error("Lỗi kết nối: {}", e.getMessage());
-                Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối server"));
+                Platform.runLater(() -> notifyError("Không thể kết nối server"));
               } catch (SendFailedException e) {
                 log.error("Lỗi gửi: {}", e.getMessage());
-                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu sửa"));
+                Platform.runLater(() -> notifyError("Không thể gửi yêu cầu sửa"));
               } catch (Exception e) {
                 log.error("Lỗi sửa auction: {}", e.getMessage(), e);
-                Platform.runLater(() -> showAlert("Lỗi", "Sửa thất bại: " + e.getMessage()));
+                Platform.runLater(() -> notifyError("Sửa thất bại: " + e.getMessage()));
               }
             })
         .start();
@@ -715,7 +715,7 @@ public class SellerManagementController implements ResponseListener {
   public void deleteAuction() {
     selectedAuction = productList.getSelectionModel().getSelectedItem();
     if (selectedAuction == null) {
-      showAlert("Lỗi", "Vui lòng chọn sản phẩm cần xóa!", "Wait.gif");
+      notifyWarning("Vui lòng chọn sản phẩm cần xóa!");
       return;
     }
     new Thread(
@@ -726,13 +726,13 @@ public class SellerManagementController implements ResponseListener {
                 connection.sendCommand(new DeleteAuctionCommand(selectedAuction));
               } catch (ConnectionFailedException e) {
                 log.error("Lỗi kết nối: {}", e.getMessage());
-                Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối server"));
+                Platform.runLater(() -> notifyError("Không thể kết nối server"));
               } catch (SendFailedException e) {
                 log.error("Lỗi gửi: {}", e.getMessage());
-                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu xóa"));
+                Platform.runLater(() -> notifyError("Không thể gửi yêu cầu xóa"));
               } catch (Exception e) {
                 log.error("Lỗi xóa auction: {}", e.getMessage());
-                Platform.runLater(() -> showAlert("Lỗi", "Không thể xóa"));
+                Platform.runLater(() -> notifyError("Không thể xóa"));
               }
             })
         .start();
@@ -748,14 +748,13 @@ public class SellerManagementController implements ResponseListener {
                 NetworkManager.getInstance().sendRequest(cmd, this);
               } catch (ConnectionFailedException e) {
                 log.error("Lỗi kết nối khi load sản phẩm: {}", e.getMessage());
-                Platform.runLater(() -> showAlert("Lỗi kết nối", "Không thể kết nối đến server"));
+                Platform.runLater(() -> notifyError("Không thể kết nối đến server"));
               } catch (SendFailedException e) {
                 log.error("Lỗi gửi command load sản phẩm: {}", e.getMessage());
-                Platform.runLater(() -> showAlert("Lỗi", "Không thể gửi yêu cầu tải dữ liệu"));
+                Platform.runLater(() -> notifyError("Không thể gửi yêu cầu tải dữ liệu"));
               } catch (Exception e) {
                 log.error("Lỗi không xác định khi load sản phẩm: {}", e.getMessage(), e);
-                Platform.runLater(
-                    () -> showAlert("Lỗi", "Tải sản phẩm thất bại: " + e.getMessage()));
+                Platform.runLater(() -> notifyError("Tải sản phẩm thất bại: " + e.getMessage()));
               }
             })
         .start();
@@ -779,7 +778,7 @@ public class SellerManagementController implements ResponseListener {
       if (Image != null) Image.setImage(new Image(new ByteArrayInputStream(fileContent)));
     } catch (Exception e) {
       log.error("Không thể tải ảnh lên: {}", e.getMessage(), e);
-      showAlert("Lỗi", "Không thể tải ảnh lên!", "False.gif");
+      notifyError("Không thể tải ảnh lên!");
     }
   }
 
@@ -960,17 +959,20 @@ public class SellerManagementController implements ResponseListener {
         () -> {
           if (rp.isSuccess()) {
             observable.add((Auction) rp.getPayLoad());
-            showAlert("Thành công", "Thêm sản phẩm thành công!", "Happy.gif");
+            notifySuccess("Thêm sản phẩm thành công!");
           } else {
             log.warn("Thêm thất bại: {}", rp.getMessage());
-            showAlert("Thất bại", rp.getMessage(), "Wait.gif");
+            notifyError(rp.getMessage());
           }
         });
   }
 
   private void handleLoadAuctionsResponse(Response rp) {
     NetworkManager.getInstance().unregister(GetAuctionsBySellerIdCommand.class, this);
-    if (!rp.isSuccess()) return;
+    if (!rp.isSuccess()) {
+      Platform.runLater(() -> notifyError(rp.getMessage()));
+      return;
+    }
     Platform.runLater(
         () -> {
           ArrayList<Auction> auctions = (ArrayList<Auction>) rp.getPayLoad();
@@ -1036,7 +1038,13 @@ public class SellerManagementController implements ResponseListener {
         && rp.getPayLoad() instanceof SellerNotification adminNotif) {
       Platform.runLater(
           () -> {
-            observable.removeIf(a -> a.getAuctionId() == adminNotif.getAuctionId());
+            for (int i = 0; i < observable.size(); i++) {
+              if (observable.get(i).getAuctionId() == adminNotif.getAuctionId()) {
+                observable.get(i).setStatus(AuctionStatus.CANCELLED_BY_ADMIN);
+                observable.set(i, observable.get(i)); // trigger refresh
+                break;
+              }
+            }
             addOrReplaceNotification(adminNotif);
           });
       return;
@@ -1049,9 +1057,9 @@ public class SellerManagementController implements ResponseListener {
                 (rp.getPayLoad() instanceof Auction) ? (Auction) rp.getPayLoad() : selectedAuction;
             observable.remove(deleted);
             selectedAuction = null;
-            showAlert("Thành công", "Xóa sản phẩm thành công!", "Happy.gif");
+            notifySuccess("Xóa sản phẩm thành công!");
           } else {
-            showAlert("Thất bại", rp.getMessage(), "Wait.gif");
+            notifyError(rp.getMessage());
           }
         });
   }
@@ -1066,9 +1074,9 @@ public class SellerManagementController implements ResponseListener {
             if (index >= 0) observable.set(index, updated);
             selectedAuction = updated;
             productList.refresh();
-            showAlert("Thành công", "Sửa sản phẩm thành công", "Happy.gif");
+            notifySuccess("Sửa sản phẩm thành công");
           } else {
-            showAlert("Thất bại", rp.getMessage(), "Wait.gif");
+            notifyError(rp.getMessage());
           }
         });
   }
@@ -1123,6 +1131,22 @@ public class SellerManagementController implements ResponseListener {
             }
           }
         });
+  }
+
+  private void notifySuccess(String message) {
+    toast().success(message);
+  }
+
+  private void notifyWarning(String message) {
+    toast().warning(message);
+  }
+
+  private void notifyError(String message) {
+    toast().error(message);
+  }
+
+  private ToastNotifier toast() {
+    return ToastNotifier.of(notificationToastController);
   }
 
   public void onReloadButton(ActionEvent event) {

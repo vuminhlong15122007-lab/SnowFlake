@@ -14,7 +14,6 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.shape.Circle?>
 
 <StackPane xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="com.javfxtutorial.hethongdaugia.client.controller.LiveAuctionController">
@@ -133,28 +132,6 @@
         </bottom>
     </BorderPane>
 
-    <!-- ===== NOTIFICATION POPUP - ĐÈ LÊN TRÊN, GÓC PHẢI ===== -->
-    <HBox fx:id="notificationBox"
-          spacing="10"
-          alignment="CENTER_LEFT"
-          StackPane.alignment="TOP_RIGHT"
-          style="-fx-background-color: white;
-                 -fx-background-radius: 8;
-                 -fx-padding: 12 16 12 16;
-                 -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 12, 0, 0, 4);
-                 -fx-translate-x: -20;
-                 -fx-translate-y: 70;"
-          visible="false"
-          opacity="0"
-          maxWidth="-Infinity"
-          maxHeight="-Infinity"
-          pickOnBounds="false">
-
-        <Circle radius="12" fill="#22c55e" />
-        <Label text="✓" style="-fx-text-fill: white; -fx-font-weight: bold;" />
-        <Label fx:id="notificationLabel"
-               text="Thông báo"
-               style="-fx-font-size: 14px; -fx-text-fill: #1a1a1a;" />
-    </HBox>
+    <fx:include fx:id="notificationToast" source="NotificationToast.fxml" />
 
 </StackPane>
