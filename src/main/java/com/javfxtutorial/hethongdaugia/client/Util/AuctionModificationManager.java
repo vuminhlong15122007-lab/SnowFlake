@@ -3,17 +3,26 @@ package com.javfxtutorial.hethongdaugia.client.Util;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
+import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Command.AddAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.DeleteAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
+import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import javafx.application.Platform;
-import javafx.beans.Observable;
-import javafx.collections.ObservableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 public class AuctionModificationManager implements ResponseListener {
+  private static final Logger log = LoggerFactory.getLogger(AuctionModificationManager.class);
   private static AuctionModificationManager instance;
   public boolean isAllAuctionsLoaded = false;
 
@@ -32,6 +41,33 @@ public class AuctionModificationManager implements ResponseListener {
     NetworkManager.getInstance().register(UpdateAuctionCommand.class, this);
   }
 
+  public void refreshAuctionStatus(List<Auction> auctionList){
+    for (Auction auction: auctionList){
+      AuctionStatus previousStatus = auction.getStatus();
+      LocalDateTime now = LocalDateTime.now();
+
+      if (previousStatus.equals(AuctionStatus.CANCELLED)
+          || previousStatus.equals(AuctionStatus.CANCELLED_BY_ADMIN) || previousStatus.equals(AuctionStatus.PAID)) {
+        return;
+      }
+      if (now.isBefore(auction.getStartingTime())) {
+        auction.setStatus(AuctionStatus.NOT_START);
+      } else if (now.isAfter(auction.getEndingTime())) {
+        auction.setStatus(AuctionStatus.CLOSED);
+      } else {
+        auction.setStatus(AuctionStatus.RUNNING);
+      }
+      if (previousStatus != auction.getStatus()) {
+        try {
+          ServerConnection connection = NetworkManager.getConnection();
+          connection.sendCommand(new UpdateAuctionStatusCommand(auction));
+        } catch (ConnectionFailedException | SendFailedException e) {
+          log.error("Không thể kết nối Server");
+        }
+      }
+    }
+  }
+
   @Override
   public void onResponse(Response rp) {
     // luu sp
@@ -40,16 +76,7 @@ public class AuctionModificationManager implements ResponseListener {
         Auction savedAuction = (Auction) rp.getPayLoad();
         Platform.runLater(
             () -> {
-              ObservableList<Auction> all = ClientModel.getInstance().getAllAuctions();
-              boolean exists = false;
-              for(Auction auction : all) {
-                if (auction.getAuctionId() == savedAuction.getAuctionId() ) {
-                  exists = true;
-                }
-              }
-              if (!exists) {
-                ClientModel.getInstance().getAllAuctions().add(0, savedAuction);
-              }
+              ClientModel.getInstance().getAllAuctions().add(0, savedAuction);
             });
       }
     }

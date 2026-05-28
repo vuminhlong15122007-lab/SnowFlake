@@ -133,13 +133,13 @@ public class AuctionListController implements ResponseListener {
       statusRefreshScheduler.scheduleAtFixedRate(
           () -> {
             try {
-              NetworkManager.getInstance().sendRequest(new GetAllAuctionsCommand(), this);
+              AuctionModificationManager.getInstance().refreshAuctionStatus(observable);
             } catch (Exception e) {
               log.warn("Auto-refresh thất bại: {}", e.getMessage());
             }
           },
-          30,
-          30,
+          5,
+          5,
           TimeUnit.SECONDS);
       isLoaded = true;
     }
