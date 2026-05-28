@@ -236,6 +236,5 @@ public class ClientModel {
     sellerNotifications.clear();
     readNotificationIds.clear(); // chỉ xóa RAM, disk vẫn còn
     myAuctions.clear();
-    allAuctions.clear();
   }
 }
