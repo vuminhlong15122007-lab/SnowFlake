@@ -29,23 +29,6 @@ public class DeleteAuctionCommand extends Command {
     try {
       AuctionStatus status = AuctionManager.getInstance().refreshAuctionStatus(auction);
       if (status == AuctionStatus.NOT_START) {
-
-        String productName =
-            (auction.getItem() != null)
-                ? auction.getItem().getName()
-                : String.valueOf(auction.getAuctionId());
-
-        SellerNotification notif =
-            new SellerNotification(
-                auction.getAuctionId(), SellerNotification.Type.CANCELLED, productName, null, null);
-        Response notifResponse = new Response(true, "ADMIN_DELETED_PRODUCT", notif, this);
-
-        try {
-          ClientHandler.broadcastToSeller(auction.getSellerId(), notifResponse);
-        } catch (Exception e) {
-          log.warn("Gửi notification thất bại, bỏ qua: {}", e.getMessage());
-        }
-
         int result1 = ItemDAO.getInstance().delete(auction.getItem());
         if (result1 <= 0) {
           return new Response(false, "Không thể xóa phiên đấu giá", null, this);
@@ -54,9 +37,7 @@ public class DeleteAuctionCommand extends Command {
         Response rp = new Response(true, "xóa phiên đấu giá thành công", null, this);
         ClientHandler.broadcast(rp);
         return rp;
-      }
-
-      if (status == AuctionStatus.RUNNING) {
+      } else if (status == AuctionStatus.RUNNING) {
         return new Response(false, "Không thể xóa phiên đấu giá đang diễn ra", null, this);
       } else {
         return new Response(false, "Không thể xóa phiên đấu giá đã kết thúc", null, this);

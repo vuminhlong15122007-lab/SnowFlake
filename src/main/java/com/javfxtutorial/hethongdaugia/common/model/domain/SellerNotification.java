@@ -132,16 +132,10 @@ public class SellerNotification implements Serializable {
             "✅ Phiên \"%s\" đã được thanh toán!\n \"%s\"  đã thanh toán thành công  \"%s\" VND.\nChuẩn bị giao hàng cho họ nhé!",
             productName, winnerName, price);
       }
-      case CANCELLED ->  {
-        if(!(winnerName == null || winnerName.isBlank())){
-          yield String.format(
+      case CANCELLED ->
+          String.format(
                   "❌ Phiên \"%s\" bị hủy!\n \"%s\" không thanh toán trong 24h.\nBạn có thể kiện nếu cần.",
                   productName, winnerName);
-        }else{
-          yield String.format(
-                  "🗑️ Bạn vừa xóa sản phẩm \"%s\".\nBạn có thể thêm lại nếu muốn.", productName);
-        }
-      }
 
       case CANCELLED_BY_ADMIN ->
           String.format(
