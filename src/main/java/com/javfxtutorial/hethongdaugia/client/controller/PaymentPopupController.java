@@ -2,6 +2,7 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.Util.TimeLeft;
+import com.javfxtutorial.hethongdaugia.client.Util.UIUtils;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import java.time.LocalDateTime;
 import javafx.fxml.FXML;
@@ -41,6 +42,13 @@ public class PaymentPopupController {
     if (lbTime != null && auction.getEndingTime() != null) {
       LocalDateTime deadline = auction.getEndingTime().plusHours(24);
       TimeLeft timer = new TimeLeft(lbTime, deadline);
+      timer.setOnFinished(() -> {
+        UIUtils.showError(
+                "Hết thời hạn thanh toán",
+                "Bạn đã hết thời hạn thanh toán!\n"
+                        + "Bạn có thể bị kiện vì không thực hiện nghĩa vụ thanh toán.");
+        closePopup();
+      });
       timer.start();
       timer.setOnFinished(() -> {
         lbTime.setText("Bạn đã quá hạn thanh toán");
