@@ -150,11 +150,6 @@ public class ProductDisplayController implements ResponseListener {
   }
 
   private void updateUI(AuctionStatus status) {
-    // Dừng timer cũ trước khi tạo cái mới
-    if (timer != null) {
-      timer.stop();
-      timer = null;
-    }
     switch (status) {
       case RUNNING -> {
         UI01.setText("THỜI GIAN CÒN LẠI");
@@ -165,6 +160,10 @@ public class ProductDisplayController implements ResponseListener {
         lbtimeLeft.setStyle("-fx-text-fill: -sf-success;");
         ThamGiaDauGiaBtn.setText("Tham gia");
         ThamGiaDauGiaBtn.setStyle("");
+        if (timer != null) {
+          timer.stop();
+          timer = null;
+        }
         timer = new TimeLeft(lbtimeLeft, auction.getEndingTime());
       }
       case NOT_START -> {
@@ -178,6 +177,10 @@ public class ProductDisplayController implements ResponseListener {
         ThamGiaDauGiaBtn.setStyle(
             "-fx-background-color: linear-gradient(to right, -sf-danger, -sf-warning); "
                 + "-fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
+        if (timer != null) {
+          timer.stop();
+          timer = null;
+        }
         timer = new TimeLeft(lbtimeLeft, auction.getStartingTime());
       }
       default -> { // CLOSED
