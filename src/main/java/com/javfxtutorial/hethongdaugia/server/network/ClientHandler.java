@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.server.network;
 
+import com.javfxtutorial.hethongdaugia.common.model.Command.AddAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
 import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.model.domain.User;
@@ -74,7 +75,7 @@ public class ClientHandler extends Thread implements BidListener {
               e);
           rp = new Response(false, "Lỗi server: " + e.getMessage(), null, cmd);
         }
-        if (rp.getCommand().getClass().equals(PlaceBidCommand.class)) {
+        if (rp.getCommand().getClass().equals(PlaceBidCommand.class) || rp.getCommand().getClass().equals(AddAuctionCommand.class)) {
           continue;
         }
         if (rp != null) {

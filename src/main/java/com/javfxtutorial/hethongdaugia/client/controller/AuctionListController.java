@@ -9,7 +9,6 @@ import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
-import com.javfxtutorial.hethongdaugia.common.model.Command.AddAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.GetAllAuctionsCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
@@ -134,13 +133,13 @@ public class AuctionListController implements ResponseListener {
       statusRefreshScheduler.scheduleAtFixedRate(
           () -> {
             try {
-              NetworkManager.getInstance().sendRequest(new GetAllAuctionsCommand(), this);
+              AuctionModificationManager.getInstance().refreshAuctionStatus(observable);
             } catch (Exception e) {
               log.warn("Auto-refresh thất bại: {}", e.getMessage());
             }
           },
-          30,
-          30,
+          5,
+          5,
           TimeUnit.SECONDS);
       isLoaded = true;
     }

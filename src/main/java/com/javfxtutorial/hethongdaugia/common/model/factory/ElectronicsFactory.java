@@ -8,22 +8,14 @@ import javafx.scene.control.TextField;
 public class ElectronicsFactory extends ItemFactory {
 
   private Item baseItem;
-  @FXML private TextField brandElecField, modelField;
+  @FXML private String brandElec, model;
 
-  public ElectronicsFactory(Item baseItem, TextField brandElecField, TextField modelField) {
+  public ElectronicsFactory(Item baseItem, String brandElec, String model) {
     this.baseItem = baseItem;
-    this.brandElecField = brandElecField;
-    this.modelField = modelField;
+    this.brandElec = brandElec;
+    this.model = model;
   }
 
-  @Override
-  public void showData() {
-    if (baseItem instanceof Electronics) {
-      Electronics e = (Electronics) baseItem;
-      brandElecField.setText(e.getBrand());
-      modelField.setText(e.getModel());
-    }
-  }
 
   @Override
   public Item createItemFromForm() {
@@ -33,8 +25,6 @@ public class ElectronicsFactory extends ItemFactory {
     String name = baseItem.getName();
     String description = baseItem.getDescription();
     String image = baseItem.getImage();
-    String brand = brandElecField.getText();
-    String model = modelField.getText();
-    return new Electronics(sellerName, sellerId, itemId, name, description, image, brand, model);
+    return new Electronics(sellerName, sellerId, itemId, name, description, image, brandElec, model);
   }
 }

@@ -7,31 +7,21 @@ import javafx.scene.control.TextField;
 
 public class VehicleFactory extends ItemFactory {
   private Item baseItem;
-  @FXML private TextField licensePlateField, vehicleYearField, brandVehicleField, colorField;
-
+  private String  licensePlate, brandVehicle, color;
+  private int vehicleYear;
   public VehicleFactory(
       Item baseItem,
-      TextField licensePlateField,
-      TextField vehicleYearField,
-      TextField brandVehicleField,
-      TextField colorField) {
+      String licensePlate,
+      int vehicleYear,
+      String brandVehicle,
+      String color) {
     this.baseItem = baseItem;
-    this.licensePlateField = licensePlateField;
-    this.vehicleYearField = vehicleYearField;
-    this.brandVehicleField = brandVehicleField;
-    this.colorField = colorField;
+    this.licensePlate = licensePlate;
+    this.vehicleYear = vehicleYear;
+    this.brandVehicle = brandVehicle;
+    this.color = color;
   }
 
-  @Override
-  public void showData() {
-    if (baseItem instanceof Vehicle) {
-      Vehicle v = (Vehicle) baseItem;
-      licensePlateField.setText(v.getLicensePlate());
-      vehicleYearField.setText(String.valueOf(v.getYear()));
-      brandVehicleField.setText(v.getBrand());
-      colorField.setText(v.getColor());
-    }
-  }
 
   @Override
   public Item createItemFromForm() {
@@ -41,11 +31,7 @@ public class VehicleFactory extends ItemFactory {
     String name = baseItem.getName();
     String description = baseItem.getDescription();
     String image = baseItem.getImage();
-    String licensePlate = licensePlateField.getText();
-    String brand = brandVehicleField.getText();
-    String color = colorField.getText();
-    int year = Integer.parseInt(vehicleYearField.getText());
     return new Vehicle(
-        sellerName, sellerId, itemId, name, description, image, licensePlate, year, brand, color);
+        sellerName, sellerId, itemId, name, description, image, licensePlate, vehicleYear, brandVehicle, color);
   }
 }

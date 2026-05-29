@@ -105,7 +105,7 @@ public class SellerManagementController implements ResponseListener {
   private NotifiCationPopupController popupController;
 
   private Auction selectedAuction;
-  private boolean isLoaded = false;
+  public static boolean isLoaded = false;
   private Timeline autoRefreshTimeline;
 
   private String image =
@@ -615,7 +615,7 @@ public class SellerManagementController implements ResponseListener {
           "startTime", String.valueOf(tGianBD), "Thời gian bắt đầu phải sau thời gian hiện tại");
     }
 
-    // Lấy thông tin Item cơ bản
+    // Lấy thông tin Item cơ bảnadd
     int sellerId = ClientModel.getInstance().getCurrentUser().getId();
     String sellerName = ClientModel.getInstance().getCurrentUser().getName();
     int itemId = (selectedAuction == null) ? 0 : selectedAuction.getItem().getItemId();
@@ -632,11 +632,11 @@ public class SellerManagementController implements ResponseListener {
             sellerName, sellerId, itemId, name, description, image, ItemCategory.valueOf(category));
     ItemFactory factory =
         switch (category) {
-          case "ART" -> new ArtFactory(baseItem, artTitleField, artistField, yearCreatedField);
+          case "ART" -> new ArtFactory(baseItem, artTitleField.getText(), artistField.getText(), Integer.valueOf(yearCreatedField.getText()));
           case "VEHICLE" ->
               new VehicleFactory(
-                  baseItem, licensePlateField, vehicleYearField, brandVehicleField, colorField);
-          case "ELECTRONICS" -> new ElectronicsFactory(baseItem, brandElecField, modelField);
+                  baseItem, licensePlateField.getText(), Integer.valueOf(vehicleYearField.getText()), brandVehicleField.getText(), colorField.getText());
+          case "ELECTRONICS" -> new ElectronicsFactory(baseItem, brandElecField.getText(), modelField.getText());
           default -> new OtherItemFactory(baseItem);
         };
     Item item = factory.createItemFromForm();
@@ -856,17 +856,27 @@ public class SellerManagementController implements ResponseListener {
     categoryComboBox.getSelectionModel().select(String.valueOf(cate));
     showCategoryFields(String.valueOf(cate));
 
-    ItemFactory factory =
-        switch (cate) {
-          case ItemCategory.ART ->
-              new ArtFactory(item, artTitleField, artistField, yearCreatedField);
-          case ItemCategory.VEHICLE ->
-              new VehicleFactory(
-                  item, licensePlateField, vehicleYearField, brandVehicleField, colorField);
-          case ItemCategory.ELECTRONICS -> new ElectronicsFactory(item, brandElecField, modelField);
-          default -> new OtherItemFactory(item);
-        };
-    factory.showData();
+    switch (cate) {
+      case ART -> {
+        Art art = (Art) item;
+        artTitleField.setText(art.getTitle());
+        artistField.setText(art.getArtist());
+        yearCreatedField.setText(String.valueOf(art.getYearCreated()));
+      }
+      case VEHICLE -> {
+        Vehicle v = (Vehicle) item;
+        licensePlateField.setText(v.getLicensePlate());
+        vehicleYearField.setText(String.valueOf(v.getYear()));
+        brandVehicleField.setText(v.getBrand());
+        colorField.setText(v.getColor());
+      }
+      case ELECTRONICS -> {
+        Electronics e = (Electronics) item;
+        brandElecField.setText(e.getBrand());
+        modelField.setText(e.getModel());
+      }
+      default -> {}
+    }
   }
 
   private void applyFilter(String filter) {

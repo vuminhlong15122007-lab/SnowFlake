@@ -166,4 +166,9 @@ public class NetworkManager {
       throw e;
     }
   }
+
+  public void clearAllListeners() {
+    listeners.clear();
+    log.info("Đã clear toàn bộ listeners khi logout");
+  }
 }

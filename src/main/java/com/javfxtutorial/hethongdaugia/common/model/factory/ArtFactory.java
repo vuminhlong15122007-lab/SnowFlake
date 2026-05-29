@@ -7,25 +7,17 @@ import javafx.scene.control.TextField;
 
 public class ArtFactory extends ItemFactory {
   private Item baseItem;
-  @FXML private TextField artTitleField, artistField, yearCreatedField;
+  private String artTitle, artist;
+  private int  yearCreated;
 
-  public ArtFactory(
-      Item baseItem, TextField artTitleField, TextField artistField, TextField yearCreatedField) {
+  public ArtFactory(Item baseItem, String artTitle, String artist, int yearCreated) {
     this.baseItem = baseItem;
-    this.artTitleField = artTitleField;
-    this.artistField = artistField;
-    this.yearCreatedField = yearCreatedField;
+    this.artTitle = artTitle;
+    this.artist = artist;
+    this.yearCreated = yearCreated;
   }
 
-  @Override
-  public void showData() {
-    if (baseItem instanceof Art) {
-      Art art = (Art) baseItem;
-      artistField.setText(art.getArtist());
-      artTitleField.setText(art.getTitle());
-      yearCreatedField.setText(String.valueOf(art.getYearCreated()));
-    }
-  }
+
 
   @Override
   public Item createItemFromForm() {
@@ -35,10 +27,7 @@ public class ArtFactory extends ItemFactory {
     String name = baseItem.getName();
     String description = baseItem.getDescription();
     String image = baseItem.getImage();
-    String artist = artistField.getText();
-    int yearCreated = Integer.parseInt(yearCreatedField.getText());
-    String title = artTitleField.getText();
     return new Art(
-        sellerName, sellerId, itemId, name, description, image, artist, yearCreated, title);
+        sellerName, sellerId, itemId, name, description, image, artist, yearCreated, artTitle);
   }
 }

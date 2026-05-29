@@ -12,7 +12,13 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 public class NotificationToastController {
+  @FXML private StackPane root;
+  @FXML private Label notificationLabel;
+  @FXML private Label statusIcon;
+  @FXML private Rectangle progressBar;
 
+  private FadeTransition fadeTransition;
+  private Timeline progressTimeline;
   private static final Duration FADE_DURATION = Duration.millis(120);
 
   public enum ToastType {
@@ -31,14 +37,6 @@ public class NotificationToastController {
       this.displayDuration = displayDuration;
     }
   }
-
-  @FXML private StackPane root;
-  @FXML private Label notificationLabel;
-  @FXML private Label statusIcon;
-  @FXML private Rectangle progressBar;
-
-  private FadeTransition fadeTransition;
-  private Timeline progressTimeline;
 
   public void showSuccess(String message) {
     show(message, ToastType.SUCCESS);

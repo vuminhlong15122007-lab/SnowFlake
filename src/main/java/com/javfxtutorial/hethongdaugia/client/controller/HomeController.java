@@ -63,11 +63,11 @@ public class HomeController implements ResponseListener {
     if (rp.isSuccess()) {
       ArrayList<Auction> unpaidList = (ArrayList<Auction>) rp.getPayLoad();
       Platform.runLater(
-          () -> {
-            if (unpaidList != null && !unpaidList.isEmpty()) {
-              showPaymentPopupChain(unpaidList, 0);
-            }
-          });
+              () -> {
+                if (unpaidList != null && !unpaidList.isEmpty()) {
+                  showPaymentPopupChain(unpaidList, 0);
+                }
+              });
     }
   }
 
@@ -77,9 +77,8 @@ public class HomeController implements ResponseListener {
     Auction auction = unpaidList.get(index);
     try {
       FXMLLoader loader =
-          new FXMLLoader(
-              UIUtils.class.getResource(
-                  "/com/javfxtutorial/hethongdaugia/view/fxml/PaymentPopup.fxml"));
+              new FXMLLoader(
+                      UIUtils.class.getResource("/com/javfxtutorial/hethongdaugia/view/fxml/PaymentPopup.fxml"));
       Parent root = loader.load();
       PaymentPopupController ctrl = loader.getController();
       ctrl.setAuction(auction);
@@ -89,11 +88,11 @@ public class HomeController implements ResponseListener {
       popup.setScene(new Scene(root));
 
       ctrl.setOnConfirmed(
-          () -> {
-            markAsPaid(auction);
-            popup.close();
-            showPaymentPopupChain(unpaidList, index + 1);
-          });
+              () -> {
+                markAsPaid(auction);
+                popup.close();
+                showPaymentPopupChain(unpaidList, index + 1);
+              });
 
       popup.show();
     } catch (IOException e) {
@@ -113,7 +112,7 @@ public class HomeController implements ResponseListener {
                 log.error("Lỗi mark PAID: {}", e.getMessage());
               }
             })
-        .start();
+            .start();
   }
 
   public void checkUnpaidAuction() {
@@ -127,6 +126,6 @@ public class HomeController implements ResponseListener {
                 log.error("Lỗi check unpaid: {}", e.getMessage());
               }
             })
-        .start();
+            .start();
   }
 }
