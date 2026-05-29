@@ -185,7 +185,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
   private void updateUI(AuctionStatus status) {
     switch (status) {
       case RUNNING:
-        hideCountdown();
+        showCountdown(auction.getEndingTime());
         lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
         lbWinnerName.setText(String.valueOf(auction.getWinnerName()));
         if (actionButton != null) {
