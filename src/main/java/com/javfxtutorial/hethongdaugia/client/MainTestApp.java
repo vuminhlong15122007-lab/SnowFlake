@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client;
 
+import com.javfxtutorial.hethongdaugia.client.Util.AppIcon;
 import com.javfxtutorial.hethongdaugia.client.Util.ThemeManager;
 import java.io.IOException;
 import javafx.application.Application;
@@ -19,6 +20,7 @@ public class MainTestApp extends Application {
     Scene scene = new Scene(fxmlLoader.load());
     ThemeManager.apply(scene);
     stage.setTitle("SnowFox");
+    AppIcon.apply(stage);
     stage.setScene(scene);
     stage.show();
   }

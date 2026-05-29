@@ -2,6 +2,7 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 
+import com.javfxtutorial.hethongdaugia.client.Util.AppIcon;
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.Util.ThemeManager;
 import com.javfxtutorial.hethongdaugia.client.Util.ToastNotifier;
@@ -149,6 +150,7 @@ public class UserProfileController implements ResponseListener {
                   .getResource("/com/javfxtutorial/hethongdaugia/view/fxml/reset_password.fxml"));
       Stage stage = new Stage();
       stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+      AppIcon.apply(stage);
       Scene scene = new Scene(root);
       ThemeManager.apply(scene);
       stage.setScene(scene);

@@ -26,13 +26,13 @@ public class UIUtils {
     showAlert(
         title,
         message,
-        "/com/javfxtutorial/hethongdaugia/assets/Logo.png",
+        "/com/javfxtutorial/hethongdaugia/assets/TaskBar.png",
         "/com/javfxtutorial/hethongdaugia/assets/Fox.gif");
   }
 
   public static void showAlert(String title, String message, String meme) {
     String memePath = "/com/javfxtutorial/hethongdaugia/assets/" + meme;
-    showAlert(title, message, "/com/javfxtutorial/hethongdaugia/assets/Logo.png", memePath);
+    showAlert(title, message, "/com/javfxtutorial/hethongdaugia/assets/TaskBar.png", memePath);
   }
 
   public static void showAlert(String title, String message, String iconPath, String memePath) {
@@ -63,7 +63,7 @@ public class UIUtils {
     alert.setTitle(title);
     alert.setHeaderText(null);
     alert.setContentText(message);
-    styleAlert(alert, "/com/javfxtutorial/hethongdaugia/assets/Logo.png");
+    styleAlert(alert, "/com/javfxtutorial/hethongdaugia/assets/TaskBar.png");
     alert.showAndWait();
   }
 
@@ -100,13 +100,7 @@ public class UIUtils {
             scene.setFill(Color.TRANSPARENT);
             if (scene.getWindow() instanceof Stage stage) {
               stage.setResizable(false);
-              if (iconPath != null) {
-                try {
-                  stage.getIcons().add(new Image(UIUtils.class.getResourceAsStream(iconPath)));
-                } catch (Exception e) {
-                  log.warn("Khong load duoc icon tai: {}", iconPath, e);
-                }
-              }
+              AppIcon.apply(stage, iconPath);
             }
           }
 
@@ -141,6 +135,7 @@ public class UIUtils {
       Stage popupStage = new Stage();
       popupStage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
       popupStage.setTitle(typePopUp);
+      AppIcon.apply(popupStage);
       Scene scene = new Scene(root);
       ThemeManager.apply(scene);
       popupStage.setScene(scene);

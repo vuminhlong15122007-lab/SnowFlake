@@ -1,6 +1,7 @@
 package com.javfxtutorial.hethongdaugia.client;
 
 import com.javfxtutorial.hethongdaugia.client.Util.ThemeManager;
+import com.javfxtutorial.hethongdaugia.client.Util.AppIcon;
 import com.javfxtutorial.hethongdaugia.client.handler.GlobalExceptionHandler;
 import java.io.IOException;
 import javafx.application.Application;
@@ -23,6 +24,7 @@ public class MainApplication extends Application {
     Scene scene = new Scene(fxmlLoader.load());
     ThemeManager.apply(scene);
     stage.setTitle("SnowFox");
+    AppIcon.apply(stage);
     stage.setScene(scene);
     stage.show();
   }

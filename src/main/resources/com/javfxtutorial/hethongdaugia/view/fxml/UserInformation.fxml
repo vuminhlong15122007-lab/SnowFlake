@@ -23,7 +23,7 @@
       <HBox alignment="CENTER_LEFT" prefHeight="83.0" prefWidth="1280.0" spacing="14.0" styleClass="sf-header">
          <ImageView fitHeight="50.0" fitWidth="50.0" preserveRatio="true">
             <image>
-               <Image url="@../../assets/ClassicLogo.png" />
+               <Image url="@../../assets/Logo.png" />
             </image>
          </ImageView>
          <VBox alignment="CENTER_LEFT" spacing="1.0" HBox.hgrow="ALWAYS">

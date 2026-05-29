@@ -3,6 +3,7 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 import com.javfxtutorial.hethongdaugia.client.MainApplication;
+import com.javfxtutorial.hethongdaugia.client.Util.AppIcon;
 import com.javfxtutorial.hethongdaugia.client.Util.ThemeManager;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
@@ -109,6 +110,7 @@ public class Edit_User_Popup_Controller implements ResponseListener {
             stage1.close();
             Stage stage = new Stage();
             stage.setTitle("Tạo Tài Khoản Thành Công");
+            AppIcon.apply(stage);
             FXMLLoader fxmlLoader =
                 new FXMLLoader(
                     MainApplication.class.getResource(

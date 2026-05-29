@@ -2,6 +2,7 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.*;
 
+import com.javfxtutorial.hethongdaugia.client.Util.AppIcon;
 import com.javfxtutorial.hethongdaugia.client.Util.ThemeManager;
 import com.javfxtutorial.hethongdaugia.client.Util.ToastNotifier;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
@@ -177,6 +178,7 @@ public class AdminUserController implements ResponseListener {
       Stage stage = new Stage();
       // khong dong cua so cu ma khoa cua so cu o phía  sau
       stage.initModality(javafx.stage.Modality.APPLICATION_MODAL);
+      AppIcon.apply(stage);
       Scene scene = new Scene(root);
       ThemeManager.apply(scene);
       stage.setScene(scene);

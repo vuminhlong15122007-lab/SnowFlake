@@ -3,6 +3,7 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
+import com.javfxtutorial.hethongdaugia.client.Util.AppIcon;
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.Util.TimeLeft;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
@@ -172,6 +173,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
 
       Stage popupStage = new Stage();
       popupStage.initModality(Modality.APPLICATION_MODAL);
+      AppIcon.apply(popupStage);
       popupStage.setScene(new Scene(root));
       popupStage.show();
     } catch (Exception e) {

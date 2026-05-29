@@ -33,7 +33,7 @@
                 <Circle opacity="0.28" radius="34.0" style="-fx-fill: -sf-surface;" translateX="-8.0" translateY="-10.0" />
                 <ImageView fitHeight="90.0" fitWidth="89.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../../assets/ClassicLogo.png" />
+                        <Image url="@../../assets/Logo.png" />
                     </image>
                 </ImageView>
             </StackPane>

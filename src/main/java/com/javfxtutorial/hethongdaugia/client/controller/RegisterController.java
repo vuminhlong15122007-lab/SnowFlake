@@ -4,6 +4,7 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
 import com.javfxtutorial.hethongdaugia.client.MainApplication;
+import com.javfxtutorial.hethongdaugia.client.Util.AppIcon;
 import com.javfxtutorial.hethongdaugia.client.Util.ThemeManager;
 import com.javfxtutorial.hethongdaugia.client.Util.ToastNotifier;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
@@ -178,6 +179,7 @@ public class RegisterController implements ResponseListener {
       termsStage.initStyle(StageStyle.TRANSPARENT);
       scene.setFill(Color.TRANSPARENT);
       termsStage.setTitle("Điều khoản sử dụng SnowFox");
+      AppIcon.apply(termsStage);
       termsStage.initModality(
           Modality.APPLICATION_MODAL); // không thể bấm vào cửa sổ đăng ký phía sau cho
       // đến khi đóng popup lại
@@ -227,6 +229,7 @@ public class RegisterController implements ResponseListener {
   private void openSignUpSuccessPopup() {
     Stage stage = new Stage();
     stage.setTitle("Tạo Tài Khoản Thành Công");
+    AppIcon.apply(stage);
     try {
       FXMLLoader fxmlLoader =
           new FXMLLoader(

@@ -2,6 +2,7 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 
+import com.javfxtutorial.hethongdaugia.client.Util.AppIcon;
 import com.javfxtutorial.hethongdaugia.client.Util.UIUtils;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
@@ -84,6 +85,7 @@ public class HomeController implements ResponseListener {
       ctrl.setAuction(auction);
 
       Stage popup = new Stage();
+      AppIcon.apply(popup);
       popup.setScene(new Scene(root));
 
       ctrl.setOnConfirmed(

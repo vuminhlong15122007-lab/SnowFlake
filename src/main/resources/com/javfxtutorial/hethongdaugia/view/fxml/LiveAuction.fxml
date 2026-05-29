@@ -25,7 +25,7 @@
             <HBox alignment="CENTER_LEFT" prefHeight="63.0" prefWidth="1280.0" spacing="5.0" styleClass="sf-header">
                 <ImageView fitHeight="50.0" fitWidth="50.0" pickOnBounds="true" preserveRatio="true">
                     <image>
-                        <Image url="@../../assets/ClassicLogo.png" />
+                        <Image url="@../../assets/Logo.png" />
                     </image>
                 </ImageView>
 
