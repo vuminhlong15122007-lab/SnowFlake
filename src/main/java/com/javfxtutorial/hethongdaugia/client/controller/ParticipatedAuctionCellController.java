@@ -136,8 +136,6 @@ public class ParticipatedAuctionCellController implements ResponseListener {
     AuctionStatus status = auction.getStatus();
 
     if (status == AuctionStatus.CLOSED) {
-      // Nếu cảnh báo kiện đã hiện rồi → không mở popup nữa
-      if (PaymentPopupController.isLawsuitAlreadyShown(auction.getAuctionId())) return;
       openPaymentPopup();
 
     } else if (status == AuctionStatus.RUNNING) {

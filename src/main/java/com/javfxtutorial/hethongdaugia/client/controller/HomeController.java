@@ -74,18 +74,10 @@ public class HomeController implements ResponseListener {
     if (index >= unpaidList.size()) return;
 
     Auction auction = unpaidList.get(index);
-
-    // Nếu cảnh báo kiện của phiên này đã hiện 1 lần rồi → bỏ qua, không load popup nữa
-    if (PaymentPopupController.isLawsuitAlreadyShown(auction.getAuctionId())) {
-      showPaymentPopupChain(unpaidList, index + 1);
-      return;
-    }
-
     try {
       FXMLLoader loader =
               new FXMLLoader(
-                      UIUtils.class.getResource(
-                              "/com/javfxtutorial/hethongdaugia/view/fxml/PaymentPopup.fxml"));
+                      UIUtils.class.getResource("/com/javfxtutorial/hethongdaugia/view/fxml/PaymentPopup.fxml"));
       Parent root = loader.load();
       PaymentPopupController ctrl = loader.getController();
       ctrl.setAuction(auction);
