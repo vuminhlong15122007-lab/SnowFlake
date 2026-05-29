@@ -24,34 +24,38 @@ public class PaymentPopupController {
     if (auction == null || auction.getItem() == null) return;
 
     if (lbProductName != null) lbProductName.setText(auction.getItem().getName());
-
     if (lbWinningPrice != null) {
-      double price =
-              auction.getCurrentPrice() != null ? auction.getCurrentPrice().doubleValue() : 0;
+      double price = auction.getCurrentPrice() != null
+              ? auction.getCurrentPrice().doubleValue() : 0;
       lbWinningPrice.setText(String.format("%,.0f VND", price));
     }
-
     if (lbAuctionId != null) lbAuctionId.setText("Mã phiên: " + auction.getAuctionId());
-
-    if (productImageView != null
-            && auction.getItem().getImage() != null
+    if (productImageView != null && auction.getItem().getImage() != null
             && !auction.getItem().getImage().isBlank()) {
       ImageHelper.loadBase64ToImageView(productImageView, auction.getItem().getImage());
     }
 
-    // Đếm ngược 24h kể từ endingTime của phiên
     if (lbTime != null && auction.getEndingTime() != null) {
       LocalDateTime deadline = auction.getEndingTime().plusHours(24);
-      TimeLeft timer = new TimeLeft(lbTime, deadline);
-      timer.setOnFinished(() -> {
+      LocalDateTime now = LocalDateTime.now();
+
+      if (now.isAfter(deadline)) {
         paymentSection.setVisible(false);
         paymentSection.setManaged(false);
         lawsuitSection.setVisible(true);
         lawsuitSection.setManaged(true);
-      });
-      timer.start();
+        lbTime.setText("ĐÃ HẾT HẠN");
+      } else {
+        TimeLeft timer = new TimeLeft(lbTime, deadline);
+        timer.setOnFinished(() -> {
+          paymentSection.setVisible(false);
+          paymentSection.setManaged(false);
+          lawsuitSection.setVisible(true);
+          lawsuitSection.setManaged(true);
+        });
+        timer.start();
+      }
     }
-
   }
 
   @FXML

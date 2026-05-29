@@ -495,9 +495,7 @@ public class SellerManagementController implements ResponseListener {
             .orElse(null);
 
     if (existing == null) {
-      if (ClientModel.getInstance().isNotificationReadByAuction(notif.getAuctionId()))
-        ;
-      notifications.remove(existing);
+      notif.setRead(ClientModel.getInstance().isNotificationReadByAuction(notif.getAuctionId()));
       notifications.add(0, notif);
     } else if (priority(notif.getType()) > priority(existing.getType())) {
       notif.setRead(false);

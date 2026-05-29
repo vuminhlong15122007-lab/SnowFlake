@@ -115,7 +115,7 @@ public class SellerNotification implements Serializable {
   public String getMessage() {
     return switch (type) {
       case CLOSED -> {
-        boolean noWinner = winnerName == null || winnerName.isBlank() ;
+        boolean noWinner = winnerName == null || winnerName.isBlank() || winnerName.equals("N/A")  ;
         if (noWinner) {
           yield String.format(
               "😞 Phiên \"%s\" kết thúc!\n Không có ai tham gia đấu giá.", productName);

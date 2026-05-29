@@ -266,10 +266,13 @@ public class LiveAuctionController implements ResponseListener {
           statusStyle = "-fx-text-fill: -sf-text; -fx-font-weight: bold; -fx-font-size: 13px;";
         }
         case CANCELLED -> {
-          statusText = "ĐÃ BỊ HỦY";
+            statusText = "ĐÃ BỊ HỦY";
+            statusStyle = "-fx-text-fill: -sf-danger; -fx-font-weight: bold; -fx-font-size: 13px;";
+
+        }case CANCELLED_BY_ADMIN -> {
+          statusText = "ĐÃ BỊ HỦY  ";
           statusStyle = "-fx-text-fill: -sf-danger; -fx-font-weight: bold; -fx-font-size: 13px;";
-        }
-        default -> {
+        }default -> {
           statusText = "ĐÃ THÀNH CÔNG";
           statusStyle = "-fx-text-fill: -sf-text; -fx-font-weight: bold; -fx-font-size: 13px;";
         }
