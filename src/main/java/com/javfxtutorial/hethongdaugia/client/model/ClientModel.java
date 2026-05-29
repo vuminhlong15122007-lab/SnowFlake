@@ -32,6 +32,7 @@ public class ClientModel {
     }
     return instance;
   }
+  public boolean isFromParticipatedAuction;
 
   private User currentUser;
 

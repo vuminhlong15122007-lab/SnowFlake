@@ -158,6 +158,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
 
     } else if (status == AuctionStatus.RUNNING) {
       ClientModel.getInstance().setCurrentAuction(auction);
+      ClientModel.getInstance().isFromParticipatedAuction = true;
       changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/LiveAuction.fxml");
     } else if (status == AuctionStatus.PAID) {
       showAlert("Đã thanh toán", "Sản phẩm này đã được thanh toán xong!", "Happy.gif");
