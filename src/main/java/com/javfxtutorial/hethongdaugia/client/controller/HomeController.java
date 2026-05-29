@@ -90,7 +90,7 @@ public class HomeController implements ResponseListener {
 
     try {
       FXMLLoader loader = new FXMLLoader(
-              UIUtils.class.getResource("com/javfxtutorial/hethongdaugia/view/fxml/PaymentPopup"));
+              UIUtils.class.getResource("/com/javfxtutorial/hethongdaugia/view/fxml/PaymentPopup.fxml"));
       Parent root = loader.load();
       PaymentPopupController ctrl = loader.getController();
       ctrl.setAuction(auction);
