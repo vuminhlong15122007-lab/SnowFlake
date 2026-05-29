@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.model;
 
+import com.javfxtutorial.hethongdaugia.client.controller.SellerManagementController;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.domain.SellerNotification;
 import com.javfxtutorial.hethongdaugia.common.model.domain.User;
@@ -236,5 +237,6 @@ public class ClientModel {
     sellerNotifications.clear();
     readNotificationIds.clear(); // chỉ xóa RAM, disk vẫn còn
     myAuctions.clear();
+    SellerManagementController.isLoaded = false;
   }
 }

@@ -105,7 +105,7 @@ public class SellerManagementController implements ResponseListener {
   private NotifiCationPopupController popupController;
 
   private Auction selectedAuction;
-  private boolean isLoaded = false;
+  public static boolean isLoaded = false;
   private Timeline autoRefreshTimeline;
 
   private String image =
