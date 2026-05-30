@@ -33,8 +33,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
-
-import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -130,8 +128,7 @@ public class AuctionManager {
     return placeBid(bid, Collections.emptyList());
   }
 
-  public boolean placeBid(
-      BidTransaction bid, List<BidTransaction> pendingHistoryBids)
+  public boolean placeBid(BidTransaction bid, List<BidTransaction> pendingHistoryBids)
       throws AuctionNotFoundException,
           AuctionNotStartedException,
           AuctionAlreadyEndedException,
@@ -419,8 +416,7 @@ public class AuctionManager {
 
     // Gọi lại placeBid — dùng sender = null vì là bot
     this.placeBid(
-        autoBid,
-        pendingHistoryBid == null ? Collections.emptyList() : List.of(pendingHistoryBid));
+        autoBid, pendingHistoryBid == null ? Collections.emptyList() : List.of(pendingHistoryBid));
   }
 
   private void persistBidTransaction(BidTransaction bid) throws DataException {

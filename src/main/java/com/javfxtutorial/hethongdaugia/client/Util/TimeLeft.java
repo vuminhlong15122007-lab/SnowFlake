@@ -10,7 +10,7 @@ import javafx.util.Duration;
 public class TimeLeft { // Class tái sd — truyền vào Label và end là chạy .
   private Timeline timeline; // dong ho dem nguoc
   private final Label label;
-  private final LocalDateTime end;
+  private LocalDateTime end;
   private Runnable onFinished; // Hd se chay khi thoi gian ket thuc
 
   public TimeLeft(Label label, LocalDateTime end) {
@@ -49,6 +49,10 @@ public class TimeLeft { // Class tái sd — truyền vào Label và end là ch�
     } else {
       label.setStyle("-fx-text-fill: -sf-success; -fx-font-weight: bold; -fx-font-size: 20px;");
     }
+  }
+
+  public void setDeadline(LocalDateTime newEnd) {
+    end = newEnd;
   }
 
   public void setOnFinished(Runnable onFinished) { // CAN Chuyeen them  hdong sau khi het gio

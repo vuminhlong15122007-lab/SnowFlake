@@ -13,18 +13,18 @@ import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusC
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
-import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
-import javafx.application.Platform;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.LocalDateTime;
 import java.util.List;
+import javafx.application.Platform;
+import javafx.collections.ObservableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AuctionModificationManager implements ResponseListener {
   private static final Logger log = LoggerFactory.getLogger(AuctionModificationManager.class);
   private static AuctionModificationManager instance;
-  public boolean isAllAuctionsLoaded = false;
+  ObservableList<Auction> allAuctionsList = ClientModel.getInstance().getAllAuctions();
+  ObservableList<Auction> myAuctionsList = ClientModel.getInstance().getMyAuctions();
 
   private AuctionModificationManager() {}
 
@@ -41,13 +41,14 @@ public class AuctionModificationManager implements ResponseListener {
     NetworkManager.getInstance().register(UpdateAuctionCommand.class, this);
   }
 
-  public void refreshAuctionStatus(List<Auction> auctionList){
-    for (Auction auction: auctionList){
+  public void refreshAuctionStatus(List<Auction> auctionList) {
+    for (Auction auction : auctionList) {
       AuctionStatus previousStatus = auction.getStatus();
       LocalDateTime now = LocalDateTime.now();
 
       if (previousStatus.equals(AuctionStatus.CANCELLED)
-          || previousStatus.equals(AuctionStatus.CANCELLED_BY_ADMIN) || previousStatus.equals(AuctionStatus.PAID)) {
+          || previousStatus.equals(AuctionStatus.CANCELLED_BY_ADMIN)
+          || previousStatus.equals(AuctionStatus.PAID)) {
         return;
       }
       if (now.isBefore(auction.getStartingTime())) {
@@ -68,6 +69,22 @@ public class AuctionModificationManager implements ResponseListener {
     }
   }
 
+  public void updateAuctionInList(List<Auction> listAuction, Auction auction) {
+    int foundIndex = -1; // 1. Khai báo 1 biến tạm để lưu vị trí nếu tìm thấy
+    // Duyệt list để tìm
+    for (int i = 0; i < listAuction.size(); i++) {
+      if (auction.getAuctionId()
+          == ClientModel.getInstance().getAllAuctions().get(i).getAuctionId()) {
+        foundIndex = i; // 2. Tìm thấy rồi thì lưu vị trí i lại
+        break; // Thoát vòng lặp cho nhẹ máy
+      }
+    }
+    // 3. Kiểm tra xem có thực sự tìm thấy không (khác -1)
+    if (foundIndex != -1) {
+      listAuction.set(foundIndex, auction);
+    }
+  }
+
   @Override
   public void onResponse(Response rp) {
     // luu sp
@@ -76,7 +93,7 @@ public class AuctionModificationManager implements ResponseListener {
         Auction savedAuction = (Auction) rp.getPayLoad();
         Platform.runLater(
             () -> {
-              ClientModel.getInstance().getAllAuctions().add(0, savedAuction);
+              allAuctionsList.addFirst(savedAuction);
             });
       }
     }
@@ -100,24 +117,15 @@ public class AuctionModificationManager implements ResponseListener {
     if (rp.getCommand().getClass().equals(UpdateAuctionCommand.class)
         || rp.getCommand().getClass().equals(UpdateAuctionStatusCommand.class)) {
       if (rp.isSuccess()) {
-        Auction selectedAuction = (Auction) rp.getPayLoad();
-        int foundIndex = -1; // 1. Khai báo 1 biến tạm để lưu vị trí nếu tìm thấy
-        // Duyệt list để tìm
-        for (int i = 0; i < ClientModel.getInstance().getAllAuctions().size(); i++) {
-          if (selectedAuction.getAuctionId()
-              == ClientModel.getInstance().getAllAuctions().get(i).getAuctionId()) {
-            foundIndex = i; // 2. Tìm thấy rồi thì lưu vị trí i lại
-            break; // Thoát vòng lặp cho nhẹ máy
-          }
-        }
-        // 3. Kiểm tra xem có thực sự tìm thấy không (khác -1)
-        if (foundIndex != -1) {
-          int finalIndex = foundIndex;
-          Platform.runLater(
-              () -> {
-                ClientModel.getInstance().getAllAuctions().set(finalIndex, selectedAuction);
-              });
-        }
+        Auction updatedAuction = (Auction) rp.getPayLoad();
+        Platform.runLater(
+            () -> {
+              updateAuctionInList(allAuctionsList, updatedAuction);
+              if (updatedAuction.getSellerId()
+                  == ClientModel.getInstance().getCurrentUser().getId()) {
+                updateAuctionInList(myAuctionsList, updatedAuction);
+              }
+            });
       }
     }
   }

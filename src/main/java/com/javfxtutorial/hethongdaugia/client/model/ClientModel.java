@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.client.model;
 
+import com.javfxtutorial.hethongdaugia.client.controller.ParticipatedAuctionController;
 import com.javfxtutorial.hethongdaugia.client.controller.SellerManagementController;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
@@ -20,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ClientModel {
-
+  public boolean isAllAuctionsLoaded = false;
   private static final Logger log = LoggerFactory.getLogger(ClientModel.class);
   private static ClientModel instance;
 
@@ -32,6 +33,7 @@ public class ClientModel {
     }
     return instance;
   }
+
   public boolean isFromParticipatedAuction;
 
   private User currentUser;
@@ -155,7 +157,6 @@ public class ClientModel {
     return readNotificationIds.containsKey(auctionId);
   }
 
-
   /**
    * Đánh dấu notification của 1 auction là đã đọc. Lưu cả thời điểm đọc để sau 2 ngày có thể tự
    * động xóa.
@@ -233,14 +234,14 @@ public class ClientModel {
     }
   }
 
-  public boolean isLawsuitWarned(int userID, int auctionID ){
+  public boolean isLawsuitWarned(int userID, int auctionID) {
     Preferences preferences = Preferences.userRoot().node(userID + "/lawsuit_warned");
-    return preferences.getBoolean("auction:"+ auctionID , false);
+    return preferences.getBoolean("auction:" + auctionID, false);
   }
 
   public void markLawsuitWarned(int userID, int auctionID) {
     Preferences preferences = Preferences.userRoot().node(userID + "/lawsuit_warned");
-    preferences.putBoolean("auction:"+ auctionID , true);
+    preferences.putBoolean("auction:" + auctionID, true);
   }
 
   public void logout() {

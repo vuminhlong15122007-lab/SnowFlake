@@ -2,7 +2,6 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 
-import com.javfxtutorial.hethongdaugia.client.Util.AuctionModificationManager;
 import com.javfxtutorial.hethongdaugia.client.Util.ToastNotifier;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
@@ -43,6 +42,7 @@ public class AdminItemController implements ResponseListener {
 
   /** Badge "X sản phẩm" trên header bảng — inject từ FXML */
   @FXML private Label itemCountBadge;
+
   @FXML private NotificationToastController notificationToastController;
 
   private ObservableList<Auction> observableList;
@@ -71,7 +71,6 @@ public class AdminItemController implements ResponseListener {
   public void initialize() {
     observableList = ClientModel.getInstance().getAllAuctions();
     itemTable.setItems(observableList);
-
     colId.setCellValueFactory(new PropertyValueFactory<>("auctionId"));
     colItemName.setCellValueFactory(
         cellData -> new SimpleStringProperty(cellData.getValue().getItem().getName()));
@@ -99,7 +98,7 @@ public class AdminItemController implements ResponseListener {
     }
 
     try {
-      if (!AuctionModificationManager.getInstance().isAllAuctionsLoaded) {
+      if (!ClientModel.getInstance().isAllAuctionsLoaded) {
         loadItemData();
       }
     } catch (IOException
@@ -115,6 +114,7 @@ public class AdminItemController implements ResponseListener {
     Command cmd = new GetAllAuctionsCommand();
     NetworkManager networkManager = NetworkManager.getInstance();
     networkManager.sendRequest(cmd, this);
+    log.trace("Gửi yêu cầu load allAuctions");
   }
 
   public void clickButtonExit(ActionEvent event) {
@@ -251,7 +251,7 @@ public class AdminItemController implements ResponseListener {
     if (rp.getCommand().getClass() == GetAllAuctionsCommand.class) {
       if (rp.isSuccess()) {
         ArrayList<Auction> auctionList = (ArrayList<Auction>) rp.getPayLoad();
-        AuctionModificationManager.getInstance().isAllAuctionsLoaded = true;
+        ClientModel.getInstance().isAllAuctionsLoaded = true;
         Platform.runLater(
             () -> {
               observableList.setAll(auctionList);

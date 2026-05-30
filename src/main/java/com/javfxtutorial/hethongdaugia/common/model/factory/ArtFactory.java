@@ -2,13 +2,11 @@ package com.javfxtutorial.hethongdaugia.common.model.factory;
 
 import com.javfxtutorial.hethongdaugia.common.model.domain.Art;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Item;
-import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
 
 public class ArtFactory extends ItemFactory {
   private Item baseItem;
   private String artTitle, artist;
-  private int  yearCreated;
+  private int yearCreated;
 
   public ArtFactory(Item baseItem, String artTitle, String artist, int yearCreated) {
     this.baseItem = baseItem;
@@ -16,8 +14,6 @@ public class ArtFactory extends ItemFactory {
     this.artist = artist;
     this.yearCreated = yearCreated;
   }
-
-
 
   @Override
   public Item createItemFromForm() {

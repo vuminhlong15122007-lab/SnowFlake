@@ -110,7 +110,8 @@ public class LoginController implements ResponseListener, Initializable {
       new HomeController().checkUnpaidAuction();
     } else if (user.getAccountType() == AccountType.ADMIN) {
       log.info(rp.getMessage());
-      changeScene(loginEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UserManagement.fxml");
+      changeScene(
+          loginEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UserManagement.fxml");
     }
   }
 

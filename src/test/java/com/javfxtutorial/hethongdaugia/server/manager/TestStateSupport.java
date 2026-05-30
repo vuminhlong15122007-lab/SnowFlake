@@ -40,7 +40,8 @@ final class TestStateSupport {
   static void notifySubscribers(AuctionManager manager, int auctionId, BidTransaction bid)
       throws Exception {
     Method method =
-        AuctionManager.class.getDeclaredMethod("notifySubscribers", int.class, BidTransaction.class);
+        AuctionManager.class.getDeclaredMethod(
+            "notifySubscribers", int.class, BidTransaction.class);
     method.setAccessible(true);
     method.invoke(manager, auctionId, bid);
   }

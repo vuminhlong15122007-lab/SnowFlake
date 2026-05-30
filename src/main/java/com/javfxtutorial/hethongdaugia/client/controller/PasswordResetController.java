@@ -1,7 +1,7 @@
 package com.javfxtutorial.hethongdaugia.client.controller;
 
-import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.Util.ToastNotifier;
+import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;

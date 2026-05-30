@@ -28,10 +28,13 @@ public class UpdateAuctionStatusCommand extends Command {
     int result1 = AuctionDAO.getInstance().update(auction);
     if (result1 > 0) {
       AuctionStatus status = auction.getStatus();
-      AuctionManager.getInstance().updateAuctionStatus(auction.getAuctionId(), status);
+      AuctionManager.getInstance()
+          .updateAuctionStatus(auction.getAuctionId(), status); // update trong RAM
 
       if (status == AuctionStatus.CANCELLED || status == AuctionStatus.CANCELLED_BY_ADMIN) {
-        ClientHandler.broadcast(new Response(false, "ADMIN_CANCELLED_AUCTION", auction, this));
+        if (status == AuctionStatus.CANCELLED_BY_ADMIN) {
+          ClientHandler.broadcast(new Response(false, "ADMIN_CANCELLED_AUCTION", auction, this));
+        }
         String productName =
             (auction.getItem() != null)
                 ? auction.getItem().getName()

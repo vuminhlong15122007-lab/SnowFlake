@@ -117,7 +117,7 @@ public class AuctionListController implements ResponseListener {
         });
 
     setActiveButton(btnAll);
-    if (!AuctionModificationManager.getInstance().isAllAuctionsLoaded) {
+    if (!ClientModel.getInstance().isAllAuctionsLoaded) {
       loadData();
     }
 
@@ -133,7 +133,8 @@ public class AuctionListController implements ResponseListener {
       statusRefreshScheduler.scheduleAtFixedRate(
           () -> {
             try {
-              AuctionModificationManager.getInstance().refreshAuctionStatus(observable);
+              Platform.runLater(
+                  () -> AuctionModificationManager.getInstance().refreshAuctionStatus(observable));
             } catch (Exception e) {
               log.warn("Auto-refresh thất bại: {}", e.getMessage());
             }
@@ -255,23 +256,7 @@ public class AuctionListController implements ResponseListener {
             }
             ArrayList<Auction> auctions = (ArrayList<Auction>) rp.getPayLoad();
             observable.setAll(auctions);
-            AuctionModificationManager.getInstance().isAllAuctionsLoaded = true;
-          });
-    }
-    if (rp.getCommand().getClass() == UpdateAuctionStatusCommand.class) {
-      Object payload = rp.getPayLoad();
-      if (!(payload instanceof Auction)) return;
-      Auction updated = (Auction) payload;
-      ;
-      if (updated == null) return;
-      Platform.runLater(
-          () -> {
-            for (Auction a : observable) {
-              if (a.getAuctionId() == updated.getAuctionId()) {
-                a.setStatus(updated.getStatus());
-                break;
-              }
-            }
+            ClientModel.getInstance().isAllAuctionsLoaded = true;
           });
     }
   }

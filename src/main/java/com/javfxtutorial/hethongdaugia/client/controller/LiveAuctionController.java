@@ -25,7 +25,6 @@ import com.javfxtutorial.hethongdaugia.common.network.Response;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -89,7 +88,8 @@ public class LiveAuctionController implements ResponseListener {
     if (isAdmin) {
       changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_ProductManagement.fxml");
     } else if (isSeller) {
-      changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Seller_ProductManagement.fxml");
+      changeScene(
+          event, "/com/javfxtutorial/hethongdaugia/view/fxml/Seller_ProductManagement.fxml");
     } else if (ClientModel.getInstance().isFromParticipatedAuction) {
       changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/UserParticipatedAuction.fxml");
       ClientModel.getInstance().isFromParticipatedAuction = false;
@@ -195,7 +195,7 @@ public class LiveAuctionController implements ResponseListener {
     currentAuction = ClientModel.getInstance().getCurrentAuction();
     // Xác định xem người dùng hiện tại có phải admin không
     isAdmin = ClientModel.getInstance().getCurrentUser().getAccountType() == AccountType.ADMIN;
-    //Xac dinh có phải seller k
+    // Xac dinh có phải seller k
     isSeller = ClientModel.getInstance().getCurrentUser().getId() == currentAuction.getSellerId();
 
     // register để nhận command của người khác nữa
@@ -216,7 +216,7 @@ public class LiveAuctionController implements ResponseListener {
 
     // Cài đặt giao diện dành cho admin
     setupAdminView();
-    //cai dat giao diện cho seller
+    // cai dat giao diện cho seller
     setupSellerView();
     // thời gian còn lại
     timer = new TimeLeft(lbTimeLeft, currentAuction.getEndingTime());
@@ -268,13 +268,14 @@ public class LiveAuctionController implements ResponseListener {
           statusStyle = "-fx-text-fill: -sf-text; -fx-font-weight: bold; -fx-font-size: 13px;";
         }
         case CANCELLED -> {
-            statusText = "ĐÃ BỊ HỦY";
-            statusStyle = "-fx-text-fill: -sf-danger; -fx-font-weight: bold; -fx-font-size: 13px;";
-
-        }case CANCELLED_BY_ADMIN -> {
+          statusText = "ĐÃ BỊ HỦY";
+          statusStyle = "-fx-text-fill: -sf-danger; -fx-font-weight: bold; -fx-font-size: 13px;";
+        }
+        case CANCELLED_BY_ADMIN -> {
           statusText = "ĐÃ BỊ HỦY  ";
           statusStyle = "-fx-text-fill: -sf-danger; -fx-font-weight: bold; -fx-font-size: 13px;";
-        }default -> {
+        }
+        default -> {
           statusText = "ĐÃ THÀNH CÔNG";
           statusStyle = "-fx-text-fill: -sf-text; -fx-font-weight: bold; -fx-font-size: 13px;";
         }
@@ -290,6 +291,7 @@ public class LiveAuctionController implements ResponseListener {
     autoMaxPrice_tf.setDisable(true);
     btnToInformation.setDisable(true);
   }
+
   private void setupSellerView() {
     if (!isSeller) return;
     AuctionStatus status = currentAuction.getStatus();
@@ -454,7 +456,6 @@ public class LiveAuctionController implements ResponseListener {
       if (bid.getBidderId() == ClientModel.getInstance().getCurrentUser().getId()) {
         Platform.runLater(() -> showNotification(rp.getMessage()));
       }
-
 
       // nếu đặt giá thành công thì set up lại view
       if (rp.isSuccess()) {

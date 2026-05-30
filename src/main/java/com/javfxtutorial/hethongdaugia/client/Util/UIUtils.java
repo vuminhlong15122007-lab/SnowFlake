@@ -125,7 +125,7 @@ public class UIUtils {
     } catch (IOException e) {
       log.error("Không thể tải màn hình: {}", fxmlPath, e);
       showAlert("Lỗi", "Không thể tải màn hình: " + fxmlPath);
-    } catch (NullPointerException e){
+    } catch (NullPointerException e) {
       log.error(e.getMessage());
     }
   }

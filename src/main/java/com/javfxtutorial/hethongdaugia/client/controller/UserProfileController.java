@@ -39,6 +39,7 @@ public class UserProfileController implements ResponseListener {
   @FXML private ImageView myImageView;
   @FXML private Label message;
   @FXML private NotificationToastController notificationToastController;
+
   @FXML
   public void initialize() {
     loadUserInfo();

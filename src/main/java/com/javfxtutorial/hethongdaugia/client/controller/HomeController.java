@@ -64,11 +64,11 @@ public class HomeController implements ResponseListener {
     if (rp.isSuccess()) {
       ArrayList<Auction> unpaidList = (ArrayList<Auction>) rp.getPayLoad();
       Platform.runLater(
-              () -> {
-                if (unpaidList != null && !unpaidList.isEmpty()) {
-                  showPaymentPopupChain(unpaidList, 0);
-                }
-              });
+          () -> {
+            if (unpaidList != null && !unpaidList.isEmpty()) {
+              showPaymentPopupChain(unpaidList, 0);
+            }
+          });
     }
   }
 
@@ -77,7 +77,6 @@ public class HomeController implements ResponseListener {
 
     Auction auction = unpaidList.get(index);
     int userId = ClientModel.getInstance().getCurrentUser().getId();
-
 
     LocalDateTime deadline = auction.getEndingTime().plusHours(24);
     boolean isOverdue = LocalDateTime.now().isAfter(deadline);
@@ -89,8 +88,10 @@ public class HomeController implements ResponseListener {
     }
 
     try {
-      FXMLLoader loader = new FXMLLoader(
-              UIUtils.class.getResource("/com/javfxtutorial/hethongdaugia/view/fxml/PaymentPopup.fxml"));
+      FXMLLoader loader =
+          new FXMLLoader(
+              UIUtils.class.getResource(
+                  "/com/javfxtutorial/hethongdaugia/view/fxml/PaymentPopup.fxml"));
       Parent root = loader.load();
       PaymentPopupController ctrl = loader.getController();
       ctrl.setAuction(auction);
@@ -104,11 +105,12 @@ public class HomeController implements ResponseListener {
         ClientModel.getInstance().markLawsuitWarned(userId, auction.getAuctionId());
       }
 
-      ctrl.setOnConfirmed(() -> {
-        markAsPaid(auction);
-        popup.close();
-        showPaymentPopupChain(unpaidList, index + 1);
-      });
+      ctrl.setOnConfirmed(
+          () -> {
+            markAsPaid(auction);
+            popup.close();
+            showPaymentPopupChain(unpaidList, index + 1);
+          });
 
       popup.show();
     } catch (IOException e) {
@@ -116,6 +118,7 @@ public class HomeController implements ResponseListener {
       showPaymentPopupChain(unpaidList, index + 1);
     }
   }
+
   private void markAsPaid(Auction auction) {
     new Thread(
             () -> {
@@ -127,7 +130,7 @@ public class HomeController implements ResponseListener {
                 log.error("Lỗi mark PAID: {}", e.getMessage());
               }
             })
-            .start();
+        .start();
   }
 
   public void checkUnpaidAuction() {
@@ -141,6 +144,6 @@ public class HomeController implements ResponseListener {
                 log.error("Lỗi check unpaid: {}", e.getMessage());
               }
             })
-            .start();
+        .start();
   }
 }
