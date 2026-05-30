@@ -397,6 +397,7 @@ public class LiveAuctionController implements ResponseListener {
 
         // Tạm thời khóa ô nhập giá để tránh thay đổi khi bot đang chạy
         autoMaxPrice_tf.setDisable(true);
+        autoBidToggle.setOpacity(0.5);
         autoBidToggle.setText("Autobid");
       } catch (NumberFormatException e) {
         toast().warning("Vui lòng nhập một số tiền hợp lệ!");
@@ -411,6 +412,7 @@ public class LiveAuctionController implements ResponseListener {
     } else {
       // Xử lý khi người dùng tắt Bot
       autoMaxPrice_tf.setDisable(false);
+      autoBidToggle.setOpacity(1.0);
       autoBidToggle.setText("AutoBid");
 
       stopAutoBid();
