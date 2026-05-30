@@ -1,5 +1,6 @@
 package com.javfxtutorial.hethongdaugia.common.model.Command;
 
+import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.domain.SellerNotification;
@@ -33,7 +34,7 @@ public class UpdateAuctionStatusCommand extends Command {
 
       if (status == AuctionStatus.CANCELLED || status == AuctionStatus.CANCELLED_BY_ADMIN) {
         if (status == AuctionStatus.CANCELLED_BY_ADMIN) {
-          ClientHandler.broadcastToSubscribers(AuctionManager.getInstance().getAuctionSubscribers().get(auction.getAuctionId()), new Response(false, "ADMIN_CANCELLED_AUCTION", auction, this));
+          ClientHandler.broadcastExcluding(auction.getSellerId(), new Response(false, "ADMIN_CANCELLED_AUCTION", auction, this));
         }
         String productName =
             (auction.getItem() != null)

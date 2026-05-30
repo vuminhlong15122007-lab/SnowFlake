@@ -136,12 +136,16 @@ public class ClientHandler extends Thread implements BidListener {
     }
   }
 
-  public static void broadcastToSubscribers(List<BidListener> subscribers, Response rp) {
-    if (subscribers == null || subscribers.isEmpty()) return;
-    for (BidListener listener : subscribers) {
-      if (listener instanceof ClientHandler ch) {
+  public static void broadcastExcluding(int userId, Response rp) {
+    boolean sent = false;
+    for (ClientHandler ch : allClients) {
+      if (ch.currentUser != null && ch.currentUser.getId() != userId) {
         ch.sendResponse(rp);
+        sent = true;
       }
+    }
+    if (!sent) {
+      log.warn("User id={} da nhan duoc thong bao???", userId);
     }
   }
 
