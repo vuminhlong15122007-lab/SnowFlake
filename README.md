@@ -358,6 +358,8 @@ mvn test -Djava.awt.headless=true --no-transfer-progress
 
 ## 8. Tài liệu và liên kết nộp bài
 
-| Nội dung | Link |
-| --- | --- |
-| Google Drive tổng hợp | [Mở tài liệu](https://drive.google.com/file/d/1o0IBh6RRVxtZIC6QR3hcssDfC_f8ynxJ/view?usp=sharing) |
+| Nội dung                  | Link                                                                                              |
+|---------------------------|---------------------------------------------------------------------------------------------------|
+| Báo Cáo                   | [Mở tài liệu](https://drive.google.com/file/d/1o0IBh6RRVxtZIC6QR3hcssDfC_f8ynxJ/view?usp=sharing) |
+| Video demo trên GG Driver | [Mở Video](https://drive.google.com/file/d/19xoWSCaqmhOM7LuuLezVFwnwV8Xi2InB/view?usp=sharing)    |
+| Video demo trên Youtube   | [Mở Video](https://youtu.be/PQXbnOE3Pjg?si=JszwXo1bJkjY7SIN)                                                                               |
