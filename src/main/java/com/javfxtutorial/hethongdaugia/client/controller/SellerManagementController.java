@@ -1102,6 +1102,11 @@ public class SellerManagementController implements ResponseListener {
   private void handleAuctionStatusPushResponse(Response rp) {
     if ("ADMIN_CANCELLED_AUCTION".equals(rp.getMessage())
         && rp.getPayLoad() instanceof SellerNotification adminNotif) {
+      int currentUserId = ClientModel.getInstance().getCurrentUser().getId();
+      int sellerId = ClientModel.getInstance().getSellerIdByAuctionId(adminNotif.getAuctionId());
+
+      if (sellerId != currentUserId) return;
+
       Platform.runLater(
           () -> {
             for (int i = 0; i < observable.size(); i++) {

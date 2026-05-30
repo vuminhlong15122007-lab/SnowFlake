@@ -70,6 +70,9 @@ public class ClientModel {
 
   private final ObservableList<SellerNotification> sellerNotifications =
       FXCollections.observableArrayList();
+  public int getSellerIdByAuctionId(int auctionId) {
+      return currentAuction.getSellerId();
+  }
 
   public ObservableList<SellerNotification> getSellerNotifications() {
     return sellerNotifications;
