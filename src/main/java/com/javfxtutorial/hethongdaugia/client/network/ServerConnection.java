@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 public class ServerConnection {
   private static final Logger log = LoggerFactory.getLogger(ServerConnection.class);
 
-  private static final String DEFAULT_IP = "10.11.19.219";
+  private static final String DEFAULT_IP = "localhost";
   private static final int DEFAULT_PORT = 5000;
 
   private final Socket clientSocket;
