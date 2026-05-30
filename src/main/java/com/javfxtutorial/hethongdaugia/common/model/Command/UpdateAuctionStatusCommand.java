@@ -57,8 +57,6 @@ public class UpdateAuctionStatusCommand extends Command {
               e.getMessage(),
               e);
         }
-
-        ClientHandler.broadcast(new Response(true, "ADMIN_CANCELLED_AUCTION", notif, this));
         return new Response(true, "ADMIN_CANCELLED_AUCTION", notif, this);
       }
 

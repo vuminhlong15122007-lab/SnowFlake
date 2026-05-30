@@ -1,10 +1,14 @@
 package com.javfxtutorial.hethongdaugia.common.model.Command;
 
+import com.javfxtutorial.hethongdaugia.common.Exception.data.DataException;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import java.util.ArrayList;
+
+import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,6 +24,13 @@ public class GetUnpaidAuctionCommand extends Command {
   public Response handle() {
     try {
       ArrayList<Auction> unpaid = AuctionDAO.getInstance().selectUnpaidByWinnerName(userName);
+      unpaid.forEach(auction -> {
+        try {
+          AuctionManager.getInstance().refreshAuctionStatus(auction);
+        } catch (DataException e) {
+          throw new RuntimeException(e);
+        }
+      });
       log.info("User {} có {} phiên chưa thanh toán", userName, unpaid.size());
       return new Response(true, "OK", unpaid, this);
     } catch (Exception e) {

@@ -32,6 +32,7 @@ public class ClientModel {
     }
     return instance;
   }
+  public boolean isFromParticipatedAuction;
 
   private User currentUser;
 
@@ -154,6 +155,7 @@ public class ClientModel {
     return readNotificationIds.containsKey(auctionId);
   }
 
+
   /**
    * Đánh dấu notification của 1 auction là đã đọc. Lưu cả thời điểm đọc để sau 2 ngày có thể tự
    * động xóa.
@@ -229,6 +231,16 @@ public class ClientModel {
     if (pruneScheduler != null && !pruneScheduler.isShutdown()) {
       pruneScheduler.shutdown();
     }
+  }
+
+  public boolean isLawsuitWarned(int userID, int auctionID ){
+    Preferences preferences = Preferences.userRoot().node(userID + "/lawsuit_warned");
+    return preferences.getBoolean("auction:"+ auctionID , false);
+  }
+
+  public void markLawsuitWarned(int userID, int auctionID) {
+    Preferences preferences = Preferences.userRoot().node(userID + "/lawsuit_warned");
+    preferences.putBoolean("auction:"+ auctionID , true);
   }
 
   public void logout() {

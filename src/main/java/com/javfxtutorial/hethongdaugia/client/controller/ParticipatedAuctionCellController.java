@@ -43,59 +43,76 @@ public class ParticipatedAuctionCellController implements ResponseListener {
   @FXML private Label lbTime;
   @FXML private StackPane countdownBadge;
   @FXML private ImageView productImage;
+  private TimeLeft timer;
 
   private Auction auction;
 
-  private void showCountdown(LocalDateTime deadline) {
+  private void showCountdown() {
     if (countdownBadge != null) {
       countdownBadge.setVisible(true);
       countdownBadge.setManaged(true);
     }
-    if (lbTime != null) {
-      TimeLeft timer = new TimeLeft(lbTime, deadline);
-      timer.setOnFinished(
-              () -> {
-                // Khi hết giờ, đổi badge sang đỏ
-                if (lbTime != null) {
-                  lbTime.setStyle(
-                          "-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: -sf-danger;");
-                }
-                if (auction.getStatus()
-                        == AuctionStatus.RUNNING) { // hết countdown running → chuyển CLOSED
-                  auction.setStatus(AuctionStatus.CLOSED);
-                  Platform.runLater(
-                          () -> {
-                            try {
-                              Command cmd = new UpdateAuctionStatusCommand(auction);
-                              NetworkManager.getInstance().sendRequest(cmd, this);
-                            } catch (ConnectionFailedException e) {
-                              log.error("Không kết nối được server");
-                              showAlert("Lỗi", e.getMessage());
-                            } catch (SendFailedException e) {
-                              log.error("Không gửi được command");
-                              showAlert("Lỗi", e.getMessage());
-                            }
-                          });
-                } else if (auction.getStatus()
-                        == AuctionStatus.CLOSED) { // hết countdown chờ thanh toán → CANCELLED
-                  auction.setStatus(AuctionStatus.CANCELLED);
-                  Platform.runLater(
-                          () -> {
-                            try {
-                              Command cmd = new UpdateAuctionStatusCommand(auction);
-                              NetworkManager.getInstance().sendRequest(cmd, this);
-                            } catch (ConnectionFailedException e) {
-                              log.error("Không kết nối được server");
-                              showAlert("Lỗi", e.getMessage());
-                            } catch (SendFailedException e) {
-                              log.error("Không gửi được command");
-                              showAlert("Lỗi", e.getMessage());
-                            }
-                          });
-                }
-              });
-      timer.start();
+    switch (auction.getStatus()){
+      case RUNNING -> {
+        if (timer != null) timer.stop();
+        timer = new TimeLeft(lbTime, auction.getEndingTime());
+        timer.setOnFinished(
+            () -> {
+              // Khi hết giờ, đổi badge sang đỏ
+              if (lbTime != null) {
+                lbTime.setStyle(
+                    "-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: -sf-danger;");
+              }
+              if (auction.getStatus()
+                  == AuctionStatus.RUNNING) { // hết countdown running → chuyển CLOSED
+                auction.setStatus(AuctionStatus.CLOSED);
+                Platform.runLater(
+                    () -> {
+                      try {
+                        Command cmd = new UpdateAuctionStatusCommand(auction);
+                        NetworkManager.getInstance().sendRequest(cmd, this);
+                      } catch (ConnectionFailedException e) {
+                        log.error("Không kết nối được server");
+                        showAlert("Lỗi", e.getMessage());
+                      } catch (SendFailedException e) {
+                        log.error("Không gửi được command");
+                        showAlert("Lỗi", e.getMessage());
+                      }
+                    });
+              }
+            });
+      }
+      case CLOSED -> {
+        if (timer != null) timer.stop();
+        timer = new TimeLeft(lbTime, auction.getEndingTime().plusHours(24));
+        timer.setOnFinished(
+            () -> {
+              // Khi hết giờ, đổi badge sang đỏ
+              if (lbTime != null) {
+                lbTime.setStyle(
+                    "-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: -sf-danger;");
+              }
+              if (auction.getStatus()
+                  == AuctionStatus.RUNNING) { // hết countdown running → chuyển CLOSED
+                auction.setStatus(AuctionStatus.CLOSED);
+                Platform.runLater(
+                    () -> {
+                      try {
+                        Command cmd = new UpdateAuctionStatusCommand(auction);
+                        NetworkManager.getInstance().sendRequest(cmd, this);
+                      } catch (ConnectionFailedException e) {
+                        log.error("Không kết nối được server");
+                        showAlert("Lỗi", e.getMessage());
+                      } catch (SendFailedException e) {
+                        log.error("Không gửi được command");
+                        showAlert("Lỗi", e.getMessage());
+                      }
+                    });
+              }
+            });
+      }
     }
+    timer.start();
   }
 
   private void hideCountdown() {
@@ -141,6 +158,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
 
     } else if (status == AuctionStatus.RUNNING) {
       ClientModel.getInstance().setCurrentAuction(auction);
+      ClientModel.getInstance().isFromParticipatedAuction = true;
       changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/LiveAuction.fxml");
     } else if (status == AuctionStatus.PAID) {
       showAlert("Đã thanh toán", "Sản phẩm này đã được thanh toán xong!", "Happy.gif");
@@ -185,7 +203,6 @@ public class ParticipatedAuctionCellController implements ResponseListener {
   private void updateUI(AuctionStatus status) {
     switch (status) {
       case RUNNING:
-        showCountdown(auction.getEndingTime());
         lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
         lbWinnerName.setText(String.valueOf(auction.getWinnerName()));
         if (actionButton != null) {
@@ -193,6 +210,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
           actionButton.setText("THAM GIA");
           setActionButtonClass("sf-auction-action-primary");
         }
+        showCountdown();
         break;
 
       case CLOSED:
@@ -203,11 +221,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
           actionButton.setDisable(false);
           actionButton.setText("THANH TOÁN");
           setActionButtonClass("sf-auction-action-warning");
-          LocalDateTime deadline =
-                  (auction.getEndingTime() != null)
-                          ? auction.getEndingTime().plusHours(24)
-                          : LocalDateTime.now().plusHours(24);
-          showCountdown(deadline);
+          showCountdown();
         } else {
           hideCountdown();
           actionButton.setDisable(true);

@@ -103,55 +103,13 @@ public class ProductDisplayController implements ResponseListener {
     }
     updateUI(auction.getStatus());
 
-    if (timer == null) return;
-
-    timer.setOnFinished(
-        () -> {
-          if (auction.getStatus()
-              == AuctionStatus.NOT_START) { // hết countdown running → chuyển CLOSED
-            auction.setStatus(AuctionStatus.RUNNING);
-            Platform.runLater(
-                () -> {
-                  updateUI(auction.getStatus());
-                  if (timer != null) timer.start();
-                  try {
-                    ServerConnection connection = NetworkManager.getConnection();
-                    Command cmd = new UpdateAuctionStatusCommand(auction);
-                    connection.sendCommand(cmd);
-                  } catch (ConnectionFailedException e) {
-                    log.error("Không kết nối được server");
-                    notifyError(e.getMessage());
-                  } catch (SendFailedException e) {
-                    log.error("Không gửi được command");
-                    notifyError(e.getMessage());
-                  }
-                });
-          } else if (auction.getStatus()
-              == AuctionStatus.RUNNING) { // hết countdown chờ thanh toán → CANCELLED
-            auction.setStatus(AuctionStatus.CLOSED);
-            Platform.runLater(
-                () -> {
-                  updateUI(auction.getStatus());
-                  try {
-                    ServerConnection connection = NetworkManager.getConnection();
-                    Command cmd = new UpdateAuctionStatusCommand(auction);
-                    connection.sendCommand(cmd);
-                  } catch (ConnectionFailedException e) {
-                    log.error("Không kết nối được server");
-                    notifyError(e.getMessage());
-                  } catch (SendFailedException e) {
-                    log.error("Không gửi được command");
-                    notifyError(e.getMessage());
-                  }
-                });
-          }
-        });
-    timer.start();
   }
 
   private void updateUI(AuctionStatus status) {
     switch (status) {
       case RUNNING -> {
+
+
         UI01.setText("THỜI GIAN CÒN LẠI");
         UI01.setStyle("-fx-text-fill: -sf-success; -fx-alignment: CENTER;"); // ← đổi màu xanh
         UI02.setStyle(
@@ -160,11 +118,26 @@ public class ProductDisplayController implements ResponseListener {
         lbtimeLeft.setStyle("-fx-text-fill: -sf-success;");
         ThamGiaDauGiaBtn.setText("Tham gia");
         ThamGiaDauGiaBtn.setStyle("");
-        if (timer != null) {
-          timer.stop();
-          timer = null;
-        }
+        if (timer != null)timer.stop();
         timer = new TimeLeft(lbtimeLeft, auction.getEndingTime());
+        timer.setOnFinished(() -> {
+          auction.setStatus(AuctionStatus.CLOSED);
+          Platform.runLater(
+              () -> {
+                try {
+                  ServerConnection connection = NetworkManager.getConnection();
+                  Command cmd = new UpdateAuctionStatusCommand(auction);
+                  connection.sendCommand(cmd);
+                } catch (ConnectionFailedException e) {
+                  log.error("Không kết nối được server");
+                  notifyError(e.getMessage());
+                } catch (SendFailedException e) {
+                  log.error("Không gửi được command");
+                  notifyError(e.getMessage());
+                }
+              });
+        });
+        timer.start();
       }
       case NOT_START -> {
         UI01.setStyle("-fx-text-fill: -sf-warning; -fx-alignment: CENTER;");
@@ -177,11 +150,26 @@ public class ProductDisplayController implements ResponseListener {
         ThamGiaDauGiaBtn.setStyle(
             "-fx-background-color: linear-gradient(to right, -sf-danger, -sf-warning); "
                 + "-fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
-        if (timer != null) {
-          timer.stop();
-          timer = null;
-        }
+        if (timer != null) timer.stop();
         timer = new TimeLeft(lbtimeLeft, auction.getStartingTime());
+        timer.setOnFinished(() -> {
+          auction.setStatus(AuctionStatus.RUNNING);
+          Platform.runLater(
+              () -> {
+                try {
+                  ServerConnection connection = NetworkManager.getConnection();
+                  Command cmd = new UpdateAuctionStatusCommand(auction);
+                  connection.sendCommand(cmd);
+                } catch (ConnectionFailedException e) {
+                  log.error("Không kết nối được server");
+                  notifyError(e.getMessage());
+                } catch (SendFailedException e) {
+                  log.error("Không gửi được command");
+                  notifyError(e.getMessage());
+                }
+              });
+        });
+        timer.start();
       }
       default -> { // CLOSED
         lbtimeLeft.setText("ĐÃ KẾT THÚC");

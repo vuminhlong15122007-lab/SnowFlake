@@ -68,7 +68,6 @@ public class LiveAuctionController implements ResponseListener {
   @FXML private Label auctionStatusLabel; // Nhãn trạng thái phiên (chỉ hiện cho admin)
   @FXML private Button btnToInformation;
   @FXML private NotificationToastController notificationToastController;
-
   private boolean isAdmin = false;
   private boolean isSeller = false;
   private final NetworkManager networkManager = NetworkManager.getInstance();
@@ -91,6 +90,9 @@ public class LiveAuctionController implements ResponseListener {
       changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_ProductManagement.fxml");
     } else if (isSeller) {
       changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/Seller_ProductManagement.fxml");
+    } else if (ClientModel.getInstance().isFromParticipatedAuction) {
+      changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/UserParticipatedAuction.fxml");
+      ClientModel.getInstance().isFromParticipatedAuction = false;
     } else {
       changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/AuctionList.fxml");
     }
