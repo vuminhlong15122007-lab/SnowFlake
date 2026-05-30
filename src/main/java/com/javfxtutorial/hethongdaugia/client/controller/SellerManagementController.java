@@ -330,6 +330,8 @@ public class SellerManagementController implements ResponseListener {
    */
   private void onAuctionSelected(Auction auction) {
     if (auction == null) return;
+    AuctionModificationManager.getInstance().refreshAuctionStatus(List.of(auction));
+    if (auction == null) return;
     switch (auction.getStatus()) {
       case CANCELLED -> handleCancelledAuction(auction);
       case CANCELLED_BY_ADMIN -> handleCancelledByAdminAuction(auction);
