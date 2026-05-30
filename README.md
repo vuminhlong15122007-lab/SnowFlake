@@ -216,11 +216,11 @@ Project_SnowFlake/
 
 Entry point:
 
-| Thành phần | Class |
-| --- | --- |
-| Server socket | `com.javfxtutorial.hethongdaugia.server.ServerApp` |
-| Client khi chạy bằng JavaFX Maven Plugin | `com.javfxtutorial.hethongdaugia.client.MainApplication` |
-| Client khi chạy JAR | `com.javfxtutorial.hethongdaugia.client.AppLauncher` gọi `MainApp` |
+| Thành phần | Class                                                                      |
+| --- |----------------------------------------------------------------------------|
+| Server socket | `com.javfxtutorial.hethongdaugia.server.ServerApp`                         |
+| Client khi chạy bằng JavaFX Maven Plugin | `com.javfxtutorial.hethongdaugia.client.MainApplication`                   |
+| Client khi chạy JAR | `com.javfxtutorial.hethongdaugia.client.AppLauncher` gọi `MainApplication` |
 
 JAR:
 

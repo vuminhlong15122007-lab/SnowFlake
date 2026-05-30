@@ -47,7 +47,7 @@ public class AuctionManager {
   private final AntiSnipeExtender antiSnipeExtender =
       new AntiSnipeExtender(ANTI_SNIPE_X_SECONDS, ANTI_SNIPE_Y_SECONDS);
 
-  // ── Singleton thread-safe ─────────────────────────
+
   private static volatile AuctionManager instance;
 
   private AuctionManager() {}
@@ -63,24 +63,22 @@ public class AuctionManager {
     return instance;
   }
 
-  // ── Observer: auctionId → list listener ──────────
   private final Map<Integer, List<BidListener>> auctionSubscribers = new ConcurrentHashMap<>();
 
-  // ── RAM cache ────────────────────────────────────
+  public Map<Integer, List<BidListener>> getAuctionSubscribers() {
+    return auctionSubscribers;
+  }
+
   private final Map<Integer, Auction> activeAuctions = new ConcurrentHashMap<>();
 
-  // ── AutoBid registry ─────────────────────────────
+
   private final Map<Integer, List<AutoBidConfig>> autoBidRegistry = new ConcurrentHashMap<>();
-  // ── Lock riêng theo từng auctionId ───────────────
+
   private final Map<Integer, ReentrantLock> auctionLocks = new ConcurrentHashMap<>();
 
   private ReentrantLock getAuctionLock(int auctionId) {
     return auctionLocks.computeIfAbsent(auctionId, id -> new ReentrantLock());
   }
-
-  // ─────────────────────────────────────────────────
-  // SUBSCRIBE / UNSUBSCRIBE
-  // ─────────────────────────────────────────────────
 
   public void registerToAuction(BidListener listener, int auctionId) {
     if (listener == null) {
@@ -104,9 +102,7 @@ public class AuctionManager {
     log.info("Client hủy đăng ký auction #{}", auctionId);
   }
 
-  // ─────────────────────────────────────────────────
-  // PLACE BID — logic chính
-  // ─────────────────────────────────────────────────
+
   public void unregisterListenerFromAll(BidListener listener) {
     if (listener == null) {
       return;

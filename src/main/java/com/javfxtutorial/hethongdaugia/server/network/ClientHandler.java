@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -132,6 +133,15 @@ public class ClientHandler extends Thread implements BidListener {
     }
     if (!sent) {
       log.warn("User id={} khong online, bo qua thong bao", userId);
+    }
+  }
+
+  public static void broadcastToSubscribers(List<BidListener> subscribers, Response rp) {
+    if (subscribers == null || subscribers.isEmpty()) return;
+    for (BidListener listener : subscribers) {
+      if (listener instanceof ClientHandler ch) {
+        ch.sendResponse(rp);
+      }
     }
   }
 
