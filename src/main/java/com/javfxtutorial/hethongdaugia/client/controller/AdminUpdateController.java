@@ -12,6 +12,7 @@ import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -71,6 +72,22 @@ public class AdminUpdateController implements ResponseListener {
     }
     if (newName.isBlank() || newEmail.isBlank() || newPhone.isBlank()) {
       toast().warning("Vui lòng nhập đầy đủ thông tin");
+      return;
+    }
+    // check so dien thoai
+    if (newPhone.length() != 10) {
+      toast().warning("Số điện thoại phải đủ 10 số!");
+      return;
+    }
+    try {
+      Long.parseLong(newPhone);
+    } catch (NumberFormatException e) {
+      toast().warning("Số điện thoại chỉ bao gồm các số!");
+      return;
+    }
+    // check email
+    if (!newEmail.endsWith("@gmail.com")) {
+      toast().warning(" Email phải có đuôi @gmail.com!");
       return;
     }
 
