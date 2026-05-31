@@ -33,7 +33,7 @@ public class UpdateAuctionStatusCommand extends Command {
 
       if (status == AuctionStatus.CANCELLED || status == AuctionStatus.CANCELLED_BY_ADMIN) {
         if (status == AuctionStatus.CANCELLED_BY_ADMIN) {
-          ClientHandler.broadcast(new Response(false, "ADMIN_CANCELLED_AUCTION", auction, this));
+          ClientHandler.broadcast(new Response(true, "ADMIN_CANCELLED_AUCTION", auction, this));
         }
         String productName =
             (auction.getItem() != null)
