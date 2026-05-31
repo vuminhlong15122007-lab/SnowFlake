@@ -135,24 +135,24 @@ Luồng chính:
 
 ## 3. Đối chiếu tiêu chí đánh giá
 
-| Nội dung đánh giá | Trạng thái | Hiện thực trong dự án |
-| --- | --- | --- |
-| Xác định và triển khai các lớp chính (`User`, Bidder/Seller/Admin, `Item`, `Auction`, `BidTransaction`,...) | Đã làm | Có `User`, `Item`, `Auction`, `BidTransaction`; vai trò được quản lý bằng `AccountType` với `USER` kiêm bidder/seller và `ADMIN` cho quản trị. |
-| Áp dụng đúng các nguyên tắc OOP | Đã làm | `Item` được kế thừa bởi `Art`, `Electronics`, `Vehicle`; model đóng gói bằng getter/setter; factory, command và interface hỗ trợ đa hình, trừu tượng. |
-| Áp dụng design pattern phù hợp | Đã làm | Có Singleton, Factory Method, Command, Observer và DAO. |
-| Quản lý người dùng, sản phẩm | Đã làm | Đăng ký, đăng nhập, cập nhật hồ sơ, reset mật khẩu, quản lý user cho admin; seller tạo/sửa/xóa auction và item. |
-| Chức năng đấu giá | Đã làm | Danh sách phiên, chi tiết sản phẩm, tham gia đấu giá trực tiếp, kiểm tra bid hợp lệ, cập nhật người dẫn đầu và trạng thái phiên. |
-| Xử lý lỗi và ngoại lệ | Đã làm | Có exception cho đăng nhập, user không tồn tại, bid thấp, bid không đủ bước giá, tự bid, phiên chưa bắt đầu/đã đóng, lỗi dữ liệu và lỗi kết nối. |
+| Nội dung đánh giá | Trạng thái | Hiện thực trong dự án                                                                                                                                     |
+| --- | --- |-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Xác định và triển khai các lớp chính (`User`, Bidder/Seller/Admin, `Item`, `Auction`, `BidTransaction`,...) | Đã làm | Có `User`, `Item`, `Auction`, `BidTransaction`; vai trò được quản lý bằng `AccountType` với `USER` kiêm bidder/seller và `ADMIN` cho quản trị.            |
+| Áp dụng đúng các nguyên tắc OOP | Đã làm | `Item` được kế thừa bởi `Art`, `Electronics`, `Vehicle`; model đóng gói bằng getter/setter; factory, command và interface hỗ trợ đa hình, trừu tượng.     |
+| Áp dụng design pattern phù hợp | Đã làm | Có Singleton, Factory Method, Command và Observer.                                                                                                          |
+| Quản lý người dùng, sản phẩm | Đã làm | Đăng ký, đăng nhập, cập nhật hồ sơ, reset mật khẩu, quản lý user cho admin; seller tạo/sửa/xóa auction và item.                                           |
+| Chức năng đấu giá | Đã làm | Danh sách phiên, chi tiết sản phẩm, tham gia đấu giá trực tiếp, kiểm tra bid hợp lệ, cập nhật người dẫn đầu và trạng thái phiên.                          |
+| Xử lý lỗi và ngoại lệ | Đã làm | Có exception cho đăng nhập, user không tồn tại, bid thấp, bid không đủ bước giá, tự bid, phiên chưa bắt đầu/đã đóng, lỗi dữ liệu và lỗi kết nối.          |
 | Xử lý đấu giá đồng thời an toàn | Đã làm | `AuctionManager` dùng `ReentrantLock` theo `auctionId`, `ConcurrentHashMap`, `CopyOnWriteArrayList` để giảm race condition khi nhiều client bid cùng lúc. |
-| Realtime update bằng Observer/Socket | Đã làm | Server dùng `BidListener` và danh sách subscriber theo `auctionId`, broadcast bid mới qua `ClientHandler` cho các client đang theo dõi phiên. |
-| Thiết kế kiến trúc Client-Server rõ ràng | Đã làm | Client JavaFX gửi `Command` qua socket; server xử lý trong `ServerApp`, `ClientHandler`, manager và DAO rồi trả `Response`. |
-| Áp dụng MVC | Đã làm | Client tách FXML/CSS, controller và model; server tách command, manager, DAO và domain model. |
-| Sử dụng Maven/Gradle, coding convention tốt, mã nguồn sạch | Đã làm | Có `pom.xml`, Maven Wrapper, Checkstyle, Spotless và cấu hình build JAR client/server. |
-| Unit Test cho logic quan trọng | Đã làm | Có test JUnit/Mockito cho manager, command, model/factory, exception và password hashing. |
-| Thiết lập CI/CD cơ bản | Đã làm | Có GitHub Actions trong `.github/workflows/ci.yml` chạy build và test trên Ubuntu, Windows, macOS. |
-| Auto-Bidding | Đã làm | Có `AutoBidConfig`, `AutoBidCommand`, `AuctionManager.registerAutoBid()` và logic so sánh auto-bid theo maxBid/increment/thời điểm đăng ký. |
-| Gia hạn phiên đấu giá khi bid cuối | Đã làm | Có `AntiSnipeExtender`; bid trong 60 giây cuối sẽ gia hạn phiên thêm 60 giây. |
-| Bid History Visualization | Đã làm | Có `LineChart` trong `LiveAuction.fxml`, cập nhật từ lịch sử bid và bid mới. |
+| Realtime update bằng Observer/Socket | Đã làm | Server dùng `BidListener` và danh sách subscriber theo `auctionId`, broadcast bid mới qua `ClientHandler` cho các client đang theo dõi phiên.             |
+| Thiết kế kiến trúc Client-Server rõ ràng | Đã làm | Client JavaFX gửi `Command` qua socket; server xử lý trong `ServerApp`, `ClientHandler`, manager và DAO rồi trả `Response`.                               |
+| Áp dụng MVC | Đã làm | Client tách FXML/CSS, controller và model; server tách command, manager, DAO và domain model.                                                             |
+| Sử dụng Maven/Gradle, coding convention tốt, mã nguồn sạch | Đã làm | Có `pom.xml`, Maven Wrapper, Checkstyle, Spotless và cấu hình build JAR client/server.                                                                    |
+| Unit Test cho logic quan trọng | Đã làm | Có test JUnit/Mockito cho manager, command, model/factory, exception và password hashing.                                                                 |
+| Thiết lập CI/CD cơ bản | Đã làm | Có GitHub Actions trong `.github/workflows/ci.yml` chạy build và test trên Ubuntu, Windows, macOS.                                                        |
+| Auto-Bidding | Đã làm | Có `AutoBidConfig`, `AutoBidCommand`, `AuctionManager.registerAutoBid()` và logic so sánh auto-bid theo maxBid/increment/thời điểm đăng ký.               |
+| Gia hạn phiên đấu giá khi bid cuối | Đã làm | Có `AntiSnipeExtender`; bid trong 60 giây cuối sẽ gia hạn phiên thêm 60 giây.                                                                             |
+| Bid History Visualization | Đã làm | Có `LineChart` trong `LiveAuction.fxml`, cập nhật từ lịch sử bid và bid mới.                                                                              |
 
 ---
 
