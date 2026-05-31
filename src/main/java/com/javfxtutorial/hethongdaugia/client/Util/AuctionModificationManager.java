@@ -75,7 +75,7 @@ public class AuctionModificationManager implements ResponseListener {
     // Duyệt list để tìm
     for (int i = 0; i < listAuction.size(); i++) {
       if (auction.getAuctionId()
-          == ClientModel.getInstance().getAllAuctions().get(i).getAuctionId()) {
+          == listAuction.get(i).getAuctionId()) {
         foundIndex = i; // 2. Tìm thấy rồi thì lưu vị trí i lại
         break; // Thoát vòng lặp cho nhẹ máy
       }
