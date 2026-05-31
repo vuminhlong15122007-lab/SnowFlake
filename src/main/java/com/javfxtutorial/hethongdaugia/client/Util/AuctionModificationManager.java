@@ -39,6 +39,7 @@ public class AuctionModificationManager implements ResponseListener {
     NetworkManager.getInstance().register(AddAuctionCommand.class, this);
     NetworkManager.getInstance().register(DeleteAuctionCommand.class, this);
     NetworkManager.getInstance().register(UpdateAuctionCommand.class, this);
+    NetworkManager.getInstance().register(UpdateAuctionStatusCommand.class, this);
   }
 
   public void refreshAuctionStatus(List<Auction> auctionList) {
@@ -91,6 +92,7 @@ public class AuctionModificationManager implements ResponseListener {
     if (rp.getCommand().getClass().equals(AddAuctionCommand.class)) {
       if (rp.isSuccess()) {
         Auction savedAuction = (Auction) rp.getPayLoad();
+        log.info("Đã nhận ddc command có auction mới:{}", savedAuction);
         Platform.runLater(
             () -> {
               allAuctionsList.addFirst(savedAuction);
@@ -117,10 +119,16 @@ public class AuctionModificationManager implements ResponseListener {
     if (rp.getCommand().getClass().equals(UpdateAuctionCommand.class)
         || rp.getCommand().getClass().equals(UpdateAuctionStatusCommand.class)) {
       if (rp.isSuccess()) {
-        Auction updatedAuction = (Auction) rp.getPayLoad();
+        if (!(rp.getPayLoad() instanceof Auction updatedAuction)) return;
+        if ("ADMIN_CANCELLED_AUCTION".equals(rp.getMessage())) {
+          Platform.runLater(
+              () -> allAuctionsList.remove(updatedAuction));
+        }
+        log.info("Đã nhận ddc command update auction mới:{}", updatedAuction);
         Platform.runLater(
             () -> {
               updateAuctionInList(allAuctionsList, updatedAuction);
+              if (ClientModel.getInstance().getCurrentUser() == null) return;
               if (updatedAuction.getSellerId()
                   == ClientModel.getInstance().getCurrentUser().getId()) {
                 updateAuctionInList(myAuctionsList, updatedAuction);

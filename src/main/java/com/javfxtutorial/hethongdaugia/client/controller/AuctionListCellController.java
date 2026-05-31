@@ -100,7 +100,7 @@ public class AuctionListCellController {
         }
         break;
 
-      case PAID:
+      default:
         statusBadge.setText("ĐÃ KẾT THÚC");
         setStatusBadgeClass("sf-status-ended");
         lbPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));

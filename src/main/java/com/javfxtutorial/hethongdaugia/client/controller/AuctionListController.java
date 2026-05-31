@@ -134,7 +134,10 @@ public class AuctionListController implements ResponseListener {
           () -> {
             try {
               Platform.runLater(
-                  () -> AuctionModificationManager.getInstance().refreshAuctionStatus(observable));
+                  () -> {
+                    AuctionModificationManager.getInstance().refreshAuctionStatus(observable);
+                    applyFilters();
+                  });
             } catch (Exception e) {
               log.warn("Auto-refresh thất bại: {}", e.getMessage());
             }
