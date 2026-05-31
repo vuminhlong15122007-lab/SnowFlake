@@ -1120,14 +1120,12 @@ public class SellerManagementController implements ResponseListener {
     AuctionStatus status = auction.getStatus();
     if (status != AuctionStatus.CLOSED
         && status != AuctionStatus.PAID
-        && status != AuctionStatus.CANCELLED
-        && status != AuctionStatus.CANCELLED_BY_ADMIN) return;
+        && status != AuctionStatus.CANCELLED) return;
 
     SellerNotification.Type type =
         switch (status) {
           case CLOSED -> SellerNotification.Type.CLOSED;
           case PAID -> SellerNotification.Type.PAID;
-          case CANCELLED_BY_ADMIN -> SellerNotification.Type.CANCELLED_BY_ADMIN;
           default -> SellerNotification.Type.CANCELLED;
         };
     String productName =
@@ -1142,12 +1140,6 @@ public class SellerManagementController implements ResponseListener {
     Platform.runLater(
         () -> {
           addOrReplaceNotification(notif);
-          for (int i = 0; i < observable.size(); i++) {
-            if (observable.get(i).getAuctionId() == auction.getAuctionId()) {
-              observable.set(i, auction);
-              break;
-            }
-          }
         });
   }
 

@@ -3,6 +3,7 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
+import com.javfxtutorial.hethongdaugia.client.Util.AuctionModificationManager;
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.Util.TimeLeft;
 import com.javfxtutorial.hethongdaugia.client.Util.ToastNotifier;

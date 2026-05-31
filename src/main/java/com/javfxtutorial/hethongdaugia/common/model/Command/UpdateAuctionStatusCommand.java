@@ -60,7 +60,7 @@ public class UpdateAuctionStatusCommand extends Command {
               e.getMessage(),
               e);
         }
-        return new Response(true, "ADMIN_CANCELLED_AUCTION", notif, this);
+        return new Response(true, "ADMIN_CANCELLED_AUCTION", auction, this);
       }
 
       Response rp = new Response(true, "Cập nhật status thành công", auction, this);

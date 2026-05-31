@@ -1,6 +1,5 @@
 package com.javfxtutorial.hethongdaugia.client.model;
 
-import com.javfxtutorial.hethongdaugia.client.controller.ParticipatedAuctionController;
 import com.javfxtutorial.hethongdaugia.client.controller.SellerManagementController;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
