@@ -16,7 +16,6 @@ import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
-import java.time.LocalDateTime;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public class ParticipatedAuctionCellController implements ResponseListener {
   private static final Logger log =
-          LoggerFactory.getLogger(ParticipatedAuctionCellController.class);
+      LoggerFactory.getLogger(ParticipatedAuctionCellController.class);
   @FXML private Button actionButton;
   @FXML private Label lbCategory;
   @FXML private Label lbCurrentPrice;
@@ -52,7 +51,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
       countdownBadge.setVisible(true);
       countdownBadge.setManaged(true);
     }
-    switch (auction.getStatus()){
+    switch (auction.getStatus()) {
       case RUNNING -> {
         if (timer != null) timer.stop();
         timer = new TimeLeft(lbTime, auction.getEndingTime());
@@ -127,11 +126,11 @@ public class ParticipatedAuctionCellController implements ResponseListener {
     this.auction = auction;
     updateUI(auction.getStatus()); // khởi tạo UI ban đầu
     auction
-            .statusProperty()
-            .addListener(
-                    ((_, _, newVal) -> {
-                      updateUI(newVal);
-                    })); // thay đổi UI nếu có status mơid
+        .statusProperty()
+        .addListener(
+            ((_, _, newVal) -> {
+              updateUI(newVal);
+            })); // thay đổi UI nếu có status mơid
     lbProductName.setText(auction.getItem().getName());
     lbCategory.setText(String.valueOf(auction.getItem().getCategory()));
     lbWinnerName.setText(String.valueOf(auction.getWinnerName()));
@@ -142,8 +141,8 @@ public class ParticipatedAuctionCellController implements ResponseListener {
     }
 
     if (productImage != null
-            && auction.getItem().getImage() != null
-            && !auction.getItem().getImage().isBlank()) {
+        && auction.getItem().getImage() != null
+        && !auction.getItem().getImage().isBlank()) {
       ImageHelper.loadBase64ToImageView(productImage, auction.getItem().getImage());
     }
   }
@@ -170,24 +169,24 @@ public class ParticipatedAuctionCellController implements ResponseListener {
   private void openPaymentPopup() {
     try {
       FXMLLoader loader =
-              new FXMLLoader(
-                      getClass()
-                              .getResource("/com/javfxtutorial/hethongdaugia/view/fxml/PaymentPopup.fxml"));
+          new FXMLLoader(
+              getClass()
+                  .getResource("/com/javfxtutorial/hethongdaugia/view/fxml/PaymentPopup.fxml"));
       Parent root = loader.load();
       PaymentPopupController popupController = loader.getController();
       popupController.setAuction(auction);
 
       popupController.setOnConfirmed(
-              () -> {
-                auction.setStatus(AuctionStatus.PAID);
-                try {
-                  NetworkManager.getInstance()
-                          .sendRequest(new UpdateAuctionStatusCommand(auction), this);
-                } catch (SendFailedException | ConnectionFailedException e) {
-                  Platform.runLater(
-                          () -> showAlert("Lỗi", "Không thể gửi yêu cầu thanh toán.", "Wrong.gif"));
-                }
-              });
+          () -> {
+            auction.setStatus(AuctionStatus.PAID);
+            try {
+              NetworkManager.getInstance()
+                  .sendRequest(new UpdateAuctionStatusCommand(auction), this);
+            } catch (SendFailedException | ConnectionFailedException e) {
+              Platform.runLater(
+                  () -> showAlert("Lỗi", "Không thể gửi yêu cầu thanh toán.", "Wrong.gif"));
+            }
+          });
 
       Stage popupStage = new Stage();
       popupStage.initModality(Modality.APPLICATION_MODAL);
@@ -256,10 +255,10 @@ public class ParticipatedAuctionCellController implements ResponseListener {
         hideCountdown();
         lbCurrentPrice.setText(String.format("%,.0f VND", auction.getCurrentPrice()));
         lbCategory.setText(
-                "Loại: "
-                        + (auction.getItem().getCategory() != null
-                        ? auction.getItem().getCategory()
-                        : "Khác"));
+            "Loại: "
+                + (auction.getItem().getCategory() != null
+                    ? auction.getItem().getCategory()
+                    : "Khác"));
         lbWinnerName.setText("Người thắng: " + auction.getWinnerName());
         if (actionButton != null) {
           actionButton.setDisable(true);
@@ -279,13 +278,13 @@ public class ParticipatedAuctionCellController implements ResponseListener {
     if (actionButton == null) return;
     actionButton.setStyle("");
     actionButton
-            .getStyleClass()
-            .removeAll(
-                    "sf-auction-action-primary",
-                    "sf-auction-action-warning",
-                    "sf-auction-action-neutral",
-                    "sf-auction-action-success",
-                    "sf-auction-action-danger");
+        .getStyleClass()
+        .removeAll(
+            "sf-auction-action-primary",
+            "sf-auction-action-warning",
+            "sf-auction-action-neutral",
+            "sf-auction-action-success",
+            "sf-auction-action-danger");
     actionButton.getStyleClass().add(styleClass);
   }
 
@@ -294,10 +293,10 @@ public class ParticipatedAuctionCellController implements ResponseListener {
     NetworkManager.getInstance().unregister(UpdateAuctionStatusCommand.class, this);
     if (!rp.isSuccess()) {
       Platform.runLater(
-              () -> {
-                auction.setStatus(AuctionStatus.CLOSED);
-                showAlert("Thanh toán không thành công", "vui lòng thử lại");
-              });
+          () -> {
+            auction.setStatus(AuctionStatus.CLOSED);
+            showAlert("Thanh toán không thành công", "vui lòng thử lại");
+          });
     }
   }
 }

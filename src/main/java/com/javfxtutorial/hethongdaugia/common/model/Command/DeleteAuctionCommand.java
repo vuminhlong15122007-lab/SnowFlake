@@ -2,7 +2,6 @@ package com.javfxtutorial.hethongdaugia.common.model.Command;
 
 import com.javfxtutorial.hethongdaugia.common.Exception.data.DataDeleteException;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
-import com.javfxtutorial.hethongdaugia.common.model.domain.SellerNotification;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;

@@ -3,6 +3,7 @@ package com.javfxtutorial.hethongdaugia.client.controller;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.showAlert;
 
+import com.javfxtutorial.hethongdaugia.client.Util.AuctionModificationManager;
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.Util.TimeLeft;
 import com.javfxtutorial.hethongdaugia.client.Util.ToastNotifier;
@@ -12,7 +13,6 @@ import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
 import com.javfxtutorial.hethongdaugia.client.network.ServerConnection;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.Exception.net.SendFailedException;
-import com.javfxtutorial.hethongdaugia.common.model.Command.PlaceBidCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionCommand;
 import com.javfxtutorial.hethongdaugia.common.model.Command.UpdateAuctionStatusCommand;
 import com.javfxtutorial.hethongdaugia.common.model.domain.*;
@@ -80,6 +80,12 @@ public class ProductDisplayController implements ResponseListener {
     ItemCategory category = item.getCategory();
     lbLoaisp.setText(category != null ? category.name() : "Không xác định");
     ImageHelper.loadBase64ToImageView(itemImageView, auction.getItem().getImage());
+    auction
+        .statusProperty()
+        .addListener(
+            ((_, _, newVal) -> {
+              updateUI(newVal);
+            })); // thay đổi UI nếu có status mơid
   }
 
   @FXML
@@ -90,26 +96,12 @@ public class ProductDisplayController implements ResponseListener {
     NetworkManager.getInstance().register(UpdateAuctionCommand.class, this);
     setData(auction);
     showCategoryInfo();
-    auction
-        .statusProperty()
-        .addListener(
-            ((_, _, newVal) -> {
-              updateUI(newVal);
-            })); // thay đổi UI nếu có status mơid
-
-    // Register lắng nghe bid mới CHỈ khi đang RUNNING — 1 lần duy nhất
-    if (auction.getStatus() == AuctionStatus.RUNNING) {
-      networkManager.register(PlaceBidCommand.class, this);
-    }
     updateUI(auction.getStatus());
-
   }
 
   private void updateUI(AuctionStatus status) {
     switch (status) {
       case RUNNING -> {
-
-
         UI01.setText("THỜI GIAN CÒN LẠI");
         UI01.setStyle("-fx-text-fill: -sf-success; -fx-alignment: CENTER;"); // ← đổi màu xanh
         UI02.setStyle(
@@ -118,25 +110,26 @@ public class ProductDisplayController implements ResponseListener {
         lbtimeLeft.setStyle("-fx-text-fill: -sf-success;");
         ThamGiaDauGiaBtn.setText("Tham gia");
         ThamGiaDauGiaBtn.setStyle("");
-        if (timer != null)timer.stop();
+        if (timer != null) timer.stop();
         timer = new TimeLeft(lbtimeLeft, auction.getEndingTime());
-        timer.setOnFinished(() -> {
-          auction.setStatus(AuctionStatus.CLOSED);
-          Platform.runLater(
-              () -> {
-                try {
-                  ServerConnection connection = NetworkManager.getConnection();
-                  Command cmd = new UpdateAuctionStatusCommand(auction);
-                  connection.sendCommand(cmd);
-                } catch (ConnectionFailedException e) {
-                  log.error("Không kết nối được server");
-                  notifyError(e.getMessage());
-                } catch (SendFailedException e) {
-                  log.error("Không gửi được command");
-                  notifyError(e.getMessage());
-                }
-              });
-        });
+        timer.setOnFinished(
+            () -> {
+              auction.setStatus(AuctionStatus.CLOSED);
+              Platform.runLater(
+                  () -> {
+                    try {
+                      ServerConnection connection = NetworkManager.getConnection();
+                      Command cmd = new UpdateAuctionStatusCommand(auction);
+                      connection.sendCommand(cmd);
+                    } catch (ConnectionFailedException e) {
+                      log.error("Không kết nối được server");
+                      notifyError(e.getMessage());
+                    } catch (SendFailedException e) {
+                      log.error("Không gửi được command");
+                      notifyError(e.getMessage());
+                    }
+                  });
+            });
         timer.start();
       }
       case NOT_START -> {
@@ -152,23 +145,24 @@ public class ProductDisplayController implements ResponseListener {
                 + "-fx-text-fill: -sf-on-accent; -fx-font-weight: bold; -fx-font-size: 16px; -fx-background-radius: 25;");
         if (timer != null) timer.stop();
         timer = new TimeLeft(lbtimeLeft, auction.getStartingTime());
-        timer.setOnFinished(() -> {
-          auction.setStatus(AuctionStatus.RUNNING);
-          Platform.runLater(
-              () -> {
-                try {
-                  ServerConnection connection = NetworkManager.getConnection();
-                  Command cmd = new UpdateAuctionStatusCommand(auction);
-                  connection.sendCommand(cmd);
-                } catch (ConnectionFailedException e) {
-                  log.error("Không kết nối được server");
-                  notifyError(e.getMessage());
-                } catch (SendFailedException e) {
-                  log.error("Không gửi được command");
-                  notifyError(e.getMessage());
-                }
-              });
-        });
+        timer.setOnFinished(
+            () -> {
+              auction.setStatus(AuctionStatus.RUNNING);
+              Platform.runLater(
+                  () -> {
+                    try {
+                      ServerConnection connection = NetworkManager.getConnection();
+                      Command cmd = new UpdateAuctionStatusCommand(auction);
+                      connection.sendCommand(cmd);
+                    } catch (ConnectionFailedException e) {
+                      log.error("Không kết nối được server");
+                      notifyError(e.getMessage());
+                    } catch (SendFailedException e) {
+                      log.error("Không gửi được command");
+                      notifyError(e.getMessage());
+                    }
+                  });
+            });
         timer.start();
       }
       default -> { // CLOSED
@@ -271,9 +265,9 @@ public class ProductDisplayController implements ResponseListener {
               setData(auction);
               showCategoryInfo();
               if (auction.getStatus().equals(AuctionStatus.NOT_START)) {
-                if(timer != null) timer.stop();
-                timer = new TimeLeft(lbtimeLeft, auction.getStartingTime());
-                timer.start();
+                if (timer != null) timer.setDeadline(auction.getStartingTime());
+              } else if (auction.getStatus().equals(AuctionStatus.RUNNING)) {
+                if (timer != null) timer.setDeadline(auction.getEndingTime());
               }
             });
       }

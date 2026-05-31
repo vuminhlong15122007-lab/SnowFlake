@@ -2,26 +2,20 @@ package com.javfxtutorial.hethongdaugia.common.model.factory;
 
 import com.javfxtutorial.hethongdaugia.common.model.domain.Item;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Vehicle;
-import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
 
 public class VehicleFactory extends ItemFactory {
   private Item baseItem;
-  private String  licensePlate, brandVehicle, color;
+  private String licensePlate, brandVehicle, color;
   private int vehicleYear;
+
   public VehicleFactory(
-      Item baseItem,
-      String licensePlate,
-      int vehicleYear,
-      String brandVehicle,
-      String color) {
+      Item baseItem, String licensePlate, int vehicleYear, String brandVehicle, String color) {
     this.baseItem = baseItem;
     this.licensePlate = licensePlate;
     this.vehicleYear = vehicleYear;
     this.brandVehicle = brandVehicle;
     this.color = color;
   }
-
 
   @Override
   public Item createItemFromForm() {
@@ -32,6 +26,15 @@ public class VehicleFactory extends ItemFactory {
     String description = baseItem.getDescription();
     String image = baseItem.getImage();
     return new Vehicle(
-        sellerName, sellerId, itemId, name, description, image, licensePlate, vehicleYear, brandVehicle, color);
+        sellerName,
+        sellerId,
+        itemId,
+        name,
+        description,
+        image,
+        licensePlate,
+        vehicleYear,
+        brandVehicle,
+        color);
   }
 }

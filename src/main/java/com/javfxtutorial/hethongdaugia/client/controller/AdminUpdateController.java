@@ -12,7 +12,6 @@ import com.javfxtutorial.hethongdaugia.common.network.Response;
 import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import org.slf4j.Logger;
@@ -100,14 +99,14 @@ public class AdminUpdateController implements ResponseListener {
 
     NetworkManager networkManager = NetworkManager.getInstance();
     new Thread(
-        () -> {
-          try {
-            networkManager.sendRequest(cmd, this);
-          } catch (ConnectionFailedException | SendFailedException e) {
-            log.error("Lỗi gửi UpdateProfileCommand: {}", e.getMessage(), e);
-            Platform.runLater(() -> toast().error("Không thể gửi yêu cầu"));
-          }
-        })
+            () -> {
+              try {
+                networkManager.sendRequest(cmd, this);
+              } catch (ConnectionFailedException | SendFailedException e) {
+                log.error("Lỗi gửi UpdateProfileCommand: {}", e.getMessage(), e);
+                Platform.runLater(() -> toast().error("Không thể gửi yêu cầu"));
+              }
+            })
         .start();
   }
 

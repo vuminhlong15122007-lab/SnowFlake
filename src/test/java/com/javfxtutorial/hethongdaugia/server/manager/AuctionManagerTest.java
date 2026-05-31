@@ -27,7 +27,6 @@ import com.javfxtutorial.hethongdaugia.server.dao.AuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.BidDAO;
 import com.javfxtutorial.hethongdaugia.server.dao.ParticipatedAuctionDAO;
 import com.javfxtutorial.hethongdaugia.server.network.BidListener;
-import com.javfxtutorial.hethongdaugia.server.network.ClientHandler;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.junit.jupiter.api.AfterEach;

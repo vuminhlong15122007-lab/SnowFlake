@@ -18,7 +18,8 @@ public class GetAllAuctionsCommand extends Command {
   public Response handle() {
     try {
       ArrayList<Auction> allAuctions = AuctionDAO.getInstance().selectAll();
-      for (Auction auction : allAuctions) { // trước khi load lên kiểm tra lại trạng thái của auction
+      for (Auction auction :
+          allAuctions) { // trước khi load lên kiểm tra lại trạng thái của auction
         AuctionStatus status = AuctionManager.getInstance().refreshAuctionStatus(auction);
         auction.setStatus(status);
       }

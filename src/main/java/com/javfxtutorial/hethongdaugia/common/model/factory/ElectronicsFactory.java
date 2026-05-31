@@ -3,7 +3,6 @@ package com.javfxtutorial.hethongdaugia.common.model.factory;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Electronics;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Item;
 import javafx.fxml.FXML;
-import javafx.scene.control.TextField;
 
 public class ElectronicsFactory extends ItemFactory {
 
@@ -16,7 +15,6 @@ public class ElectronicsFactory extends ItemFactory {
     this.model = model;
   }
 
-
   @Override
   public Item createItemFromForm() {
     String sellerName = baseItem.getSellerName();
@@ -25,6 +23,7 @@ public class ElectronicsFactory extends ItemFactory {
     String name = baseItem.getName();
     String description = baseItem.getDescription();
     String image = baseItem.getImage();
-    return new Electronics(sellerName, sellerId, itemId, name, description, image, brandElec, model);
+    return new Electronics(
+        sellerName, sellerId, itemId, name, description, image, brandElec, model);
   }
 }

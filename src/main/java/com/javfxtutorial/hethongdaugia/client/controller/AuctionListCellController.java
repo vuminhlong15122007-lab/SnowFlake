@@ -5,6 +5,7 @@ import static com.javfxtutorial.hethongdaugia.client.Util.UIUtils.changeScene;
 import com.javfxtutorial.hethongdaugia.client.Util.ImageHelper;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.common.model.domain.Auction;
+import com.javfxtutorial.hethongdaugia.common.model.enums.AuctionStatus;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -27,7 +28,13 @@ public class AuctionListCellController {
   public void setData(Auction auction) {
     if (auction == null || auction.getItem() == null) return;
     this.auction = auction;
-
+    updateUI(auction.getStatus()); // khởi tạo UI ban đầu
+    auction
+        .statusProperty()
+        .addListener(
+            ((_, _, newVal) -> {
+              updateUI(newVal);
+            })); // thay đổi UI nếu có status mơid
     // Thông tin chung
     lbProductName.setText(auction.getItem().getName());
     lbSellerName.setText(auction.getItem().getSellerName());
@@ -41,9 +48,10 @@ public class AuctionListCellController {
         || auction.getItem().getImage().isBlank())) {
       ImageHelper.loadBase64ToImageView(productImage, auction.getItem().getImage());
     }
+  }
 
-    // Xử lý theo trạng thái
-    switch (auction.getStatus()) {
+  private void updateUI(AuctionStatus status) {
+    switch (status) {
       case RUNNING:
         statusBadge.setText("ĐANG DIỄN RA");
         setStatusBadgeClass("sf-status-running");
@@ -92,7 +100,7 @@ public class AuctionListCellController {
         }
         break;
 
-      case PAID:
+      default:
         statusBadge.setText("ĐÃ KẾT THÚC");
         setStatusBadgeClass("sf-status-ended");
         lbPrice.setText(String.format("%,.0f VND", auction.getWinningPrice()));

@@ -51,10 +51,12 @@ public class RegisterController implements ResponseListener {
   private boolean confirmPasswordShown = false;
   ActionEvent signUpEvent;
 
-  @FXML public void initialize(){
+  @FXML
+  public void initialize() {
     Password.textProperty().bindBidirectional(PasswordVisible.textProperty());
     Confirm_Password.textProperty().bindBidirectional(ConfirmPasswordVisible.textProperty());
   }
+
   @FXML
   public void clickBackToLogin(ActionEvent event) {
     changeScene(event, "/com/javfxtutorial/hethongdaugia/view/fxml/login.fxml");

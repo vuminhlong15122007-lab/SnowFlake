@@ -33,8 +33,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.locks.ReentrantLock;
-
-import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -200,8 +198,7 @@ public class AuctionManager {
    * Luồng xử lý chính: khóa theo auction, nạp auction từ cache/database, kiểm tra trạng thái và giá,
    * cập nhật auction, lưu database, phát thông báo realtime rồi kích hoạt AutoBid tiếp theo.
    */
-  public boolean placeBid(
-      BidTransaction bid, List<BidTransaction> pendingHistoryBids)
+  public boolean placeBid(BidTransaction bid, List<BidTransaction> pendingHistoryBids)
       throws AuctionNotFoundException,
           AuctionNotStartedException,
           AuctionAlreadyEndedException,
@@ -580,8 +577,7 @@ public class AuctionManager {
 
     // Gọi lại placeBid để bid tự động đi qua cùng luồng kiểm tra, lưu DB và thông báo như bid thường.
     this.placeBid(
-        autoBid,
-        pendingHistoryBid == null ? Collections.emptyList() : List.of(pendingHistoryBid));
+        autoBid, pendingHistoryBid == null ? Collections.emptyList() : List.of(pendingHistoryBid));
   }
 
   /**

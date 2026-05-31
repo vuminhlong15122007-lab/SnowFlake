@@ -1,10 +1,11 @@
 package com.javfxtutorial.hethongdaugia.client;
 
-import com.javfxtutorial.hethongdaugia.client.Util.ThemeManager;
 import com.javfxtutorial.hethongdaugia.client.Util.AppIcon;
+import com.javfxtutorial.hethongdaugia.client.Util.ThemeManager;
 import com.javfxtutorial.hethongdaugia.client.handler.GlobalExceptionHandler;
 import java.io.IOException;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
@@ -14,7 +15,7 @@ public class MainApplication extends Application {
 
   @Override
   public void start(Stage stage) throws IOException {
-    MainApp.stage = stage;
+    MainApplication.stage = stage;
     GlobalExceptionHandler.register();
     GlobalExceptionHandler.registerForJavaFX();
     FXMLLoader fxmlLoader =
@@ -27,9 +28,10 @@ public class MainApplication extends Application {
     AppIcon.apply(stage);
     stage.setScene(scene);
     stage.show();
-  }
-
-  public static void main(String[] args) {
-    Application.launch(MainApplication.class, args);
+    stage.setOnCloseRequest(
+        e -> {
+          Platform.exit();
+          System.exit(0); // thoát hẳn JVM nếu cần
+        });
   }
 }

@@ -13,7 +13,6 @@ import com.javfxtutorial.hethongdaugia.common.model.domain.BidTransaction;
 import com.javfxtutorial.hethongdaugia.common.network.Command;
 import com.javfxtutorial.hethongdaugia.common.network.Response;
 import com.javfxtutorial.hethongdaugia.server.manager.AuctionManager;
-import com.javfxtutorial.hethongdaugia.server.network.ClientHandlerContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

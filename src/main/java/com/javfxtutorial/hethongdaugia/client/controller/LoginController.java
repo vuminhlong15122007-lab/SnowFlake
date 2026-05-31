@@ -8,6 +8,7 @@ import com.javfxtutorial.hethongdaugia.client.Util.UserManager;
 import com.javfxtutorial.hethongdaugia.client.model.ClientModel;
 import com.javfxtutorial.hethongdaugia.client.network.NetworkManager;
 import com.javfxtutorial.hethongdaugia.client.network.ResponseListener;
+import com.javfxtutorial.hethongdaugia.common.Exception.net.ConnectionFailedException;
 import com.javfxtutorial.hethongdaugia.common.model.Command.LoginCommand;
 import com.javfxtutorial.hethongdaugia.common.model.domain.User;
 import com.javfxtutorial.hethongdaugia.common.model.enums.AccountType;
@@ -60,7 +61,13 @@ public class LoginController implements ResponseListener, Initializable {
                 cmd.addData("username", username);
                 cmd.addData("password", password);
                 NetworkManager.getInstance().sendRequest(cmd, this);
-              } catch (Exception e) {
+              }
+              catch (ConnectionFailedException e) {
+                log.error("Lỗi khi gửi login request: {}", e.getMessage(), e);
+                Platform.runLater(() -> {
+                  toast().error("Không thể kết nối đến máy chủ!");
+                });
+              }catch (Exception e) {
                 log.error("Lỗi khi gửi login request: {}", e.getMessage(), e);
                 Platform.runLater(
                     () -> {
@@ -95,11 +102,17 @@ public class LoginController implements ResponseListener, Initializable {
           });
     } else {
       Platform.runLater(
-          () -> {
-            message.setText("Sai tên hoặc mật khẩu!");
-            toast().error("Đăng nhập thất bại");
-            log.info(rp.getMessage());
-          });
+              () -> {
+                String msg = rp.getMessage();
+                if (msg != null && msg.contains("cơ sở dữ liệu")) {
+                  message.setText("Không thể kết nối máy chủ, thử lại sau!");
+                  toast().error("Mất kết nối máy chủ!");
+                } else {
+                  message.setText("Sai tên hoặc mật khẩu!");
+                  toast().error("Đăng nhập thất bại");
+                }
+                log.info(rp.getMessage());
+              });
     }
   }
 
@@ -110,7 +123,8 @@ public class LoginController implements ResponseListener, Initializable {
       new HomeController().checkUnpaidAuction();
     } else if (user.getAccountType() == AccountType.ADMIN) {
       log.info(rp.getMessage());
-      changeScene(loginEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UserManagement.fxml");
+      changeScene(
+          loginEvent, "/com/javfxtutorial/hethongdaugia/view/fxml/Admin_UserManagement.fxml");
     }
   }
 
