@@ -62,8 +62,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
                 lbTime.setStyle(
                     "-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: -sf-danger;");
               }
-              if (auction.getStatus()
-                  == AuctionStatus.RUNNING) { // hết countdown running → chuyển CLOSED
+               // hết countdown running → chuyển CLOSED
                 auction.setStatus(AuctionStatus.CLOSED);
                 Platform.runLater(
                     () -> {
@@ -78,7 +77,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
                         showAlert("Lỗi", e.getMessage());
                       }
                     });
-              }
+
             });
       }
       case CLOSED -> {
@@ -91,9 +90,8 @@ public class ParticipatedAuctionCellController implements ResponseListener {
                 lbTime.setStyle(
                     "-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: -sf-danger;");
               }
-              if (auction.getStatus()
-                  == AuctionStatus.RUNNING) { // hết countdown running → chuyển CLOSED
-                auction.setStatus(AuctionStatus.CLOSED);
+              // hết countdown CLOSED → chuyển CANCELLED
+                auction.setStatus(AuctionStatus.CANCELLED);
                 Platform.runLater(
                     () -> {
                       try {
@@ -107,7 +105,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
                         showAlert("Lỗi", e.getMessage());
                       }
                     });
-              }
+
             });
       }
     }
@@ -235,7 +233,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
         lbWinnerName.setText("Phiên bị hủy");
         if (actionButton != null) {
           actionButton.setDisable(true);
-          actionButton.setText("ĐÃ HỦY");
+          actionButton.setText("KHÔNG THANH TOÁN");
           setActionButtonClass("sf-auction-action-danger");
         }
         break;
@@ -246,7 +244,7 @@ public class ParticipatedAuctionCellController implements ResponseListener {
         lbWinnerName.setText("Phiên bị hủy");
         if (actionButton != null) {
           actionButton.setDisable(true);
-          actionButton.setText("ĐÃ HỦY");
+          actionButton.setText("ĐÃ HỦY BỞI ADMIN");
           setActionButtonClass("sf-auction-action-danger");
         }
         break;

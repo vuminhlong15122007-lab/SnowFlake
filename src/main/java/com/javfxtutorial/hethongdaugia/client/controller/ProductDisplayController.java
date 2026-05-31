@@ -67,6 +67,7 @@ public class ProductDisplayController implements ResponseListener {
   private TimeLeft timer;
 
   public void setData(Auction auction) {
+    ClientModel.getInstance().setCurrentAuction(auction);
     this.auction = auction;
     this.item = auction.getItem();
     LbMotasp.setText(item.getDescription());
