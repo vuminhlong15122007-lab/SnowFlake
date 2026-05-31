@@ -38,6 +38,10 @@ public class LoginCommand extends Command {
       log.error("Lỗi không xác định: {}", e.getMessage(), e);
       return new Response(false, "Lỗi hệ thống: " + e.getMessage(), null, this);
     }
+    catch (Error e) {
+      log.error("Lỗi khởi tạo hệ thống (DB không kết nối được?): {}", e.getMessage(), e);
+      return new Response(false, "Không thể kết nối cơ sở dữ liệu, vui lòng thử lại sau", null, this);
+    }
   }
 
   private static User sanitize(User user) {
