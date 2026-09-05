@@ -728,7 +728,7 @@ public class AuctionManager {
    * <p>Input: auction cần kiểm tra. Output: trạng thái sau khi xét thanh toán. Nếu không có người
    * thắng thì đóng auction; nếu quá 24 giờ mà chưa PAID thì hủy auction.
    */
-  public AuctionStatus checkPaymentStatus(Auction auction) throws DataException {
+  public AuctionStatus checkPaymentStatus(Auction auction) {
     // Không có người thắng nghĩa là phiên kết thúc mà không ai đặt giá hợp lệ.
     if (auction.getWinnerName() == null || auction.getWinnerName().isBlank()) {
       auction.setStatus(AuctionStatus.CLOSED);
